@@ -1,0 +1,72 @@
+{
+  "name": "@three-recast/core",
+  "type": "module",
+  "packageManager": "yarn@3.2.1",
+  "author": "Isaac Mason <isaac@isaacmason.com>",
+  "license": "MIT",
+  "version": "0.0.0",
+  "homepage": "https://github.com/isaac-mason/three-recast",
+  "bugs": {
+    "url": "https://github.com/isaac-mason/three-recast/issues"
+  },
+  "scripts": {
+    "test": " NODE_OPTIONS=--experimental-vm-modules jest --coverage",
+    "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watch",
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
+  },
+  "dependencies": {
+    "@three-recast/wasm": "workspace:^"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.18.6",
+    "@jest/globals": "^28.1.2",
+    "@mdx-js/react": "^1.6.22",
+    "@storybook/addon-actions": "^6.5.9",
+    "@storybook/addon-docs": "^6.5.9",
+    "@storybook/addon-essentials": "^6.5.9",
+    "@storybook/addon-interactions": "^6.5.9",
+    "@storybook/addon-links": "^6.5.9",
+    "@storybook/builder-vite": "^0.1.38",
+    "@storybook/client-api": "^6.5.9",
+    "@storybook/html": "^6.5.9",
+    "@storybook/testing-library": "^0.0.13",
+    "@types/jest": "^28.1.4",
+    "@typescript-eslint/eslint-plugin": "^5.7.0",
+    "@typescript-eslint/parser": "^5.7.0",
+    "babel-jest": "^28.1.3",
+    "babel-loader": "^8.2.5",
+    "eslint": "^8.5.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-import-resolver-typescript": "^2.4.0",
+    "eslint-plugin-es": "^4.1.0",
+    "eslint-plugin-import": "^2.24.2",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
+    "eslint-plugin-storybook": "^0.5.1",
+    "eslint-plugin-typescript-enum": "^2.1.0",
+    "jest": "^28.1.2",
+    "prettier": "^2.3.2",
+    "ts-jest": "^28.0.5",
+    "typescript": "^4.5.4",
+    "vite": "^2.9.9",
+    "vite-plugin-dts": "^1.2.0"
+  },
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.umd.js",
+  "module": "./dist/index.es.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.umd.js"
+    }
+  }
+}

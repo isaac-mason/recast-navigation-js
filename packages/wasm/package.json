@@ -1,0 +1,15 @@
+{
+  "name": "@three-recast/wasm",
+  "version": "0.0.0",
+  "description": "wasm port of recastnavigation",
+  "author": "Isaac Mason <isaac@isaacmason>",
+  "license": "MIT",
+  "packageManager": "yarn@3.2.2",
+  "main": "dist/recast.js",
+  "scripts": {
+    "build": "sh build.sh"
+  },
+  "devDependencies": {
+    "webidl2ts": "file:../../../webidl2ts"
+  }
+}
