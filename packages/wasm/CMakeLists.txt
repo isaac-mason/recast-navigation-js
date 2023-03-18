@@ -87,14 +87,14 @@ set(EMCC_ARGS
   -s EXPORTED_FUNCTIONS=["_malloc","_free"]
   -s EXPORTED_RUNTIME_METHODS=["UTF8ToString","addFunction"]
   -s EXPORT_NAME="Recast"
+  -s EXPORT_ES6=1
   -s MODULARIZE=1
+  -s ENVIRONMENT=web,node
   -s NO_EXIT_RUNTIME=1
   -s NO_FILESYSTEM=1
   -s TOTAL_MEMORY=${TOTAL_MEMORY})
 
 if(${CLOSURE})
-  # Ignore closure errors about the bullet Node class
-  # (Node is a DOM thing too)
   LIST(APPEND EMCC_ARGS
     --closure 1
     -s IGNORE_CLOSURE_COMPILER_ERRORS=1)
@@ -108,11 +108,16 @@ set(EMCC_JS_ARGS ${EMCC_ARGS}
   -s ELIMINATE_DUPLICATE_FUNCTIONS=1
   -s LEGACY_VM_SUPPORT=1
   -s SINGLE_FILE=1
+  -s WASM=0)
+
+set(EMCC_WASM_ARGS ${EMCC_ARGS}
+  -s BINARYEN_IGNORE_IMPLICIT_TRAPS=1
   -s WASM=1)
 
-# set(EMCC_WASM_ARGS ${EMCC_ARGS}
-#   -s BINARYEN_IGNORE_IMPLICIT_TRAPS=1
-#   -s WASM=1)
+set(EMCC_WASM_COMPAT_ARGS ${EMCC_ARGS}
+  -s BINARYEN_IGNORE_IMPLICIT_TRAPS=1
+  -s SINGLE_FILE=1
+  -s WASM=1)
 
 set(EMCC_GLUE_ARGS
   -c
@@ -150,11 +155,20 @@ add_custom_command(
 add_custom_target(${EXE_NAME}-javascript ALL DEPENDS ${EXE_NAME}.js)
 
 # #######################################
-# add_custom_command(
-#   OUTPUT ${EXE_NAME}.wasm.js ${EXE_NAME}.wasm.wasm
-#   COMMAND emcc glue.o lib${EXE_NAME}.a ${EMCC_WASM_ARGS} -o ${EXE_NAME}.wasm.js
-#   DEPENDS ${EXE_NAME}-bindings ${EXE_NAME} ${RECAST_ONLOAD_FILE}
-#   COMMENT "Building ${EXE_NAME} webassembly"
-#   VERBATIM)
-# add_custom_target(${EXE_NAME}-wasm ALL DEPENDS ${EXE_NAME}.wasm.js ${EXE_NAME}.wasm.wasm)
+add_custom_command(
+  OUTPUT ${EXE_NAME}.wasm.js ${EXE_NAME}.wasm.wasm
+  COMMAND emcc glue.o lib${EXE_NAME}.a ${EMCC_WASM_ARGS} -o ${EXE_NAME}.wasm.js
+  DEPENDS ${EXE_NAME}-bindings ${EXE_NAME} ${RECAST_ONLOAD_FILE}
+  COMMENT "Building ${EXE_NAME} webassembly"
+  VERBATIM)
+add_custom_target(${EXE_NAME}-wasm ALL DEPENDS ${EXE_NAME}.wasm.js ${EXE_NAME}.wasm.wasm)
+
+# #######################################
+add_custom_command(
+  OUTPUT ${EXE_NAME}.wasm-compat.js
+  COMMAND emcc glue.o lib${EXE_NAME}.a ${EMCC_WASM_COMPAT_ARGS} -o ${EXE_NAME}.wasm-compat.js
+  DEPENDS ${EXE_NAME}-bindings ${EXE_NAME} ${RECAST_ONLOAD_FILE}
+  COMMENT "Building ${EXE_NAME} webassembly compat"
+  VERBATIM)
+add_custom_target(${EXE_NAME}-wasm-compat ALL DEPENDS ${EXE_NAME}.wasm-compat.js)
 

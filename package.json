@@ -2,7 +2,8 @@
   "name": "root",
   "packageManager": "yarn@3.2.2",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "apps/*"
   ],
   "scripts": {
     "build": "(cd packages/wasm && yarn build) && (cd packages/core && yarn build)"
