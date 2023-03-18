@@ -11,7 +11,6 @@ import {
   BufferAttribute,
   BufferGeometry,
   Mesh,
-  MeshStandardMaterial,
   Object3D,
   Scene,
   Vector3,
@@ -28,7 +27,7 @@ export type IObstacle = any;
 /**
  * Configures the navigation mesh creation
  */
-export interface INavMeshParameters {
+export type NavMeshParameters = {
   /**
    * The xz-plane cell size to use for fields. [Limit: > 0] [Units: wu]
    */
@@ -112,12 +111,12 @@ export interface INavMeshParameters {
    * The size of the non-navigable border around the heightfield.
    */
   borderSize?: number;
-}
+};
 
 /**
  * Configures an agent
  */
-export interface IAgentParameters {
+export type AgentParameters = {
   /**
    *  Agent radius. [Limit: >= 0]
    */
@@ -158,7 +157,7 @@ export interface IAgentParameters {
    * Default is agent radius
    */
   reachRadius?: number;
-}
+};
 
 /**
  * Recast navigation wrapper
@@ -267,10 +266,7 @@ export class Recast {
    * @param meshes array of all the geometry used to compute the navigation mesh
    * @param parameters bunch of parameters used to filter geometry
    */
-  createNavMesh(
-    meshes: Array<Mesh>,
-    parameters: INavMeshParameters
-  ): R.NavMesh {
+  createNavMesh(meshes: Array<Mesh>, parameters: NavMeshParameters): R.NavMesh {
     const navMesh = new this.recast.NavMesh();
 
     this.navMesh = navMesh;
@@ -302,23 +298,7 @@ export class Recast {
         mesh.updateMatrixWorld();
         const worldMatrix = mesh.matrixWorld;
 
-        // const worldMatrix = mesh.computeWorldMatrix(true);
-
-        // if (mesh.hasThinInstances) {
-        //   const thinMatrices = (mesh as Mesh).thinInstanceGetWorldMatrices();
-        //   for (
-        //     let instanceIndex = 0;
-        //     instanceIndex < thinMatrices.length;
-        //     instanceIndex++
-        //   ) {
-        //     const tmpMatrix = new Matrix4();
-        //     const thinMatrix = thinMatrices[instanceIndex];
-        //     thinMatrix.multiplyToRef(worldMatrix, tmpMatrix);
-        //     worldMatrices.push(tmpMatrix);
-        //   }
-        // } else {
-        //   worldMatrices.push(worldMatrix);
-        // }
+        // todo - support instanced meshes
 
         worldMatrices.push(worldMatrix);
 
@@ -362,9 +342,6 @@ export class Recast {
       }
     }
 
-    console.log(positions);
-
-    // blocking calls
     const rc = new this.recast.rcConfig();
     rc.cs = parameters.cs;
     rc.ch = parameters.ch;
@@ -382,6 +359,7 @@ export class Recast {
     rc.detailSampleDist = parameters.detailSampleDist;
     rc.detailSampleMaxError = parameters.detailSampleMaxError;
 
+    // todo: move into web worker?
     this.navMesh.build(positions, offset, indices, indices.length, rc);
 
     return navMesh;
@@ -421,10 +399,7 @@ export class Recast {
 
     geometry.setIndex(new BufferAttribute(new Uint16Array(indices), 1));
 
-    const mesh = new Mesh(
-      geometry,
-      new MeshStandardMaterial({ color: 0xff0000, wireframe: true })
-    );
+    const mesh = new Mesh(geometry);
 
     return mesh;
   }
@@ -798,7 +773,7 @@ export class DetourCrowd {
    */
   addAgent(
     pos: Vector3,
-    parameters: IAgentParameters,
+    parameters: AgentParameters,
     transform: Object3D
   ): number {
     const agentParams = new this.bjsRECASTPlugin.recast.dtCrowdAgentParams();
@@ -955,7 +930,7 @@ export class DetourCrowd {
    * @param index agent index returned by addAgent
    * @param parameters agent parameters
    */
-  updateAgentParameters(index: number, parameters: IAgentParameters): void {
+  updateAgentParameters(index: number, parameters: AgentParameters): void {
     const agentParams = this.recastCrowd.getAgentParameters(index);
 
     if (parameters.radius !== undefined) {
