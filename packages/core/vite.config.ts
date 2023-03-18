@@ -12,7 +12,7 @@ export default defineConfig({
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),
       name: 'index',
-      formats: ['es', 'umd'],
+      formats: ['es', 'cjs'],
       fileName: (format) => `index.${format}.js`,
     },
     rollupOptions: {

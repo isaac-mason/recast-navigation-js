@@ -1,17 +1,25 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable new-cap */
 /* eslint-disable no-continue */
 /* eslint-disable max-classes-per-file */
 
-import Recast from '@three-recast/wasm';
+import R from '@three-recast/wasm';
 import {
-  Vector3,
-  Mesh,
-  BufferGeometry,
   BufferAttribute,
-  Scene,
+  BufferGeometry,
+  Mesh,
+  MeshStandardMaterial,
   Object3D,
+  Scene,
+  Vector3,
 } from 'three';
+
+export const createRecastNavigation = async () => {
+  return R();
+};
 
 const Epsilon = 0.001;
 
@@ -153,23 +161,18 @@ export interface IAgentParameters {
 }
 
 /**
- * RecastJS navigation plugin
+ * Recast navigation wrapper
  */
-export class RecastJS {
+export class Recast {
   /**
    * Reference to the Recast library
    */
-  public bjsRECAST: typeof Recast = {} as any;
+  recast: typeof R = {} as any;
 
   /**
-   * plugin name
+   * The first navmesh created. We might extend this to support multiple navmeshes
    */
-  public name = 'RecastJSPlugin';
-
-  /**
-   * the first navmesh created. We might extend this to support multiple navmeshes
-   */
-  public navMesh!: Recast.NavMesh;
+  navMesh!: R.NavMesh;
 
   private _maximumSubStepCount = 10;
 
@@ -177,23 +180,21 @@ export class RecastJS {
 
   private _timeFactor = 1;
 
-  private _tempVec1!: Recast.Vec3;
+  private _tempVec1!: R.Vec3;
 
-  private _tempVec2!: Recast.Vec3;
-
-  private _worker?: Worker;
+  private _tempVec2!: R.Vec3;
 
   /**
    * Initializes the recastJS plugin
    * @param recastInjection can be used to inject your own recast reference
    */
-  public constructor(recastInjection: any = Recast) {
+  constructor(recastInjection: typeof R) {
     if (typeof recastInjection === 'function') {
       console.error(
         'RecastJS is not ready. Please make sure you await Recast() before using the plugin.'
       );
     } else {
-      this.bjsRECAST = recastInjection;
+      this.recast = recastInjection;
     }
 
     if (!this.isSupported()) {
@@ -204,21 +205,8 @@ export class RecastJS {
     }
     this.setTimeStep();
 
-    this._tempVec1 = new this.bjsRECAST.Vec3();
-    this._tempVec2 = new this.bjsRECAST.Vec3();
-  }
-
-  /**
-   * Set worker URL to be used when generating a new navmesh
-   * @param workerURL url string
-   * @returns boolean indicating if worker is created
-   */
-  public setWorkerURL(workerURL: string): boolean {
-    if (window && window.Worker) {
-      this._worker = new Worker(workerURL);
-      return true;
-    }
-    return false;
+    this._tempVec1 = new this.recast.Vec3();
+    this._tempVec2 = new this.recast.Vec3();
   }
 
   /**
@@ -262,7 +250,7 @@ export class RecastJS {
    * Time factor applied when updating crowd agents (default 1). A value of 0 will pause crowd updates.
    * @param value the time factor applied at update
    */
-  public set timeFactor(value: number) {
+  set timeFactor(value: number) {
     this._timeFactor = Math.max(value, 0);
   }
 
@@ -270,7 +258,7 @@ export class RecastJS {
    * Get the time factor used for crowd agent update
    * @returns the time factor
    */
-  public get timeFactor(): number {
+  get timeFactor(): number {
     return this._timeFactor;
   }
 
@@ -278,24 +266,14 @@ export class RecastJS {
    * Creates a navigation mesh
    * @param meshes array of all the geometry used to compute the navigation mesh
    * @param parameters bunch of parameters used to filter geometry
-   * @param completion callback when data is available from the worker. Not used without a worker
    */
   createNavMesh(
     meshes: Array<Mesh>,
-    parameters: INavMeshParameters,
-    completion?: (navmeshData: Uint8Array) => void
-  ): void {
-    if (this._worker && !completion) {
-      console.warn(
-        'A worker is avaible but no completion callback. Defaulting to blocking navmesh creation'
-      );
-    } else if (!this._worker && completion) {
-      console.warn(
-        'A completion callback is avaible but no worker. Defaulting to blocking navmesh creation'
-      );
-    }
+    parameters: INavMeshParameters
+  ): R.NavMesh {
+    const navMesh = new this.recast.NavMesh();
 
-    this.navMesh = new this.bjsRECAST.NavMesh();
+    this.navMesh = navMesh;
 
     let index: number;
     let tri: number;
@@ -309,8 +287,6 @@ export class RecastJS {
         const mesh = meshes[index];
 
         const meshIndices = mesh.geometry.getIndex()?.array;
-        // const meshIndices = mesh.getIndices();
-
         if (!meshIndices) {
           continue;
         }
@@ -318,20 +294,14 @@ export class RecastJS {
         const meshPositions = (mesh.geometry.getAttribute(
           'position'
         ) as BufferAttribute)!.array;
-        // const meshPositions = mesh.getVerticesData(
-        //   VertexBuffer.PositionKind,
-        //   false,
-        //   false
-        // );
-
         if (!meshPositions) {
           continue;
         }
 
         const worldMatrices = [];
-        // mesh.matrixWorld
         mesh.updateMatrixWorld();
         const worldMatrix = mesh.matrixWorld;
+
         // const worldMatrix = mesh.computeWorldMatrix(true);
 
         // if (mesh.hasThinInstances) {
@@ -392,39 +362,29 @@ export class RecastJS {
       }
     }
 
-    if (this._worker && completion) {
-      // spawn worker and send message
-      this._worker.postMessage([
-        positions,
-        offset,
-        indices,
-        indices.length,
-        parameters,
-      ]);
-      this._worker.onmessage = function (e) {
-        completion(e.data);
-      };
-    } else {
-      // blocking calls
-      const rc = new this.bjsRECAST.rcConfig();
-      rc.cs = parameters.cs;
-      rc.ch = parameters.ch;
-      rc.borderSize = parameters.borderSize ? parameters.borderSize : 0;
-      rc.tileSize = parameters.tileSize ? parameters.tileSize : 0;
-      rc.walkableSlopeAngle = parameters.walkableSlopeAngle;
-      rc.walkableHeight = parameters.walkableHeight;
-      rc.walkableClimb = parameters.walkableClimb;
-      rc.walkableRadius = parameters.walkableRadius;
-      rc.maxEdgeLen = parameters.maxEdgeLen;
-      rc.maxSimplificationError = parameters.maxSimplificationError;
-      rc.minRegionArea = parameters.minRegionArea;
-      rc.mergeRegionArea = parameters.mergeRegionArea;
-      rc.maxVertsPerPoly = parameters.maxVertsPerPoly;
-      rc.detailSampleDist = parameters.detailSampleDist;
-      rc.detailSampleMaxError = parameters.detailSampleMaxError;
+    console.log(positions);
 
-      this.navMesh.build(positions, offset, indices, indices.length, rc);
-    }
+    // blocking calls
+    const rc = new this.recast.rcConfig();
+    rc.cs = parameters.cs;
+    rc.ch = parameters.ch;
+    rc.borderSize = parameters.borderSize ? parameters.borderSize : 0;
+    rc.tileSize = parameters.tileSize ? parameters.tileSize : 0;
+    rc.walkableSlopeAngle = parameters.walkableSlopeAngle;
+    rc.walkableHeight = parameters.walkableHeight;
+    rc.walkableClimb = parameters.walkableClimb;
+    rc.walkableRadius = parameters.walkableRadius;
+    rc.maxEdgeLen = parameters.maxEdgeLen;
+    rc.maxSimplificationError = parameters.maxSimplificationError;
+    rc.minRegionArea = parameters.minRegionArea;
+    rc.mergeRegionArea = parameters.mergeRegionArea;
+    rc.maxVertsPerPoly = parameters.maxVertsPerPoly;
+    rc.detailSampleDist = parameters.detailSampleDist;
+    rc.detailSampleMaxError = parameters.detailSampleMaxError;
+
+    this.navMesh.build(positions, offset, indices, indices.length, rc);
+
+    return navMesh;
   }
 
   /**
@@ -432,17 +392,14 @@ export class RecastJS {
    * @param scene is where the mesh will be added
    * @returns debug display mesh
    */
-  createDebugNavMesh(scene: Scene): Mesh {
+  createDebugNavMesh(): Mesh {
     let tri: number;
     let pt: number;
+
     const debugNavMesh = this.navMesh.getDebugNavMesh();
     const triangleCount = debugNavMesh.getTriangleCount();
 
-    const indices = [];
     const positions = [];
-    for (tri = 0; tri < triangleCount * 3; tri++) {
-      indices.push(tri);
-    }
     for (tri = 0; tri < triangleCount; tri++) {
       for (pt = 0; pt < 3; pt++) {
         const point = debugNavMesh.getTriangle(tri).getPoint(pt);
@@ -450,20 +407,24 @@ export class RecastJS {
       }
     }
 
+    const indices = [];
+    for (tri = 0; tri < triangleCount * 3; tri++) {
+      indices.push(tri);
+    }
+
     const geometry = new BufferGeometry();
 
-    const positionAttribute = new BufferAttribute(
-      new Float32Array(positions),
-      3
+    geometry.setAttribute(
+      'position',
+      new BufferAttribute(new Float32Array(positions), 3)
     );
-    geometry.setAttribute('position', positionAttribute);
 
-    const indexAttribute = new BufferAttribute(new Uint16Array(indices), 1);
-    geometry.setIndex(indexAttribute);
+    geometry.setIndex(new BufferAttribute(new Uint16Array(indices), 1));
 
-    const mesh = new Mesh(geometry);
-
-    scene.add(mesh);
+    const mesh = new Mesh(
+      geometry,
+      new MeshStandardMaterial({ color: 0xff0000, wireframe: true })
+    );
 
     return mesh;
   }
@@ -602,8 +563,8 @@ export class RecastJS {
     maxAgents: number,
     maxAgentRadius: number,
     scene: Scene
-  ): RecastJSCrowd {
-    const crowd = new RecastJSCrowd(this, maxAgents, maxAgentRadius, scene);
+  ): DetourCrowd {
+    const crowd = new DetourCrowd(this, maxAgents, maxAgentRadius, scene);
     return crowd;
   }
 
@@ -635,23 +596,23 @@ export class RecastJS {
    */
   buildFromNavmeshData(data: Uint8Array): void {
     const nDataBytes = data.length * data.BYTES_PER_ELEMENT;
-    const dataPtr = this.bjsRECAST._malloc(nDataBytes);
+    const dataPtr = this.recast._malloc(nDataBytes);
 
     const dataHeap = new Uint8Array(
-      this.bjsRECAST.HEAPU8.buffer,
+      this.recast.HEAPU8.buffer,
       dataPtr,
       nDataBytes
     );
     dataHeap.set(data);
 
-    const buf = new this.bjsRECAST.NavmeshData();
+    const buf = new this.recast.NavmeshData();
     buf.dataPointer = dataHeap.byteOffset;
     buf.size = data.length;
-    this.navMesh = new this.bjsRECAST.NavMesh();
+    this.navMesh = new this.recast.NavMesh();
     this.navMesh.buildFromNavmeshData(buf);
 
     // Free memory
-    this.bjsRECAST._free(dataHeap.byteOffset);
+    this.recast._free(dataHeap.byteOffset);
   }
 
   /**
@@ -661,7 +622,7 @@ export class RecastJS {
   getNavmeshData(): Uint8Array {
     const navmeshData = this.navMesh.getNavmeshData();
     const arrView = new Uint8Array(
-      this.bjsRECAST.HEAPU8.buffer,
+      this.recast.HEAPU8.buffer,
       navmeshData.dataPointer,
       navmeshData.size
     );
@@ -683,7 +644,7 @@ export class RecastJS {
   /**
    * Disposes
    */
-  public dispose() {}
+  dispose() {}
 
   /**
    * Creates a cylinder obstacle and add it to the navigation
@@ -732,39 +693,39 @@ export class RecastJS {
    * If this plugin is supported
    * @returns true if plugin is supported
    */
-  public isSupported(): boolean {
-    return this.bjsRECAST !== undefined;
+  isSupported(): boolean {
+    return this.recast !== undefined;
   }
 }
 
 /**
  * Recast detour crowd implementation
  */
-export class RecastJSCrowd {
+export class DetourCrowd {
   /**
    * Recast/detour plugin
    */
-  public bjsRECASTPlugin: RecastJS;
+  bjsRECASTPlugin: Recast;
 
   /**
    * Link to the detour crowd
    */
-  public recastCrowd: any = {};
+  recastCrowd: any = {};
 
   /**
    * One transform per agent
    */
-  public transforms: Object3D[] = new Array<Object3D>();
+  transforms: Object3D[] = new Array<Object3D>();
 
   /**
    * All agents created
    */
-  public agents: number[] = new Array<number>();
+  agents: number[] = new Array<number>();
 
   /**
    * agents reach radius
    */
-  public reachRadii: number[] = new Array<number>();
+  reachRadii: number[] = new Array<number>();
 
   /**
    * true when a destination is active for an agent and notifier hasn't been notified of reach
@@ -779,17 +740,18 @@ export class RecastJSCrowd {
   /**
    * Link to the scene is kept to unregister the crowd from the scene
    */
+  // @ts-expect-error todo
   private _scene: Scene;
 
   /**
    * Observer for crowd updates
    */
-  //   private _onBeforeAnimationsObserver: Observer<Scene> | null = null;
+  // private _onBeforeAnimationsObserver: Observer<Scene> | null = null;
 
   /**
    * Fires each time an agent is in reach radius of its destination
    */
-  public onReachTargetObservable = new Observable<{
+  onReachTargetObservable = new Observable<{
     agentIndex: number;
     destination: Vector3;
   }>();
@@ -802,14 +764,14 @@ export class RecastJSCrowd {
    * @param scene to attach the crowd to
    * @returns the crowd you can add agents to
    */
-  public constructor(
-    recastJs: RecastJS,
+  constructor(
+    recastJs: Recast,
     maxAgents: number,
     maxAgentRadius: number,
     scene: Scene
   ) {
     this.bjsRECASTPlugin = recastJs;
-    this.recastCrowd = new this.bjsRECASTPlugin.bjsRECAST.Crowd(
+    this.recastCrowd = new this.bjsRECASTPlugin.recast.Crowd(
       maxAgents,
       maxAgentRadius,
       this.bjsRECASTPlugin.navMesh.getNavMesh()
@@ -839,7 +801,7 @@ export class RecastJSCrowd {
     parameters: IAgentParameters,
     transform: Object3D
   ): number {
-    const agentParams = new this.bjsRECASTPlugin.bjsRECAST.dtCrowdAgentParams();
+    const agentParams = new this.bjsRECASTPlugin.recast.dtCrowdAgentParams();
     agentParams.radius = parameters.radius;
     agentParams.height = parameters.height;
     agentParams.maxAcceleration = parameters.maxAcceleration;
@@ -853,7 +815,7 @@ export class RecastJSCrowd {
     agentParams.userData = 0;
 
     const agentIndex = this.recastCrowd.addAgent(
-      new this.bjsRECASTPlugin.bjsRECAST.Vec3(pos.x, pos.y, pos.z),
+      new this.bjsRECASTPlugin.recast.Vec3(pos.x, pos.y, pos.z),
       agentParams
     );
     this.transforms.push(transform);
@@ -863,6 +825,7 @@ export class RecastJSCrowd {
     );
     this._agentDestinationArmed.push(false);
     this._agentDestination.push(new Vector3(0, 0, 0));
+
     return agentIndex;
   }
 
@@ -952,7 +915,7 @@ export class RecastJSCrowd {
   agentGoto(index: number, destination: Vector3): void {
     this.recastCrowd.agentGoto(
       index,
-      new this.bjsRECASTPlugin.bjsRECAST.Vec3(
+      new this.bjsRECASTPlugin.recast.Vec3(
         destination.x,
         destination.y,
         destination.z
@@ -979,7 +942,7 @@ export class RecastJSCrowd {
   agentTeleport(index: number, destination: Vector3): void {
     this.recastCrowd.agentTeleport(
       index,
-      new this.bjsRECASTPlugin.bjsRECAST.Vec3(
+      new this.bjsRECASTPlugin.recast.Vec3(
         destination.x,
         destination.y,
         destination.z
@@ -1114,7 +1077,7 @@ export class RecastJSCrowd {
    * @param extent x,y,z value that define the extent around the queries point of reference
    */
   setDefaultQueryExtent(extent: Vector3): void {
-    const ext = new this.bjsRECASTPlugin.bjsRECAST.Vec3(
+    const ext = new this.bjsRECASTPlugin.recast.Vec3(
       extent.x,
       extent.y,
       extent.z

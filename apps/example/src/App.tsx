@@ -1,23 +1,55 @@
-import createRecast from '@three-recast/wasm'
+import { OrbitControls } from "@react-three/drei";
+import { Canvas, useThree } from "@react-three/fiber";
+import { createRecastNavigation, Recast } from "@three-recast/core";
 import { useEffect } from "react";
+import { BoxGeometry, Mesh, MeshBasicMaterial } from "three";
 
-const Recast = await createRecast()
+const recastNavigation = await createRecastNavigation();
 
-console.log(Recast)
+const App = () => {
+  const scene = useThree((state) => state.scene);
 
-function App() {
   useEffect(() => {
-    console.log(Recast)
+    const recast = new Recast(recastNavigation);
 
-    const navMesh = new Recast.NavMesh()
+    const mesh = new Mesh(new BoxGeometry(10, 1, 10), new MeshBasicMaterial());
 
-    const navMeshData = navMesh.getNavmeshData()
+    const navMeshParameters = {
+      cs: 0.2,
+      ch: 0.2,
+      walkableSlopeAngle: 35,
+      walkableHeight: 1,
+      walkableClimb: 1,
+      walkableRadius: 1,
+      maxEdgeLen: 12,
+      maxSimplificationError: 1.3,
+      minRegionArea: 8,
+      mergeRegionArea: 20,
+      maxVertsPerPoly: 6,
+      detailSampleDist: 6,
+      detailSampleMaxError: 1,
+    };
 
-    console.log(navMeshData)
+    recast.createNavMesh([mesh], navMeshParameters);
 
+    const debugNavMesh = recast.createDebugNavMesh();
+    scene.add(debugNavMesh);
+
+    console.log(debugNavMesh)
+
+    console.log(recast)
   }, []);
 
-  return <div></div>;
-}
+  return null;
+};
 
-export default App;
+export default () => (
+  <>
+    <Canvas camera={{ position: [5, 5, 5] }}>
+      <App />
+
+      <OrbitControls />
+    </Canvas>
+    <h1>hello</h1>
+  </>
+);

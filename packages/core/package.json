@@ -10,8 +10,6 @@
     "url": "https://github.com/isaac-mason/three-recast/issues"
   },
   "scripts": {
-    "test": " NODE_OPTIONS=--experimental-vm-modules jest --coverage",
-    "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watch",
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
@@ -20,6 +18,9 @@
   },
   "dependencies": {
     "@three-recast/wasm": "0.0.0",
+    "three": "^0.150.1"
+  },
+  "peerDependencies": {
     "three": "^0.150.1"
   },
   "devDependencies": {
