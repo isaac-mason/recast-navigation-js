@@ -16096,27 +16096,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"threejs-vite-example@workspace:apps/threejs-vite-example":
-  version: 0.0.0-use.local
-  resolution: "threejs-vite-example@workspace:apps/threejs-vite-example"
-  dependencies:
-    "@react-three/drei": ^9.57.3
-    "@react-three/fiber": ^8.12.0
-    "@recast-navigation/core": 0.0.0
-    "@recast-navigation/three": 0.0.0
-    "@types/react": ^18.0.28
-    "@types/react-dom": ^18.0.11
-    "@types/three": ^0.149.0
-    "@vitejs/plugin-react": ^3.1.0
-    arancini: ^2.2.1
-    react: ^18.2.0
-    react-dom: ^18.2.0
-    three: ^0.150.1
-    typescript: ^4.9.3
-    vite: ^4.2.0
-  languageName: unknown
-  linkType: soft
-
 "through2@npm:^2.0.0":
   version: 2.0.5
   resolution: "through2@npm:2.0.5"
@@ -17014,6 +16993,27 @@ __metadata:
   checksum: 4e532dd9d08a8ff1248a112c503dfa9faabda9ccbb8141300bb81e4924002fe67d5f73555bfec6645912913c70dd611330cdd132786ec389bcc47f6d1cc6d1b0
   languageName: node
   linkType: hard
+
+"vite-recast-navigation-three-example@workspace:examples/vite-recast-navigation-three-example":
+  version: 0.0.0-use.local
+  resolution: "vite-recast-navigation-three-example@workspace:examples/vite-recast-navigation-three-example"
+  dependencies:
+    "@react-three/drei": ^9.57.3
+    "@react-three/fiber": ^8.12.0
+    "@recast-navigation/core": 0.0.0
+    "@recast-navigation/three": 0.0.0
+    "@types/react": ^18.0.28
+    "@types/react-dom": ^18.0.11
+    "@types/three": ^0.149.0
+    "@vitejs/plugin-react": ^3.1.0
+    arancini: ^2.2.1
+    react: ^18.2.0
+    react-dom: ^18.2.0
+    three: ^0.150.1
+    typescript: ^4.9.3
+    vite: ^4.2.0
+  languageName: unknown
+  linkType: soft
 
 "vite@npm:^2.9.9":
   version: 2.9.15

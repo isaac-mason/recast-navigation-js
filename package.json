@@ -4,7 +4,8 @@
   "workspaces": [
     "packages/recast-navigation-core",
     "packages/recast-navigation-three",
-    "apps/*"
+    "apps/*",
+    "examples/*"
   ],
   "scripts": {
     "build": "(cd packages/wasm && yarn build) && (cd packages/core && yarn build)"
