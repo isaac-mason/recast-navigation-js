@@ -6,7 +6,7 @@
 /* eslint-disable no-continue */
 /* eslint-disable max-classes-per-file */
 
-import R from '@three-recast/wasm';
+import R from '@recast-navigation/core';
 import {
   BufferAttribute,
   BufferGeometry,

@@ -12,9 +12,8 @@ set(RECAST_HEADER_FILE ${CMAKE_CURRENT_SOURCE_DIR}/src/recastjs.h)
 set(RECASTAPI_HEADER_FILE ${CMAKE_CURRENT_SOURCE_DIR}/recastnavigation/Recast/Include/Recast.h)
 set(NAVMESHQUERY_HEADER_FILE ${CMAKE_CURRENT_SOURCE_DIR}/recastnavigation/Detour/Include/DetourNavMeshQuery.h)
 set(RECAST_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/)
-set(RECAST_ONLOAD_FILE ${CMAKE_CURRENT_SOURCE_DIR}/onload.js)
 
-project("recast-wasm")
+project("recast-navigation-core")
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -80,7 +79,6 @@ set(EMCC_ARGS
   -flto
   --extern-pre-js ${RECAST_FRONT_MATTER_FILE}
   --post-js glue.js
-  --post-js ${RECAST_ONLOAD_FILE}
   -O3
   -s ALLOW_MEMORY_GROWTH=${ALLOW_MEMORY_GROWTH}
   -s ALLOW_TABLE_GROWTH=1
@@ -149,7 +147,7 @@ add_custom_target(${EXE_NAME}-bindings ALL DEPENDS glue.js glue.o)
 add_custom_command(
   OUTPUT ${EXE_NAME}.js
   COMMAND emcc glue.o lib${EXE_NAME}.a ${EMCC_JS_ARGS} -o ${EXE_NAME}.js
-  DEPENDS ${EXE_NAME}-bindings ${EXE_NAME} ${RECAST_ONLOAD_FILE}
+  DEPENDS ${EXE_NAME}-bindings ${EXE_NAME}
   COMMENT "Building ${EXE_NAME} javascript"
   VERBATIM)
 add_custom_target(${EXE_NAME}-javascript ALL DEPENDS ${EXE_NAME}.js)
@@ -158,7 +156,7 @@ add_custom_target(${EXE_NAME}-javascript ALL DEPENDS ${EXE_NAME}.js)
 add_custom_command(
   OUTPUT ${EXE_NAME}.wasm.js ${EXE_NAME}.wasm.wasm
   COMMAND emcc glue.o lib${EXE_NAME}.a ${EMCC_WASM_ARGS} -o ${EXE_NAME}.wasm.js
-  DEPENDS ${EXE_NAME}-bindings ${EXE_NAME} ${RECAST_ONLOAD_FILE}
+  DEPENDS ${EXE_NAME}-bindings ${EXE_NAME}
   COMMENT "Building ${EXE_NAME} webassembly"
   VERBATIM)
 add_custom_target(${EXE_NAME}-wasm ALL DEPENDS ${EXE_NAME}.wasm.js ${EXE_NAME}.wasm.wasm)
@@ -167,7 +165,7 @@ add_custom_target(${EXE_NAME}-wasm ALL DEPENDS ${EXE_NAME}.wasm.js ${EXE_NAME}.w
 add_custom_command(
   OUTPUT ${EXE_NAME}.wasm-compat.js
   COMMAND emcc glue.o lib${EXE_NAME}.a ${EMCC_WASM_COMPAT_ARGS} -o ${EXE_NAME}.wasm-compat.js
-  DEPENDS ${EXE_NAME}-bindings ${EXE_NAME} ${RECAST_ONLOAD_FILE}
+  DEPENDS ${EXE_NAME}-bindings ${EXE_NAME}
   COMMENT "Building ${EXE_NAME} webassembly compat"
   VERBATIM)
 add_custom_target(${EXE_NAME}-wasm-compat ALL DEPENDS ${EXE_NAME}.wasm-compat.js)

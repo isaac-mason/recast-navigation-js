@@ -1,5 +1,5 @@
 {
-  "name": "@three-recast/wasm",
+  "name": "@recast-navigation/core",
   "description": "wasm port of recastnavigation",
   "version": "0.0.0",
   "author": "Isaac Mason <isaac@isaacmason>",

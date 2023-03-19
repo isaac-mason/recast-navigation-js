@@ -1,19 +1,17 @@
-import { OrbitControls } from "@react-three/drei";
+import { Environment, OrbitControls } from "@react-three/drei";
 import { Canvas, useThree } from "@react-three/fiber";
-import { Line2, LineGeometry, LineMaterial } from "three-stdlib";
-import { createRecastNavigation, Recast } from "@three-recast/core";
+import { createRecastNavigation, Recast } from "@recast-navigation/three";
 import { useEffect } from "react";
 import {
   BoxGeometry,
   Color,
-  LineBasicMaterial,
-  LineSegments,
   Mesh,
   MeshBasicMaterial,
   MeshStandardMaterial,
   Vector2,
-  Vector3,
+  Vector3
 } from "three";
+import { Line2, LineGeometry, LineMaterial } from "three-stdlib";
 
 const recastNavigation = await createRecastNavigation();
 
@@ -27,14 +25,14 @@ const App = () => {
       new BoxGeometry(5, 0.5, 5),
       new MeshStandardMaterial()
     );
-    const middleObstacle = new Mesh(
+    const obstacle = new Mesh(
       new BoxGeometry(1, 1, 1),
       new MeshStandardMaterial()
     );
-    middleObstacle.position.y = 0.5;
+    obstacle.position.y = 0.5;
 
     scene.add(ground);
-    scene.add(middleObstacle);
+    scene.add(obstacle);
 
     const navMeshParameters = {
       cs: 0.2,
@@ -52,7 +50,7 @@ const App = () => {
       detailSampleMaxError: 1,
     };
 
-    recast.createNavMesh([ground, middleObstacle], navMeshParameters);
+    recast.createNavMesh([ground, obstacle], navMeshParameters);
 
     const debugNavMesh = recast.createDebugNavMesh();
 
@@ -99,8 +97,7 @@ export default () => (
   <Canvas camera={{ position: [5, 5, 5] }}>
     <App />
 
-    <ambientLight intensity={0.5} />
-    <pointLight position={[10, 10, -10]} />
+    <Environment preset="city" />
 
     <OrbitControls />
   </Canvas>

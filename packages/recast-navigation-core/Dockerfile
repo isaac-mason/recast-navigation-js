@@ -1,4 +1,4 @@
-FROM emscripten/emsdk:3.1.25
+FROM emscripten/emsdk:3.1.24
 
 WORKDIR /workspace
 

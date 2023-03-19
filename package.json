@@ -1,8 +1,9 @@
 {
-  "name": "root",
+  "name": "recast-navigation",
   "packageManager": "yarn@3.2.2",
   "workspaces": [
-    "packages/*",
+    "packages/recast-navigation-core",
+    "packages/recast-navigation-three",
     "apps/*"
   ],
   "scripts": {
