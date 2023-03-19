@@ -36,14 +36,8 @@ module.exports = {
       },
     ],
     'no-use-before-define': 'off',
-    '@typescript-eslint/no-use-before-define': ['error'],
-    'no-shadow': 'off',
-    '@typescript-eslint/no-shadow': 'error',
     'no-underscore-dangle': 'off',
-    'array-callback-return': 'off',
-    'import/no-cycle': 'off',
     'no-plusplus': 'off',
-    'no-param-reassign': 'off',
     '@typescript-eslint/no-unused-vars': [
       'warn',
       {
@@ -52,13 +46,13 @@ module.exports = {
       },
     ],
     'class-methods-use-this': 'off',
-    'no-restricted-syntax': [
-      'off',
-      'ForInStatement',
-      'LabeledStatement',
-      'WithStatement',
-    ],
-    '@typescript-eslint/no-empty-function': 'off',
+    '@typescript-eslint/no-non-null-assertion': 'off',
+    'no-console': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-use-before-define': 'off',
+    'new-cap': 'off',
+    'no-continue': 'off',
+    'max-classes-per-file': 'off',
   },
   settings: {
     'import/resolver': {

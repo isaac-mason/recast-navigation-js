@@ -1,11 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable no-console */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-use-before-define */
-/* eslint-disable new-cap */
-/* eslint-disable no-continue */
-/* eslint-disable max-classes-per-file */
-
 import R from '@recast-navigation/core';
 import {
   BufferAttribute,
@@ -16,13 +8,9 @@ import {
   Vector3,
 } from 'three';
 
-export const createRecastNavigation = async () => {
-  return R();
-};
-
 const Epsilon = 0.001;
 
-export type IObstacle = any;
+export type Obstacle = any;
 
 /**
  * Configures the navigation mesh creation
@@ -166,7 +154,7 @@ export class Recast {
   /**
    * Reference to the Recast library
    */
-  recast: typeof R = {} as any;
+  recast: typeof R = null as any;
 
   /**
    * The first navmesh created. We might extend this to support multiple navmeshes
@@ -185,15 +173,22 @@ export class Recast {
 
   /**
    * Initializes the recastJS plugin
-   * @param recastInjection can be used to inject your own recast reference
+   * @param recastInjection optional @recast-navigation/core import, can be used to inject your own recast reference
    */
-  constructor(recastInjection: typeof R) {
-    if (typeof recastInjection === 'function') {
-      console.error(
-        'RecastJS is not ready. Please make sure you await Recast() before using the plugin.'
-      );
-    } else {
+  constructor(recastInjection?: typeof R) {
+    if (recastInjection) {
       this.recast = recastInjection;
+    }
+
+    this.setTimeStep();
+  }
+
+  /**
+   * Initializes recast.
+   */
+  async init(): Promise<void> {
+    if (!this.recast) {
+      this.recast = await R();
     }
 
     if (!this.isSupported()) {
@@ -202,7 +197,6 @@ export class Recast {
       );
       return;
     }
-    this.setTimeStep();
 
     this._tempVec1 = new this.recast.Vec3();
     this._tempVec2 = new this.recast.Vec3();
@@ -312,15 +306,6 @@ export class Recast {
             indices.push(meshIndices[tri] + offset);
           }
 
-          //   const transformed = Vector3.Zero();
-          //   const position = Vector3.Zero();
-          //   for (pt = 0; pt < meshPositions.length; pt += 3) {
-          //     Vector3.FromArrayToRef(meshPositions, pt, position);
-          //     Vector3.TransformCoordinatesToRef(position, wm, transformed);
-          //     positions.push(transformed.x, transformed.y, transformed.z);
-          //   }
-
-          // todo: confirm this is correct
           const transformed = new Vector3();
           const position = new Vector3();
           for (pt = 0; pt < meshPositions.length; pt += 3) {
@@ -329,11 +314,8 @@ export class Recast {
               meshPositions[pt + 1],
               meshPositions[pt + 2]
             );
-            // Vector3.FromArrayToRef(meshPositions, pt, position);
 
             transformed.copy(position).applyMatrix4(wm);
-            // Vector3.TransformCoordinatesToRef(position, wm, transformed);
-
             positions.push(transformed.x, transformed.y, transformed.z);
           }
 
@@ -407,92 +389,51 @@ export class Recast {
   /**
    * Get a navigation mesh constrained position, closest to the parameter position
    * @param position world position
+   * @param result optional vector3 to set the result to
    * @returns the closest point to position constrained by the navigation mesh
    */
-  getClosestPoint(position: Vector3): Vector3 {
+  getClosestPoint(position: Vector3, result: Vector3 = new Vector3()): Vector3 {
     this._tempVec1.x = position.x;
     this._tempVec1.y = position.y;
     this._tempVec1.z = position.z;
     const ret = this.navMesh.getClosestPoint(this._tempVec1);
-    const pr = new Vector3(ret.x, ret.y, ret.z);
-    return pr;
-  }
 
-  /**
-   * Get a navigation mesh constrained position, closest to the parameter position
-   * @param position world position
-   * @param result output the closest point to position constrained by the navigation mesh
-   */
-  getClosestPointToRef(position: Vector3, result: Vector3): void {
-    this._tempVec1.x = position.x;
-    this._tempVec1.y = position.y;
-    this._tempVec1.z = position.z;
-    const ret = this.navMesh.getClosestPoint(this._tempVec1);
     result.set(ret.x, ret.y, ret.z);
+    return result;
   }
 
   /**
    * Get a navigation mesh constrained position, within a particular radius
    * @param position world position
    * @param maxRadius the maximum distance to the constrained world position
+   * @param result optional vector3 to set the result to
    * @returns the closest point to position constrained by the navigation mesh
    */
-  getRandomPointAround(position: Vector3, maxRadius: number): Vector3 {
-    this._tempVec1.x = position.x;
-    this._tempVec1.y = position.y;
-    this._tempVec1.z = position.z;
-    const ret = this.navMesh.getRandomPointAround(this._tempVec1, maxRadius);
-    const pr = new Vector3(ret.x, ret.y, ret.z);
-    return pr;
-  }
-
-  /**
-   * Get a navigation mesh constrained position, within a particular radius
-   * @param position world position
-   * @param maxRadius the maximum distance to the constrained world position
-   * @param result output the closest point to position constrained by the navigation mesh
-   */
-  getRandomPointAroundToRef(
+  getRandomPointAround(
     position: Vector3,
     maxRadius: number,
-    result: Vector3
-  ): void {
+    result: Vector3 = new Vector3()
+  ): Vector3 {
     this._tempVec1.x = position.x;
     this._tempVec1.y = position.y;
     this._tempVec1.z = position.z;
     const ret = this.navMesh.getRandomPointAround(this._tempVec1, maxRadius);
     result.set(ret.x, ret.y, ret.z);
+    return result;
   }
 
   /**
    * Compute the final position from a segment made of destination-position
    * @param position world position
    * @param destination world position
+   * @param result optional vector3 to set the result to
    * @returns the resulting point along the navmesh
    */
-  moveAlong(position: Vector3, destination: Vector3): Vector3 {
-    this._tempVec1.x = position.x;
-    this._tempVec1.y = position.y;
-    this._tempVec1.z = position.z;
-    this._tempVec2.x = destination.x;
-    this._tempVec2.y = destination.y;
-    this._tempVec2.z = destination.z;
-    const ret = this.navMesh.moveAlong(this._tempVec1, this._tempVec2);
-    const pr = new Vector3(ret.x, ret.y, ret.z);
-    return pr;
-  }
-
-  /**
-   * Compute the final position from a segment made of destination-position
-   * @param position world position
-   * @param destination world position
-   * @param result output the resulting point along the navmesh
-   */
-  moveAlongToRef(
+  moveAlong(
     position: Vector3,
     destination: Vector3,
-    result: Vector3
-  ): void {
+    result: Vector3 = new Vector3()
+  ): Vector3 {
     this._tempVec1.x = position.x;
     this._tempVec1.y = position.y;
     this._tempVec1.z = position.z;
@@ -501,6 +442,7 @@ export class Recast {
     this._tempVec2.z = destination.z;
     const ret = this.navMesh.moveAlong(this._tempVec1, this._tempVec2);
     result.set(ret.x, ret.y, ret.z);
+    return result;
   }
 
   /**
@@ -534,13 +476,8 @@ export class Recast {
    * @param scene to attach the crowd to
    * @returns the crowd you can add agents to
    */
-  createCrowd(
-    maxAgents: number,
-    maxAgentRadius: number,
-    scene: Scene
-  ): DetourCrowd {
-    const crowd = new DetourCrowd(this, maxAgents, maxAgentRadius, scene);
-    return crowd;
+  createCrowd(maxAgents: number, maxAgentRadius: number, scene: Scene): Crowd {
+    return new Crowd(this, maxAgents, maxAgentRadius, scene);
   }
 
   /**
@@ -566,10 +503,10 @@ export class Recast {
   }
 
   /**
-   * build the navmesh from a previously saved state using getNavmeshData
+   * build the navmesh from a previously saved state using getNavMeshData
    * @param data the Uint8Array returned by getNavmeshData
    */
-  buildFromNavmeshData(data: Uint8Array): void {
+  buildFromNavMeshData(data: Uint8Array): void {
     const nDataBytes = data.length * data.BYTES_PER_ELEMENT;
     const dataPtr = this.recast._malloc(nDataBytes);
 
@@ -594,7 +531,7 @@ export class Recast {
    * returns the navmesh data that can be used later. The navmesh must be built before retrieving the data
    * @returns data the Uint8Array that can be saved and reused
    */
-  getNavmeshData(): Uint8Array {
+  getNavMeshData(): Uint8Array {
     const navmeshData = this.navMesh.getNavmeshData();
     const arrView = new Uint8Array(
       this.recast.HEAPU8.buffer,
@@ -617,11 +554,6 @@ export class Recast {
   }
 
   /**
-   * Disposes
-   */
-  dispose() {}
-
-  /**
    * Creates a cylinder obstacle and add it to the navigation
    * @param position world position
    * @param radius cylinder radius
@@ -632,7 +564,7 @@ export class Recast {
     position: Vector3,
     radius: number,
     height: number
-  ): IObstacle {
+  ): Obstacle {
     this._tempVec1.x = position.x;
     this._tempVec1.y = position.y;
     this._tempVec1.z = position.z;
@@ -646,7 +578,7 @@ export class Recast {
    * @param angle angle in radians of the box orientation on Y axis
    * @returns the obstacle freshly created
    */
-  addBoxObstacle(position: Vector3, extent: Vector3, angle: number): IObstacle {
+  addBoxObstacle(position: Vector3, extent: Vector3, angle: number): Obstacle {
     this._tempVec1.x = position.x;
     this._tempVec1.y = position.y;
     this._tempVec1.z = position.z;
@@ -660,7 +592,7 @@ export class Recast {
    * Removes an obstacle created by addCylinderObstacle or addBoxObstacle
    * @param obstacle obstacle to remove from the navigation
    */
-  removeObstacle(obstacle: IObstacle): void {
+  removeObstacle(obstacle: Obstacle): void {
     this.navMesh.removeObstacle(obstacle);
   }
 
@@ -676,7 +608,7 @@ export class Recast {
 /**
  * Recast detour crowd implementation
  */
-export class DetourCrowd {
+export class Crowd {
   /**
    * Recast/detour plugin
    */
@@ -807,61 +739,40 @@ export class DetourCrowd {
   /**
    * Returns the agent position in world space
    * @param index agent index returned by addAgent
+   * @param result optional vector3 to set the result to
    * @returns world space position
    */
-  getAgentPosition(index: number): Vector3 {
-    const agentPos = this.recastCrowd.getAgentPosition(index);
-    return new Vector3(agentPos.x, agentPos.y, agentPos.z);
-  }
-
-  /**
-   * Returns the agent position result in world space
-   * @param index agent index returned by addAgent
-   * @param result output world space position
-   */
-  getAgentPositionToRef(index: number, result: Vector3): void {
+  getAgentPosition(index: number, result: Vector3 = new Vector3()): Vector3 {
     const agentPos = this.recastCrowd.getAgentPosition(index);
     result.set(agentPos.x, agentPos.y, agentPos.z);
+    return result;
   }
 
   /**
    * Returns the agent velocity in world space
    * @param index agent index returned by addAgent
+   * @param result optional vector3 to set the result to
    * @returns world space velocity
    */
-  getAgentVelocity(index: number): Vector3 {
-    const agentVel = this.recastCrowd.getAgentVelocity(index);
-    return new Vector3(agentVel.x, agentVel.y, agentVel.z);
-  }
-
-  /**
-   * Returns the agent velocity result in world space
-   * @param index agent index returned by addAgent
-   * @param result output world space velocity
-   */
-  getAgentVelocityToRef(index: number, result: Vector3): void {
+  getAgentVelocity(index: number, result: Vector3 = new Vector3()): Vector3 {
     const agentVel = this.recastCrowd.getAgentVelocity(index);
     result.set(agentVel.x, agentVel.y, agentVel.z);
+    return result;
   }
 
   /**
    * Returns the agent next target point on the path
    * @param index agent index returned by addAgent
+   * @param result optional vector3 to set the result to
    * @returns world space position
    */
-  getAgentNextTargetPath(index: number): Vector3 {
-    const pathTargetPos = this.recastCrowd.getAgentNextTargetPath(index);
-    return new Vector3(pathTargetPos.x, pathTargetPos.y, pathTargetPos.z);
-  }
-
-  /**
-   * Returns the agent next target point on the path
-   * @param index agent index returned by addAgent
-   * @param result output world space position
-   */
-  getAgentNextTargetPathToRef(index: number, result: Vector3): void {
+  getAgentNextTargetPath(
+    index: number,
+    result: Vector3 = new Vector3()
+  ): Vector3 {
     const pathTargetPos = this.recastCrowd.getAgentNextTargetPath(index);
     result.set(pathTargetPos.x, pathTargetPos.y, pathTargetPos.z);
+    return result;
   }
 
   /**
@@ -878,7 +789,7 @@ export class DetourCrowd {
    * @param index agent index returned by addAgent
    * @returns true if over an off mesh link connection
    */
-  overOffmeshConnection(index: number): boolean {
+  overOffMeshConnection(index: number): boolean {
     return this.recastCrowd.overOffmeshConnection(index);
   }
 
@@ -1020,6 +931,7 @@ export class DetourCrowd {
       const agentIndex = this.agents[index];
       const agentPosition = this.getAgentPosition(agentIndex);
       this.transforms[index].position.copy(agentPosition);
+
       // check agent reach destination
       if (this._agentDestinationArmed[index]) {
         const dx = agentPosition.x - this._agentDestination[index].x;
@@ -1062,20 +974,13 @@ export class DetourCrowd {
 
   /**
    * Get the Bounding box extent specified by setDefaultQueryExtent
+   * @param result optional vector3 to set the result to
    * @returns the box extent values
    */
-  getDefaultQueryExtent(): Vector3 {
-    const p = this.recastCrowd.getDefaultQueryExtent();
-    return new Vector3(p.x, p.y, p.z);
-  }
-
-  /**
-   * Get the Bounding box extent result specified by setDefaultQueryExtent
-   * @param result output the box extent values
-   */
-  getDefaultQueryExtentToRef(result: Vector3): void {
+  getDefaultQueryExtent(result: Vector3 = new Vector3()): Vector3 {
     const p = this.recastCrowd.getDefaultQueryExtent();
     result.set(p.x, p.y, p.z);
+    return result;
   }
 
   /**
