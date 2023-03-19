@@ -1,6 +1,7 @@
 {
   "name": "@recast-navigation/core",
   "description": "wasm port of recastnavigation",
+  "type": "module",
   "version": "0.0.0",
   "author": "Isaac Mason <isaac@isaacmason>",
   "license": "MIT",

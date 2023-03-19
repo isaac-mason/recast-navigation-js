@@ -2795,7 +2795,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@recast-navigation/core@0.0.0, @recast-navigation/core@workspace:packages/recast-navigation-core":
+"@recast-navigation/core@0.0.0, @recast-navigation/core@workspace:^, @recast-navigation/core@workspace:packages/recast-navigation-core":
   version: 0.0.0-use.local
   resolution: "@recast-navigation/core@workspace:packages/recast-navigation-core"
   dependencies:
@@ -12856,6 +12856,16 @@ __metadata:
   checksum: 41fa7927378edc0cb98a8cc784d3f4a47e43378d3b42ec57a23f81125baa7287c4b54d6d26d062072226160a3ce4d8b7a62e873d2fb637aceaddf71f5a26eca0
   languageName: node
   linkType: hard
+
+"node-recast-navigation-core-example@workspace:examples/node-recast-navigation-core-example":
+  version: 0.0.0-use.local
+  resolution: "node-recast-navigation-core-example@workspace:examples/node-recast-navigation-core-example"
+  dependencies:
+    "@recast-navigation/core": "workspace:^"
+    "@types/three": ^0.149.0
+    three: ^0.150.1
+  languageName: unknown
+  linkType: soft
 
 "node-releases@npm:^2.0.6":
   version: 2.0.6
