@@ -1,53 +1,105 @@
-import { Bounds, Html } from '@react-three/drei';
+import { Environment, Html, OrbitControls } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
-import styled from 'styled-components';
-
-const DropZone = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-
-  width: calc(100% - 4em);
-  height: 50vh;
-  padding: 2em;
-
-  font-size: 1.2em;
-  line-height: 1.3;
-
-  color: #fff;
-
-  border: #fff dashed 2px;
-
-  .example {
-    color: #0094ff;
-    text-decoration: underline;
-    cursor: pointer;
-  }
-`;
+import { Leva, useControls } from 'leva';
+import { useState } from 'react';
+import { Group } from 'three';
+import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
+import { DropZone } from './components/drop-zone';
+import { Loader } from './components/loader';
+import { gltfLoader } from './utils/gltf-loader';
+import { readFile } from './utils/read-file';
 
 const App = () => {
-  const onExample = () => {};
+  const [loading, setLoading] = useState(false);
+  const [scene, setScene] = useState<Group | null>(null);
 
-  const onDrop = (e: React.DragEvent<HTMLDivElement>) => {};
+  const {
+    borderSize,
+    tileSize,
+    cs,
+    ch,
+    walkableSlopeAngle,
+    walkableHeight,
+    walkableClimb,
+    walkableRadius,
+    maxEdgeLen,
+    maxSimplificationError,
+    minRegionArea,
+    mergeRegionArea,
+    maxVertsPerPoly,
+    detailSampleDist,
+    detailSampleMaxError,
+  } = useControls('NavMesh Configuration', {
+    borderSize: 0,
+    tileSize: 0,
+    cs: 0.2,
+    ch: 0.2,
+    walkableSlopeAngle: 35,
+    walkableHeight: 1,
+    walkableClimb: 1,
+    walkableRadius: 1,
+    maxEdgeLen: 12,
+    maxSimplificationError: 1.3,
+    minRegionArea: 8,
+    mergeRegionArea: 20,
+    maxVertsPerPoly: 6,
+    detailSampleDist: 6,
+    detailSampleMaxError: 1,
+  });
 
-  return (
-    <>
-      <Bounds fit>
-        <Html transform>
-          <DropZone>
-            <h2>
-              Drag 'n' drop your GLTF file here or{' '}
-              <a className="example">try with an example model</a>
-            </h2>
-          </DropZone>
-        </Html>
-      </Bounds>
-    </>
-  );
-};
+  const selectExample = () => {};
 
-export default () => {
+  const onDrop = async (acceptedFiles: File[]) => {
+    if (acceptedFiles.length === 0) {
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const { buffer } = await readFile(acceptedFiles[0]);
+
+      const gltf: GLTF = await new Promise((resolve, reject) =>
+        gltfLoader.parse(buffer, '', resolve, reject)
+      );
+
+      setScene(gltf.scene);
+    } catch (e) {}
+
+    setLoading(false);
+  };
+
+  let content: React.ReactNode;
+  
+  if (scene) {
+    content = (
+      <>
+        <primitive object={scene} />
+
+        <Environment preset="city" />
+
+        <OrbitControls />
+      </>
+    );
+  } else {
+    content = (
+      <Html fullscreen>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexDirection: 'column',
+          textAlign: 'center',
+          width: '100%',
+          height: '100vh',
+        }}>
+        {loading ? <Loader /> : <DropZone onDrop={onDrop} selectExample={selectExample} />}
+          
+        </div>
+      </Html>
+    )
+  }
+
   return (
     <>
       <Canvas
@@ -55,8 +107,26 @@ export default () => {
           position: [0, 0, 10],
         }}
       >
-        <App />
+        {content}
       </Canvas>
+
+      <Leva
+        hidden={!scene}
+        collapsed={true}
+        theme={{
+          sizes: {
+            controlWidth: '60px',
+          },
+        }}
+      />
+    </>
+  );
+};
+
+export default () => {
+  return (
+    <>
+      <App />
     </>
   );
 };

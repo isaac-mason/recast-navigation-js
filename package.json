@@ -20,6 +20,7 @@
     "@types/styled-components": "^5.1.26"
   },
   "dependencies": {
+    "react-dropzone": "^14.2.3",
     "styled-components": "^5.3.9"
   }
 }
