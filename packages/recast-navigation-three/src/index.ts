@@ -341,7 +341,6 @@ export class Recast {
     rc.detailSampleDist = parameters.detailSampleDist;
     rc.detailSampleMaxError = parameters.detailSampleMaxError;
 
-    // todo: move into web worker?
     this.navMesh.build(positions, offset, indices, indices.length, rc);
 
     return navMesh;

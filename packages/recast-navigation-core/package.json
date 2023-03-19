@@ -7,6 +7,12 @@
   "license": "MIT",
   "main": "dist/recast.wasm-compat.js",
   "types": "dist/recast.d.ts",
+  "exports": {
+    ".": "./dist/recast.wasm-compat.js",
+    "./wasm-compat": "./dist/recast.wasm-compat.js",
+    "./wasm": "./dist/recast.wasm.js",
+    "./js": "./dist/recast.js"
+  },
   "scripts": {
     "build": "sh build.sh"
   },

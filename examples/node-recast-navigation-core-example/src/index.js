@@ -1,10 +1,10 @@
-import R from '@recast-navigation/core';
+import createRecast from '@recast-navigation/core';
 import { BoxGeometry, Mesh } from 'three';
 
 /**
  * @type {typeof import('@recast-navigation/core').default}
  */
-const Recast = await R();
+const Recast = await createRecast();
 
 const navMesh = new Recast.NavMesh();
 

@@ -8,6 +8,18 @@
     "examples/*"
   ],
   "scripts": {
-    "build": "(cd packages/wasm && yarn build) && (cd packages/core && yarn build)"
+    "build:apps": "(cd apps/navmesh-website && yarn build)",
+    "build:examples": "(cd examples/node-recast-navigation-core-example && yarn build) && (cd examples/vite-recast-navigation-three-example && yarn build)",
+    "build:packages": "(cd packages/recast-navigation-core && yarn build) && (cd packages/recast-navigation-three && yarn build)",
+    "build": "yarn build:packages && yarn build:apps && yarn build:examples",
+    "change": "yarn changeset",
+    "version": "yarn changeset version && yarn install --mode update-lockfile"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.26.0",
+    "@types/styled-components": "^5.1.26"
+  },
+  "dependencies": {
+    "styled-components": "^5.3.9"
   }
 }
