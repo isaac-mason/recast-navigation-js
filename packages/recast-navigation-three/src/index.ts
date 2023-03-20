@@ -148,11 +148,11 @@ export type AgentParameters = {
 };
 
 /**
- * Recast navigation wrapper
+ * Recast NavMesh wrapper
  */
-export class Recast {
+export class NavMesh {
   /**
-   * Reference to the Recast library
+   * Reference to the NavMesh library
    */
   recast: typeof R = null as any;
 
@@ -260,7 +260,7 @@ export class Recast {
    * @param meshes array of all the geometry used to compute the navigation mesh
    * @param parameters bunch of parameters used to filter geometry
    */
-  createNavMesh(meshes: Array<Mesh>, parameters: NavMeshParameters): R.NavMesh {
+  build(meshes: Array<Mesh>, parameters: NavMeshParameters): void {
     const navMesh = new this.recast.NavMesh();
 
     this.navMesh = navMesh;
@@ -288,39 +288,23 @@ export class Recast {
           continue;
         }
 
-        const worldMatrices = [];
-        mesh.updateMatrixWorld();
-        const worldMatrix = mesh.matrixWorld;
-
-        // todo - support instanced meshes
-
-        worldMatrices.push(worldMatrix);
-
-        for (
-          let matrixIndex = 0;
-          matrixIndex < worldMatrices.length;
-          matrixIndex++
-        ) {
-          const wm = worldMatrices[matrixIndex];
-          for (tri = 0; tri < meshIndices.length; tri++) {
-            indices.push(meshIndices[tri] + offset);
-          }
-
-          const transformed = new Vector3();
-          const position = new Vector3();
-          for (pt = 0; pt < meshPositions.length; pt += 3) {
-            position.set(
-              meshPositions[pt],
-              meshPositions[pt + 1],
-              meshPositions[pt + 2]
-            );
-
-            transformed.copy(position).applyMatrix4(wm);
-            positions.push(transformed.x, transformed.y, transformed.z);
-          }
-
-          offset += meshPositions.length / 3;
+        for (tri = 0; tri < meshIndices.length; tri++) {
+          indices.push(meshIndices[tri] + offset);
         }
+
+        const position = new Vector3();
+        for (pt = 0; pt < meshPositions.length; pt += 3) {
+          position.set(
+            meshPositions[pt],
+            meshPositions[pt + 1],
+            meshPositions[pt + 2]
+          );
+          mesh.localToWorld(position);
+
+          positions.push(position.x, position.y, position.z);
+        }
+
+        offset += meshPositions.length / 3;
       }
     }
 
@@ -342,8 +326,6 @@ export class Recast {
     rc.detailSampleMaxError = parameters.detailSampleMaxError;
 
     this.navMesh.build(positions, offset, indices, indices.length, rc);
-
-    return navMesh;
   }
 
   /**
@@ -605,13 +587,13 @@ export class Recast {
 }
 
 /**
- * Recast detour crowd implementation
+ * NavMesh detour crowd implementation
  */
 export class Crowd {
   /**
-   * Recast/detour plugin
+   * NavMesh/detour plugin
    */
-  bjsRECASTPlugin: Recast;
+  bjsRECASTPlugin: NavMesh;
 
   /**
    * Link to the detour crowd
@@ -671,7 +653,7 @@ export class Crowd {
    * @returns the crowd you can add agents to
    */
   constructor(
-    recastJs: Recast,
+    recastJs: NavMesh,
     maxAgents: number,
     maxAgentRadius: number,
     scene: Scene

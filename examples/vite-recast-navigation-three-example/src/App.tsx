@@ -1,39 +1,20 @@
 import { Environment, OrbitControls } from '@react-three/drei';
 import { Canvas, useThree } from '@react-three/fiber';
-import { Recast } from '@recast-navigation/three';
-import { useEffect } from 'react';
-import {
-  BoxGeometry,
-  Color,
-  Mesh,
-  MeshBasicMaterial,
-  MeshStandardMaterial,
-  Vector2,
-  Vector3,
-} from 'three';
+import { NavMeshParameters, NavMesh } from '@recast-navigation/three';
+import { useEffect, useRef } from 'react';
+import { Color, Group, Mesh, MeshBasicMaterial, Vector2, Vector3 } from 'three';
 import { Line2, LineGeometry, LineMaterial } from 'three-stdlib';
 
 const App = () => {
   const scene = useThree((state) => state.scene);
 
+  const groupRef = useRef<Group>(null!);
+
   useEffect(() => {
-    const recast = new Recast();
+    const navMesh = new NavMesh();
 
-    recast.init().then(() => {
-      const ground = new Mesh(
-        new BoxGeometry(5, 0.5, 5),
-        new MeshStandardMaterial()
-      );
-      const obstacle = new Mesh(
-        new BoxGeometry(1, 1, 1),
-        new MeshStandardMaterial()
-      );
-      obstacle.position.y = 0.5;
-
-      scene.add(ground);
-      scene.add(obstacle);
-
-      const navMeshParameters = {
+    navMesh.init().then(() => {
+      const navMeshParameters: NavMeshParameters = {
         cs: 0.2,
         ch: 0.2,
         walkableSlopeAngle: 35,
@@ -49,9 +30,17 @@ const App = () => {
         detailSampleMaxError: 1,
       };
 
-      recast.createNavMesh([ground, obstacle], navMeshParameters);
+      const meshes: Mesh[] = [];
 
-      const debugNavMesh = recast.createDebugNavMesh();
+      groupRef.current.traverse((obj) => {
+        if (obj instanceof Mesh) {
+          meshes.push(obj);
+        }
+      });
+
+      navMesh.build(meshes, navMeshParameters);
+
+      const debugNavMesh = navMesh.createDebugNavMesh();
 
       debugNavMesh.material = new MeshBasicMaterial({
         color: 'red',
@@ -60,9 +49,9 @@ const App = () => {
 
       scene.add(debugNavMesh);
 
-      const path = recast.computePath(
-        recast.getClosestPoint(new Vector3(2, 1, 2)),
-        recast.getClosestPoint(new Vector3(-2, 1, -2))
+      const path = navMesh.computePath(
+        navMesh.getClosestPoint(new Vector3(2, 1, 2)),
+        navMesh.getClosestPoint(new Vector3(-2, 1, -2))
       );
       console.log(path);
 
@@ -90,7 +79,23 @@ const App = () => {
     });
   }, []);
 
-  return null;
+  return (
+    <>
+      <group ref={groupRef}>
+        {/* ground */}
+        <mesh position={[0, -0.25, 0]}>
+          <boxGeometry args={[5, 0.5, 5]} />
+          <meshStandardMaterial color="#ccc" />
+        </mesh>
+
+        {/* obstacle */}
+        <mesh position={[0, 0.5, 0]}>
+          <boxGeometry args={[1, 1, 1]} />
+          <meshStandardMaterial color="blue" />
+        </mesh>
+      </group>
+    </>
+  );
 };
 
 export default () => (

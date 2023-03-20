@@ -2,22 +2,27 @@ import { useDropzone } from 'react-dropzone';
 import styled from 'styled-components';
 
 const DropZoneWrapper = styled.div`
-  font-size: 1.2em;
-  font-weight: 600;
-  line-height: 1.3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-  color: #fff;
+  width: 100%;
+  height: 100%;
+
+  font-size: 2em;
 
   .example {
-    color: #0094ff;
-    text-decoration: underline;
-    cursor: pointer;
-
+    padding: 0;
     border: none;
     background: none;
 
+    color: #0094ff;
+
     font-size: inherit;
     font-weight: inherit;
+    text-decoration: underline;
+
+    cursor: pointer;
   }
 `;
 
@@ -31,7 +36,6 @@ export const DropZone = ({ onDrop, selectExample }: DropZoneProps) => {
     useDropzone({
       onDrop,
       maxFiles: 1,
-      // accept: { '': ['.gltf', '.glb'] },
     });
 
   return (
@@ -39,11 +43,19 @@ export const DropZone = ({ onDrop, selectExample }: DropZoneProps) => {
       <input {...getInputProps()} />
 
       {isDragActive ? (
-        <p>Drop the files here ...</p>
+        <p>Drop your GLTF file here ...</p>
       ) : (
         <p>
-          Drag {"'"}n{"'"} drop your GLTF file <span>here</span> or{' '}
-          <button className="example" onClick={selectExample}>try it with an example model</button>
+          Drag 'n' drop your GLTF file <span>here</span> or{' '}
+          <button
+            className="example"
+            onClick={(e) => {
+              e.stopPropagation();
+              selectExample();
+            }}
+          >
+            try it with an example model
+          </button>
         </p>
       )}
 

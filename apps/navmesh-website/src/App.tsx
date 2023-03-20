@@ -1,118 +1,195 @@
-import { Environment, Html, OrbitControls } from '@react-three/drei';
+import { useGLTF } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
-import { Leva, useControls } from 'leva';
-import { useState } from 'react';
-import { Group } from 'three';
+import { button, Leva, useControls } from 'leva';
+import { Suspense, useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { Group, Mesh, MeshStandardMaterial } from 'three';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
+import dungeonGltfUrl from './assets/dungeon.gltf?url';
 import { DropZone } from './components/drop-zone';
 import { Loader } from './components/loader';
+import { Viewer } from './components/viewer';
+import { useNavMesh } from './hooks/use-nav-mesh';
+import { useNavMeshConfig } from './hooks/use-nav-mesh-config';
 import { gltfLoader } from './utils/gltf-loader';
 import { readFile } from './utils/read-file';
 
+const Fullscreen = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  width: calc(100% - 4em);
+  height: calc(100vh - 4em);
+  padding: 2em;
+
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: center;
+
+  color: #fff;
+`;
+
+const Error = styled.div`
+  position: absolute;
+  bottom: 0px;
+  left: 50% - 140px;
+  width: 280px;
+  z-index: 1;
+
+  margin: 0.5em;
+  padding: 0.5em;
+
+  background-color: #222;
+  color: #fae864;
+
+  border: 1px solid #fae864;
+  border-radius: 0.2em;
+
+  font-size: 1em;
+  font-weight: 400;
+`;
+
 const App = () => {
+  const navMesh = useNavMesh();
+
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [scene, setScene] = useState<Group | null>(null);
+  const [debugNavMesh, setDebugNavMesh] = useState<Mesh | null>(null);
 
-  const {
-    borderSize,
-    tileSize,
-    cs,
-    ch,
-    walkableSlopeAngle,
-    walkableHeight,
-    walkableClimb,
-    walkableRadius,
-    maxEdgeLen,
-    maxSimplificationError,
-    minRegionArea,
-    mergeRegionArea,
-    maxVertsPerPoly,
-    detailSampleDist,
-    detailSampleMaxError,
-  } = useControls('NavMesh Configuration', {
-    borderSize: 0,
-    tileSize: 0,
-    cs: 0.2,
-    ch: 0.2,
-    walkableSlopeAngle: 35,
-    walkableHeight: 1,
-    walkableClimb: 1,
-    walkableRadius: 1,
-    maxEdgeLen: 12,
-    maxSimplificationError: 1.3,
-    minRegionArea: 8,
-    mergeRegionArea: 20,
-    maxVertsPerPoly: 6,
-    detailSampleDist: 6,
-    detailSampleMaxError: 1,
-  });
+  const exampleGltf = useGLTF(dungeonGltfUrl);
 
-  const selectExample = () => {};
+  const navMeshConfig = useNavMeshConfig();
 
   const onDrop = async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) {
       return;
     }
 
+    setError(null);
     setLoading(true);
 
     try {
       const { buffer } = await readFile(acceptedFiles[0]);
 
-      const gltf: GLTF = await new Promise((resolve, reject) =>
+      const { scene } = await new Promise<GLTF>((resolve, reject) =>
         gltfLoader.parse(buffer, '', resolve, reject)
       );
 
-      setScene(gltf.scene);
-    } catch (e) {}
+      setScene(scene);
+    } catch (e) {
+      setError(
+        'Something went wrong! Please ensure the file is a valid GLTF / GLB.'
+      );
+    }
 
     setLoading(false);
   };
 
-  let content: React.ReactNode;
-  
-  if (scene) {
-    content = (
-      <>
-        <primitive object={scene} />
+  const generateNavMesh = async () => {
+    if (!scene) return;
 
-        <Environment preset="city" />
+    setError(null);
+    setLoading(true);
+    setDebugNavMesh(null);
 
-        <OrbitControls />
-      </>
-    );
-  } else {
-    content = (
-      <Html fullscreen>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexDirection: 'column',
-          textAlign: 'center',
-          width: '100%',
-          height: '100vh',
-        }}>
-        {loading ? <Loader /> : <DropZone onDrop={onDrop} selectExample={selectExample} />}
-          
-        </div>
-      </Html>
-    )
-  }
+    try {
+      const meshes: Mesh[] = [];
+
+      scene.traverse((object) => {
+        if (object instanceof Mesh) {
+          meshes.push(object);
+        }
+      });
+
+      navMesh.build(meshes, navMeshConfig);
+
+      const debugNavMesh = navMesh.createDebugNavMesh();
+      debugNavMesh.material = new MeshStandardMaterial({
+        wireframe: true,
+        color: 'red',
+      });
+
+      setDebugNavMesh(debugNavMesh);
+    } catch (e) {
+      setError(
+        'Something went wrong generating the nav mesh - ' +
+          (e as { message: string }).message
+      );
+    }
+
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    generateNavMesh();
+  }, [scene]);
+
+  useControls(
+    'Actions',
+    {
+      Generate: button(
+        () => {
+          generateNavMesh();
+        },
+        { disabled: loading }
+      ),
+      'Export as GLTF': button(
+        () => {
+          console.log('exporting!');
+        },
+        { disabled: loading }
+      ),
+    },
+    [navMeshConfig, scene, loading]
+  );
 
   return (
     <>
-      <Canvas
-        camera={{
-          position: [0, 0, 10],
-        }}
+      <Suspense
+        fallback={
+          <Fullscreen>
+            <Loader />
+          </Fullscreen>
+        }
       >
-        {content}
-      </Canvas>
+        <Canvas
+          camera={{
+            position: [0, 0, 10],
+          }}
+        >
+          {scene && <Viewer scene={scene} />}
+          {debugNavMesh && <primitive object={debugNavMesh} />}
+        </Canvas>
+      </Suspense>
+
+      {loading && (
+        <Fullscreen>
+          <Loader />
+        </Fullscreen>
+      )}
+
+      {!scene && !loading && (
+        <Fullscreen>
+          <DropZone
+            onDrop={onDrop}
+            selectExample={() => {
+              setScene(exampleGltf.scene);
+            }}
+          />
+        </Fullscreen>
+      )}
+
+      {error && <Error>{error}</Error>}
 
       <Leva
         hidden={!scene}
-        collapsed={true}
         theme={{
           sizes: {
             controlWidth: '60px',
@@ -123,10 +200,4 @@ const App = () => {
   );
 };
 
-export default () => {
-  return (
-    <>
-      <App />
-    </>
-  );
-};
+export default App;
