@@ -85,15 +85,11 @@ Various examples of how to use `@recast-navigation/three`.
 
 ([source](./packages/recast-navigation-three/.storybook))
 
-### [Vite Recast Navigation Three.js Example](https://example.com/)
+### [Three.js + Vite Example](https://example.com/)
 
 An example of using `@recast-navigation/three` with Three.js in a Vite project.
 
 ([source](./examples/vite-recast-navigation-three-example/))
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details
 
 ## Development
 
@@ -114,6 +110,10 @@ To build the project, run the following:
 ```sh
 > yarn build
 ```
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
 
 ## Acknowledgements
 
