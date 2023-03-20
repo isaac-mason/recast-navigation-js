@@ -1,28 +1,23 @@
 # recast-navigation-js
 
-### Recast Navigation for the web!
+### Recast Navigation for JavaScript!
 
-A WebAssembly port of [Recast Navigation](https://github.com/recastnavigation/recastnavigation) for JavaScript.
+WASM + asm.js ports of [Recast Navigation](https://github.com/recastnavigation/recastnavigation), plus other goodies.
 
 ## Features
 
-- 🌐 ‎ Supports both web and node environments
+- 🌐 ‎ Support for web and node environments
 - 💙 TypeScript support
-- 🙆‍♀️ ‎ Multiple Emscripten builds for different environments (WASM, Inlined WASM, asm.js)
-- 🖇 ‎ [Easy integration with three.js](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-three)
-
-## Installation
-
-Install via NPM or Yarn:
-
-```sh
-> npm i recast-navigation
-> yarn add recast-navigation
-```
-
-Note that all packages ship as ESM packages, there are no CommonJS/UMD packages at this time.
+- 🙆‍♀️ ‎ Multiple Emscripten builds (WASM, Inlined WASM, asm.js)
+- 🖇 ‎ [Easy integration with three.js via @recast-navigation/three](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-three)
 
 ## Packages
+
+Functionality is spread across packages in the `@recast-navigation/*` organization, with the `recast-navigation` acting as an umbrella package.
+
+You can choose between picking the scoped packages you need, or using the umbrella `recast-navigation` package, which provides additional entrypoints for specific frameworks and libraries.
+
+Note that all packages ship as ESM, there is no support for CommonJS/UMD right now.
 
 ### [**`recast-navigation`**](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation)
 
