@@ -1,1 +1,1 @@
-# recast-navigation
+# @recast-navigation/core

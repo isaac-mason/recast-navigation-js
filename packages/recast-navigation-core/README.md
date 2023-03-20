@@ -1,6 +1,6 @@
 # recast-navigation
 
-A WASM port of the Recast & Detour pathfinding libraries.
+Recast Navigation for the web!
 
 ## Development Guide
 
