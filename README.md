@@ -30,8 +30,8 @@ The umbrella package for `recast-navigation`. Includes `@recast-navigation/core`
 ```
 
 ```ts
-import createRecast from "recast-navigation";
-import { NavMesh, Crowd } from "recast-navigation/three";
+import createRecast from 'recast-navigation';
+import { NavMesh, Crowd } from 'recast-navigation/three';
 
 const Recast = await createRecast();
 ```
@@ -47,7 +47,7 @@ The core library!
 ```
 
 ```ts
-import createRecast from "@recast-navigation/core";
+import createRecast from '@recast-navigation/core';
 
 const Recast = await createRecast();
 ```
@@ -56,14 +56,14 @@ const Recast = await createRecast();
 
 [![Version](https://img.shields.io/npm/v/@recast-navigation/three)](https://www.npmjs.com/package/@recast-navigation/three)
 
-A Three.js integration for `@recast-navigation/core`.
+A friendly three.js API for recast-navigation.
 
 ```bash
 > yarn add @recast-navigation/three
 ```
 
 ```ts
-import { NavMesh, Crowd } from "@recast-navigation/three";
+import { NavMesh, Crowd } from '@recast-navigation/three';
 ```
 
 ## Websites
@@ -93,6 +93,7 @@ An example of using `@recast-navigation/three` with Three.js in a Vite project.
 The repository is structured as a monorepo. You will find all packages inside `./packages`, examples in `./examples`, and deployed apps in `./apps`.
 
 ### Prerequisites
+
 Before building, ensure you have the following installed:
 
 - Python 3
