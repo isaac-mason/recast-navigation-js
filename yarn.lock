@@ -15,25 +15,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@arancini/core@npm:2.2.1":
-  version: 2.2.1
-  resolution: "@arancini/core@npm:2.2.1"
-  checksum: 41d5e60b5791e1f7619d3a7c51839e35439667c20953d5270ec877265d194ddad72768ca764e9a186b06cebbc8e13dbabef2afb954774e824cb679d60da1de9e
-  languageName: node
-  linkType: hard
-
-"@arancini/react@npm:2.2.1":
-  version: 2.2.1
-  resolution: "@arancini/react@npm:2.2.1"
-  dependencies:
-    "@arancini/core": 2.2.1
-  peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: f9010ed4726ea5281247b502fef7bff538d6ec5655441fd7b8f394d148d7dddd12c4142e6b057216b7a89814de1fae31329c5fa5ec7dc1aa2e8221f33ff28bc4
-  languageName: node
-  linkType: hard
-
 "@babel/code-frame@npm:^7.0.0, @babel/code-frame@npm:^7.10.4, @babel/code-frame@npm:^7.12.13, @babel/code-frame@npm:^7.18.6, @babel/code-frame@npm:^7.5.5, @babel/code-frame@npm:^7.8.3":
   version: 7.18.6
   resolution: "@babel/code-frame@npm:7.18.6"
@@ -3375,7 +3356,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@recast-navigation/core@0.0.0, @recast-navigation/core@workspace:^, @recast-navigation/core@workspace:packages/recast-navigation-core":
+"@recast-navigation/core@0.0.0, @recast-navigation/core@workspace:packages/recast-navigation-core":
   version: 0.0.0-use.local
   resolution: "@recast-navigation/core@workspace:packages/recast-navigation-core"
   dependencies:
@@ -6112,19 +6093,6 @@ __metadata:
   version: 1.2.0
   resolution: "aproba@npm:1.2.0"
   checksum: 0fca141966559d195072ed047658b6e6c4fe92428c385dd38e288eacfc55807e7b4989322f030faff32c0f46bb0bc10f1e0ac32ec22d25315a1e5bbc0ebb76dc
-  languageName: node
-  linkType: hard
-
-"arancini@npm:^2.2.1":
-  version: 2.2.1
-  resolution: "arancini@npm:2.2.1"
-  dependencies:
-    "@arancini/core": 2.2.1
-    "@arancini/react": 2.2.1
-  peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: 72d97c6b08b45a3ee8ff43ddde5c1f463cdbc6b78e4ba8fcf0f7d5252cc857065ec547be7ed49d11cc0751342efb5139e875a78f9c9bcb7e2699b4cdf5b11e2f
   languageName: node
   linkType: hard
 
@@ -13825,6 +13793,7 @@ __metadata:
     leva: ^0.9.34
     react: ^18.2.0
     react-dom: ^18.2.0
+    recast-navigation: 0.0.0
     suspend-react: ^0.0.9
     three: ^0.150.1
     tunnel-rat: ^0.1.1
@@ -13953,12 +13922,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-recast-navigation-core-example@workspace:examples/node-recast-navigation-core-example":
+"node-recast-navigation-example@workspace:examples/node-recast-navigation-example":
   version: 0.0.0-use.local
-  resolution: "node-recast-navigation-core-example@workspace:examples/node-recast-navigation-core-example"
+  resolution: "node-recast-navigation-example@workspace:examples/node-recast-navigation-example"
   dependencies:
-    "@recast-navigation/core": "workspace:^"
     "@types/three": ^0.149.0
+    recast-navigation: 0.0.0
     three: ^0.150.1
   languageName: unknown
   linkType: soft
@@ -15611,14 +15580,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"recast-navigation@workspace:.":
+"recast-navigation-root@workspace:.":
   version: 0.0.0-use.local
-  resolution: "recast-navigation@workspace:."
+  resolution: "recast-navigation-root@workspace:."
   dependencies:
     "@changesets/cli": ^2.26.0
     "@types/styled-components": ^5.1.26
     react-dropzone: ^14.2.3
     styled-components: ^5.3.9
+  languageName: unknown
+  linkType: soft
+
+"recast-navigation@0.0.0, recast-navigation@workspace:packages/recast-navigation":
+  version: 0.0.0-use.local
+  resolution: "recast-navigation@workspace:packages/recast-navigation"
+  dependencies:
+    "@recast-navigation/core": 0.0.0
+    "@recast-navigation/three": 0.0.0
   languageName: unknown
   linkType: soft
 
@@ -18377,15 +18355,13 @@ __metadata:
   dependencies:
     "@react-three/drei": ^9.57.3
     "@react-three/fiber": ^8.12.0
-    "@recast-navigation/core": 0.0.0
-    "@recast-navigation/three": 0.0.0
     "@types/react": ^18.0.28
     "@types/react-dom": ^18.0.11
     "@types/three": ^0.149.0
     "@vitejs/plugin-react": ^3.1.0
-    arancini: ^2.2.1
     react: ^18.2.0
     react-dom: ^18.2.0
+    recast-navigation: 0.0.0
     three: ^0.150.1
     typescript: ^4.9.3
     vite: ^4.2.0

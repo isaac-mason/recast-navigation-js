@@ -1,1 +1,1 @@
-// @recast-navigation/core, a port of recast navigation to JavaScript.
+// recast-navigation, a port of recast navigation to JavaScript.

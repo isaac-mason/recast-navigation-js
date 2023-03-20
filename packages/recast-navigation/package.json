@@ -1,0 +1,22 @@
+{
+  "name": "recast-navigation",
+  "description": "A WASM port of recast-navigation",
+  "author": "Isaac Mason <isaac@isaacmason.com>",
+  "version": "0.0.0",
+  "license": "MIT",
+  "type": "module",
+  "homepage": "https://github.com/isaac-mason/recast-navigation-js",
+  "bugs": {
+    "url": "https://github.com/isaac-mason/recast-navigation-js/issues"
+  },
+  "dependencies": {
+    "@recast-navigation/core": "0.0.0",
+    "@recast-navigation/three": "0.0.0"
+  },
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./three": "./three.js"
+  },
+  "packageManager": "yarn@3.2.2"
+}

@@ -1,6 +1,6 @@
-# @recast-navigation/core
+# recast-navigation
 
-A wasm port of the Recast/Detour library.
+A WASM port of the Recast & Detour pathfinding libraries.
 
 ## Development Guide
 
@@ -12,5 +12,5 @@ A wasm port of the Recast/Detour library.
 ### Building
 
 ```sh
-npm run build
+yarn build
 ```

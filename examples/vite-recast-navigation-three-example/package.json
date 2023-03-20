@@ -11,11 +11,9 @@
   "dependencies": {
     "@react-three/drei": "^9.57.3",
     "@react-three/fiber": "^8.12.0",
-    "@recast-navigation/core": "0.0.0",
-    "@recast-navigation/three": "0.0.0",
-    "arancini": "^2.2.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "recast-navigation": "0.0.0",
     "three": "^0.150.1"
   },
   "devDependencies": {

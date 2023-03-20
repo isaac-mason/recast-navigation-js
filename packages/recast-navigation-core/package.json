@@ -1,10 +1,14 @@
 {
   "name": "@recast-navigation/core",
-  "description": "wasm port of recastnavigation",
-  "type": "module",
+  "description": "A WASM port of recast-navigation",
+  "author": "Isaac Mason <isaac@isaacmason.com>",
   "version": "0.0.0",
-  "author": "Isaac Mason <isaac@isaacmason>",
   "license": "MIT",
+  "type": "module",
+  "homepage": "https://github.com/isaac-mason/recast-navigation-js",
+  "bugs": {
+    "url": "https://github.com/isaac-mason/recast-navigation-js/issues"
+  },
   "main": "dist/recast.wasm-compat.js",
   "types": "dist/recast.d.ts",
   "exports": {

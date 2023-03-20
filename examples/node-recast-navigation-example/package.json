@@ -1,17 +1,17 @@
 {
-  "name": "node-recast-navigation-core-example",
+  "name": "node-recast-navigation-example",
   "private": true,
   "type": "module",
   "version": "1.0.0",
-  "description": "example of using @recast-navigation/core in node",
+  "description": "example of using recast-navigation in node",
   "scripts": {
     "start": "node src/index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@recast-navigation/core": "workspace:^",
     "@types/three": "^0.149.0",
+    "recast-navigation": "0.0.0",
     "three": "^0.150.1"
   }
 }

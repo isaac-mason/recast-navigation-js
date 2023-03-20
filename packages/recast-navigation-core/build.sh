@@ -1,7 +1,8 @@
 #!/bin/sh
 
-# create build directory
+# create directories
 mkdir -p ./build
+mkdir -p dist
 
 # clone recast navigation library
 [ ! -d "recastnavigation" ] && git clone https://github.com/recastnavigation/recastnavigation.git
@@ -12,13 +13,10 @@ emcmake cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 
 # generate typescript definitions
-yarn run webidl-dts-gen -e -d -i recast.idl -o ./build/recast.d.ts -n Recast
+yarn run webidl-dts-gen -e -d -i recast.idl -o ./dist/recast.d.ts -n Recast
 
-# copy to dist
-mkdir -p dist
-
+# copy files to dist
 cp ./build/recast.js ./dist/recast.js
-cp ./build/recast.d.ts ./dist/recast.d.ts
 
 cp ./build/recast.wasm.js ./dist/recast.wasm.js
 cp ./build/recast.wasm.wasm ./dist/recast.wasm.wasm

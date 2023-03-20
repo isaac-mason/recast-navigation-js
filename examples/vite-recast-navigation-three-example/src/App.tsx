@@ -1,7 +1,7 @@
 import { Environment, OrbitControls } from '@react-three/drei';
 import { Canvas, useThree } from '@react-three/fiber';
-import { NavMeshParameters, NavMesh } from '@recast-navigation/three';
 import { useEffect, useRef } from 'react';
+import { NavMesh, NavMeshParameters } from 'recast-navigation/three';
 import { Color, Group, Mesh, MeshBasicMaterial, Vector2, Vector3 } from 'three';
 import { Line2, LineGeometry, LineMaterial } from 'three-stdlib';
 

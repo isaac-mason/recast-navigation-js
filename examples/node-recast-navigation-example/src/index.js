@@ -1,8 +1,8 @@
-import createRecast from '@recast-navigation/core';
+import createRecast from 'recast-navigation';
 import { BoxGeometry, Mesh } from 'three';
 
 /**
- * @type {typeof import('@recast-navigation/core').default}
+ * @type {typeof import('recast-navigation').default}
  */
 const Recast = await createRecast();
 

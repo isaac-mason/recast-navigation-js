@@ -173,7 +173,7 @@ export class NavMesh {
 
   /**
    * Initializes the recastJS plugin
-   * @param recastInjection optional @recast-navigation/core import, can be used to inject your own recast reference
+   * @param recastInjection optional recast-navigation import, can be used to inject your own recast reference
    */
   constructor(recastInjection?: typeof R) {
     if (recastInjection) {

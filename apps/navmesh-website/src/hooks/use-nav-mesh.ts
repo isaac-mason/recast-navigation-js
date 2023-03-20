@@ -1,4 +1,4 @@
-import { NavMesh } from '@recast-navigation/three';
+import { NavMesh } from 'recast-navigation/three';
 import { suspend } from 'suspend-react';
 
 export const useNavMesh = () =>

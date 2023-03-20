@@ -1,17 +1,16 @@
 {
-  "name": "recast-navigation",
+  "name": "recast-navigation-root",
+  "private": true,
   "packageManager": "yarn@3.2.2",
   "workspaces": [
     "packages/recast-navigation-core",
     "packages/recast-navigation-three",
+    "packages/recast-navigation",
     "apps/*",
     "examples/*"
   ],
   "scripts": {
-    "build:apps": "(cd apps/navmesh-website && yarn build)",
-    "build:examples": "(cd examples/node-recast-navigation-core-example && yarn build) && (cd examples/vite-recast-navigation-three-example && yarn build)",
-    "build:packages": "(cd packages/recast-navigation-core && yarn build) && (cd packages/recast-navigation-three && yarn build)",
-    "build": "yarn build:packages && yarn build:apps && yarn build:examples",
+    "build": "yarn workspaces foreach run build",
     "change": "yarn changeset",
     "version": "yarn changeset version && yarn install --mode update-lockfile"
   },
