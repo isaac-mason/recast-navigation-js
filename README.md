@@ -1,13 +1,26 @@
 # recast-navigation-js
 
-Recast Navigation for the web!
+### Recast Navigation for the web!
+
+A WebAssembly port of [Recast Navigation](https://github.com/recastnavigation/recastnavigation) for JavaScript.
 
 ## Features
 
 - 🌐 ‎ Supports both web and node environments
-- 💙 TypeScript support 
-- 🙆‍♀️ ‎ Multiple @recast-navigation/core builds (JavaScript, WASM, Inlined WASM)
+- 💙 TypeScript support
+- 🙆‍♀️ ‎ Multiple Emscripten builds for different environments (WASM, Inlined WASM, asm.js)
 - 🖇 ‎ [Easy integration with three.js](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-three)
+
+## Installation
+
+Install via NPM or Yarn:
+
+```sh
+> npm i recast-navigation
+> yarn add recast-navigation
+```
+
+Note that all packages ship as ESM packages, there are no CommonJS/UMD packages at this time.
 
 ## Packages
 
@@ -15,10 +28,17 @@ Recast Navigation for the web!
 
 [![Version](https://img.shields.io/npm/v/recast-navigation)](https://www.npmjs.com/package/recast-navigation)
 
-The umbrella package for `recast-navigation`. Includes `@recast-navigation/core`, and `@recast-navigation/three` under the `recast-navigation/three` entrypoint.
+The umbrella package for `recast-navigation`. Includes `@recast-navigation/core`, and `@recast-navigation/three`.
 
 ```bash
 > yarn add recast-navigation
+```
+
+```ts
+import createRecast from "recast-navigation";
+import { NavMesh, Crowd } from "recast-navigation/three";
+
+const Recast = await createRecast();
 ```
 
 ### [**`@recast-navigation/core`**](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-core)
@@ -31,6 +51,12 @@ The core library!
 > yarn add @recast-navigation/core
 ```
 
+```ts
+import createRecast from "@recast-navigation/core";
+
+const Recast = await createRecast();
+```
+
 ### [**`@recast-navigation/three`**](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-three)
 
 [![Version](https://img.shields.io/npm/v/@recast-navigation/three)](https://www.npmjs.com/package/@recast-navigation/three)
@@ -41,43 +67,55 @@ A Three.js integration for `@recast-navigation/core`.
 > yarn add @recast-navigation/three
 ```
 
-## Example
-
 ```ts
-import createRecast from "recast-navigation";
-import { BoxGeometry, Mesh } from "three";
-
-const Recast = await createRecast();
-
-const navMesh = new Recast.NavMesh();
-
-const ground = new Mesh(new BoxGeometry(5, 0.5, 5));
-
-const config = new Recast.rcConfig();
-
-config.borderSize = 0;
-config.tileSize = 0;
-config.cs = 0.2;
-config.ch = 0.2;
-config.walkableSlopeAngle = 35;
-config.walkableHeight = 1;
-config.walkableClimb = 1;
-config.walkableRadius = 1;
-config.maxEdgeLen = 12;
-config.maxSimplificationError = 1.3;
-config.minRegionArea = 8;
-config.mergeRegionArea = 20;
-config.maxVertsPerPoly = 6;
-config.detailSampleDist = 6;
-config.detailSampleMaxError = 1;
-
-const positions = ground.geometry.attributes.position.array;
-const indices = ground.geometry.index.array;
-const offset = positions.length / 3;
-
-navMesh.build(positions, offset, indices, indices.length, config);
-
-const closestPoint = navMesh.getClosestPoint(new Recast.Vec3(2, 1, 2));
-
-console.log(closestPoint.x, closestPoint.y, closestPoint.z);
+import { NavMesh, Crowd } from "@recast-navigation/three";
 ```
+
+## Websites
+
+### [NavMesh Generator](<[https://navmesh.isaacmason.com/](https://navmesh.isaacmason.com)>)
+
+A website for generating navmeshes for your game. Drag 'n' drop your GLTF, fine tune your settings, and download your navmesh!
+
+([source](./apps/navmesh-website/dist/))
+
+### [Storybook - @recast-navigation/three](https://example.com/)
+
+Various examples of how to use `@recast-navigation/three`.
+
+([source](./packages/recast-navigation-three/.storybook))
+
+### [Vite Recast Navigation Three.js Example](https://example.com/)
+
+An example of using `@recast-navigation/three` with Three.js in a Vite project.
+
+([source](./examples/vite-recast-navigation-three-example/))
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details
+
+## Development
+
+### Project Structure
+
+The repository is structured as a monorepo. You will find all packages inside `./packages`, examples in `./examples`, and deployed apps in `./apps`.
+
+### Prerequisites
+Before building, ensure you have the following installed:
+
+- Python 3
+- Emsdk v3.1.34
+
+### Building
+
+To build the project, run the following:
+
+```sh
+> yarn build
+```
+
+## Acknowledgements
+
+- This would not exist without [Recast Navigation](https://github.com/recastnavigation/recastnavigation) itself!
+- The [Babylon.js Recast Extension](https://github.com/BabylonJS/Extensions/tree/master/recastjs) was used as a reference for the WASM build and the three.js extension.
