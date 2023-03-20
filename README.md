@@ -4,6 +4,8 @@
 
 WASM + asm.js ports of [Recast Navigation](https://github.com/recastnavigation/recastnavigation), plus other goodies.
 
+> **Warning** This library is still in early development. Versions in the 0.x.x range may have breaking changes.
+
 ## Features
 
 - 🌐 ‎ Support for web and node environments
@@ -68,7 +70,7 @@ import { NavMesh, Crowd } from '@recast-navigation/three';
 
 ## Websites
 
-### [NavMesh Generator](<[https://navmesh.isaacmason.com/](https://navmesh.isaacmason.com)>)
+### [NavMesh Generator](https://navmesh.isaacmason.com/)
 
 A website for generating navmeshes for your game. Drag 'n' drop your GLTF, fine tune your settings, and download your navmesh!
 
