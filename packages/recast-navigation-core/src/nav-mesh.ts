@@ -1,7 +1,8 @@
 import R from '@recast-navigation/wasm';
 import { ObstacleRef } from './obstacle';
 import { Raw } from './raw';
-import { vector3, Vector3 } from './utils';
+import { NavPath, navPath, vec3, Vector3 } from './utils';
+import { DebugNavMesh } from './debug-nav-mesh';
 
 export type NavMeshConfig = {
   /**
@@ -80,44 +81,11 @@ export type NavMeshConfig = {
   detailSampleMaxError?: number;
 };
 
-export class DebugNavMesh {
-  raw: R.DebugNavMesh;
-
-  positions: number[];
-
-  indices: number[];
-
-  constructor(debugNavMesh: R.DebugNavMesh) {
-    this.raw = debugNavMesh;
-
-    let tri: number;
-    let pt: number;
-
-    const triangleCount = debugNavMesh.getTriangleCount();
-
-    const positions = [];
-    for (tri = 0; tri < triangleCount; tri++) {
-      for (pt = 0; pt < 3; pt++) {
-        const point = debugNavMesh.getTriangle(tri).getPoint(pt);
-        positions.push(point.x, point.y, point.z);
-      }
-    }
-
-    const indices = [];
-    for (tri = 0; tri < triangleCount * 3; tri++) {
-      indices.push(tri);
-    }
-
-    this.positions = positions;
-    this.indices = indices;
-  }
-}
-
 export class NavMesh {
-  navMesh: R.NavMesh;
+  raw: R.NavMesh;
 
   constructor() {
-    this.navMesh = new Raw.Recast.NavMesh();
+    this.raw = new Raw.Recast.NavMesh();
   }
 
   build(
@@ -143,7 +111,7 @@ export class NavMesh {
     rc.detailSampleDist = config.detailSampleDist ?? 6;
     rc.detailSampleMaxError = config.detailSampleMaxError ?? 1;
 
-    this.navMesh.build(
+    this.raw.build(
       positions,
       positions.length / 3,
       indices,
@@ -171,8 +139,8 @@ export class NavMesh {
     buf.dataPointer = dataHeap.byteOffset;
     buf.size = data.length;
 
-    this.navMesh = new Raw.Recast.NavMesh();
-    this.navMesh.buildFromNavMeshData(buf);
+    this.raw = new Raw.Recast.NavMesh();
+    this.raw.buildFromNavMeshData(buf);
 
     // Free memory
     Raw.Recast._free(dataHeap.byteOffset);
@@ -182,8 +150,8 @@ export class NavMesh {
    * Returns the navmesh data that can be used later. The navmesh must be built before retrieving the data
    * @returns data the Uint8Array that can be saved and reused
    */
-  getNavMeshData(): Uint8Array {
-    const navMeshData = this.navMesh.getNavMeshData();
+  navMeshData(): Uint8Array {
+    const navMeshData = this.raw.getNavMeshData();
     const arrView = new Uint8Array(
       Raw.Recast.HEAPU8.buffer,
       navMeshData.dataPointer,
@@ -191,63 +159,55 @@ export class NavMesh {
     );
     const ret = new Uint8Array(navMeshData.size);
     ret.set(arrView);
-    this.navMesh.freeNavMeshData(navMeshData);
+    this.raw.freeNavMeshData(navMeshData);
 
     return ret;
   }
 
-  getDebugNavMesh(): DebugNavMesh {
-    const rawDebugNavMesh = this.navMesh.getDebugNavMesh();
+  debugNavMesh(): DebugNavMesh {
+    const rawDebugNavMesh = this.raw.getDebugNavMesh();
     return new DebugNavMesh(rawDebugNavMesh);
   }
 
-  getClosestPoint(position: Vector3): Vector3 {
-    const positionRaw = vector3.toRaw(position);
-    const closestPoint = this.navMesh.getClosestPoint(positionRaw);
+  closestPoint(position: Vector3): Vector3 {
+    const positionRaw = vec3.toRaw(position);
+    const closestPoint = this.raw.getClosestPoint(positionRaw);
 
-    return vector3.fromRaw(closestPoint);
+    return vec3.fromRaw(closestPoint);
   }
 
-  getRandomPointAround(position: Vector3, radius: number): Vector3 {
-    const positionRaw = vector3.toRaw(position);
-    const randomPoint = this.navMesh.getRandomPointAround(positionRaw, radius);
+  randomPointAround(position: Vector3, radius: number): Vector3 {
+    const positionRaw = vec3.toRaw(position);
+    const randomPoint = this.raw.getRandomPointAround(positionRaw, radius);
 
-    return vector3.fromRaw(randomPoint);
+    return vec3.fromRaw(randomPoint);
   }
 
   moveAlong(position: Vector3, destination: Vector3): Vector3 {
-    const positionRaw = vector3.toRaw(position);
-    const destinationRaw = vector3.toRaw(destination);
-    const movedPosition = this.navMesh.moveAlong(positionRaw, destinationRaw);
+    const positionRaw = vec3.toRaw(position);
+    const destinationRaw = vec3.toRaw(destination);
+    const movedPosition = this.raw.moveAlong(positionRaw, destinationRaw);
 
     return { x: movedPosition.x, y: movedPosition.y, z: movedPosition.z };
   }
 
-  computePath(start: Vector3, end: Vector3): Vector3[] {
-    const startRaw = vector3.toRaw(start);
-    const endRaw = vector3.toRaw(end);
-    const pathRaw = this.navMesh.computePath(startRaw, endRaw);
-    const count = pathRaw.getPointCount();
+  computePath(start: Vector3, end: Vector3): NavPath {
+    const startRaw = vec3.toRaw(start);
+    const endRaw = vec3.toRaw(end);
+    const pathRaw = this.raw.computePath(startRaw, endRaw);
 
-    const path: Vector3[] = [];
+    return navPath.fromRaw(pathRaw);
+  }
 
-    for (let i = 0; i < count; i += 3) {
-      const point = pathRaw.getPoint(i);
-      path.push({ x: point.x, y: point.y, z: point.z });
-    }
+  defaultQueryExtent(): Vector3 {
+    const extentRaw = this.raw.getDefaultQueryExtent();
 
-    return path;
+    return { x: extentRaw.x, y: extentRaw.y, z: extentRaw.z };
   }
 
   setDefaultQueryExtent(extent: Vector3): void {
-    const extentRaw = vector3.toRaw(extent);
-    this.navMesh.setDefaultQueryExtent(extentRaw);
-  }
-
-  getDefaultQueryExtent(): Vector3 {
-    const extentRaw = this.navMesh.getDefaultQueryExtent();
-
-    return { x: extentRaw.x, y: extentRaw.y, z: extentRaw.z };
+    const extentRaw = vec3.toRaw(extent);
+    this.raw.setDefaultQueryExtent(extentRaw);
   }
 
   addCylinderObstacle(
@@ -255,8 +215,8 @@ export class NavMesh {
     radius: number,
     height: number
   ): ObstacleRef {
-    const positionRaw = vector3.toRaw(position);
-    const obstacleRef = this.navMesh.addCylinderObstacle(
+    const positionRaw = vec3.toRaw(position);
+    const obstacleRef = this.raw.addCylinderObstacle(
       positionRaw,
       radius,
       height
@@ -270,26 +230,22 @@ export class NavMesh {
     extent: Vector3,
     angle: number
   ): ObstacleRef {
-    const positionRaw = vector3.toRaw(position);
-    const extentRaw = vector3.toRaw(extent);
-    const obstacleRef = this.navMesh.addBoxObstacle(
-      positionRaw,
-      extentRaw,
-      angle
-    );
+    const positionRaw = vec3.toRaw(position);
+    const extentRaw = vec3.toRaw(extent);
+    const obstacleRef = this.raw.addBoxObstacle(positionRaw, extentRaw, angle);
 
     return obstacleRef;
   }
 
   removeObstacle(obstacleRef: ObstacleRef): void {
-    this.navMesh.removeObstacle(obstacleRef as R.dtObstacleRef);
+    this.raw.removeObstacle(obstacleRef as R.dtObstacleRef);
   }
 
   update(): void {
-    this.navMesh.update();
+    this.raw.update();
   }
 
   destroy(): void {
-    this.navMesh.destroy();
+    this.raw.destroy();
   }
 }

@@ -526,15 +526,6 @@ export class Recast {
   }
 
   /**
-   * Get the Bounding box extent result specified by setDefaultQueryExtent
-   * @param result output the box extent values
-   */
-  getDefaultQueryExtentToRef(result: Vector3): void {
-    const p = this.navMesh.getDefaultQueryExtent();
-    result.set(p.x, p.y, p.z);
-  }
-
-  /**
    * Creates a cylinder obstacle and add it to the navigation
    * @param position world position
    * @param radius cylinder radius

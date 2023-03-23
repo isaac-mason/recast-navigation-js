@@ -1317,7 +1317,7 @@ int Crowd::getAgentState(int idx)
     return agent->state;
 }
 
-bool Crowd::overOffmeshConnection(int idx)
+bool Crowd::overOffMeshConnection(int idx)
 {
     const dtCrowdAgent* agent = m_crowd->getAgent(idx);
     const float triggerRadius = agent->params.radius * 2.25f;

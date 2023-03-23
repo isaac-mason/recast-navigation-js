@@ -264,7 +264,7 @@ public:
     Vec3 getAgentVelocity(int idx);
     Vec3 getAgentNextTargetPath(int idx);
     int getAgentState(int idx);
-    bool overOffmeshConnection(int idx);
+    bool overOffMeshConnection(int idx);
     void agentGoto(int idx, const Vec3& destination);
     void agentTeleport(int idx, const Vec3& destination);
     dtCrowdAgentParams getAgentParameters(const int idx);
