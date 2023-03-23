@@ -2,14 +2,16 @@ import { Environment, OrbitControls, useGLTF } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { button, Leva, useControls } from 'leva';
 import { Suspense, useEffect, useState } from 'react';
+import { NavMesh } from 'recast-navigation';
+import { NavMeshDebug, threeToNavMeshArgs } from 'recast-navigation/three';
 import styled from 'styled-components';
-import { Color, DoubleSide, Group, Mesh, MeshBasicMaterial, MeshStandardMaterial } from 'three';
+import { DoubleSide, Group, Mesh, MeshStandardMaterial } from 'three';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 import dungeonGltfUrl from './assets/dungeon.gltf?url';
 import { DropZone } from './components/drop-zone';
 import { Loader } from './components/loader';
+import { RecastInit } from './components/recast-init';
 import { Viewer } from './components/viewer';
-import { useRecast } from './hooks/use-recast';
 import { useNavMeshConfig } from './hooks/use-nav-mesh-config';
 import { gltfLoader } from './utils/gltf-loader';
 import { readFile } from './utils/read-file';
@@ -56,8 +58,6 @@ const Error = styled.div`
 `;
 
 const App = () => {
-  const recast = useRecast();
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [scene, setScene] = useState<Group | null>(null);
@@ -100,6 +100,8 @@ const App = () => {
     setDebugNavMesh(null);
 
     try {
+      const navMesh = new NavMesh();
+
       const meshes: Mesh[] = [];
 
       scene.traverse((object) => {
@@ -108,18 +110,22 @@ const App = () => {
         }
       });
 
-      recast.buildNavMesh(meshes, navMeshConfig);
+      const navMeshArgs = threeToNavMeshArgs(meshes);
 
-      const debugNavMesh = recast.createDebugNavMesh();
-      debugNavMesh.material = new MeshStandardMaterial({
-        color: 'orange',
-        flatShading: true,
-        opacity: 0.5,
-        transparent: true,
-        side: DoubleSide,
+      navMesh.build(navMeshArgs.positions, navMeshArgs.indices, navMeshConfig);
+
+      const debug = new NavMeshDebug({
+        navMesh,
+        baseMeshMaterial: new MeshStandardMaterial({
+          color: 'orange',
+          flatShading: true,
+          opacity: 0.5,
+          transparent: true,
+          side: DoubleSide,
+        }),
       });
 
-      setDebugNavMesh(debugNavMesh);
+      setDebugNavMesh(debug.mesh);
     } catch (e) {
       setError(
         'Something went wrong generating the nav mesh - ' +
@@ -155,26 +161,18 @@ const App = () => {
 
   return (
     <>
-      <Suspense
-        fallback={
-          <Fullscreen>
-            <Loader />
-          </Fullscreen>
-        }
+      <Canvas
+        camera={{
+          position: [0, 0, 10],
+        }}
       >
-        <Canvas
-          camera={{
-            position: [0, 0, 10],
-          }}
-        >
-          {scene && <Viewer scene={scene} />}
-          {debugNavMesh && <primitive object={debugNavMesh} />}
+        {scene && <Viewer scene={scene} />}
+        {debugNavMesh && <primitive object={debugNavMesh} />}
 
-          <Environment preset="city" />
+        <Environment preset="city" />
 
-          <OrbitControls />
-        </Canvas>
-      </Suspense>
+        <OrbitControls />
+      </Canvas>
 
       {loading && (
         <Fullscreen>
@@ -207,4 +205,16 @@ const App = () => {
   );
 };
 
-export default App;
+export default () => (
+  <RecastInit>
+    <Suspense
+      fallback={
+        <Fullscreen>
+          <Loader />
+        </Fullscreen>
+      }
+    >
+      <App />
+    </Suspense>
+  </RecastInit>
+);

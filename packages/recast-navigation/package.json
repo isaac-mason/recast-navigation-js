@@ -9,14 +9,20 @@
   "bugs": {
     "url": "https://github.com/isaac-mason/recast-navigation-js/issues"
   },
-  "dependencies": {
-    "@recast-navigation/core": "0.0.0",
-    "@recast-navigation/three": "0.0.0"
-  },
   "main": "./index.js",
   "exports": {
     ".": "./index.js",
     "./three": "./three.js"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@recast-navigation/core": "0.0.0",
+    "@recast-navigation/three": "0.0.0"
+  },
+  "devDependencies": {
+    "vitest": "^0.29.7"
   },
   "packageManager": "yarn@3.2.2"
 }

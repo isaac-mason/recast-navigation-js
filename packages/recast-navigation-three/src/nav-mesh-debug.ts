@@ -30,6 +30,9 @@ export class NavMeshDebug {
       new MeshBasicMaterial({ color: 'red', side: DoubleSide });
 
     this.obstaclesGroup = new Group();
+
+    this.updateNavMesh();
+    this.updateNavMeshObstacles();
   }
 
   updateNavMesh() {

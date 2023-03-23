@@ -89,8 +89,8 @@ export class NavMesh {
   }
 
   build(
-    positions: number[],
-    indices: number[],
+    positions: ArrayLike<number>,
+    indices: ArrayLike<number>,
     config: NavMeshConfig = {}
   ): void {
     const rc = new Raw.Recast.rcConfig();
@@ -112,9 +112,9 @@ export class NavMesh {
     rc.detailSampleMaxError = config.detailSampleMaxError ?? 1;
 
     this.raw.build(
-      positions,
+      positions as number[],
       positions.length / 3,
-      indices,
+      indices as number[],
       indices.length,
       rc
     );

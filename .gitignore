@@ -9,3 +9,4 @@ node_modules
 .emsdk-cache
 build
 dist
+.vscode
