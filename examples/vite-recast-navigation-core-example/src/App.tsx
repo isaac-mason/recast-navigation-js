@@ -40,7 +40,7 @@ const App = () => {
         navMeshParameters
       );
 
-      console.log(navMesh.getClosestPoint(new Vector3(2, 1, 2)));
+      console.log(navMesh.getClosestPoint({ x: 2, y: 1, z: 2 }));
     });
   }, []);
 

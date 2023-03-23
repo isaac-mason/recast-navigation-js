@@ -33,6 +33,6 @@ const indices = groundMesh.geometry.index.array;
 
 navMesh.build(positions, indices, config);
 
-const closestPoint = navMesh.getClosestPoint({ x: 2, y: 1, z: 2 });
+const closestPoint = navMesh.closestPoint({ x: 2, y: 1, z: 2 });
 
 console.log(closestPoint.x, closestPoint.y, closestPoint.z);

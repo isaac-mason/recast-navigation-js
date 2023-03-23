@@ -150,7 +150,7 @@ export class NavMesh {
    * Returns the navmesh data that can be used later. The navmesh must be built before retrieving the data
    * @returns data the Uint8Array that can be saved and reused
    */
-  navMeshData(): Uint8Array {
+  getNavMeshData(): Uint8Array {
     const navMeshData = this.raw.getNavMeshData();
     const arrView = new Uint8Array(
       Raw.Recast.HEAPU8.buffer,
@@ -164,19 +164,19 @@ export class NavMesh {
     return ret;
   }
 
-  debugNavMesh(): DebugNavMesh {
+  getDebugNavMesh(): DebugNavMesh {
     const rawDebugNavMesh = this.raw.getDebugNavMesh();
     return new DebugNavMesh(rawDebugNavMesh);
   }
 
-  closestPoint(position: Vector3): Vector3 {
+  getClosestPoint(position: Vector3): Vector3 {
     const positionRaw = vec3.toRaw(position);
     const closestPoint = this.raw.getClosestPoint(positionRaw);
 
     return vec3.fromRaw(closestPoint);
   }
 
-  randomPointAround(position: Vector3, radius: number): Vector3 {
+  getRandomPointAround(position: Vector3, radius: number): Vector3 {
     const positionRaw = vec3.toRaw(position);
     const randomPoint = this.raw.getRandomPointAround(positionRaw, radius);
 
@@ -199,7 +199,7 @@ export class NavMesh {
     return navPath.fromRaw(pathRaw);
   }
 
-  defaultQueryExtent(): Vector3 {
+  getDefaultQueryExtent(): Vector3 {
     const extentRaw = this.raw.getDefaultQueryExtent();
 
     return { x: extentRaw.x, y: extentRaw.y, z: extentRaw.z };

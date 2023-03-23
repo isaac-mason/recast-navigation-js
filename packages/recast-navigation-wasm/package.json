@@ -9,9 +9,9 @@
   "bugs": {
     "url": "https://github.com/isaac-mason/recast-navigation-js/issues"
   },
-  "main": "./dist/recast.esm.wasm-compat.js",
-  "module": "./dist/recast.esm.wasm-compat.js",
-  "types": "./dist/recast.d.ts",
+  "main": "./dist/recast-navigation.esm.wasm-compat.js",
+  "module": "./dist/recast-navigation.esm.wasm-compat.js",
+  "types": "./dist/recast-navigation.d.ts",
   "scripts": {
     "build": "sh build.sh"
   },

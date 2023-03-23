@@ -33,7 +33,7 @@ export class NavMeshDebug {
   }
 
   updateNavMesh() {
-    const debugNavMesh = this.navMesh.debugNavMesh();
+    const debugNavMesh = this.navMesh.getDebugNavMesh();
 
     const geometry = new BufferGeometry();
 

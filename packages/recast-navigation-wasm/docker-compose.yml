@@ -8,4 +8,4 @@ services:
     volumes:
       - ./build:/workspace/build
       - /emsdk/upstream/emscripten/cache
-    command: yarn build
+    command: sh build.sh

@@ -13,13 +13,12 @@ emcmake cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 
 # generate typescript definitions
-yarn run webidl-dts-gen -e -d -i recast.idl -o ./dist/recast.d.ts -n Recast
+yarn run webidl-dts-gen -e -d -i recast-navigation.idl -o ./dist/recast-navigation.d.ts -n Recast
 
 # copy files to dist
-cp ./build/recast.js ./dist/recast.js
+cp ./build/recast-navigation.js ./dist/recast-navigation.js
 
-cp ./build/recast.wasm.js ./dist/recast.wasm.js
-cp ./build/recast.wasm.wasm ./dist/recast.wasm.wasm
+cp ./build/recast-navigation.wasm.js ./dist/recast-navigation.wasm.js
+cp ./build/recast-navigation.wasm.wasm ./dist/recast-navigation.wasm.wasm
 
-cp ./build/recast.cjs.wasm-compat.js ./dist/recast.cjs.wasm-compat.js
-cp ./build/recast.esm.wasm-compat.js ./dist/recast.esm.wasm-compat.js
+cp ./build/recast-navigation.esm.wasm-compat.js ./dist/recast-navigation.esm.wasm-compat.js

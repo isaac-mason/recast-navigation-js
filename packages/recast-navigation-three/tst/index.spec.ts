@@ -1,6 +1,6 @@
 import { describe, it, expect } from '@jest/globals';
 
-describe('core', () => {
+describe('@recast-navigation/three', () => {
   it('passes', () => {
     expect(true).toEqual(true);
   });

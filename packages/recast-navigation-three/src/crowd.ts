@@ -10,6 +10,9 @@ export type CrowdParams = {
   maxAgentRadius: number;
 };
 
+/**
+ * todo - finish implementation
+ */
 export class Crowd {
   /**
    * If delta time in navigation tick update is greater than the time step
@@ -96,7 +99,7 @@ export class Crowd {
 
     // update transforms
     this.crowd.agents.forEach((agent, index) => {
-      const agentPosition = agent.position();
+      const agentPosition = agent.getPosition();
       this.transforms[index].position.copy(agentPosition as Vector3);
 
       // check agent reach destination

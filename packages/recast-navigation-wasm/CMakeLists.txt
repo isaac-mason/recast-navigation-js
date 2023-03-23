@@ -7,8 +7,8 @@ set(EMSCRIPTEN_ROOT $ENV{EMSDK}/upstream/emscripten CACHE STRING "Emscripten pat
 set(CMAKE_TOOLCHAIN_FILE ${EMSCRIPTEN_ROOT}/cmake/Modules/Platform/Emscripten.cmake)
 set(WEBIDL_BINDER_SCRIPT ${EMSCRIPTEN_ROOT}/tools/webidl_binder.py)
 set(RECAST_FRONT_MATTER_FILE ${CMAKE_CURRENT_SOURCE_DIR}/front-matter.js)
-set(RECAST_IDL_FILE ${CMAKE_CURRENT_SOURCE_DIR}/recast.idl)
-set(RECAST_HEADER_FILE ${CMAKE_CURRENT_SOURCE_DIR}/src/recastjs.h)
+set(RECAST_IDL_FILE ${CMAKE_CURRENT_SOURCE_DIR}/recast-navigation.idl)
+set(RECAST_HEADER_FILE ${CMAKE_CURRENT_SOURCE_DIR}/src/recast-navigation.h)
 set(RECASTAPI_HEADER_FILE ${CMAKE_CURRENT_SOURCE_DIR}/recastnavigation/Recast/Include/Recast.h)
 set(NAVMESHQUERY_HEADER_FILE ${CMAKE_CURRENT_SOURCE_DIR}/recastnavigation/Detour/Include/DetourNavMeshQuery.h)
 set(RECAST_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/)
@@ -62,7 +62,7 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/recastnavigation/RecastDemo/Include
 )
 
-SET(EXE_NAME "recast")
+SET(EXE_NAME "recast-navigation")
 
 ADD_LIBRARY(${EXE_NAME} ${SRC_FILES} ${RECASTDETOUR_FILES})
 

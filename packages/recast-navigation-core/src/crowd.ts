@@ -33,19 +33,19 @@ export class CrowdAgent {
     this.agentIndex = agentIndex;
   }
 
-  position(): Vector3 {
+  getPosition(): Vector3 {
     return vec3.fromRaw(this.crowd.raw.getAgentPosition(this.agentIndex));
   }
 
-  velocity(): Vector3 {
+  getVelocity(): Vector3 {
     return vec3.fromRaw(this.crowd.raw.getAgentVelocity(this.agentIndex));
   }
 
-  nextTargetPath(): Vector3 {
+  getNextTargetPath(): Vector3 {
     return vec3.fromRaw(this.crowd.raw.getAgentNextTargetPath(this.agentIndex));
   }
 
-  state(): number {
+  getState(): number {
     return this.crowd.raw.getAgentState(this.agentIndex);
   }
 
@@ -57,13 +57,13 @@ export class CrowdAgent {
     this.crowd.raw.agentTeleport(this.agentIndex, vec3.toRaw(position));
   }
 
-  corners(): NavPath {
+  getCorners(): NavPath {
     const corners = this.crowd.raw.getCorners(this.agentIndex);
 
     return navPath.fromRaw(corners);
   }
 
-  parameters(): CrowdAgentParams {
+  getParameters(): CrowdAgentParams {
     const params = this.crowd.raw.getAgentParameters(this.agentIndex);
 
     return {
@@ -112,7 +112,7 @@ export class Crowd {
     this.raw = new R.Crowd(maxAgents, maxAgentRadius, navMesh.raw);
   }
 
-  agent(index: number): CrowdAgent {
+  getAgent(index: number): CrowdAgent {
     let agent = this.agents.get(index);
 
     if (!agent) {
@@ -140,7 +140,7 @@ export class Crowd {
 
     const agentId = this.raw.addAgent(vec3.toRaw(position), dtCrowdAgentParams);
 
-    const agent = this.agent(agentId);
+    const agent = this.getAgent(agentId);
     this.agents.set(agentId, agent);
 
     return agent;
@@ -154,16 +154,16 @@ export class Crowd {
     this.raw.removeAgent(index);
   }
 
-  update(dt: number) {
-    this.raw.update(dt);
-  }
-
-  defaultQueryExtent(): Vector3 {
+  getDefaultQueryExtent(): Vector3 {
     return vec3.fromRaw(this.raw.getDefaultQueryExtent());
   }
 
   setDefaultQueryExtent(extent: Vector3): void {
     this.raw.setDefaultQueryExtent(vec3.toRaw(extent));
+  }
+
+  update(dt: number) {
+    this.raw.update(dt);
   }
 
   destroy() {
