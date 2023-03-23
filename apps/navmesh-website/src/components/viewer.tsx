@@ -1,29 +1,34 @@
 import { useThree } from '@react-three/fiber';
-import { useEffect, useMemo } from 'react';
-import { Box3, Group, PerspectiveCamera, Vector3 } from 'three';
+import { useEffect } from 'react';
+import { Box3, Group, Mesh, PerspectiveCamera, Vector3 } from 'three';
 
 export type ViewerProps = {
-  scene: Group;
+  group: Group;
 };
 
-export const Viewer = ({ scene }: ViewerProps) => {
+export const Viewer = ({ group }: ViewerProps) => {
+  const scene = useThree((state) => state.scene);
   const camera = useThree((state) => state.camera as PerspectiveCamera);
 
-  const initialCameraPosition = useMemo(() => {
+  useEffect(() => {
     const box = new Box3();
-    box.expandByObject(scene);
+
+    scene.traverse((obj) => {
+      if (obj instanceof Mesh) {
+        box.expandByObject(obj);
+      }
+    });
+
     const center = box.getCenter(new Vector3());
 
-    return [center.x, box.max.y * 1.5, center.z] as const;
-  }, [scene]);
+    const initial = [center.x * 3, box.max.y * 2, center.z * 3] as const;
 
-  useEffect(() => {
-    camera.position.set(...initialCameraPosition);
-  }, []);
+    camera.position.set(...initial);
+  }, [group, scene]);
 
   return (
     <>
-      <primitive object={scene} />
+      <primitive object={group} />
     </>
   );
 };

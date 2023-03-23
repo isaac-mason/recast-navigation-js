@@ -57,10 +57,16 @@ const Error = styled.div`
   font-weight: 400;
 `;
 
+const FullscreenLoader = () => (
+  <Fullscreen>
+    <Loader />
+  </Fullscreen>
+);
+
 const App = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [scene, setScene] = useState<Group | null>(null);
+  const [gltf, setGtlf] = useState<Group | null>(null);
   const [debugNavMesh, setDebugNavMesh] = useState<Mesh | null>(null);
 
   const exampleGltf = useGLTF(dungeonGltfUrl);
@@ -82,7 +88,7 @@ const App = () => {
         gltfLoader.parse(buffer, '', resolve, reject)
       );
 
-      setScene(scene);
+      setGtlf(scene);
     } catch (e) {
       setError(
         'Something went wrong! Please ensure the file is a valid GLTF / GLB.'
@@ -93,7 +99,7 @@ const App = () => {
   };
 
   const generateNavMesh = async () => {
-    if (!scene) return;
+    if (!gltf) return;
 
     setError(null);
     setLoading(true);
@@ -104,7 +110,7 @@ const App = () => {
 
       const meshes: Mesh[] = [];
 
-      scene.traverse((object) => {
+      gltf.traverse((object) => {
         if (object instanceof Mesh) {
           meshes.push(object);
         }
@@ -138,25 +144,17 @@ const App = () => {
 
   useEffect(() => {
     generateNavMesh();
-  }, [scene]);
+  }, [gltf]);
 
   useControls(
     'Actions',
     {
-      Generate: button(
-        () => {
-          generateNavMesh();
-        },
-        { disabled: loading }
-      ),
-      'Export as GLTF': button(
-        () => {
-          console.log('exporting!');
-        },
-        { disabled: loading }
-      ),
+      'Generate Nav Mesh': button(() => generateNavMesh(), { disabled: loading }),
+      'Export as GLTF': button(() => console.log('exporting!'), {
+        disabled: loading,
+      }),
     },
-    [navMeshConfig, scene, loading]
+    [navMeshConfig, gltf, loading]
   );
 
   return (
@@ -166,7 +164,7 @@ const App = () => {
           position: [0, 0, 10],
         }}
       >
-        {scene && <Viewer scene={scene} />}
+        {gltf && <Viewer group={gltf} />}
         {debugNavMesh && <primitive object={debugNavMesh} />}
 
         <Environment preset="city" />
@@ -174,18 +172,14 @@ const App = () => {
         <OrbitControls />
       </Canvas>
 
-      {loading && (
-        <Fullscreen>
-          <Loader />
-        </Fullscreen>
-      )}
+      {loading && <FullscreenLoader />}
 
-      {!scene && !loading && (
+      {!gltf && !loading && (
         <Fullscreen>
           <DropZone
             onDrop={onDrop}
             selectExample={() => {
-              setScene(exampleGltf.scene);
+              setGtlf(exampleGltf.scene);
             }}
           />
         </Fullscreen>
@@ -194,7 +188,7 @@ const App = () => {
       {error && <Error>{error}</Error>}
 
       <Leva
-        hidden={!scene}
+        hidden={!gltf}
         theme={{
           sizes: {
             controlWidth: '60px',
@@ -207,14 +201,10 @@ const App = () => {
 
 export default () => (
   <RecastInit>
-    <Suspense
-      fallback={
-        <Fullscreen>
-          <Loader />
-        </Fullscreen>
-      }
-    >
+    <Suspense fallback={<FullscreenLoader />}>
       <App />
     </Suspense>
   </RecastInit>
 );
+
+useGLTF.preload(dungeonGltfUrl);

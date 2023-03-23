@@ -1,6 +1,7 @@
 import { useControls } from 'leva';
+import { NavMeshConfig } from 'recast-navigation';
 
-export const useNavMeshConfig = () =>
+export const useNavMeshConfig = (): NavMeshConfig =>
   useControls('Config', {
     borderSize: {
       value: 0,
