@@ -1,4 +1,4 @@
-import { init, NavMesh } from 'recast-navigation';
+import { init, NavMesh } from '@recast-navigation/core';
 import { BoxGeometry, BufferAttribute, Mesh } from 'three';
 import { beforeAll, beforeEach, describe, test } from 'vitest';
 

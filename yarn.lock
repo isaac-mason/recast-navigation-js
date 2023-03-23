@@ -3139,6 +3139,7 @@ __metadata:
     rollup-plugin-copy: ^3.4.0
     rollup-plugin-filesize: ^10.0.0
     typescript: ^4.5.4
+    vitest: ^0.29.7
   languageName: unknown
   linkType: soft
 
@@ -3202,6 +3203,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@rollup/plugin-multi-entry@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "@rollup/plugin-multi-entry@npm:6.0.0"
+  dependencies:
+    "@rollup/plugin-virtual": ^3.0.0
+    matched: ^5.0.1
+  peerDependencies:
+    rollup: ^1.20.0||^2.0.0||^3.0.0
+  peerDependenciesMeta:
+    rollup:
+      optional: true
+  checksum: e95fa7728d4b9d6dc7cc77e52eadc79acb376a5fe0a38e595ddecce81f936fa8e025d58e0b22f74d2ec50944ad4188e54fa0934662560adb793327e668bd26af
+  languageName: node
+  linkType: hard
+
 "@rollup/plugin-node-resolve@npm:^15.0.1":
   version: 15.0.1
   resolution: "@rollup/plugin-node-resolve@npm:15.0.1"
@@ -3253,6 +3269,18 @@ __metadata:
     tslib:
       optional: true
   checksum: b0d34ff0ad6bfc681c437ef42df7b02f04c361465be5a2044cd30cac5b003045c54e4377d58ab91925e296076b792bbb5ddded72cacdd21092bc8694a95b046f
+  languageName: node
+  linkType: hard
+
+"@rollup/plugin-virtual@npm:^3.0.0":
+  version: 3.0.1
+  resolution: "@rollup/plugin-virtual@npm:3.0.1"
+  peerDependencies:
+    rollup: ^1.20.0||^2.0.0||^3.0.0
+  peerDependenciesMeta:
+    rollup:
+      optional: true
+  checksum: 93800884956299b071383e1a051323ed38acfffdb64bbd6f3b909a052e506e236eb9022e43b3a039425aa45a33367c9fd50f85a3a867a1259a9862086143bd42
   languageName: node
   linkType: hard
 
@@ -12472,6 +12500,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"matched@npm:^5.0.1":
+  version: 5.0.1
+  resolution: "matched@npm:5.0.1"
+  dependencies:
+    glob: ^7.1.6
+    picomatch: ^2.2.1
+  checksum: 65f8b3f0309f20809de35aa0b5c2da1ee84cd8e670c39ad3a78c4feab2aa3ebd9065e09d51e97b5ad4ceca9d7b0576f6a01d53112b40d40b455eb31a7ab0b156
+  languageName: node
+  linkType: hard
+
 "md5.js@npm:^1.3.4":
   version: 1.3.5
   resolution: "md5.js@npm:1.3.5"
@@ -13158,6 +13196,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"node-cjs-recast-navigation-example@workspace:examples/node-cjs-recast-navigation-example":
+  version: 0.0.0-use.local
+  resolution: "node-cjs-recast-navigation-example@workspace:examples/node-cjs-recast-navigation-example"
+  dependencies:
+    "@types/three": ^0.149.0
+    recast-navigation: 0.0.0
+    three: ^0.150.1
+  languageName: unknown
+  linkType: soft
+
 "node-dir@npm:^0.1.10":
   version: 0.1.17
   resolution: "node-dir@npm:0.1.17"
@@ -13166,6 +13214,16 @@ __metadata:
   checksum: 29de9560e52cdac8d3f794d38d782f6799e13d4d11aaf96d3da8c28458e1c5e33bb5f8edfb42dc34172ec5516c50c5b8850c9e1526542616757a969267263328
   languageName: node
   linkType: hard
+
+"node-esm-recast-navigation-example@workspace:examples/node-esm-recast-navigation-example":
+  version: 0.0.0-use.local
+  resolution: "node-esm-recast-navigation-example@workspace:examples/node-esm-recast-navigation-example"
+  dependencies:
+    "@types/three": ^0.149.0
+    recast-navigation: 0.0.0
+    three: ^0.150.1
+  languageName: unknown
+  linkType: soft
 
 "node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.7":
   version: 2.6.7
@@ -13258,16 +13316,6 @@ __metadata:
   checksum: 41fa7927378edc0cb98a8cc784d3f4a47e43378d3b42ec57a23f81125baa7287c4b54d6d26d062072226160a3ce4d8b7a62e873d2fb637aceaddf71f5a26eca0
   languageName: node
   linkType: hard
-
-"node-recast-navigation-example@workspace:examples/node-recast-navigation-example":
-  version: 0.0.0-use.local
-  resolution: "node-recast-navigation-example@workspace:examples/node-recast-navigation-example"
-  dependencies:
-    "@types/three": ^0.149.0
-    recast-navigation: 0.0.0
-    three: ^0.150.1
-  languageName: unknown
-  linkType: soft
 
 "node-releases@npm:^2.0.6":
   version: 2.0.6
@@ -15085,6 +15133,11 @@ __metadata:
     "@mdx-js/react": ^1.6.22
     "@recast-navigation/core": 0.0.0
     "@recast-navigation/three": 0.0.0
+    "@rollup/plugin-commonjs": ^24.0.1
+    "@rollup/plugin-multi-entry": ^6.0.0
+    "@rollup/plugin-node-resolve": ^15.0.1
+    "@rollup/plugin-terser": ^0.4.0
+    "@rollup/plugin-typescript": ^11.0.0
     "@storybook/addon-actions": ^6.5.9
     "@storybook/addon-docs": ^6.5.9
     "@storybook/addon-essentials": ^6.5.9
@@ -15096,7 +15149,9 @@ __metadata:
     "@storybook/testing-library": ^0.0.13
     babel-loader: ^8.2.5
     eslint-plugin-storybook: ^0.5.1
-    vitest: ^0.29.7
+    rollup: ^3.20.0
+    rollup-plugin-copy: ^3.4.0
+    rollup-plugin-filesize: ^10.0.0
   languageName: unknown
   linkType: soft
 

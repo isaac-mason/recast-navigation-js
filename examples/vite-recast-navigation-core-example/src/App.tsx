@@ -2,7 +2,7 @@ import { Environment, OrbitControls } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { useEffect } from 'react';
 import { init, NavMesh } from 'recast-navigation';
-import { BoxGeometry, BufferAttribute, Mesh, Vector3 } from 'three';
+import { BoxGeometry, BufferAttribute, Mesh } from 'three';
 
 const App = () => {
   useEffect(() => {
@@ -31,8 +31,6 @@ const App = () => {
         groundMesh.geometry.getAttribute('position') as BufferAttribute
       ).array;
       const indices = groundMesh.geometry.getIndex()!.array;
-
-      console.log(positions);
 
       navMesh.build(
         positions as number[],

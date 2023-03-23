@@ -1,15 +1,26 @@
 {
   "name": "@recast-navigation/core",
   "description": "Recast Navigation for JavaScript!",
-  "author": "Isaac Mason <isaac@isaacmason.com>",
+  "author": {
+    "name": "Isaac Mason",
+    "email": "isaac@isaacmason.com",
+    "url": "https://isaacmason.com"
+  },
   "version": "0.0.0",
   "license": "MIT",
-  "type": "module",
   "packageManager": "yarn@3.2.1",
   "homepage": "https://github.com/isaac-mason/recast-navigation-js",
   "bugs": {
     "url": "https://github.com/isaac-mason/recast-navigation-js/issues"
   },
+  "type": "module",
+  "main": "./dist/index.es.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "rollup --config rollup.config.js --bundleConfigAsCjs",
     "test": "vitest run"
@@ -41,18 +52,7 @@
     "rollup": "^3.20.0",
     "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-filesize": "^10.0.0",
-    "typescript": "^4.5.4"
-  },
-  "files": [
-    "dist"
-  ],
-  "main": "./dist/index.cjs.js",
-  "module": "./dist/index.es.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/index.es.js",
-      "require": "./dist/index.cjs.js"
-    }
+    "typescript": "^4.5.4",
+    "vitest": "^0.29.7"
   }
 }

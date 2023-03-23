@@ -1,5 +1,5 @@
 {
-  "name": "node-recast-navigation-example",
+  "name": "node-esm-recast-navigation-example",
   "private": true,
   "type": "module",
   "version": "1.0.0",

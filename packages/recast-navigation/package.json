@@ -1,18 +1,27 @@
 {
   "name": "recast-navigation",
   "description": "A WASM port of recast-navigation",
-  "author": "Isaac Mason <isaac@isaacmason.com>",
+  "author": {
+    "name": "Isaac Mason",
+    "email": "isaac@isaacmason.com",
+    "url": "https://isaacmason.com"
+  },
   "version": "0.0.0",
   "license": "MIT",
-  "type": "module",
   "homepage": "https://github.com/isaac-mason/recast-navigation-js",
   "bugs": {
     "url": "https://github.com/isaac-mason/recast-navigation-js/issues"
   },
+  "type": "module",
   "main": "./index.js",
+  "types": "./index.d.ts",
   "exports": {
-    ".": "./index.js",
-    "./three": "./three.js"
+    ".": {
+      "import": "./index.js"
+    },
+    "./three": {
+      "import": "./three.js"
+    }
   },
   "files": [
     "index.js",
@@ -23,7 +32,7 @@
     "README.md"
   ],
   "scripts": {
-    "test": "vitest run",
+    "build": "rollup --config rollup.config.js --bundleConfigAsCjs",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
   },
@@ -45,7 +54,14 @@
     "eslint-plugin-storybook": "^0.5.1"
   },
   "devDependencies": {
-    "vitest": "^0.29.7"
+    "@rollup/plugin-commonjs": "^24.0.1",
+    "@rollup/plugin-multi-entry": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@rollup/plugin-terser": "^0.4.0",
+    "@rollup/plugin-typescript": "^11.0.0",
+    "rollup": "^3.20.0",
+    "rollup-plugin-copy": "^3.4.0",
+    "rollup-plugin-filesize": "^10.0.0"
   },
   "packageManager": "yarn@3.2.2"
 }

@@ -1,7 +1,10 @@
 import { init, NavMesh } from 'recast-navigation';
+import * as RecastThree from 'recast-navigation/three';
 import { BoxGeometry, Mesh } from 'three';
 
 await init();
+
+console.log(RecastThree)
 
 const navMesh = new NavMesh();
 
@@ -33,6 +36,6 @@ const indices = groundMesh.geometry.index.array;
 
 navMesh.build(positions, indices, config);
 
-const closestPoint = navMesh.closestPoint({ x: 2, y: 1, z: 2 });
+const closestPoint = navMesh.getClosestPoint({ x: 2, y: 1, z: 2 });
 
 console.log(closestPoint.x, closestPoint.y, closestPoint.z);
