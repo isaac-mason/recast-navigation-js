@@ -21,6 +21,8 @@ Functionality is spread across packages in the `@recast-navigation/*` organizati
 
 You can choose between picking the scoped packages you need, or using the umbrella `recast-navigation` package, which provides additional entrypoints for specific frameworks and libraries.
 
+All packages ship as ECMAScript modules, and are compatible with Node.js and the browser. An example of using the esm package in a commonjs project can be found in [`./examples/node-cjs-recast-navigation-example`](./examples/node-cjs-recast-navigation-example/)
+
 ### [**`recast-navigation`**](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation)
 
 [![Version](https://img.shields.io/npm/v/recast-navigation)](https://www.npmjs.com/package/recast-navigation)
