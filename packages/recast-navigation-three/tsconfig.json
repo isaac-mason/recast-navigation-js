@@ -10,13 +10,16 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "esModuleInterop": true,
-    "noEmit": true,
+    "noEmit": false,
+    "declaration": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "skipLibCheck": true,
     "baseUrl": "./",
-    "allowSyntheticDefaultImports": true
+    "rootDir": "./src",
+    "allowSyntheticDefaultImports": true,
+    "outDir": "./dist"
   },
-  "include": ["src"]
+  "files": ["./src/index.ts"]
 }
