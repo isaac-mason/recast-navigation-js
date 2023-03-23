@@ -3146,26 +3146,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@recast-navigation/three@workspace:packages/recast-navigation-three"
   dependencies:
-    "@babel/core": ^7.18.6
-    "@mdx-js/react": ^1.6.22
     "@recast-navigation/core": 0.0.0
     "@rollup/plugin-commonjs": ^24.0.1
     "@rollup/plugin-node-resolve": ^15.0.1
     "@rollup/plugin-terser": ^0.4.0
     "@rollup/plugin-typescript": ^11.0.0
-    "@storybook/addon-actions": ^6.5.9
-    "@storybook/addon-docs": ^6.5.9
-    "@storybook/addon-essentials": ^6.5.9
-    "@storybook/addon-interactions": ^6.5.9
-    "@storybook/addon-links": ^6.5.9
-    "@storybook/builder-vite": ^0.1.38
-    "@storybook/client-api": ^6.5.9
-    "@storybook/html": ^6.5.9
-    "@storybook/testing-library": ^0.0.13
     "@types/three": ^0.149.0
     "@typescript-eslint/eslint-plugin": ^5.7.0
     "@typescript-eslint/parser": ^5.7.0
-    babel-loader: ^8.2.5
     eslint: ^8.5.0
     eslint-config-airbnb: ^18.2.1
     eslint-config-airbnb-base: ^14.2.1
@@ -3175,7 +3163,6 @@ __metadata:
     eslint-plugin-import: ^2.24.2
     eslint-plugin-prettier: ^4.0.0
     eslint-plugin-simple-import-sort: ^7.0.0
-    eslint-plugin-storybook: ^0.5.1
     eslint-plugin-typescript-enum: ^2.1.0
     prettier: ^2.3.2
     rollup: ^3.20.0
@@ -15094,8 +15081,21 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "recast-navigation@workspace:packages/recast-navigation"
   dependencies:
+    "@babel/core": ^7.18.6
+    "@mdx-js/react": ^1.6.22
     "@recast-navigation/core": 0.0.0
     "@recast-navigation/three": 0.0.0
+    "@storybook/addon-actions": ^6.5.9
+    "@storybook/addon-docs": ^6.5.9
+    "@storybook/addon-essentials": ^6.5.9
+    "@storybook/addon-interactions": ^6.5.9
+    "@storybook/addon-links": ^6.5.9
+    "@storybook/builder-vite": ^0.1.38
+    "@storybook/client-api": ^6.5.9
+    "@storybook/html": ^6.5.9
+    "@storybook/testing-library": ^0.0.13
+    babel-loader: ^8.2.5
+    eslint-plugin-storybook: ^0.5.1
     vitest: ^0.29.7
   languageName: unknown
   linkType: soft

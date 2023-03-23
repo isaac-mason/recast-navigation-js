@@ -14,12 +14,35 @@
     ".": "./index.js",
     "./three": "./three.js"
   },
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "three.js",
+    "three.d.ts",
+    "LICENSE",
+    "README.md"
+  ],
   "scripts": {
-    "test": "vitest run"
+    "test": "vitest run",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "dependencies": {
+    "@babel/core": "^7.18.6",
+    "@mdx-js/react": "^1.6.22",
     "@recast-navigation/core": "0.0.0",
-    "@recast-navigation/three": "0.0.0"
+    "@recast-navigation/three": "0.0.0",
+    "@storybook/addon-actions": "^6.5.9",
+    "@storybook/addon-docs": "^6.5.9",
+    "@storybook/addon-essentials": "^6.5.9",
+    "@storybook/addon-interactions": "^6.5.9",
+    "@storybook/addon-links": "^6.5.9",
+    "@storybook/builder-vite": "^0.1.38",
+    "@storybook/client-api": "^6.5.9",
+    "@storybook/html": "^6.5.9",
+    "@storybook/testing-library": "^0.0.13",
+    "babel-loader": "^8.2.5",
+    "eslint-plugin-storybook": "^0.5.1"
   },
   "devDependencies": {
     "vitest": "^0.29.7"

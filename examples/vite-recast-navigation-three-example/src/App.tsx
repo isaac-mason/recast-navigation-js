@@ -1,9 +1,12 @@
 import { Environment, OrbitControls } from '@react-three/drei';
 import { Canvas, useThree } from '@react-three/fiber';
 import { useEffect, useRef } from 'react';
-import { Recast, NavMeshParameters } from 'recast-navigation/three';
+import { NavMeshDebug, threeToNavMeshArgs } from 'recast-navigation/three';
+import { NavMesh, init, NavMeshConfig } from 'recast-navigation'
 import { Color, Group, Mesh, MeshBasicMaterial, Vector2, Vector3 } from 'three';
 import { Line2, LineGeometry, LineMaterial } from 'three-stdlib';
+
+await init()
 
 const App = () => {
   const scene = useThree((state) => state.scene);
@@ -11,72 +14,69 @@ const App = () => {
   const groupRef = useRef<Group>(null!);
 
   useEffect(() => {
-    const recast = new Recast();
+    const navMeshConfig: NavMeshConfig = {
+      cs: 0.2,
+      ch: 0.2,
+      walkableSlopeAngle: 35,
+      walkableHeight: 1,
+      walkableClimb: 1,
+      walkableRadius: 1,
+      maxEdgeLen: 12,
+      maxSimplificationError: 1.3,
+      minRegionArea: 8,
+      mergeRegionArea: 20,
+      maxVertsPerPoly: 6,
+      detailSampleDist: 6,
+      detailSampleMaxError: 1,
+    };
 
-    recast.init().then(() => {
-      const navMeshParameters: NavMeshParameters = {
-        cs: 0.2,
-        ch: 0.2,
-        walkableSlopeAngle: 35,
-        walkableHeight: 1,
-        walkableClimb: 1,
-        walkableRadius: 1,
-        maxEdgeLen: 12,
-        maxSimplificationError: 1.3,
-        minRegionArea: 8,
-        mergeRegionArea: 20,
-        maxVertsPerPoly: 6,
-        detailSampleDist: 6,
-        detailSampleMaxError: 1,
-      };
+    const meshes: Mesh[] = [];
 
-      const meshes: Mesh[] = [];
-
-      groupRef.current.traverse((obj) => {
-        if (obj instanceof Mesh) {
-          meshes.push(obj);
-        }
-      });
-
-      recast.buildNavMesh(meshes, navMeshParameters);
-
-      const debugNavMesh = recast.createDebugNavMesh();
-
-      debugNavMesh.material = new MeshBasicMaterial({
-        color: 'red',
-        wireframe: true,
-      });
-
-      scene.add(debugNavMesh);
-
-      const path = recast.computePath(
-        recast.getClosestPoint(new Vector3(2, 1, 2)),
-        recast.getClosestPoint(new Vector3(-2, 1, -2))
-      );
-      console.log(path);
-
-      const lineGeometry = new LineGeometry();
-      lineGeometry.setPositions(path.flatMap((p) => [p.x, p.y, p.z]));
-      lineGeometry.setColors(
-        path.flatMap((_, idx) => {
-          const color = new Color();
-          color.setHSL(idx / path.length, 1, 0.5);
-          return [color.r, color.g, color.b];
-        })
-      );
-
-      const line = new Line2(
-        lineGeometry,
-        new LineMaterial({
-          linewidth: 5, // in pixels
-          vertexColors: true,
-          resolution: new Vector2(window.innerWidth, window.innerHeight),
-          dashed: true,
-        })
-      );
-
-      scene.add(line);
+    groupRef.current.traverse((obj) => {
+      if (obj instanceof Mesh) {
+        meshes.push(obj);
+      }
     });
+
+    const navMeshArgs = threeToNavMeshArgs(meshes)
+
+    const navMesh = new NavMesh()
+    navMesh.build(navMeshArgs.positions, navMeshArgs.indices, navMeshConfig);
+
+    const debug = new NavMeshDebug({ navMesh, baseMeshMaterial: new MeshBasicMaterial({
+      color: 'red',
+      wireframe: true,
+    }) })
+
+    scene.add(debug.mesh);
+
+    const path = navMesh.computePath(
+      navMesh.getClosestPoint(new Vector3(2, 1, 2)),
+      navMesh.getClosestPoint(new Vector3(-2, 1, -2))
+    );
+    console.log(path);
+
+    const lineGeometry = new LineGeometry();
+    lineGeometry.setPositions(path.flatMap((p) => [p.x, p.y, p.z]));
+    lineGeometry.setColors(
+      path.flatMap((_, idx) => {
+        const color = new Color();
+        color.setHSL(idx / path.length, 1, 0.5);
+        return [color.r, color.g, color.b];
+      })
+    );
+
+    const line = new Line2(
+      lineGeometry,
+      new LineMaterial({
+        linewidth: 5, // in pixels
+        vertexColors: true,
+        resolution: new Vector2(window.innerWidth, window.innerHeight),
+        dashed: true,
+      })
+    );
+
+    scene.add(line);
   }, []);
 
   return (
