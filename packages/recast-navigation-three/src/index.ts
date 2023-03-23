@@ -1,4 +1,4 @@
-import R from '@recast-navigation/core';
+import R from '@recast-navigation/wasm';
 import {
   BufferAttribute,
   BufferGeometry,
@@ -148,9 +148,9 @@ export type AgentParameters = {
 };
 
 /**
- * Recast NavMesh wrapper
+ * Recast wrapper
  */
-export class NavMesh {
+export class Recast {
   /**
    * Reference to the NavMesh library
    */
@@ -260,7 +260,7 @@ export class NavMesh {
    * @param meshes array of all the geometry used to compute the navigation mesh
    * @param parameters bunch of parameters used to filter geometry
    */
-  build(meshes: Array<Mesh>, parameters: NavMeshParameters): void {
+  buildNavMesh(meshes: Array<Mesh>, parameters: NavMeshParameters): void {
     const navMesh = new this.recast.NavMesh();
 
     this.navMesh = navMesh;
@@ -457,8 +457,8 @@ export class NavMesh {
    * @param scene to attach the crowd to
    * @returns the crowd you can add agents to
    */
-  createCrowd(maxAgents: number, maxAgentRadius: number, scene: Scene): Crowd {
-    return new Crowd(this, maxAgents, maxAgentRadius, scene);
+  createCrowd(maxAgents: number, maxAgentRadius: number, scene: Scene): Detour {
+    return new Detour(this, maxAgents, maxAgentRadius, scene);
   }
 
   /**
@@ -498,11 +498,11 @@ export class NavMesh {
     );
     dataHeap.set(data);
 
-    const buf = new this.recast.NavmeshData();
+    const buf = new this.recast.NavMeshData();
     buf.dataPointer = dataHeap.byteOffset;
     buf.size = data.length;
     this.navMesh = new this.recast.NavMesh();
-    this.navMesh.buildFromNavmeshData(buf);
+    this.navMesh.buildFromNavMeshData(buf);
 
     // Free memory
     this.recast._free(dataHeap.byteOffset);
@@ -513,7 +513,7 @@ export class NavMesh {
    * @returns data the Uint8Array that can be saved and reused
    */
   getNavMeshData(): Uint8Array {
-    const navmeshData = this.navMesh.getNavmeshData();
+    const navmeshData = this.navMesh.getNavMeshData();
     const arrView = new Uint8Array(
       this.recast.HEAPU8.buffer,
       navmeshData.dataPointer,
@@ -521,7 +521,7 @@ export class NavMesh {
     );
     const ret = new Uint8Array(navmeshData.size);
     ret.set(arrView);
-    this.navMesh.freeNavmeshData(navmeshData);
+    this.navMesh.freeNavMeshData(navmeshData);
     return ret;
   }
 
@@ -587,13 +587,13 @@ export class NavMesh {
 }
 
 /**
- * NavMesh detour crowd implementation
+ * Detour crowd wrapper
  */
-export class Crowd {
+export class Detour {
   /**
    * NavMesh/detour plugin
    */
-  bjsRECASTPlugin: NavMesh;
+  navMesh: Recast;
 
   /**
    * Link to the detour crowd
@@ -646,23 +646,23 @@ export class Crowd {
 
   /**
    * Constructor
-   * @param recastJs recastJS class
+   * @param navMesh the NavMesh
    * @param maxAgents the maximum agent count in the crowd
    * @param maxAgentRadius the maximum radius an agent can have
    * @param scene to attach the crowd to
    * @returns the crowd you can add agents to
    */
   constructor(
-    recastJs: NavMesh,
+    navMesh: Recast,
     maxAgents: number,
     maxAgentRadius: number,
     scene: Scene
   ) {
-    this.bjsRECASTPlugin = recastJs;
-    this.recastCrowd = new this.bjsRECASTPlugin.recast.Crowd(
+    this.navMesh = navMesh;
+    this.recastCrowd = new this.navMesh.recast.Crowd(
       maxAgents,
       maxAgentRadius,
-      this.bjsRECASTPlugin.navMesh.getNavMesh()
+      this.navMesh.navMesh.getNavMesh()
     );
     this._scene = scene;
 
@@ -689,7 +689,7 @@ export class Crowd {
     parameters: AgentParameters,
     transform: Object3D
   ): number {
-    const agentParams = new this.bjsRECASTPlugin.recast.dtCrowdAgentParams();
+    const agentParams = new this.navMesh.recast.dtCrowdAgentParams();
     agentParams.radius = parameters.radius;
     agentParams.height = parameters.height;
     agentParams.maxAcceleration = parameters.maxAcceleration;
@@ -703,7 +703,7 @@ export class Crowd {
     agentParams.userData = 0;
 
     const agentIndex = this.recastCrowd.addAgent(
-      new this.bjsRECASTPlugin.recast.Vec3(pos.x, pos.y, pos.z),
+      new this.navMesh.recast.Vec3(pos.x, pos.y, pos.z),
       agentParams
     );
     this.transforms.push(transform);
@@ -782,11 +782,7 @@ export class Crowd {
   agentGoto(index: number, destination: Vector3): void {
     this.recastCrowd.agentGoto(
       index,
-      new this.bjsRECASTPlugin.recast.Vec3(
-        destination.x,
-        destination.y,
-        destination.z
-      )
+      new this.navMesh.recast.Vec3(destination.x, destination.y, destination.z)
     );
 
     // arm observer
@@ -809,11 +805,7 @@ export class Crowd {
   agentTeleport(index: number, destination: Vector3): void {
     this.recastCrowd.agentTeleport(
       index,
-      new this.bjsRECASTPlugin.recast.Vec3(
-        destination.x,
-        destination.y,
-        destination.z
-      )
+      new this.navMesh.recast.Vec3(destination.x, destination.y, destination.z)
     );
   }
 
@@ -881,14 +873,14 @@ export class Crowd {
    */
   update(deltaTime: number): void {
     // update obstacles
-    this.bjsRECASTPlugin.navMesh.update();
+    this.navMesh.navMesh.update();
 
     if (deltaTime <= Epsilon) {
       return;
     }
     // update crowd
-    const timeStep = this.bjsRECASTPlugin.getTimeStep();
-    const maxStepCount = this.bjsRECASTPlugin.getMaximumSubStepCount();
+    const timeStep = this.navMesh.getTimeStep();
+    const maxStepCount = this.navMesh.getMaximumSubStepCount();
     if (timeStep <= Epsilon) {
       this.recastCrowd.update(deltaTime);
     } else {
@@ -945,11 +937,7 @@ export class Crowd {
    * @param extent x,y,z value that define the extent around the queries point of reference
    */
   setDefaultQueryExtent(extent: Vector3): void {
-    const ext = new this.bjsRECASTPlugin.recast.Vec3(
-      extent.x,
-      extent.y,
-      extent.z
-    );
+    const ext = new this.navMesh.recast.Vec3(extent.x, extent.y, extent.z);
     this.recastCrowd.setDefaultQueryExtent(ext);
   }
 

@@ -1,4 +1,3 @@
-import { Environment, OrbitControls } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
 import { useEffect, useMemo } from 'react';
 import { Box3, Group, PerspectiveCamera, Vector3 } from 'three';
@@ -25,10 +24,6 @@ export const Viewer = ({ scene }: ViewerProps) => {
   return (
     <>
       <primitive object={scene} />
-
-      <Environment preset="city" />
-
-      <OrbitControls />
     </>
   );
 };

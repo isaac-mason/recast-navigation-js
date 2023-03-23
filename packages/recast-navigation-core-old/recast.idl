@@ -89,8 +89,8 @@ interface dtNavMesh {
 
 };
 
-interface NavmeshData {
-    void NavmeshData();
+interface NavMeshData {
+    void NavMeshData();
     attribute any dataPointer;
     attribute long size;
 };
@@ -138,9 +138,9 @@ interface NavMesh {
     void NavMesh();
     void destroy();
     void build([Const] float[] positions, [Const] long positionCount, [Const] long[] indices, [Const] long indexCount, [Const, Ref] rcConfig config);
-    void buildFromNavmeshData(NavmeshData data);
-    [Value] NavmeshData getNavmeshData();
-    void freeNavmeshData(NavmeshData data);
+    void buildFromNavMeshData(NavMeshData data);
+    [Value] NavMeshData getNavMeshData();
+    void freeNavMeshData(NavMeshData data);
 
     [Value] DebugNavMesh getDebugNavMesh();
     [Value] Vec3 getClosestPoint([Const, Ref] Vec3 position);

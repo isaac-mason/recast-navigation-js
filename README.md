@@ -8,9 +8,12 @@ WASM + asm.js ports of [Recast Navigation](https://github.com/recastnavigation/r
 
 ## Features
 
-- 🌐 ‎ Support for web and node environments
-- 💙 TypeScript support
-- 🙆‍♀️ ‎ Multiple Emscripten builds (WASM, Inlined WASM, asm.js)
+- 🧭 ‎ NavMesh generation
+- 📐 ‎ Path-finding and spatial reasoning
+- 🧑‍🤝‍🧑 ‎ Crowd simulation
+- 🌐 ‎ Web and Node support
+- 💙 ‎ TypeScript support
+- 🙆‍♀️ ‎ Multiple emscripten builds (WASM, Inlined WASM, asm.js)
 - 🖇 ‎ [Easy integration with three.js via @recast-navigation/three](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-three)
 
 ## Packages

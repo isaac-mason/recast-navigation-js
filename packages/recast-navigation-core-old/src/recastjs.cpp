@@ -745,10 +745,10 @@ struct NavMeshTileHeader
     int dataSize;
 };
 
-void NavMesh::buildFromNavmeshData(NavmeshData* navmeshData)
+void NavMesh::buildFromNavMeshData(NavMeshData* navMeshData)
 {
     destroy();
-    unsigned char* bits = (unsigned char*)navmeshData->dataPointer;
+    unsigned char* bits = (unsigned char*)navMeshData->dataPointer;
 
     // Read header.
     RecastHeader recastHeader;
@@ -897,7 +897,7 @@ void NavMesh::buildFromNavmeshData(NavmeshData* navmeshData)
     }
 }
 
-NavmeshData NavMesh::getNavmeshData() const
+NavMeshData NavMesh::getNavMeshData() const
 {
     if (!m_navMesh)
     {
@@ -996,15 +996,15 @@ NavmeshData NavMesh::getNavmeshData() const
         }
     }
 
-    NavmeshData navmeshData;
-    navmeshData.dataPointer = bits;
-    navmeshData.size = int(bitsSize);
-    return navmeshData;
+    NavMeshData navMeshData;
+    navMeshData.dataPointer = bits;
+    navMeshData.size = int(bitsSize);
+    return navMeshData;
 }
 
-void NavMesh::freeNavmeshData(NavmeshData* navmeshData)
+void NavMesh::freeNavMeshData(NavMeshData* navMeshData)
 {
-    free(navmeshData->dataPointer);
+    free(navMeshData->dataPointer);
 }
 
 void NavMesh::navMeshPoly(DebugNavMesh& debugNavMesh, const dtNavMesh& mesh, dtPolyRef ref)

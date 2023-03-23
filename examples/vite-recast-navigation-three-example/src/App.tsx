@@ -1,7 +1,7 @@
 import { Environment, OrbitControls } from '@react-three/drei';
 import { Canvas, useThree } from '@react-three/fiber';
 import { useEffect, useRef } from 'react';
-import { NavMesh, NavMeshParameters } from 'recast-navigation/three';
+import { Recast, NavMeshParameters } from 'recast-navigation/three';
 import { Color, Group, Mesh, MeshBasicMaterial, Vector2, Vector3 } from 'three';
 import { Line2, LineGeometry, LineMaterial } from 'three-stdlib';
 
@@ -11,9 +11,9 @@ const App = () => {
   const groupRef = useRef<Group>(null!);
 
   useEffect(() => {
-    const navMesh = new NavMesh();
+    const recast = new Recast();
 
-    navMesh.init().then(() => {
+    recast.init().then(() => {
       const navMeshParameters: NavMeshParameters = {
         cs: 0.2,
         ch: 0.2,
@@ -38,9 +38,9 @@ const App = () => {
         }
       });
 
-      navMesh.build(meshes, navMeshParameters);
+      recast.buildNavMesh(meshes, navMeshParameters);
 
-      const debugNavMesh = navMesh.createDebugNavMesh();
+      const debugNavMesh = recast.createDebugNavMesh();
 
       debugNavMesh.material = new MeshBasicMaterial({
         color: 'red',
@@ -49,9 +49,9 @@ const App = () => {
 
       scene.add(debugNavMesh);
 
-      const path = navMesh.computePath(
-        navMesh.getClosestPoint(new Vector3(2, 1, 2)),
-        navMesh.getClosestPoint(new Vector3(-2, 1, -2))
+      const path = recast.computePath(
+        recast.getClosestPoint(new Vector3(2, 1, 2)),
+        recast.getClosestPoint(new Vector3(-2, 1, -2))
       );
       console.log(path);
 

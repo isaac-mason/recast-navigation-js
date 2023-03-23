@@ -1,15 +1,15 @@
-import { useGLTF } from '@react-three/drei';
+import { Environment, OrbitControls, useGLTF } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { button, Leva, useControls } from 'leva';
 import { Suspense, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Group, Mesh, MeshStandardMaterial } from 'three';
+import { Color, DoubleSide, Group, Mesh, MeshBasicMaterial, MeshStandardMaterial } from 'three';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 import dungeonGltfUrl from './assets/dungeon.gltf?url';
 import { DropZone } from './components/drop-zone';
 import { Loader } from './components/loader';
 import { Viewer } from './components/viewer';
-import { useNavMesh } from './hooks/use-nav-mesh';
+import { useRecast } from './hooks/use-recast';
 import { useNavMeshConfig } from './hooks/use-nav-mesh-config';
 import { gltfLoader } from './utils/gltf-loader';
 import { readFile } from './utils/read-file';
@@ -56,7 +56,7 @@ const Error = styled.div`
 `;
 
 const App = () => {
-  const navMesh = useNavMesh();
+  const recast = useRecast();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -108,12 +108,15 @@ const App = () => {
         }
       });
 
-      navMesh.build(meshes, navMeshConfig);
+      recast.buildNavMesh(meshes, navMeshConfig);
 
-      const debugNavMesh = navMesh.createDebugNavMesh();
+      const debugNavMesh = recast.createDebugNavMesh();
       debugNavMesh.material = new MeshStandardMaterial({
-        wireframe: true,
-        color: 'red',
+        color: 'orange',
+        flatShading: true,
+        opacity: 0.5,
+        transparent: true,
+        side: DoubleSide,
       });
 
       setDebugNavMesh(debugNavMesh);
@@ -166,6 +169,10 @@ const App = () => {
         >
           {scene && <Viewer scene={scene} />}
           {debugNavMesh && <primitive object={debugNavMesh} />}
+
+          <Environment preset="city" />
+
+          <OrbitControls />
         </Canvas>
       </Suspense>
 

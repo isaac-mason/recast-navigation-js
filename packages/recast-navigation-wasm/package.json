@@ -1,0 +1,22 @@
+{
+  "name": "@recast-navigation/wasm",
+  "description": "A WASM port of recast-navigation",
+  "author": "Isaac Mason <isaac@isaacmason.com>",
+  "version": "0.0.0",
+  "license": "MIT",
+  "type": "module",
+  "homepage": "https://github.com/isaac-mason/recast-navigation-js",
+  "bugs": {
+    "url": "https://github.com/isaac-mason/recast-navigation-js/issues"
+  },
+  "main": "./dist/recast.esm.wasm-compat.js",
+  "module": "./dist/recast.esm.wasm-compat.js",
+  "types": "./dist/recast.d.ts",
+  "scripts": {
+    "build": "sh build.sh"
+  },
+  "devDependencies": {
+    "webidl-dts-gen": "^0.0.3"
+  },
+  "packageManager": "yarn@3.2.2"
+}
