@@ -1,1 +1,6 @@
-!dist
+./index.js
+./index.map.js
+./index.d.ts
+./three.js
+./three.map.js
+./three.d.ts

@@ -15,6 +15,20 @@
   "type": "module",
   "main": "./dist/recast-navigation.wasm-compat.js",
   "types": "./dist/recast-navigation.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/recast-navigation.wasm-compat.js"
+    },
+    "./wasm": {
+      "import": "./dist/recast-navigation.wasm.js"
+    },
+    "./wasm-compat": {
+      "import": "./dist/recast-navigation.wasm.js"
+    },
+    "./js": {
+      "import": "./dist/recast-navigation.js"
+    }
+  },
   "scripts": {
     "build": "sh build.sh"
   },

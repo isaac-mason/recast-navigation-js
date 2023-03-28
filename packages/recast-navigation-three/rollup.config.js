@@ -9,6 +9,7 @@ import filesize from 'rollup-plugin-filesize';
 export default [
   {
     input: `./src/index.ts`,
+    external: ['@recast-navigation/core', 'three'],
     output: [
       {
         file: `dist/index.es.js`,

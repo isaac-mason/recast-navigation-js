@@ -41,9 +41,9 @@ struct TileCacheData
     int dataSize;
 };
 
-struct NavMeshintermediates
+struct NavMeshIntermediates
 {
-    ~NavMeshintermediates()
+    ~NavMeshIntermediates()
     {
         if (m_solid)
         {
@@ -97,13 +97,16 @@ void NavMesh::destroy()
     m_talloc.reset();
 }
 
-int NavMesh::rasterizeTileLayers(const int tx, const int ty,
-                                 const rcConfig &cfg,
-                                 TileCacheData *tiles,
-                                 const int maxTiles,
-                                 NavMeshintermediates &intermediates,
-                                 const std::vector<unsigned char> &triareas,
-                                 const std::vector<float> &verts)
+int NavMesh::rasterizeTileLayers(
+    const int tx,
+    const int ty,
+    const rcConfig &cfg,
+    const NavMeshBuildConfig &buildCfg,
+    TileCacheData *tiles,
+    const int maxTiles,
+    NavMeshIntermediates &intermediates,
+    const std::vector<unsigned char> &triareas,
+    const std::vector<float> &verts)
 {
     RecastFastLZCompressor comp;
 
@@ -124,7 +127,7 @@ int NavMesh::rasterizeTileLayers(const int tx, const int ty,
     tcfg.bmax[0] += tcfg.borderSize * tcfg.cs;
     tcfg.bmax[2] += tcfg.borderSize * tcfg.cs;
 
-    NavMeshintermediates tileIntermediates;
+    NavMeshIntermediates tileIntermediates;
     // Allocate voxel heightfield where we rasterize our input data to.
     tileIntermediates.m_solid = rcAllocHeightfield();
     if (!tileIntermediates.m_solid)
@@ -257,7 +260,13 @@ int NavMesh::rasterizeTileLayers(const int tx, const int ty,
     return n;
 }
 
-bool NavMesh::computeTiledNavMesh(const std::vector<float> &verts, const std::vector<int> &tris, rcConfig &cfg, NavMeshintermediates &intermediates, const std::vector<unsigned char> &triareas)
+bool NavMesh::computeTiledNavMesh(
+    const std::vector<float> &verts,
+    const std::vector<int> &tris,
+    rcConfig &cfg,
+    NavMeshBuildConfig &navMeshBuildConfig,
+    NavMeshIntermediates &intermediates,
+    const std::vector<unsigned char> &triareas)
 {
     dtStatus status;
 
@@ -340,7 +349,7 @@ bool NavMesh::computeTiledNavMesh(const std::vector<float> &verts, const std::ve
         {
             TileCacheData tiles[MAX_LAYERS];
             memset(tiles, 0, sizeof(tiles));
-            int ntiles = rasterizeTileLayers(x, y, cfg, tiles, MAX_LAYERS, intermediates, triareas, verts);
+            int ntiles = rasterizeTileLayers(x, y, cfg, navMeshBuildConfig, tiles, MAX_LAYERS, intermediates, triareas, verts);
             for (int i = 0; i < ntiles; ++i)
             {
                 TileCacheData *tile = &tiles[i];
@@ -368,7 +377,13 @@ bool NavMesh::computeTiledNavMesh(const std::vector<float> &verts, const std::ve
     return true;
 }
 
-void NavMesh::build(const float *positions, const int positionCount, const int *indices, const int indexCount, const rcConfig &config)
+void NavMesh::build(
+    const float *positions,
+    const int positionCount,
+    const int *indices,
+    const int indexCount,
+    const rcConfig &config,
+    const NavMeshBuildConfig &navMeshBuildConfig)
 {
     if (m_pmesh)
     {
@@ -388,7 +403,7 @@ void NavMesh::build(const float *positions, const int positionCount, const int *
     }
     m_talloc.reset();
 
-    NavMeshintermediates intermediates;
+    NavMeshIntermediates intermediates;
     std::vector<Vec3> triangleIndices;
     const float *pv = &positions[0];
     const int *t = &indices[0];
@@ -457,11 +472,14 @@ void NavMesh::build(const float *positions, const int positionCount, const int *
 
     rcCalcGridSize(cfg.bmin, cfg.bmax, cfg.cs, &cfg.width, &cfg.height);
 
+    // NavMesh build config
+    NavMeshBuildConfig buildCfg = navMeshBuildConfig;
+
     rcContext ctx;
 
     if (config.tileSize)
     {
-        if (!computeTiledNavMesh(verts, tris, cfg, intermediates, triareas))
+        if (!computeTiledNavMesh(verts, tris, cfg, buildCfg, intermediates, triareas))
         {
             Log("Unable to create tiled navmesh");
         }
@@ -894,6 +912,15 @@ void NavMesh::buildFromNavMeshData(NavMeshData *navMeshData)
     }
 }
 
+void NavMesh::update()
+{
+    if (!m_navMesh || !m_tileCache)
+    {
+        return;
+    }
+    m_tileCache->update(0, m_navMesh);
+}
+
 NavMeshData NavMesh::getNavMeshData() const
 {
     if (!m_navMesh)
@@ -1254,15 +1281,6 @@ void NavMesh::removeObstacle(dtObstacleRef *obstacle)
     }
 }
 
-void NavMesh::update()
-{
-    if (!m_navMesh || !m_tileCache)
-    {
-        return;
-    }
-    m_tileCache->update(0, m_navMesh);
-}
-
 Crowd::Crowd(const int maxAgents, const float maxAgentRadius, dtNavMesh *nav) : m_defaultQueryExtent(1.f)
 {
     m_crowd = dtAllocCrowd();
@@ -1291,6 +1309,11 @@ void Crowd::removeAgent(const int idx)
 void Crowd::update(const float dt)
 {
     m_crowd->update(dt, NULL);
+}
+
+int Crowd::getAgentCount()
+{
+    return m_crowd->getAgentCount();
 }
 
 Vec3 Crowd::getAgentPosition(int idx)

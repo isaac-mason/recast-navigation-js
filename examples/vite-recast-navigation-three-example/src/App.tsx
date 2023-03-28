@@ -1,12 +1,12 @@
 import { Environment, OrbitControls } from '@react-three/drei';
 import { Canvas, useThree } from '@react-three/fiber';
 import { useEffect, useRef } from 'react';
-import { NavMeshDebug, threeToNavMeshArgs } from 'recast-navigation/three';
-import { NavMesh, init, NavMeshConfig } from 'recast-navigation'
+import { ThreeDebugNavMesh, threeToNavMeshArgs } from 'recast-navigation/three';
+import { NavMesh, init, NavMeshConfig } from 'recast-navigation';
 import { Color, Group, Mesh, MeshBasicMaterial, Vector2, Vector3 } from 'three';
 import { Line2, LineGeometry, LineMaterial } from 'three-stdlib';
 
-await init()
+await init();
 
 const App = () => {
   const scene = useThree((state) => state.scene);
@@ -38,15 +38,18 @@ const App = () => {
       }
     });
 
-    const navMeshArgs = threeToNavMeshArgs(meshes)
+    const navMeshArgs = threeToNavMeshArgs(meshes);
 
-    const navMesh = new NavMesh()
-    navMesh.build(navMeshArgs.positions, navMeshArgs.indices, navMeshConfig);
+    const navMesh = new NavMesh();
+    navMesh.build(...navMeshArgs, navMeshConfig);
 
-    const debug = new NavMeshDebug({ navMesh, baseMeshMaterial: new MeshBasicMaterial({
-      color: 'red',
-      wireframe: true,
-    }) })
+    const debug = new ThreeDebugNavMesh({
+      navMesh,
+      navMeshMaterial: new MeshBasicMaterial({
+        color: 'red',
+        wireframe: true,
+      }),
+    });
 
     scene.add(debug.mesh);
 

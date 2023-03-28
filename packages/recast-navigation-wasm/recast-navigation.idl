@@ -1,6 +1,4 @@
 interface rcConfig {
-    void rcConfig();
-    
     /// The width of the field along the x-axis. [Limit: >= 0] [Units: vx]
     attribute long width;
 
@@ -64,23 +62,28 @@ interface rcConfig {
     /// The maximum distance the detail mesh surface should deviate from heightfield
     /// data. (For height detail only.) [Limit: >=0] [Units: wu] 
     attribute float detailSampleMaxError;
+
+    void rcConfig();
 };
 
 interface Vec3 {
-    void Vec3();
-    void Vec3(float x, float y, float z);
     attribute float x;
     attribute float y;
     attribute float z;
+
+    void Vec3();
+    void Vec3(float x, float y, float z);
 };
 
 interface Triangle {
     void Triangle();
+
     [Const, Ref] Vec3 getPoint(long n);
 };
 
 interface DebugNavMesh {
     void DebugNavMesh();
+
     long getTriangleCount();
     [Const, Ref] Triangle getTriangle(long n);
 };
@@ -90,9 +93,10 @@ interface dtNavMesh {
 };
 
 interface NavMeshData {
-    void NavMeshData();
     attribute any dataPointer;
     attribute long size;
+
+    void NavMeshData();
 };
 
 interface NavPath
@@ -107,15 +111,24 @@ interface dtObstacleRef {
 
 interface dtCrowdAgentParams {
     void dtCrowdAgentParams();
-    attribute float radius;                        ///< Agent radius. [Limit: >= 0]
-    attribute float height;                        ///< Agent height. [Limit: > 0]
-    attribute float maxAcceleration;                ///< Maximum allowed acceleration. [Limit: >= 0]
-    attribute float maxSpeed;                        ///< Maximum allowed speed. [Limit: >= 0]
+
+    /// Agent radius. [Limit: >= 0]
+    attribute float radius;                        
+    
+    /// Agent height. [Limit: > 0]
+    attribute float height;                        
+    
+    /// Maximum allowed acceleration. [Limit: >= 0]
+    attribute float maxAcceleration;                
+    
+    /// Maximum allowed speed. [Limit: >= 0]
+    attribute float maxSpeed;                        
 
     /// Defines how close a collision element must be before it is considered for steering behaviors. [Limits: > 0]
     attribute float collisionQueryRange;
 
-    attribute float pathOptimizationRange;        ///< The path visibility optimization range. [Limit: > 0]
+    /// The path visibility optimization range. [Limit: > 0]
+    attribute float pathOptimizationRange;        
 
     /// How aggresive the agent manager should be at avoiding collisions with this agent. [Limit: >= 0]
     attribute float separationWeight;
@@ -134,14 +147,23 @@ interface dtCrowdAgentParams {
     attribute VoidPtr userData;
 };
 
+interface NavMeshBuildConfig {
+    void NavMeshBuildConfig();
+
+    attribute long expectedLayersPerTile;
+
+    attribute long maxLayers;
+};
+
 interface NavMesh {
     void NavMesh();
-    void destroy();
-    void build([Const] float[] positions, [Const] long positionCount, [Const] long[] indices, [Const] long indexCount, [Const, Ref] rcConfig config);
+
+    void build([Const] float[] positions, [Const] long positionCount, [Const] long[] indices, [Const] long indexCount, [Const, Ref] rcConfig config, [Const, Ref] NavMeshBuildConfig navMeshBuildConfig);
     void buildFromNavMeshData(NavMeshData data);
+    void update();
+    void destroy();
     [Value] NavMeshData getNavMeshData();
     void freeNavMeshData(NavMeshData data);
-
     [Value] DebugNavMesh getDebugNavMesh();
     [Value] Vec3 getClosestPoint([Const, Ref] Vec3 position);
     [Value] Vec3 getRandomPointAround([Const, Ref] Vec3 position, float maxRadius);
@@ -150,19 +172,19 @@ interface NavMesh {
     [Value] NavPath computePath([Const, Ref] Vec3 start, [Const, Ref] Vec3 end);
     void setDefaultQueryExtent([Const, Ref] Vec3 extent);
     [Value] Vec3 getDefaultQueryExtent();
-
     dtObstacleRef addCylinderObstacle([Const, Ref] Vec3 position, float radius, float height);
     dtObstacleRef addBoxObstacle([Const, Ref] Vec3 position, [Const, Ref] Vec3 extent, float angle);
     void removeObstacle(dtObstacleRef obstacle);
-    void update();
 };
 
 interface Crowd {
     void Crowd([Const] long maxAgents, [Const] float maxAgentRadius, dtNavMesh nav);
+
     void destroy();
     long addAgent([Const, Ref] Vec3 position, [Const] dtCrowdAgentParams params);
     void removeAgent([Const] long idx);
     void update([Const] float dt);
+    long getAgentCount();
     [Value] Vec3 getAgentPosition([Const] long idx);
     [Value] Vec3 getAgentVelocity([Const] long idx);
     [Value] Vec3 getAgentNextTargetPath([Const] long idx);

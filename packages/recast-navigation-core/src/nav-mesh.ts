@@ -79,6 +79,17 @@ export type NavMeshConfig = {
    * @default 1
    */
   detailSampleMaxError?: number;
+
+  /**
+   * This value specifies how many layers (or "floors") each navmesh tile is expected to have.
+   * @default 4
+   */
+  expectedLayersPerTile?: number;
+
+  /**
+   * @default 32
+   */
+  maxLayers?: number;
 };
 
 export class NavMesh {
@@ -93,36 +104,42 @@ export class NavMesh {
     indices: ArrayLike<number>,
     config: NavMeshConfig = {}
   ): void {
-    const rc = new Raw.Recast.rcConfig();
+    const rcConfig = new Raw.Recast.rcConfig();
 
-    rc.borderSize = config.borderSize ?? 0;
-    rc.tileSize = config.tileSize ?? 0;
-    rc.cs = config.cs ?? 0.2;
-    rc.ch = config.ch ?? 0.2;
-    rc.walkableSlopeAngle = config.walkableSlopeAngle ?? 60;
-    rc.walkableHeight = config.walkableHeight ?? 2;
-    rc.walkableClimb = config.walkableClimb ?? 2;
-    rc.walkableRadius = config.walkableRadius ?? 0.5;
-    rc.maxEdgeLen = config.maxEdgeLen ?? 12;
-    rc.maxSimplificationError = config.maxSimplificationError ?? 1.3;
-    rc.minRegionArea = config.minRegionArea ?? 8;
-    rc.mergeRegionArea = config.mergeRegionArea ?? 20;
-    rc.maxVertsPerPoly = config.maxVertsPerPoly ?? 6;
-    rc.detailSampleDist = config.detailSampleDist ?? 6;
-    rc.detailSampleMaxError = config.detailSampleMaxError ?? 1;
+    rcConfig.borderSize = config.borderSize ?? 0;
+    rcConfig.tileSize = config.tileSize ?? 0;
+    rcConfig.cs = config.cs ?? 0.2;
+    rcConfig.ch = config.ch ?? 0.2;
+    rcConfig.walkableSlopeAngle = config.walkableSlopeAngle ?? 60;
+    rcConfig.walkableHeight = config.walkableHeight ?? 2;
+    rcConfig.walkableClimb = config.walkableClimb ?? 2;
+    rcConfig.walkableRadius = config.walkableRadius ?? 0.5;
+    rcConfig.maxEdgeLen = config.maxEdgeLen ?? 12;
+    rcConfig.maxSimplificationError = config.maxSimplificationError ?? 1.3;
+    rcConfig.minRegionArea = config.minRegionArea ?? 8;
+    rcConfig.mergeRegionArea = config.mergeRegionArea ?? 20;
+    rcConfig.maxVertsPerPoly = config.maxVertsPerPoly ?? 6;
+    rcConfig.detailSampleDist = config.detailSampleDist ?? 6;
+    rcConfig.detailSampleMaxError = config.detailSampleMaxError ?? 1;
+
+    const navMeshBuildConfig = new Raw.Recast.NavMeshBuildConfig();
+    navMeshBuildConfig.expectedLayersPerTile =
+      config.expectedLayersPerTile ?? 4;
+    navMeshBuildConfig.maxLayers = config.maxLayers ?? 32;
 
     this.raw.build(
       positions as number[],
       positions.length / 3,
       indices as number[],
       indices.length,
-      rc
+      rcConfig,
+      navMeshBuildConfig
     );
   }
 
   /**
    * Build the navmesh from a previously saved state using getNavMeshData
-   * @param data the Uint8Array returned by getNavmeshData
+   * @param data the Uint8Array returned by `getNavMeshData`
    */
   buildFromNavMeshData(data: Uint8Array): void {
     const nDataBytes = data.length * data.BYTES_PER_ELEMENT;
@@ -147,7 +164,7 @@ export class NavMesh {
   }
 
   /**
-   * Returns the navmesh data that can be used later. The navmesh must be built before retrieving the data
+   * Returns the NavMesh data that can be used later. The NavMesh must be built before retrieving the data
    * @returns data the Uint8Array that can be saved and reused
    */
   getNavMeshData(): Uint8Array {
@@ -157,11 +174,12 @@ export class NavMesh {
       navMeshData.dataPointer,
       navMeshData.size
     );
-    const ret = new Uint8Array(navMeshData.size);
-    ret.set(arrView);
+
+    const data = new Uint8Array(navMeshData.size);
+    data.set(arrView);
     this.raw.freeNavMeshData(navMeshData);
 
-    return ret;
+    return data;
   }
 
   getDebugNavMesh(): DebugNavMesh {

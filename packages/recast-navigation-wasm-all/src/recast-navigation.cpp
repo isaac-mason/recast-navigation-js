@@ -1,8 +1,0 @@
-#include "recast-navigation.h"
-#include "Recast.h"
-#include "DetourNavMesh.h"
-#include "DetourCommon.h"
-#include "DetourNavMeshBuilder.h"
-#include "DetourNavMesh.h"
-#include "DetourNavMeshQuery.h"
-#include "ChunkyTriMesh.h"

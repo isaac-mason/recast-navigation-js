@@ -3,7 +3,7 @@ import { Canvas } from '@react-three/fiber';
 import { button, Leva, useControls } from 'leva';
 import { Suspense, useEffect, useState } from 'react';
 import { NavMesh } from 'recast-navigation';
-import { NavMeshDebug, threeToNavMeshArgs } from 'recast-navigation/three';
+import { ThreeDebugNavMesh, threeToNavMeshArgs } from 'recast-navigation/three';
 import styled from 'styled-components';
 import { DoubleSide, Group, Mesh, MeshStandardMaterial } from 'three';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
@@ -118,11 +118,11 @@ const App = () => {
 
       const navMeshArgs = threeToNavMeshArgs(meshes);
 
-      navMesh.build(navMeshArgs.positions, navMeshArgs.indices, navMeshConfig);
+      navMesh.build(...navMeshArgs, navMeshConfig);
 
-      const debug = new NavMeshDebug({
+      const debug = new ThreeDebugNavMesh({
         navMesh,
-        baseMeshMaterial: new MeshStandardMaterial({
+        navMeshMaterial: new MeshStandardMaterial({
           color: 'orange',
           flatShading: true,
           opacity: 0.5,

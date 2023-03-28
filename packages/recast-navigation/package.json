@@ -40,10 +40,13 @@
     "@recast-navigation/core": "0.0.0",
     "@recast-navigation/three": "0.0.0"
   },
+  "peerDependencies": {
+    "three": "^0.150.1"
+  },
   "devDependencies": {
     "@babel/core": "^7.21.3",
     "@mdx-js/react": "^1.6.22",
-    "@react-three/drei": "^9.58.3",
+    "@react-three/drei": "^9.58.5",
     "@react-three/fiber": "^8.12.0",
     "@rollup/plugin-commonjs": "^24.0.1",
     "@rollup/plugin-multi-entry": "^6.0.0",
@@ -59,10 +62,9 @@
     "@storybook/builder-webpack4": "^6.5.16",
     "@storybook/manager-webpack4": "^6.5.16",
     "@storybook/react": "^6.5.16",
-    "@storybook/testing-library": "^0.0.13",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
-    "@types/three": "^0.149.0",
+    "@types/three": "^0.150.0",
     "babel-loader": "^8.3.0",
     "rollup": "^3.20.0",
     "rollup-plugin-copy": "^3.4.0",

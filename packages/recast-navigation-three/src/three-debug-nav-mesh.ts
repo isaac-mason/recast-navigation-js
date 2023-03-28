@@ -9,27 +9,27 @@ import {
   MeshBasicMaterial,
 } from 'three';
 
-export type NavMeshDebugParams = {
+export type ThreeDebugNavMeshParams = {
   navMesh: NavMesh;
-  baseMeshMaterial?: Material;
+  navMeshMaterial?: Material;
 };
 
-export class NavMeshDebug {
+export class ThreeDebugNavMesh {
   mesh: Mesh;
 
-  obstaclesGroup: Group;
+  obstacles: Group;
 
   navMesh: NavMesh;
 
-  constructor({ navMesh, baseMeshMaterial }: NavMeshDebugParams) {
+  constructor({ navMesh, navMeshMaterial }: ThreeDebugNavMeshParams) {
     this.navMesh = navMesh;
 
     this.mesh = new Mesh();
     this.mesh.material =
-      baseMeshMaterial ??
+      navMeshMaterial ??
       new MeshBasicMaterial({ color: 'red', side: DoubleSide });
 
-    this.obstaclesGroup = new Group();
+    this.obstacles = new Group();
 
     this.updateNavMesh();
     this.updateNavMeshObstacles();

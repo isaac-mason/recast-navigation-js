@@ -17,36 +17,51 @@ class NavMesh;
 struct rcPolyMesh;
 class rcPolyMeshDetail;
 struct rcConfig;
-struct NavMeshintermediates;
+struct NavMeshIntermediates;
 struct TileCacheData;
 
-struct Vec3 
+struct NavMeshBuildConfig
 {
+    // This value specifies how many layers (or "floors") each navmesh tile is expected to have.
+    int expectedLayersPerTile;
+    int maxLayers;
+};
+
+struct Vec3
+{
+    float x, y, z;
+
     Vec3() {}
     Vec3(float v) : x(v), y(v), z(v) {}
     Vec3(float x, float y, float z) : x(x), y(y), z(z) {}
-    void isMinOf(const Vec3& v)
+
+    void isMinOf(const Vec3 &v)
     {
         x = std::min(x, v.x);
         y = std::min(y, v.y);
         z = std::min(z, v.z);
     }
-    void isMaxOf(const Vec3& v)
+
+    void isMaxOf(const Vec3 &v)
     {
         x = std::max(x, v.x);
         y = std::max(y, v.y);
         z = std::max(z, v.z);
     }
-    float operator [](int index) {
-        return ((float*)&x)[index];
+
+    float operator[](int index)
+    {
+        return ((float *)&x)[index];
     }
-    float x, y, z;
 };
 
-struct Triangle 
+struct Triangle
 {
-    Triangle(){}
-    const Vec3& getPoint(long n)
+    Vec3 mPoint[3];
+
+    Triangle() {}
+
+    const Vec3 &getPoint(long n)
     {
         if (n < 2)
         {
@@ -54,13 +69,15 @@ struct Triangle
         }
         return mPoint[2];
     }
-    Vec3 mPoint[3];
 };
 
-struct DebugNavMesh 
+struct DebugNavMesh
 {
+    std::vector<Triangle> mTriangles;
+
     int getTriangleCount() { return int(mTriangles.size()); }
-    const Triangle& getTriangle(int n)
+
+    const Triangle &getTriangle(int n)
     {
         if (n < int(mTriangles.size()))
         {
@@ -68,13 +85,15 @@ struct DebugNavMesh
         }
         return mTriangles.back();
     }
-    std::vector<Triangle> mTriangles;
 };
 
 struct NavPath
 {
+    std::vector<Vec3> mPoints;
+
     int getPointCount() { return int(mPoints.size()); }
-    const Vec3& getPoint(int n)
+
+    const Vec3 &getPoint(int n)
     {
         if (n < int(mPoints.size()))
         {
@@ -82,12 +101,11 @@ struct NavPath
         }
         return mPoints.back();
     }
-    std::vector<Vec3> mPoints;
 };
 
 struct NavMeshData
 {
-    void* dataPointer;
+    void *dataPointer;
     int size;
 };
 
@@ -95,18 +113,18 @@ struct RecastFastLZCompressor : public dtTileCacheCompressor
 {
     virtual int maxCompressedSize(const int bufferSize)
     {
-        return (int)(bufferSize* 1.05f);
+        return (int)(bufferSize * 1.05f);
     }
-    
-    virtual dtStatus compress(const unsigned char* buffer, const int bufferSize,
-                              unsigned char* compressed, const int /*maxCompressedSize*/, int* compressedSize)
+
+    virtual dtStatus compress(const unsigned char *buffer, const int bufferSize,
+                              unsigned char *compressed, const int /*maxCompressedSize*/, int *compressedSize)
     {
         *compressedSize = fastlz_compress((const void *const)buffer, bufferSize, compressed);
         return DT_SUCCESS;
     }
-    
-    virtual dtStatus decompress(const unsigned char* compressed, const int compressedSize,
-                                unsigned char* buffer, const int maxBufferSize, int* bufferSize)
+
+    virtual dtStatus decompress(const unsigned char *compressed, const int compressedSize,
+                                unsigned char *buffer, const int maxBufferSize, int *bufferSize)
     {
         *bufferSize = fastlz_decompress(compressed, compressedSize, buffer, maxBufferSize);
         return *bufferSize < 0 ? DT_FAILURE : DT_SUCCESS;
@@ -115,16 +133,16 @@ struct RecastFastLZCompressor : public dtTileCacheCompressor
 
 struct RecastLinearAllocator : public dtTileCacheAlloc
 {
-    unsigned char* buffer;
+    unsigned char *buffer;
     size_t capacity;
     size_t top;
     size_t high;
-    
+
     RecastLinearAllocator(const size_t cap) : buffer(0), capacity(0), top(0), high(0)
     {
         resize(cap);
     }
-    
+
     ~RecastLinearAllocator()
     {
         dtFree(buffer);
@@ -132,29 +150,30 @@ struct RecastLinearAllocator : public dtTileCacheAlloc
 
     void resize(const size_t cap)
     {
-        if (buffer) dtFree(buffer);
-        buffer = (unsigned char*)dtAlloc(cap, DT_ALLOC_PERM);
+        if (buffer)
+            dtFree(buffer);
+        buffer = (unsigned char *)dtAlloc(cap, DT_ALLOC_PERM);
         capacity = cap;
     }
-    
+
     virtual void reset()
     {
         high = dtMax(high, top);
         top = 0;
     }
-    
-    virtual void* alloc(const size_t size)
+
+    virtual void *alloc(const size_t size)
     {
         if (!buffer)
             return 0;
-        if (top+size > capacity)
+        if (top + size > capacity)
             return 0;
-        unsigned char* mem = &buffer[top];
+        unsigned char *mem = &buffer[top];
         top += size;
         return mem;
     }
-    
-    virtual void free(void* /*ptr*/)
+
+    virtual void free(void * /* ptr */)
     {
         // Empty
     }
@@ -162,125 +181,176 @@ struct RecastLinearAllocator : public dtTileCacheAlloc
 
 struct RecastMeshProcess : public dtTileCacheMeshProcess
 {
-    inline RecastMeshProcess()
-    {
-    }
+    inline RecastMeshProcess() {}
 
-    virtual void process(struct dtNavMeshCreateParams* params,
-                         unsigned char* polyAreas, unsigned short* polyFlags)
+    virtual void process(struct dtNavMeshCreateParams *params,
+                         unsigned char *polyAreas, unsigned short *polyFlags)
     {
         // Update poly flags from areas.
         for (int i = 0; i < params->polyCount; ++i)
         {
             polyAreas[i] = 0;
-            polyFlags[i] = 1; //SAMPLE_POLYFLAGS_WALK
+            polyFlags[i] = 1; // SAMPLE_POLYFLAGS_WALK
         }
 
         // Pass in off-mesh connections.
-        params->offMeshConVerts = 0;//m_geom->getOffMeshConnectionVerts();
-        params->offMeshConRad = 0;//m_geom->getOffMeshConnectionRads();
-        params->offMeshConDir = 0;//m_geom->getOffMeshConnectionDirs();
-        params->offMeshConAreas = 0;//m_geom->getOffMeshConnectionAreas();
-        params->offMeshConFlags = 0;//m_geom->getOffMeshConnectionFlags();
-        params->offMeshConUserID = 0;//m_geom->getOffMeshConnectionId();
-        params->offMeshConCount = 0;//m_geom->getOffMeshConnectionCount();    
+        params->offMeshConVerts = 0;  // m_geom->getOffMeshConnectionVerts();
+        params->offMeshConRad = 0;    // m_geom->getOffMeshConnectionRads();
+        params->offMeshConDir = 0;    // m_geom->getOffMeshConnectionDirs();
+        params->offMeshConAreas = 0;  // m_geom->getOffMeshConnectionAreas();
+        params->offMeshConFlags = 0;  // m_geom->getOffMeshConnectionFlags();
+        params->offMeshConUserID = 0; // m_geom->getOffMeshConnectionId();
+        params->offMeshConCount = 0;  // m_geom->getOffMeshConnectionCount();
     }
 };
 
 class NavMesh
 {
 public:
-    NavMesh() : m_navQuery(0)
-        , m_navMesh(0)
-        , m_tileCache(0)
-        , m_pmesh(0)
-        , m_dmesh(0)
-        , m_navData(0)
-        , m_defaultQueryExtent(1.f)
-        , m_talloc(32000)
-    {
+    dtTileCache *m_tileCache;
 
-    }
+    dtNavMeshQuery *m_navQuery;
+
+    NavMesh() : m_navQuery(0), m_navMesh(0), m_tileCache(0), m_pmesh(0), m_dmesh(0), m_navData(0), m_defaultQueryExtent(1.f), m_talloc(32000) {}
+
+    void build(
+        const float *positions,
+        const int positionCount,
+        const int *indices,
+        const int indexCount,
+        const rcConfig &config,
+        const NavMeshBuildConfig &navMeshBuildConfig);
+
+    void buildFromNavMeshData(NavMeshData *navMeshData);
+
     void destroy();
-    void build(const float* positions, const int positionCount, const int* indices, const int indexCount, const rcConfig& config);
-    void buildFromNavMeshData(NavMeshData* navMeshData);
+
     NavMeshData getNavMeshData() const;
-    void freeNavMeshData(NavMeshData* navMeshData);
+
+    void freeNavMeshData(NavMeshData *navMeshData);
 
     DebugNavMesh getDebugNavMesh();
-    Vec3 getClosestPoint(const Vec3& position);
-    Vec3 getRandomPointAround(const Vec3& position, float maxRadius);
-    Vec3 moveAlong(const Vec3& position, const Vec3& destination);
-    dtNavMesh* getNavMesh() 
-    { 
-        return m_navMesh; 
+
+    Vec3 getClosestPoint(const Vec3 &position);
+
+    Vec3 getRandomPointAround(const Vec3 &position, float maxRadius);
+
+    Vec3 moveAlong(const Vec3 &position, const Vec3 &destination);
+
+    dtNavMesh *getNavMesh()
+    {
+        return m_navMesh;
     }
-    NavPath computePath(const Vec3& start, const Vec3& end) const;
-    void setDefaultQueryExtent(const Vec3& extent)
+
+    NavPath computePath(const Vec3 &start, const Vec3 &end) const;
+
+    void setDefaultQueryExtent(const Vec3 &extent)
     {
         m_defaultQueryExtent = extent;
     }
+
     Vec3 getDefaultQueryExtent() const
     {
         return m_defaultQueryExtent;
     }
 
-    dtObstacleRef* addCylinderObstacle(const Vec3& position, float radius, float height);
-    dtObstacleRef* addBoxObstacle(const Vec3& position, const Vec3& extent, float angle);
-    void removeObstacle(dtObstacleRef* obstacle);
+    dtObstacleRef *addCylinderObstacle(const Vec3 &position, float radius, float height);
+
+    dtObstacleRef *addBoxObstacle(const Vec3 &position, const Vec3 &extent, float angle);
+
+    void removeObstacle(dtObstacleRef *obstacle);
+
     void update();
 
-    dtTileCache* m_tileCache;
-    dtNavMeshQuery* m_navQuery;
 protected:
-
     std::list<dtObstacleRef> m_obstacles;
-    dtNavMesh* m_navMesh;
-    
-    rcPolyMesh* m_pmesh;
-    rcPolyMeshDetail* m_dmesh;
-    unsigned char* m_navData;
+    dtNavMesh *m_navMesh;
+
+    rcPolyMesh *m_pmesh;
+    rcPolyMeshDetail *m_dmesh;
+    unsigned char *m_navData;
     Vec3 m_defaultQueryExtent;
 
     RecastLinearAllocator m_talloc;
     RecastFastLZCompressor m_tcomp;
     RecastMeshProcess m_tmproc;
 
-    void navMeshPoly(DebugNavMesh& debugNavMesh, const dtNavMesh& mesh, dtPolyRef ref);
-    void navMeshPolysWithFlags(DebugNavMesh& debugNavMesh, const dtNavMesh& mesh, const unsigned short polyFlags);
-    bool computeTiledNavMesh(const std::vector<float>& verts, const std::vector<int>& tris, rcConfig& cfg, NavMeshintermediates& intermediates, const std::vector<unsigned char>& triareas);
-    int rasterizeTileLayers(const int tx, const int ty, const rcConfig& cfg, TileCacheData* tiles, const int maxTiles, NavMeshintermediates& intermediates, const std::vector<unsigned char>& triareas, const std::vector<float>& verts);
+    void navMeshPoly(
+        DebugNavMesh &debugNavMesh,
+        const dtNavMesh &mesh,
+        dtPolyRef ref);
+
+    void navMeshPolysWithFlags(
+        DebugNavMesh &debugNavMesh,
+        const dtNavMesh &mesh,
+        const unsigned short polyFlags);
+
+    bool computeTiledNavMesh(
+        const std::vector<float> &verts,
+        const std::vector<int> &tris,
+        rcConfig &cfg,
+        NavMeshBuildConfig &navMeshBuildConfig,
+        NavMeshIntermediates &intermediates,
+        const std::vector<unsigned char> &triareas);
+
+    int rasterizeTileLayers(
+        const int tx,
+        const int ty,
+        const rcConfig &cfg,
+        const NavMeshBuildConfig &navMeshBuildConfig,
+        TileCacheData *tiles,
+        const int maxTiles,
+        NavMeshIntermediates &intermediates,
+        const std::vector<unsigned char> &triareas,
+        const std::vector<float> &verts);
 };
 
 class Crowd
 {
 public:
-    Crowd(const int maxAgents, const float maxAgentRadius, dtNavMesh* nav);
+    Crowd(const int maxAgents, const float maxAgentRadius, dtNavMesh *nav);
+
     void destroy();
-    int addAgent(const Vec3& pos, const dtCrowdAgentParams* params);
+
+    int addAgent(const Vec3 &pos, const dtCrowdAgentParams *params);
+
     void removeAgent(const int idx);
+
     void update(const float dt);
+
+    int getAgentCount();
+
     Vec3 getAgentPosition(int idx);
+
     Vec3 getAgentVelocity(int idx);
+
     Vec3 getAgentNextTargetPath(int idx);
+
     int getAgentState(int idx);
+
     bool overOffMeshConnection(int idx);
-    void agentGoto(int idx, const Vec3& destination);
-    void agentTeleport(int idx, const Vec3& destination);
+
+    void agentGoto(int idx, const Vec3 &destination);
+
+    void agentTeleport(int idx, const Vec3 &destination);
+
     dtCrowdAgentParams getAgentParameters(const int idx);
-    void setAgentParameters(const int idx, const dtCrowdAgentParams* params);
-    void setDefaultQueryExtent(const Vec3& extent)
+
+    void setAgentParameters(const int idx, const dtCrowdAgentParams *params);
+
+    void setDefaultQueryExtent(const Vec3 &extent)
     {
         m_defaultQueryExtent = extent;
     }
+
     Vec3 getDefaultQueryExtent() const
     {
         return m_defaultQueryExtent;
     }
+
     NavPath getCorners(const int idx);
 
 protected:
-
     dtCrowd *m_crowd;
     Vec3 m_defaultQueryExtent;
 };
