@@ -1,0 +1,141 @@
+interface rcConfig {
+	attribute long width;
+  attribute long height;
+	attribute long tileSize;
+  attribute long borderSize;
+  attribute float cs;
+  attribute float ch;
+  attribute float[] bmin; 
+  attribute float[] bmax;
+  attribute float walkableSlopeAngle;
+  attribute long walkableHeight;
+	attribute long walkableClimb;
+  attribute long walkableRadius;
+  attribute long maxEdgeLen;
+	attribute float maxSimplificationError;
+	attribute long minRegionArea;
+  attribute long mergeRegionArea;
+	attribute long maxVertsPerPoly;
+	attribute float detailSampleDist;
+  attribute float detailSampleMaxError;
+};
+
+interface dtMeshHeader {
+  attribute long magic;
+  attribute long version;
+  attribute long x;
+  attribute long y;
+  attribute long layer;
+  attribute unsigned long userId;
+  attribute long polyCount;
+  attribute long vertCount;
+  attribute long maxLinkCount;
+  attribute long detailMeshCount;
+
+  attribute long detailVertCount;
+
+  attribute long detailTriCount;
+  attribute long bvNodeCount;
+  attribute long offMeshConCount;
+  attribute long offMeshBase;
+  attribute float walkableHeight;
+  attribute float walkableRadius;
+  attribute float walkableClimb;
+  attribute float[] bmin;
+  attribute float[] bmax;
+
+  attribute long bvQuantFactor;
+};
+
+interface dtPoly {
+  attribute unsigned long firstLink;
+  attribute unsigned short[] verts;
+  attribute unsigned short[] neis;
+  attribute unsigned short flags;
+  attribute octet vertCount;
+  attribute octet areaAndtype;
+
+  void setArea(octet a);
+  void setType(octet t);
+  octet getArea();
+  octet getType();
+};
+
+interface dtLink {
+  attribute unsigned long ref;
+  attribute unsigned long next;
+  attribute octet edge;
+  attribute octet side;
+  attribute octet bmin;
+  attribute octet bmax;
+};
+
+interface dtPolyDetail {
+  attribute unsigned long vertBase;
+  attribute unsigned long triBase;
+  attribute octet vertCount;
+  attribute octet triCount;
+};
+
+interface dtBVNode {
+  attribute unsigned short[] bmin;
+  attribute unsigned short[] bmax;
+  attribute long i;
+};
+
+interface dtOffMeshConnection {
+  attribute float[] pos;
+  attribute float rad;
+  attribute unsigned short poly;
+  attribute octet flags;
+  attribute octet side;
+  attribute unsigned long userId;
+};
+
+interface dtMeshTile {
+  attribute long salt;
+
+  attribute long linksFreeList;
+  attribute dtMeshHeader header;
+  attribute dtPoly polys;
+  attribute float[] verts;
+  attribute dtLink links;
+  attribute dtPolyDetail detailMeshes;
+
+  attribute float[] detailVerts;
+  
+  attribute octet[] detailTris;
+  
+  attribute dtBVNode bvTree;
+  
+  attribute dtOffMeshConnection offMeshCons;
+
+  attribute octet[] data;
+  attribute long dataSize;
+  attribute long flags;
+  attribute dtMeshTile next;
+};
+
+interface dtNavMeshParams {
+  attribute float[] orig;
+  attribute float tileWidth;
+  attribute float tileHeight;
+  attribute long maxTiles;
+  attribute long maxPolys;
+};
+
+interface dtNavMesh {
+  unsigned long init([Const] dtNavMeshParams params);
+  unsigned long init(octet[] data, [Const] long dataSize, [Const] long flags);
+  [Const] dtNavMeshParams getParams();
+  unsigned long addTile(octet[] data, long dataSize, long flags, unsigned long lastRef, unsigned long[] result);
+  
+  // todo: removeTile
+  unsigned long removeTile(unsigned long ref);
+
+  void calcTileLoc([Const] float[] pos, long[] tx, long[] ty);
+  
+  [Const] dtMeshTile getTileAt([Const] long x, [Const] long y, [Const] long layer);
+
+  // todo - getTilesAt, cont...
+};

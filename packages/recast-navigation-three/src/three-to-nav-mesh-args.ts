@@ -1,6 +1,9 @@
+import { NavMesh, NavMeshConfig } from '@recast-navigation/core';
 import { BufferAttribute, Mesh, Vector3 } from 'three';
 
-export const threeToNavMeshArgs = (meshes: Mesh[]) => {
+export const threeToNavMeshArgs = (
+  meshes: Mesh[]
+): [positions: number[], indices: number[]] => {
   let index: number;
   let tri: number;
   let pt: number;
@@ -45,5 +48,17 @@ export const threeToNavMeshArgs = (meshes: Mesh[]) => {
     }
   }
 
-  return { positions, indices };
+  return [positions, indices];
+};
+
+export const threeToNavMesh = (
+  meshes: Mesh[],
+  config: NavMeshConfig = {}
+): NavMesh => {
+  const args = threeToNavMeshArgs(meshes);
+
+  const navMesh = new NavMesh();
+  navMesh.build(...args, config);
+
+  return navMesh;
 };

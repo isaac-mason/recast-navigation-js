@@ -1,5 +1,5 @@
 {
-  "name": "@recast-navigation/wasm",
+  "name": "@recast-navigation/wasm-all",
   "description": "A WASM port of recast-navigation",
   "author": {
     "name": "Isaac Mason",

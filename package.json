@@ -4,6 +4,7 @@
   "packageManager": "yarn@3.2.2",
   "workspaces": [
     "packages/recast-navigation-wasm",
+    "packages/recast-navigation-wasm-all",
     "packages/recast-navigation-core",
     "packages/recast-navigation-three",
     "packages/recast-navigation",

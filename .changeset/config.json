@@ -9,7 +9,8 @@
   "updateInternalDependencies": "patch",
   "ignore": [
     "navmesh-website",
-    "node-recast-navigation-example",
+    "node-cjs-recast-navigation-example",
+    "node-esm-recast-navigation-example",
     "vite-recast-navigation-three-example"
   ],
   "___experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH": {
