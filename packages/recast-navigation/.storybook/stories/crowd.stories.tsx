@@ -1,12 +1,13 @@
 import { useThree } from '@react-three/fiber';
+import { Crowd, NavMesh } from '@recast-navigation/core';
 import React, { useEffect, useState } from 'react';
-import { ThreeDebugNavMesh, threeToNavMesh } from 'recast-navigation/three';
+import { ThreeDebugNavMesh, threeToNavMeshArgs } from 'recast-navigation/three';
 import { Group, MeshStandardMaterial } from 'three';
 import { BasicEnvironment } from '../utils/basic-environment';
 import { decorators } from '../utils/decorators';
 
 export default {
-  title: 'NavMesh',
+  title: 'Crowd',
   decorators,
 };
 
@@ -17,7 +18,12 @@ export const Basic = () => {
   useEffect(() => {
     if (!group) return;
 
-    const navMesh = threeToNavMesh(group, {
+    const args = threeToNavMeshArgs(group);
+
+    console.log(args);
+
+    const navMesh = new NavMesh();
+    navMesh.build(...args, {
       cs: 0.05,
       ch: 0.02,
     });
@@ -32,6 +38,12 @@ export const Basic = () => {
     });
 
     scene.add(threeDebugNavMesh.mesh);
+
+    const crowd = new Crowd({
+      navMesh,
+      maxAgents: 5,
+      maxAgentRadius: 0.5,
+    });
 
     return () => {
       scene.remove(threeDebugNavMesh.mesh);

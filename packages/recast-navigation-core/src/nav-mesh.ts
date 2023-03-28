@@ -3,6 +3,7 @@ import { ObstacleRef } from './obstacle';
 import { Raw } from './raw';
 import { NavPath, navPath, vec3, Vector3 } from './utils';
 import { DebugNavMesh } from './debug-nav-mesh';
+import { Crowd } from './crowd';
 
 export type NavMeshConfig = {
   /**
@@ -97,6 +98,14 @@ export class NavMesh {
 
   constructor() {
     this.raw = new Raw.Recast.NavMesh();
+  }
+
+  update(): void {
+    this.raw.update();
+  }
+
+  destroy(): void {
+    this.raw.destroy();
   }
 
   build(
@@ -259,11 +268,7 @@ export class NavMesh {
     this.raw.removeObstacle(obstacleRef as R.dtObstacleRef);
   }
 
-  update(): void {
-    this.raw.update();
-  }
-
-  destroy(): void {
-    this.raw.destroy();
+  createCrowd(config: { maxAgents: number; maxAgentRadius: number }): Crowd {
+    return new Crowd({ navMesh: this, ...config });
   }
 }

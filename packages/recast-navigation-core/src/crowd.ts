@@ -9,18 +9,19 @@ export type CrowdParams = {
   navMesh: NavMesh;
 };
 
+// todo - defaults for these
 export type CrowdAgentParams = {
-  radius: number;
-  height: number;
-  maxAcceleration: number;
-  maxSpeed: number;
-  collisionQueryRange: number;
-  pathOptimizationRange: number;
-  separationWeight: number;
-  updateFlags: number;
-  obstacleAvoidanceType: number;
-  queryFilterType: number;
-  userData: unknown;
+  radius?: number;
+  height?: number;
+  maxAcceleration?: number;
+  maxSpeed?: number;
+  collisionQueryRange?: number;
+  pathOptimizationRange?: number;
+  separationWeight?: number;
+  updateFlags?: number;
+  obstacleAvoidanceType?: number;
+  queryFilterType?: number;
+  userData?: unknown;
 };
 
 const Epsilon = 0.001;
@@ -53,7 +54,7 @@ export class Crowd {
 
   constructor({ maxAgents, maxAgentRadius, navMesh }: CrowdParams) {
     this.navMesh = navMesh;
-    this.raw = new R.Crowd(maxAgents, maxAgentRadius, navMesh.raw);
+    this.raw = new Raw.Recast.Crowd(maxAgents, maxAgentRadius, navMesh.raw);
   }
 
   addAgent(position: Vector3, params: CrowdAgentParams): number {
