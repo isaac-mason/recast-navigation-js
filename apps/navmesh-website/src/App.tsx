@@ -2,8 +2,7 @@ import { Environment, OrbitControls, useGLTF } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { button, Leva, useControls } from 'leva';
 import { Suspense, useEffect, useState } from 'react';
-import { NavMesh } from 'recast-navigation';
-import { ThreeDebugNavMesh, threeToNavMeshArgs } from 'recast-navigation/three';
+import { ThreeDebugNavMesh, threeToNavMesh } from 'recast-navigation/three';
 import styled from 'styled-components';
 import { DoubleSide, Group, Mesh, MeshStandardMaterial } from 'three';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
@@ -106,19 +105,10 @@ const App = () => {
     setDebugNavMesh(null);
 
     try {
-      const navMesh = new NavMesh();
-
-      const meshes: Mesh[] = [];
-
-      gltf.traverse((object) => {
-        if (object instanceof Mesh) {
-          meshes.push(object);
-        }
+      const navMesh = threeToNavMesh(gltf, {
+        cs: 0.05,
+        borderSize: 0.5
       });
-
-      const navMeshArgs = threeToNavMeshArgs(meshes);
-
-      navMesh.build(...navMeshArgs, navMeshConfig);
 
       const debug = new ThreeDebugNavMesh({
         navMesh,
@@ -149,7 +139,9 @@ const App = () => {
   useControls(
     'Actions',
     {
-      'Generate Nav Mesh': button(() => generateNavMesh(), { disabled: loading }),
+      'Generate Nav Mesh': button(() => generateNavMesh(), {
+        disabled: loading,
+      }),
       'Export as GLTF': button(() => console.log('exporting!'), {
         disabled: loading,
       }),

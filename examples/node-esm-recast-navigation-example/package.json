@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/three": "^0.149.0",
+    "@types/three": "^0.150.0",
     "recast-navigation": "0.0.0",
     "three": "^0.150.1"
   }

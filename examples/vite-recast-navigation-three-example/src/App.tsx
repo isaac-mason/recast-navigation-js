@@ -30,15 +30,7 @@ const App = () => {
       detailSampleMaxError: 1,
     };
 
-    const meshes: Mesh[] = [];
-
-    groupRef.current.traverse((obj) => {
-      if (obj instanceof Mesh) {
-        meshes.push(obj);
-      }
-    });
-
-    const navMeshArgs = threeToNavMeshArgs(meshes);
+    const navMeshArgs = threeToNavMeshArgs(groupRef.current);
 
     const navMesh = new NavMesh();
     navMesh.build(...navMeshArgs, navMeshConfig);

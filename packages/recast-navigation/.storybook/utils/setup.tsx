@@ -20,7 +20,9 @@ export const Setup = ({ children }: SetupProps) => {
 
       <OrbitControls />
 
-      <Environment preset="city" />
+      <ambientLight intensity={0.2} />
+      <pointLight position={[10, 10, 10]} intensity={0.25} />
+      <pointLight position={[-10, 10, -10]} intensity={0.5} />
     </Canvas>
   );
 };

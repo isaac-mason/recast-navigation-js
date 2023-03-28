@@ -1,8 +1,8 @@
-import { NavMesh } from '@recast-navigation/core';
+import { NavMesh, NavMeshConfig } from '@recast-navigation/core';
 import {
   BufferAttribute,
   BufferGeometry,
-  DoubleSide,
+  // DoubleSide,
   Group,
   Material,
   Mesh,
@@ -69,6 +69,18 @@ export const threeToNavMeshArgs = (
   return [positions, indices];
 };
 
+export const threeToNavMesh = (
+  object: Object3D,
+  navMeshConfig: NavMeshConfig = {}
+): NavMesh => {
+  const [positions, indices] = threeToNavMeshArgs(object);
+
+  const navMesh = new NavMesh();
+  navMesh.build(positions, indices, navMeshConfig);
+
+  return navMesh;
+};
+
 export type ThreeDebugNavMeshParams = {
   navMesh: NavMesh;
   navMeshMaterial?: Material;
@@ -86,8 +98,7 @@ export class ThreeDebugNavMesh {
 
     this.mesh = new Mesh();
     this.mesh.material =
-      navMeshMaterial ??
-      new MeshBasicMaterial({ color: 'red', side: DoubleSide });
+      navMeshMaterial ?? new MeshBasicMaterial({ color: 'red' });
 
     this.obstacles = new Group();
 
@@ -96,18 +107,25 @@ export class ThreeDebugNavMesh {
   }
 
   updateNavMesh() {
-    const debugNavMesh = this.navMesh.getDebugNavMesh();
+    const { positions, indices } = this.navMesh.getDebugNavMesh();
+
+    // Set the winding order of the affected faces to clockwise
+    for (let i = 0; i < indices.length; i += 3) {
+      const tmp = indices[i];
+      indices[i] = indices[i + 2];
+      indices[i + 2] = tmp;
+    }
 
     const geometry = new BufferGeometry();
 
     geometry.setAttribute(
       'position',
-      new BufferAttribute(new Float32Array(debugNavMesh.positions), 3)
+      new BufferAttribute(new Float32Array(positions), 3)
     );
 
-    geometry.setIndex(
-      new BufferAttribute(new Uint16Array(debugNavMesh.indices), 1)
-    );
+    geometry.setIndex(new BufferAttribute(new Uint16Array(indices), 1));
+    // Recompute vertex normals
+    geometry.computeVertexNormals();
 
     this.mesh.geometry = geometry;
   }
