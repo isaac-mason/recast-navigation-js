@@ -11,7 +11,7 @@
     "examples/*"
   ],
   "scripts": {
-    "build": "yarn workspaces foreach run build",
+    "build": "yarn workspaces foreach -t run build",
     "change": "yarn changeset",
     "version": "yarn changeset version && yarn install --mode update-lockfile"
   },

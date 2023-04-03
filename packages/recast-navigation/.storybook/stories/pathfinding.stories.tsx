@@ -1,11 +1,11 @@
 import { useThree } from '@react-three/fiber';
 import { NavMesh } from '@recast-navigation/core';
 import React, { useEffect, useState } from 'react';
-import { ThreeDebugNavMesh, threeToNavMeshArgs } from 'recast-navigation/three';
+import { NavMeshHelper, threeToNavMeshArgs } from 'recast-navigation/three';
 import { Group, MeshStandardMaterial } from 'three';
 import { BasicEnvironment } from '../utils/basic-environment';
-import { decorators } from '../utils/decorators';
 import { createLine } from '../utils/create-line';
+import { decorators } from '../utils/decorators';
 
 export default {
   title: 'Pathfinding',
@@ -29,7 +29,7 @@ export const Basic = () => {
       ch: 0.02,
     });
 
-    const threeDebugNavMesh = new ThreeDebugNavMesh({
+    const navMeshHelper = new NavMeshHelper({
       navMesh,
       navMeshMaterial: new MeshStandardMaterial({
         color: 'orange',
@@ -38,7 +38,7 @@ export const Basic = () => {
       }),
     });
 
-    scene.add(threeDebugNavMesh.mesh);
+    scene.add(navMeshHelper.navMesh);
 
     const from = { x: 3, y: 0, z: 3 };
     const to = { x: -3.5, y: 0, z: -3 };
@@ -50,7 +50,7 @@ export const Basic = () => {
     scene.add(line);
 
     return () => {
-      scene.remove(threeDebugNavMesh.mesh);
+      scene.remove(navMeshHelper.navMesh);
       scene.remove(line);
     };
   }, [group]);

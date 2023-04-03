@@ -185,6 +185,7 @@ interface Crowd {
     void removeAgent([Const] long idx);
     void update([Const] float dt);
     long getAgentCount();
+    long getActiveAgentCount();
     [Value] Vec3 getAgentPosition([Const] long idx);
     [Value] Vec3 getAgentVelocity([Const] long idx);
     [Value] Vec3 getAgentNextTargetPath([Const] long idx);

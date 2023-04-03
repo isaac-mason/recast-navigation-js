@@ -1296,6 +1296,7 @@ void Crowd::destroy()
     }
 }
 
+// todo - memory access out of bounds, maybe due to &pos.x
 int Crowd::addAgent(const Vec3 &pos, const dtCrowdAgentParams *params)
 {
     return m_crowd->addAgent(&pos.x, params);
@@ -1314,6 +1315,11 @@ void Crowd::update(const float dt)
 int Crowd::getAgentCount()
 {
     return m_crowd->getAgentCount();
+}
+
+int Crowd::getActiveAgentCount()
+{
+    return m_crowd->getActiveAgents(NULL, m_crowd->getAgentCount());
 }
 
 Vec3 Crowd::getAgentPosition(int idx)

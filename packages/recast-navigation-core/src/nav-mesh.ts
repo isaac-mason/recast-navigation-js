@@ -9,88 +9,108 @@ export type NavMeshConfig = {
   /**
    * @default 0
    */
-  borderSize?: number;
+  borderSize: number;
 
   /**
    * @default 0
    */
-  tileSize?: number;
+  tileSize: number;
 
   /**
    * @default 0.2
    */
-  cs?: number;
+  cs: number;
 
   /**
    * @default 0.2
    */
-  ch?: number;
+  ch: number;
 
   /**
    * @default 60
    */
-  walkableSlopeAngle?: number;
+  walkableSlopeAngle: number;
 
   /**
    * @default 2
    */
-  walkableHeight?: number;
+  walkableHeight: number;
 
   /**
    * @default 2
    */
-  walkableClimb?: number;
+  walkableClimb: number;
 
   /**
    * @default 0.5
    */
-  walkableRadius?: number;
+  walkableRadius: number;
 
   /**
    * @default 12
    */
-  maxEdgeLen?: number;
+  maxEdgeLen: number;
 
   /**
    * @default 1.3
    */
-  maxSimplificationError?: number;
+  maxSimplificationError: number;
 
   /**
    * @default 8
    */
-  minRegionArea?: number;
+  minRegionArea: number;
 
   /**
    * @default 20
    */
-  mergeRegionArea?: number;
+  mergeRegionArea: number;
 
   /**
    * @default 6
    */
-  maxVertsPerPoly?: number;
+  maxVertsPerPoly: number;
 
   /**
    * @default 6
    */
-  detailSampleDist?: number;
+  detailSampleDist: number;
 
   /**
    * @default 1
    */
-  detailSampleMaxError?: number;
+  detailSampleMaxError: number;
 
   /**
    * This value specifies how many layers (or "floors") each navmesh tile is expected to have.
    * @default 4
    */
-  expectedLayersPerTile?: number;
+  expectedLayersPerTile: number;
 
   /**
    * @default 32
    */
-  maxLayers?: number;
+  maxLayers: number;
+};
+
+const navMeshConfigDefaults: NavMeshConfig = {
+  borderSize: 0,
+  tileSize: 0,
+  cs: 0.2,
+  ch: 0.2,
+  walkableSlopeAngle: 60,
+  walkableHeight: 2,
+  walkableClimb: 2,
+  walkableRadius: 0.5,
+  maxEdgeLen: 12,
+  maxSimplificationError: 1.3,
+  minRegionArea: 8,
+  mergeRegionArea: 20,
+  maxVertsPerPoly: 6,
+  detailSampleDist: 6,
+  detailSampleMaxError: 1,
+  expectedLayersPerTile: 4,
+  maxLayers: 4,
 };
 
 export class NavMesh {
@@ -111,30 +131,30 @@ export class NavMesh {
   build(
     positions: ArrayLike<number>,
     indices: ArrayLike<number>,
-    config: NavMeshConfig = {}
+    navMeshConfig: Partial<NavMeshConfig> = {}
   ): void {
-    const rcConfig = new Raw.Recast.rcConfig();
+    const config = { ...navMeshConfigDefaults, ...navMeshConfig };
 
-    rcConfig.borderSize = config.borderSize ?? 0;
-    rcConfig.tileSize = config.tileSize ?? 0;
-    rcConfig.cs = config.cs ?? 0.2;
-    rcConfig.ch = config.ch ?? 0.2;
-    rcConfig.walkableSlopeAngle = config.walkableSlopeAngle ?? 60;
-    rcConfig.walkableHeight = config.walkableHeight ?? 2;
-    rcConfig.walkableClimb = config.walkableClimb ?? 2;
-    rcConfig.walkableRadius = config.walkableRadius ?? 0.5;
-    rcConfig.maxEdgeLen = config.maxEdgeLen ?? 12;
-    rcConfig.maxSimplificationError = config.maxSimplificationError ?? 1.3;
-    rcConfig.minRegionArea = config.minRegionArea ?? 8;
-    rcConfig.mergeRegionArea = config.mergeRegionArea ?? 20;
-    rcConfig.maxVertsPerPoly = config.maxVertsPerPoly ?? 6;
-    rcConfig.detailSampleDist = config.detailSampleDist ?? 6;
-    rcConfig.detailSampleMaxError = config.detailSampleMaxError ?? 1;
+    const rcConfig = new Raw.Recast.rcConfig();
+    rcConfig.borderSize = config.borderSize;
+    rcConfig.tileSize = config.tileSize;
+    rcConfig.cs = config.cs;
+    rcConfig.ch = config.ch;
+    rcConfig.walkableSlopeAngle = config.walkableSlopeAngle;
+    rcConfig.walkableHeight = config.walkableHeight;
+    rcConfig.walkableClimb = config.walkableClimb;
+    rcConfig.walkableRadius = config.walkableRadius;
+    rcConfig.maxEdgeLen = config.maxEdgeLen;
+    rcConfig.maxSimplificationError = config.maxSimplificationError;
+    rcConfig.minRegionArea = config.minRegionArea;
+    rcConfig.mergeRegionArea = config.mergeRegionArea;
+    rcConfig.maxVertsPerPoly = config.maxVertsPerPoly;
+    rcConfig.detailSampleDist = config.detailSampleDist;
+    rcConfig.detailSampleMaxError = config.detailSampleMaxError;
 
     const navMeshBuildConfig = new Raw.Recast.NavMeshBuildConfig();
-    navMeshBuildConfig.expectedLayersPerTile =
-      config.expectedLayersPerTile ?? 4;
-    navMeshBuildConfig.maxLayers = config.maxLayers ?? 32;
+    navMeshBuildConfig.expectedLayersPerTile = config.expectedLayersPerTile;
+    navMeshBuildConfig.maxLayers = config.maxLayers;
 
     this.raw.build(
       positions as number[],

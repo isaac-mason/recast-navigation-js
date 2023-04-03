@@ -1,7 +1,11 @@
-import { useThree } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { Crowd, NavMesh } from '@recast-navigation/core';
-import React, { useEffect, useState } from 'react';
-import { ThreeDebugNavMesh, threeToNavMeshArgs } from 'recast-navigation/three';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  CrowdHelper,
+  NavMeshHelper,
+  threeToNavMeshArgs,
+} from 'recast-navigation/three';
 import { Group, MeshStandardMaterial } from 'three';
 import { BasicEnvironment } from '../utils/basic-environment';
 import { decorators } from '../utils/decorators';
@@ -13,7 +17,11 @@ export default {
 
 export const Basic = () => {
   const scene = useThree((state) => state.scene);
+
   const [group, setGroup] = useState<Group | null>(null);
+
+  const crowdRef = useRef<Crowd>(null!)
+  const crowdHelperRef = useRef<CrowdHelper>(null!)
 
   useEffect(() => {
     if (!group) return;
@@ -28,7 +36,23 @@ export const Basic = () => {
       ch: 0.02,
     });
 
-    const threeDebugNavMesh = new ThreeDebugNavMesh({
+    const crowd = new Crowd({
+      navMesh,
+      maxAgents: 5,
+      maxAgentRadius: 0.5,
+    });
+
+    const agentId = crowd.addAgent(
+      { x: 0, y: 0, z: 0 },
+      {
+        radius: 0.5,
+        height: 1,
+      }
+    );
+
+    console.log(`new agent! - ${agentId}`)
+
+    const navMeshHelper = new NavMeshHelper({
       navMesh,
       navMeshMaterial: new MeshStandardMaterial({
         color: 'orange',
@@ -37,18 +61,32 @@ export const Basic = () => {
       }),
     });
 
-    scene.add(threeDebugNavMesh.mesh);
+    scene.add(navMeshHelper.navMesh);
 
-    const crowd = new Crowd({
-      navMesh,
-      maxAgents: 5,
-      maxAgentRadius: 0.5,
+    const crowdHelper = new CrowdHelper({
+      crowd,
     });
 
+    scene.add(crowdHelper.agents);
+
+    crowdRef.current = crowd
+    crowdHelperRef.current = crowdHelper
+
     return () => {
-      scene.remove(threeDebugNavMesh.mesh);
+      scene.remove(navMeshHelper.navMesh);
+      scene.remove(crowdHelper.agents);
+
+      crowdRef.current = null!
+      crowdHelperRef.current = null!
     };
   }, [group]);
+
+  useFrame((_, delta) => {
+    if (!crowdRef.current || !crowdHelperRef.current) return
+
+    crowdRef.current.update(delta)
+    crowdHelperRef.current.updateAgents()
+  })
 
   return (
     <>

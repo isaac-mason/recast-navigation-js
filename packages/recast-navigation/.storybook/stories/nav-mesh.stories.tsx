@@ -1,6 +1,6 @@
 import { useThree } from '@react-three/fiber';
 import React, { useEffect, useState } from 'react';
-import { ThreeDebugNavMesh, threeToNavMesh } from 'recast-navigation/three';
+import { NavMeshHelper, threeToNavMesh } from 'recast-navigation/three';
 import { Group, MeshStandardMaterial } from 'three';
 import { BasicEnvironment } from '../utils/basic-environment';
 import { decorators } from '../utils/decorators';
@@ -22,7 +22,7 @@ export const Basic = () => {
       ch: 0.02,
     });
 
-    const threeDebugNavMesh = new ThreeDebugNavMesh({
+    const navMeshHelper = new NavMeshHelper({
       navMesh,
       navMeshMaterial: new MeshStandardMaterial({
         color: 'orange',
@@ -31,10 +31,10 @@ export const Basic = () => {
       }),
     });
 
-    scene.add(threeDebugNavMesh.mesh);
+    scene.add(navMeshHelper.navMesh);
 
     return () => {
-      scene.remove(threeDebugNavMesh.mesh);
+      scene.remove(navMeshHelper.navMesh);
     };
   }, [group]);
 

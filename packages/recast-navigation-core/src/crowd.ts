@@ -11,17 +11,74 @@ export type CrowdParams = {
 
 // todo - defaults for these
 export type CrowdAgentParams = {
-  radius?: number;
-  height?: number;
-  maxAcceleration?: number;
-  maxSpeed?: number;
-  collisionQueryRange?: number;
-  pathOptimizationRange?: number;
-  separationWeight?: number;
-  updateFlags?: number;
-  obstacleAvoidanceType?: number;
-  queryFilterType?: number;
-  userData?: unknown;
+  /**
+   * @default 0.5
+   */
+  radius: number;
+
+  /**
+   * @default 1
+   */
+  height: number;
+
+  /**
+   * @default 1
+   */
+  maxAcceleration: number;
+
+  /**
+   * @default 1
+   */
+  maxSpeed: number;
+
+  /**
+   * @default 0.5
+   */
+  collisionQueryRange: number;
+
+  /**
+   * @default 1
+   */
+  pathOptimizationRange: number;
+
+  /**
+   * @default 0.5
+   */
+  separationWeight: number;
+
+  /**
+   * @default 7
+   */
+  updateFlags: number;
+
+  /**
+   * @default 0
+   */
+  obstacleAvoidanceType: number;
+
+  /**
+   * @default 0
+   */
+  queryFilterType: number;
+
+  /**
+   * @default null
+   */
+  userData: unknown;
+};
+
+const crowdAgentParamsDefaults: CrowdAgentParams = {
+  radius: 0.5,
+  height: 1,
+  maxAcceleration: 1,
+  maxSpeed: 1,
+  collisionQueryRange: 0.5,
+  pathOptimizationRange: 1,
+  separationWeight: 0.5,
+  updateFlags: 7,
+  obstacleAvoidanceType: 0,
+  queryFilterType: 0,
+  userData: 0,
 };
 
 const Epsilon = 0.001;
@@ -57,7 +114,12 @@ export class Crowd {
     this.raw = new Raw.Recast.Crowd(maxAgents, maxAgentRadius, navMesh.raw);
   }
 
-  addAgent(position: Vector3, params: CrowdAgentParams): number {
+  addAgent(position: Vector3, crowdAgentParams: Partial<CrowdAgentParams>): number {
+    const params = {
+      ...crowdAgentParamsDefaults,
+      ...crowdAgentParams,
+    } as Required<CrowdAgentParams>;
+
     const dtCrowdAgentParams = new Raw.Recast.dtCrowdAgentParams();
 
     dtCrowdAgentParams.radius = params.radius;
@@ -130,6 +192,13 @@ export class Crowd {
     return this.raw.getAgentCount();
   }
 
+  /**
+   * Returns the number of active agents in the crowd.
+   */
+  getActiveAgentCount(): number {
+    return this.raw.getActiveAgentCount();
+  }
+
   getAgentPosition(agentIndex: number): Vector3 {
     return vec3.fromRaw(this.raw.getAgentPosition(agentIndex));
   }
@@ -170,7 +239,12 @@ export class Crowd {
     };
   }
 
-  setAgentParameters(agentIndex: number, params: CrowdAgentParams) {
+  setAgentParameters(agentIndex: number, crowdAgentParams: Partial<CrowdAgentParams>) {
+    const params = {
+      ...crowdAgentParamsDefaults,
+      ...crowdAgentParams,
+    } as CrowdAgentParams;
+
     const dtCrowdAgentParams = new Raw.Recast.dtCrowdAgentParams();
 
     dtCrowdAgentParams.radius = params.radius;

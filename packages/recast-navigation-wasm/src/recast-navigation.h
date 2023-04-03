@@ -320,6 +320,8 @@ public:
 
     int getAgentCount();
 
+    int getActiveAgentCount();
+
     Vec3 getAgentPosition(int idx);
 
     Vec3 getAgentVelocity(int idx);
