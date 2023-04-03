@@ -2,7 +2,7 @@ import { Environment, OrbitControls, useGLTF } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { button, Leva, useControls } from 'leva';
 import { Suspense, useEffect, useState } from 'react';
-import { ThreeDebugNavMesh, threeToNavMesh } from 'recast-navigation/three';
+import { NavMeshHelper, threeToNavMesh } from 'recast-navigation/three';
 import styled from 'styled-components';
 import { DoubleSide, Group, Mesh, MeshStandardMaterial } from 'three';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
@@ -110,7 +110,7 @@ const App = () => {
         borderSize: 0.5
       });
 
-      const debug = new ThreeDebugNavMesh({
+      const navMeshHelper = new NavMeshHelper({
         navMesh,
         navMeshMaterial: new MeshStandardMaterial({
           color: 'orange',
@@ -121,7 +121,7 @@ const App = () => {
         }),
       });
 
-      setDebugNavMesh(debug.mesh);
+      setDebugNavMesh(navMeshHelper.navMesh);
     } catch (e) {
       setError(
         'Something went wrong generating the nav mesh - ' +

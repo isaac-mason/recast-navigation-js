@@ -61,7 +61,7 @@ export const threeToNavMeshArgs = (
 
 export const threeToNavMesh = (
   object: Object3D,
-  navMeshConfig: NavMeshConfig = {}
+  navMeshConfig: Partial<NavMeshConfig> = {}
 ): NavMesh => {
   const [positions, indices] = threeToNavMeshArgs(object);
 

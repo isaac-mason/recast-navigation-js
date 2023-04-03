@@ -1,9 +1,9 @@
 import { Environment, OrbitControls } from '@react-three/drei';
 import { Canvas, useThree } from '@react-three/fiber';
 import { useEffect, useRef } from 'react';
-import { ThreeDebugNavMesh, threeToNavMeshArgs } from 'recast-navigation/three';
-import { NavMesh, init, NavMeshConfig } from 'recast-navigation';
-import { Color, Group, Mesh, MeshBasicMaterial, Vector2, Vector3 } from 'three';
+import { init, NavMesh } from 'recast-navigation';
+import { NavMeshHelper, threeToNavMeshArgs } from 'recast-navigation/three';
+import { Color, Group, MeshBasicMaterial, Vector2, Vector3 } from 'three';
 import { Line2, LineGeometry, LineMaterial } from 'three-stdlib';
 
 await init();
@@ -14,7 +14,11 @@ const App = () => {
   const groupRef = useRef<Group>(null!);
 
   useEffect(() => {
-    const navMeshConfig: NavMeshConfig = {
+    const navMeshArgs = threeToNavMeshArgs(groupRef.current);
+
+    const navMesh = new NavMesh();
+
+    navMesh.build(...navMeshArgs, {
       cs: 0.2,
       ch: 0.2,
       walkableSlopeAngle: 35,
@@ -28,14 +32,9 @@ const App = () => {
       maxVertsPerPoly: 6,
       detailSampleDist: 6,
       detailSampleMaxError: 1,
-    };
+    });
 
-    const navMeshArgs = threeToNavMeshArgs(groupRef.current);
-
-    const navMesh = new NavMesh();
-    navMesh.build(...navMeshArgs, navMeshConfig);
-
-    const debug = new ThreeDebugNavMesh({
+    const debug = new NavMeshHelper({
       navMesh,
       navMeshMaterial: new MeshBasicMaterial({
         color: 'red',
@@ -43,7 +42,7 @@ const App = () => {
       }),
     });
 
-    scene.add(debug.mesh);
+    scene.add(debug.navMesh);
 
     const path = navMesh.computePath(
       navMesh.getClosestPoint(new Vector3(2, 1, 2)),

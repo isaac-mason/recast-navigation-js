@@ -20,13 +20,6 @@ struct rcConfig;
 struct NavMeshIntermediates;
 struct TileCacheData;
 
-struct NavMeshBuildConfig
-{
-    // This value specifies how many layers (or "floors") each navmesh tile is expected to have.
-    int expectedLayersPerTile;
-    int maxLayers;
-};
-
 struct Vec3
 {
     float x, y, z;
@@ -218,8 +211,7 @@ public:
         const int positionCount,
         const int *indices,
         const int indexCount,
-        const rcConfig &config,
-        const NavMeshBuildConfig &navMeshBuildConfig);
+        const rcConfig &config);
 
     void buildFromNavMeshData(NavMeshData *navMeshData);
 
@@ -289,7 +281,6 @@ protected:
         const std::vector<float> &verts,
         const std::vector<int> &tris,
         rcConfig &cfg,
-        NavMeshBuildConfig &navMeshBuildConfig,
         NavMeshIntermediates &intermediates,
         const std::vector<unsigned char> &triareas);
 
@@ -297,7 +288,6 @@ protected:
         const int tx,
         const int ty,
         const rcConfig &cfg,
-        const NavMeshBuildConfig &navMeshBuildConfig,
         TileCacheData *tiles,
         const int maxTiles,
         NavMeshIntermediates &intermediates,

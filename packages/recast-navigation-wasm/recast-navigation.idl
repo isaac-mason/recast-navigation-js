@@ -147,18 +147,10 @@ interface dtCrowdAgentParams {
     attribute VoidPtr userData;
 };
 
-interface NavMeshBuildConfig {
-    void NavMeshBuildConfig();
-
-    attribute long expectedLayersPerTile;
-
-    attribute long maxLayers;
-};
-
 interface NavMesh {
     void NavMesh();
 
-    void build([Const] float[] positions, [Const] long positionCount, [Const] long[] indices, [Const] long indexCount, [Const, Ref] rcConfig config, [Const, Ref] NavMeshBuildConfig navMeshBuildConfig);
+    void build([Const] float[] positions, [Const] long positionCount, [Const] long[] indices, [Const] long indexCount, [Const, Ref] rcConfig config);
     void buildFromNavMeshData(NavMeshData data);
     void update();
     void destroy();

@@ -22,27 +22,27 @@ export type CrowdAgentParams = {
   height: number;
 
   /**
-   * @default 1
+   * @default 20
    */
   maxAcceleration: number;
 
   /**
-   * @default 1
+   * @default 6
    */
   maxSpeed: number;
 
   /**
-   * @default 0.5
+   * @default 2.5
    */
   collisionQueryRange: number;
 
   /**
-   * @default 1
+   * @default 0
    */
   pathOptimizationRange: number;
 
   /**
-   * @default 0.5
+   * @default 0
    */
   separationWeight: number;
 
@@ -62,7 +62,7 @@ export type CrowdAgentParams = {
   queryFilterType: number;
 
   /**
-   * @default null
+   * @default 0
    */
   userData: unknown;
 };
@@ -70,11 +70,11 @@ export type CrowdAgentParams = {
 const crowdAgentParamsDefaults: CrowdAgentParams = {
   radius: 0.5,
   height: 1,
-  maxAcceleration: 1,
-  maxSpeed: 1,
-  collisionQueryRange: 0.5,
-  pathOptimizationRange: 1,
-  separationWeight: 0.5,
+  maxAcceleration: 20,
+  maxSpeed: 6,
+  collisionQueryRange: 2.5,
+  pathOptimizationRange: 0,
+  separationWeight: 0,
   updateFlags: 7,
   obstacleAvoidanceType: 0,
   queryFilterType: 0,
@@ -121,7 +121,6 @@ export class Crowd {
     } as Required<CrowdAgentParams>;
 
     const dtCrowdAgentParams = new Raw.Recast.dtCrowdAgentParams();
-
     dtCrowdAgentParams.radius = params.radius;
     dtCrowdAgentParams.height = params.height;
     dtCrowdAgentParams.maxAcceleration = params.maxAcceleration;
@@ -242,6 +241,29 @@ export class Crowd {
   setAgentParameters(agentIndex: number, crowdAgentParams: Partial<CrowdAgentParams>) {
     const params = {
       ...crowdAgentParamsDefaults,
+      ...crowdAgentParams,
+    } as CrowdAgentParams;
+
+    const dtCrowdAgentParams = new Raw.Recast.dtCrowdAgentParams();
+
+    dtCrowdAgentParams.radius = params.radius;
+    dtCrowdAgentParams.height = params.height;
+    dtCrowdAgentParams.maxAcceleration = params.maxAcceleration;
+    dtCrowdAgentParams.maxSpeed = params.maxSpeed;
+    dtCrowdAgentParams.collisionQueryRange = params.collisionQueryRange;
+    dtCrowdAgentParams.pathOptimizationRange = params.pathOptimizationRange;
+    dtCrowdAgentParams.separationWeight = params.separationWeight;
+    dtCrowdAgentParams.updateFlags = params.updateFlags;
+    dtCrowdAgentParams.obstacleAvoidanceType = params.obstacleAvoidanceType;
+    dtCrowdAgentParams.queryFilterType = params.queryFilterType;
+    dtCrowdAgentParams.userData = params.userData;
+
+    this.raw.setAgentParameters(agentIndex, dtCrowdAgentParams);
+  }
+
+  updateAgentParameters(agentIndex: number, crowdAgentParams: Partial<CrowdAgentParams>) {
+    const params = {
+      ...this.getAgentParameters(agentIndex),
       ...crowdAgentParams,
     } as CrowdAgentParams;
 

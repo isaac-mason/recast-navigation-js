@@ -5,7 +5,7 @@ mkdir -p ./build
 mkdir -p dist
 
 # clone recast navigation library
-[ ! -d "recastnavigation" ] && git clone https://github.com/recastnavigation/recastnavigation.git
+[ ! -d "recastnavigation" ] && git clone https://github.com/isaac-mason/recastnavigation.git
 (cd recastnavigation && git checkout c5cbd53024c8a9d8d097a4371215e3342d2fdc87)
 
 # emscripten builds

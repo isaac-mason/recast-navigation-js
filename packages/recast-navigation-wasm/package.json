@@ -23,12 +23,14 @@
       "import": "./dist/recast-navigation.wasm.js"
     },
     "./wasm-compat": {
-      "import": "./dist/recast-navigation.wasm.js"
-    },
-    "./js": {
-      "import": "./dist/recast-navigation.js"
+      "import": "./dist/recast-navigation.wasm-compat.js"
     }
   },
+  "files": [
+    "dist/**",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "sh build.sh"
   },

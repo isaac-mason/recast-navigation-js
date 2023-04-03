@@ -13,7 +13,7 @@ set(RECASTAPI_HEADER_FILE ${CMAKE_CURRENT_SOURCE_DIR}/recastnavigation/Recast/In
 set(NAVMESHQUERY_HEADER_FILE ${CMAKE_CURRENT_SOURCE_DIR}/recastnavigation/Detour/Include/DetourNavMeshQuery.h)
 set(RECAST_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/)
 
-project("recast-navigation-core")
+project("recast-navigation-wasm")
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -121,7 +121,7 @@ set(EMCC_GLUE_ARGS
   -include${NAVMESHQUERY_HEADER_FILE}
   )
 
-#######################################
+# GLUE
 add_custom_command(
   OUTPUT glue.cpp glue.js
   BYPRODUCTS parser.out WebIDLGrammar.pkl
@@ -137,16 +137,7 @@ add_custom_command(
   VERBATIM)
 add_custom_target(${EXE_NAME}-bindings ALL DEPENDS glue.js glue.o)
 
-#######################################
-add_custom_command(
-  OUTPUT ${EXE_NAME}.js
-  COMMAND emcc glue.o lib${EXE_NAME}.a ${EMCC_JS_ESM_ARGS} -o ${EXE_NAME}.js
-  DEPENDS ${EXE_NAME}-bindings ${EXE_NAME}
-  COMMENT "Building ${EXE_NAME} javascript"
-  VERBATIM)
-add_custom_target(${EXE_NAME}-javascript ALL DEPENDS ${EXE_NAME}.js)
-
-# #######################################
+# ES6 WASM
 add_custom_command(
   OUTPUT ${EXE_NAME}.wasm.js ${EXE_NAME}.wasm.wasm
   COMMAND emcc glue.o lib${EXE_NAME}.a ${EMCC_WASM_ESM_ARGS} -o ${EXE_NAME}.wasm.js
@@ -155,11 +146,11 @@ add_custom_command(
   VERBATIM)
 add_custom_target(${EXE_NAME}-wasm ALL DEPENDS ${EXE_NAME}.wasm.js ${EXE_NAME}.wasm.wasm)
 
-# #######################################
+# ES6 INLINED BASE64 WASM
 add_custom_command(
   OUTPUT ${EXE_NAME}.wasm-compat.js
   COMMAND emcc glue.o lib${EXE_NAME}.a ${EMCC_WASM_COMPAT_ESM_ARGS} -o ${EXE_NAME}.wasm-compat.js
   DEPENDS ${EXE_NAME}-bindings ${EXE_NAME}
-  COMMENT "Building ${EXE_NAME} esm webassembly compat"
+  COMMENT "Building ${EXE_NAME} inlined base64 webassembly"
   VERBATIM)
 add_custom_target(${EXE_NAME}-wasm-compat ALL DEPENDS ${EXE_NAME}.wasm-compat.js)

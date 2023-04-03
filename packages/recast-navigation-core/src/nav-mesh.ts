@@ -80,17 +80,6 @@ export type NavMeshConfig = {
    * @default 1
    */
   detailSampleMaxError: number;
-
-  /**
-   * This value specifies how many layers (or "floors") each navmesh tile is expected to have.
-   * @default 4
-   */
-  expectedLayersPerTile: number;
-
-  /**
-   * @default 32
-   */
-  maxLayers: number;
 };
 
 const navMeshConfigDefaults: NavMeshConfig = {
@@ -109,8 +98,6 @@ const navMeshConfigDefaults: NavMeshConfig = {
   maxVertsPerPoly: 6,
   detailSampleDist: 6,
   detailSampleMaxError: 1,
-  expectedLayersPerTile: 4,
-  maxLayers: 4,
 };
 
 export class NavMesh {
@@ -152,17 +139,12 @@ export class NavMesh {
     rcConfig.detailSampleDist = config.detailSampleDist;
     rcConfig.detailSampleMaxError = config.detailSampleMaxError;
 
-    const navMeshBuildConfig = new Raw.Recast.NavMeshBuildConfig();
-    navMeshBuildConfig.expectedLayersPerTile = config.expectedLayersPerTile;
-    navMeshBuildConfig.maxLayers = config.maxLayers;
-
     this.raw.build(
       positions as number[],
       positions.length / 3,
       indices as number[],
       indices.length,
       rcConfig,
-      navMeshBuildConfig
     );
   }
 
@@ -254,6 +236,7 @@ export class NavMesh {
 
   setDefaultQueryExtent(extent: Vector3): void {
     const extentRaw = vec3.toRaw(extent);
+    console.log(extentRaw)
     this.raw.setDefaultQueryExtent(extentRaw);
   }
 

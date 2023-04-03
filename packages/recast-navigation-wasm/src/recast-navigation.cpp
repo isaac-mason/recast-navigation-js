@@ -32,6 +32,7 @@ inline float r01()
 }
 
 // This value specifies how many layers (or "floors") each navmesh tile is expected to have.
+// todo - pass in from params ...
 static const int EXPECTED_LAYERS_PER_TILE = 4;
 static const int MAX_LAYERS = 32;
 
@@ -101,7 +102,6 @@ int NavMesh::rasterizeTileLayers(
     const int tx,
     const int ty,
     const rcConfig &cfg,
-    const NavMeshBuildConfig &buildCfg,
     TileCacheData *tiles,
     const int maxTiles,
     NavMeshIntermediates &intermediates,
@@ -264,7 +264,6 @@ bool NavMesh::computeTiledNavMesh(
     const std::vector<float> &verts,
     const std::vector<int> &tris,
     rcConfig &cfg,
-    NavMeshBuildConfig &navMeshBuildConfig,
     NavMeshIntermediates &intermediates,
     const std::vector<unsigned char> &triareas)
 {
@@ -349,7 +348,7 @@ bool NavMesh::computeTiledNavMesh(
         {
             TileCacheData tiles[MAX_LAYERS];
             memset(tiles, 0, sizeof(tiles));
-            int ntiles = rasterizeTileLayers(x, y, cfg, navMeshBuildConfig, tiles, MAX_LAYERS, intermediates, triareas, verts);
+            int ntiles = rasterizeTileLayers(x, y, cfg, tiles, MAX_LAYERS, intermediates, triareas, verts);
             for (int i = 0; i < ntiles; ++i)
             {
                 TileCacheData *tile = &tiles[i];
@@ -382,8 +381,7 @@ void NavMesh::build(
     const int positionCount,
     const int *indices,
     const int indexCount,
-    const rcConfig &config,
-    const NavMeshBuildConfig &navMeshBuildConfig)
+    const rcConfig &config)
 {
     if (m_pmesh)
     {
@@ -472,14 +470,11 @@ void NavMesh::build(
 
     rcCalcGridSize(cfg.bmin, cfg.bmax, cfg.cs, &cfg.width, &cfg.height);
 
-    // NavMesh build config
-    NavMeshBuildConfig buildCfg = navMeshBuildConfig;
-
     rcContext ctx;
 
     if (config.tileSize)
     {
-        if (!computeTiledNavMesh(verts, tris, cfg, buildCfg, intermediates, triareas))
+        if (!computeTiledNavMesh(verts, tris, cfg, intermediates, triareas))
         {
             Log("Unable to create tiled navmesh");
         }
@@ -1296,7 +1291,6 @@ void Crowd::destroy()
     }
 }
 
-// todo - memory access out of bounds, maybe due to &pos.x
 int Crowd::addAgent(const Vec3 &pos, const dtCrowdAgentParams *params)
 {
     return m_crowd->addAgent(&pos.x, params);
@@ -1372,14 +1366,27 @@ void Crowd::agentGoto(int idx, const Vec3 &destination)
 
     dtPolyRef polyRef;
 
+    printf("m_defaultQueryExtent.x: %f, y: %f, z: %f\n", m_defaultQueryExtent.x, m_defaultQueryExtent.y, m_defaultQueryExtent.z);
+
     Vec3 pos(destination.x, destination.y, destination.z);
     m_crowd->getNavMeshQuery()->findNearestPoly(&pos.x, &m_defaultQueryExtent.x, &filter, &polyRef, 0);
 
-    m_crowd->requestMoveTarget(idx, polyRef, &pos.x);
+    bool success = m_crowd->requestMoveTarget(idx, polyRef, &pos.x);
+    if (success) {
+        printf("agentGoto success\n");
+    } else {
+        printf("agentGoto failed\n");
+    }
+
+    if (!polyRef) {
+        printf("polyRef false\n");
+    }
 }
 
 void Crowd::agentTeleport(int idx, const Vec3 &destination)
 {
+    printf("agentTeleport Test 1\n");
+    
     if (idx < 0 || idx > m_crowd->getAgentCount())
     {
         return;
@@ -1391,8 +1398,16 @@ void Crowd::agentTeleport(int idx, const Vec3 &destination)
 
     dtPolyRef polyRef = 0;
 
+    // todo: remove
+    printf("agentTeleport Test 2\n");
+
+    printf("agentTeleport m_defaultQueryExtent.x: %f, y: %f, z: %f\n", m_defaultQueryExtent.x, m_defaultQueryExtent.y, m_defaultQueryExtent.z);
+
     Vec3 pos(destination.x, destination.y, destination.z);
     m_crowd->getNavMeshQuery()->findNearestPoly(&pos.x, &m_defaultQueryExtent.x, &filter, &polyRef, 0);
+
+    // todo: remove
+    printf("agentTeleport Test 3\n");
 
     dtCrowdAgent *ag = m_crowd->getEditableAgent(idx);
 
