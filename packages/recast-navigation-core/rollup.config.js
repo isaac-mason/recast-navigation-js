@@ -18,7 +18,7 @@ export default [
     ],
     plugins: [
       terser(),
-      // nodeResolve(),
+      nodeResolve(),
       commonjs(),
       typescript({
         tsconfig: path.resolve(__dirname, `tsconfig.json`),
