@@ -32,7 +32,7 @@ export class NavMeshHelper {
 
     this.navMesh = new Mesh(
       new BufferGeometry(),
-      
+      this.navMeshMaterial
     );
 
     this.obstacles = new Group();
