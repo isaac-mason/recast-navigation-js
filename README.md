@@ -67,12 +67,14 @@ The repository is structured as a monorepo. You will find all published packages
 
 Before building, ensure you have the following installed:
 
+- Node 16
 - Python 3.10.5
 - Emsdk v3.1.34
 
 To build the project, run the following:
 
 ```sh
+> yarn install
 > yarn build
 ```
 
