@@ -7,7 +7,7 @@ A WebAssembly port of [Recast Navigation](https://github.com/recastnavigation/re
 ## Features
 
 - 📐 ‎ NavMesh generation
-- 🧭 ‎ Path-finding and spatial reasoning
+- 🧭 ‎ Path-finding
 - 🧑‍🤝‍🧑 ‎ Crowd simulation
 - 🌐 ‎ Web and Node support
 - 💙 ‎ TypeScript friendly
