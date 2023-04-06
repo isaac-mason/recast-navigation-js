@@ -1,85 +1,62 @@
-name: Release
+name: Preview
 
 on:
   push:
-    branches:
+    branches-ignore:
       - main
 
-concurrency: release-${{ github.workflow }}-${{ github.ref }}
+concurrency: preview-${{ github.workflow }}-${{ github.ref }}
 
 jobs:
-  release:
-    name: Release
-    if: github.repository_owner == 'isaac-mason'
+  preview:
+    name: Preview
     runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: '--max-old-space-size=4096'
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-      - name: Setup Node.js 16.x
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16.x
-
-      - name: Install Dependencies
-        run: yarn
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
 
       - name: Build Packages
         run: ./ci/build-packages.sh
         shell: bash
 
-      - name: Test
-        run: yarn test
-
-      - name: Install Vercel CLI
-        run: npm install --global vercel@latest
-
       # navmesh website
       - name: NavMesh Website - Pull Vercel Environment Information
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_NAVMESH_WEBSITE_PROJECT_ID }}
-      
+
       - name: NavMesh Website - Build Project Artifacts
-        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_NAVMESH_WEBSITE_PROJECT_ID }}
-      
+
       - name: NavMesh Website - Deploy Project Artifacts to Vercel
-        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_NAVMESH_WEBSITE_PROJECT_ID }}
 
       # storybook
       - name: Storybook - Pull Vercel Environment Information
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_STORYBOOK_PROJECT_ID }}
-      
-      - name: Storybook - Build Project Artifacts
-        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_STORYBOOK_PROJECT_ID }}
-      
-      - name: Storybook - Deploy Project Artifacts to Vercel
-        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_STORYBOOK_PROJECT_ID }}
 
-      # release
-      - name: Create Release Pull Request or Publish to npm
-        id: changesets
-        uses: changesets/action@v1
-        with:
-          version: yarn version
-          publish: yarn publish
-          commit: 'chore(changeset): release packages'
+      - name: Storybook - Build Project Artifacts
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_STORYBOOK_PROJECT_ID }}
+
+      - name: Storybook - Deploy Project Artifacts to Vercel
+        run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_STORYBOOK_PROJECT_ID }}
