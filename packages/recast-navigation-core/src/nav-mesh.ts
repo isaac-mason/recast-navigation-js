@@ -1,9 +1,15 @@
-import R from '@recast-navigation/wasm';
-import { ObstacleRef } from './obstacle';
-import { Raw } from './raw';
-import { NavPath, navPath, vec3, Vector3 } from './utils';
-import { DebugNavMesh } from './debug-nav-mesh';
+import type R from '@recast-navigation/wasm';
 import { Crowd } from './crowd';
+import { DebugNavMesh } from './debug-nav-mesh';
+import type {
+  BoxObstacle,
+  CylinderObstacle,
+  Obstacle,
+  ObstacleRef,
+} from './obstacle';
+import { Raw } from './raw';
+import type { NavPath, Vector3 } from './utils';
+import { navPath, vec3 } from './utils';
 
 export type NavMeshConfig = {
   /**
@@ -99,24 +105,6 @@ const navMeshConfigDefaults: NavMeshConfig = {
   detailSampleDist: 6,
   detailSampleMaxError: 1,
 };
-
-export type BoxObstacle = {
-  type: 'box';
-  ref: ObstacleRef;
-  position: Vector3;
-  extent: Vector3;
-  angle: number;
-};
-
-export type CylinderObstacle = {
-  type: 'cylinder';
-  ref: ObstacleRef;
-  position: Vector3;
-  radius: number;
-  height: number;
-};
-
-export type Obstacle = BoxObstacle | CylinderObstacle;
 
 export class NavMesh {
   raw: R.NavMesh;
