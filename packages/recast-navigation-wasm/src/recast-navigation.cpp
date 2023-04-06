@@ -1257,6 +1257,7 @@ dtObstacleRef *NavMesh::addBoxObstacle(const Vec3 &position, const Vec3 &extent,
     {
         return nullptr;
     }
+
     m_tileCache->addBoxObstacle(&position.x, &extent.x, angle, &ref);
     m_obstacles.push_back(ref);
     return &m_obstacles.back();
@@ -1370,6 +1371,11 @@ void Crowd::agentGoto(int idx, const Vec3 &destination)
     m_crowd->getNavMeshQuery()->findNearestPoly(&pos.x, &m_defaultQueryExtent.x, &filter, &polyRef, 0);
 
     bool success = m_crowd->requestMoveTarget(idx, polyRef, &pos.x);
+}
+
+void Crowd::agentResetMoveTarget(int idx)
+{
+    m_crowd->resetMoveTarget(idx);
 }
 
 void Crowd::agentTeleport(int idx, const Vec3 &destination)

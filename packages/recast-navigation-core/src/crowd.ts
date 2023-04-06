@@ -165,6 +165,10 @@ export class Crowd {
     this.raw.agentTeleport(agentIndex, vec3.toRaw(position));
   }
 
+  resetMoveTarget(agentIndex: number) {
+    this.raw.agentResetMoveTarget(agentIndex);
+  }
+
   update(deltaTime: number) {
     // update navmesh obstacles
     this.navMesh.update();

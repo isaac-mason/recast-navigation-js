@@ -324,6 +324,8 @@ public:
 
     void agentGoto(int idx, const Vec3 &destination);
 
+    void agentResetMoveTarget(int idx);
+
     void agentTeleport(int idx, const Vec3 &destination);
 
     dtCrowdAgentParams getAgentParameters(const int idx);

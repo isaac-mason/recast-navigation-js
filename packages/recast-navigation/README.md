@@ -76,6 +76,8 @@ navMesh.getRandomPointAround(position, radius);
 
 Recast Navigation supports creating Box and Cylinder obstacles.
 
+Note that in order to use obstacles, you must specify a `tileSize` in the `NavMeshConfig`.
+
 ```ts
 /* add a Box obstacle to the NavMesh */
 const position = { x: 0, y: 0, z: 0 };
@@ -153,6 +155,9 @@ const agentParameters = crowd.getAgentParameters(agentIndex);
 /* tell the agent to move to a target position */
 const targetPosition = { x: 0, y: 0, z: 0 };
 crowd.goto(agentIndex, targetPosition);
+
+/* reset the agents target */
+crowd.resetMoveTarget(agentIndex);
 
 /* teleport the agent to a position */
 crowd.teleport(agentIndex, targetPosition);
