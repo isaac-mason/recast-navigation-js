@@ -27,10 +27,10 @@ All packages ship as ECMAScript modules, and are compatible with Node.js and bro
 
 [![Version](https://img.shields.io/npm/v/recast-navigation)](https://www.npmjs.com/package/recast-navigation)
 
-The umbrella package for `recast-navigation`. Includes `@recast-navigation/core`, and `@recast-navigation/three`.
+The umbrella package for `recast-navigation`.
 
 ```bash
-> yarn add recast-navigation
+> npm install recast-navigation
 ```
 
 ### [**`@recast-navigation/core`**](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-core)
@@ -40,17 +40,17 @@ The umbrella package for `recast-navigation`. Includes `@recast-navigation/core`
 The core library!
 
 ```bash
-> yarn add @recast-navigation/core
+> npm install @recast-navigation/core
 ```
 
 ### [**`@recast-navigation/three`**](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-three)
 
 [![Version](https://img.shields.io/npm/v/@recast-navigation/three)](https://www.npmjs.com/package/@recast-navigation/three)
 
-A friendly three.js API for recast-navigation.
+Helpers for three.js. 
 
 ```bash
-> yarn add @recast-navigation/three
+> npm install @recast-navigation/three
 ```
 
 ## Apps
