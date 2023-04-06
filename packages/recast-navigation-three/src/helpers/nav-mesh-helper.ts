@@ -15,6 +15,8 @@ export type NavMeshHelperParams = {
 export class NavMeshHelper {
   navMesh: Mesh;
 
+  navMeshTiles: Group;
+
   obstacles: Group;
 
   recastNavMesh: NavMesh;
@@ -26,6 +28,8 @@ export class NavMeshHelper {
       new BufferGeometry(),
       navMeshMaterial ?? new MeshBasicMaterial({ color: 'red' })
     );
+
+    this.navMeshTiles = new Group();
 
     this.obstacles = new Group();
 

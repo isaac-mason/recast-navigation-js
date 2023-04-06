@@ -36,7 +36,7 @@ export const Basic = () => {
       walkableHeight: 1.0,
       walkableClimb: 1,
       walkableRadius: 1,
-      maxEdgeLen: 12.,
+      maxEdgeLen: 12,
       maxSimplificationError: 1.3,
       minRegionArea: 8,
       mergeRegionArea: 20,
@@ -45,38 +45,30 @@ export const Basic = () => {
       detailSampleMaxError: 1,
     });
 
-    navMesh.setDefaultQueryExtent({ x: 10, y: 10, z: 10 });
-
     const crowd = new Crowd({
       navMesh,
-      maxAgents: 11,
-      maxAgentRadius: 0.2,
+      maxAgents: 10,
+      maxAgentRadius: 0.5,
     });
 
-    crowd.setDefaultQueryExtent({ x: 2, y: 2, z: 2 });
-
-    console.log(
-      crowd.addAgent(
-        { x: 0, y: 0, z: 0 },
-        {
-          radius: 0.1,
-          height: 0.2,
-          maxAcceleration: 4.0,
-          maxSpeed: 1.0,
-          collisionQueryRange: 0.5,
-          pathOptimizationRange: 0.0,
-          separationWeight: 1.0,
-        }
-      )
-    );
+    for (let i = 0; i < 10; i++) {
+      crowd.addAgent(navMesh.getRandomPointAround({ x: 0, y: 0, z: 0 }, 2), {
+        radius: 0.1 + Math.random() * 0.1,
+        height: 0.5,
+        maxAcceleration: 4.0,
+        maxSpeed: 1.0,
+        collisionQueryRange: 0.5,
+        pathOptimizationRange: 0.0,
+        separationWeight: 1.0,
+      });
+    }
 
     const navMeshHelper = new NavMeshHelper({
       navMesh,
       navMeshMaterial: new MeshStandardMaterial({
         color: 'orange',
         transparent: true,
-        opacity: 1,
-        wireframe: true,
+        opacity: 0.5,
         wireframeLinewidth: 3,
       }),
     });
@@ -106,17 +98,14 @@ export const Basic = () => {
   useFrame((_, delta) => {
     if (!crowdRef.current || !crowdHelperRef.current) return;
 
-    crowdRef.current.update(delta * 1000);
+    crowdRef.current.update(delta);
     crowdHelperRef.current.updateAgents();
   });
 
   return (
     <>
       <group ref={setGroup}>
-        <mesh rotation={[-Math.PI / 2, 0, 0]}>
-          <planeGeometry args={[6, 6]} />
-          <meshStandardMaterial color="grey" />
-        </mesh>
+        <BasicEnvironment />
       </group>
 
       <group>
@@ -127,18 +116,11 @@ export const Basic = () => {
         onClick={(e) => {
           if (!crowdRef.current) return;
 
-          const agent = 0;
-
-          console.log(crowdRef.current.getActiveAgentCount());
-
-          const start = crowdRef.current.getAgentPosition(agent);
-
           const target = crowdRef.current.navMesh.getClosestPoint(e.point);
 
-          console.log(start, target);
-          console.log(crowdRef.current.navMesh.computePath(start, target));
-
-          crowdRef.current.teleport(agent, e.point);
+          for (const agent of crowdRef.current.getAgents()) {
+            crowdRef.current.goto(agent, target);
+          }
         }}
       >
         {threeNavMesh && <primitive object={threeNavMesh} />}

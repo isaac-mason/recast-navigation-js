@@ -1,7 +1,7 @@
 {
   "name": "recast-navigation-root",
   "private": true,
-  "packageManager": "yarn@3.2.2",
+  "packageManager": "yarn@3.5.0",
   "workspaces": [
     "packages/recast-navigation-wasm",
     "packages/recast-navigation-core",
@@ -12,6 +12,7 @@
   ],
   "scripts": {
     "build": "yarn workspaces foreach -t run build",
+    "build:packages": "yarn workspaces foreach -t --include recast-navigation --include @recast-navigation/core --include @recast-navigation/three --include @recast-navigation/wasm run build",
     "change": "yarn changeset",
     "version": "yarn changeset version && yarn install --mode update-lockfile"
   },

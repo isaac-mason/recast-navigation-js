@@ -25,11 +25,11 @@ export class CrowdHelper {
   }
 
   updateAgents() {
-    const activeAgentCount = this.recastCrowd.getActiveAgentCount();
+    const agentsIndices = this.recastCrowd.getAgents();
 
     const unseen = new Set(this.agentMeshes.keys());
 
-    for (let i = 0; i < activeAgentCount; i++) {
+    for (const i of agentsIndices) {
       unseen.delete(i);
 
       const position = this.recastCrowd.getAgentPosition(i);
@@ -51,7 +51,7 @@ export class CrowdHelper {
       );
       agentMesh.lookAt(
         new Vector3().copy(agentMesh.position).add(velocity as Vector3)
-      );
+      ); 
     }
 
     for (const agentId of unseen) {

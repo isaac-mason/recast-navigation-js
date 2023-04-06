@@ -236,7 +236,6 @@ export class NavMesh {
 
   setDefaultQueryExtent(extent: Vector3): void {
     const extentRaw = vec3.toRaw(extent);
-    console.log(extentRaw)
     this.raw.setDefaultQueryExtent(extentRaw);
   }
 

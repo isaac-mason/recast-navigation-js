@@ -26,6 +26,7 @@ export const threeToNavMeshArgs = (
 
       const meshIndices = mesh.geometry.getIndex()?.array;
       if (!meshIndices) {
+        // todo: to indexed?
         continue;
       }
 

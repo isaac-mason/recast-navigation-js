@@ -4,11 +4,11 @@ import { Raw } from './raw';
 export type Vector3 = { x: number; y: number; z: number };
 
 export const vec3 = {
-  toRaw: (v: Vector3) => {
-    return new Raw.Recast.Vec3(v.x, v.y, v.z);
+  toRaw: ({ x, y, z }: Vector3) => {
+    return new Raw.Recast.Vec3(x, y, z);
   },
-  fromRaw: (v: R.Vec3) => {
-    return { x: v.x, y: v.y, z: v.z };
+  fromRaw: ({ x, y, z }: R.Vec3) => {
+    return { x, y, z };
   },
 };
 

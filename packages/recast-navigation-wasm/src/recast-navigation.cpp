@@ -1366,27 +1366,14 @@ void Crowd::agentGoto(int idx, const Vec3 &destination)
 
     dtPolyRef polyRef;
 
-    printf("m_defaultQueryExtent.x: %f, y: %f, z: %f\n", m_defaultQueryExtent.x, m_defaultQueryExtent.y, m_defaultQueryExtent.z);
-
     Vec3 pos(destination.x, destination.y, destination.z);
     m_crowd->getNavMeshQuery()->findNearestPoly(&pos.x, &m_defaultQueryExtent.x, &filter, &polyRef, 0);
 
     bool success = m_crowd->requestMoveTarget(idx, polyRef, &pos.x);
-    if (success) {
-        printf("agentGoto success\n");
-    } else {
-        printf("agentGoto failed\n");
-    }
-
-    if (!polyRef) {
-        printf("polyRef false\n");
-    }
 }
 
 void Crowd::agentTeleport(int idx, const Vec3 &destination)
 {
-    printf("agentTeleport Test 1\n");
-    
     if (idx < 0 || idx > m_crowd->getAgentCount())
     {
         return;
@@ -1398,16 +1385,8 @@ void Crowd::agentTeleport(int idx, const Vec3 &destination)
 
     dtPolyRef polyRef = 0;
 
-    // todo: remove
-    printf("agentTeleport Test 2\n");
-
-    printf("agentTeleport m_defaultQueryExtent.x: %f, y: %f, z: %f\n", m_defaultQueryExtent.x, m_defaultQueryExtent.y, m_defaultQueryExtent.z);
-
     Vec3 pos(destination.x, destination.y, destination.z);
     m_crowd->getNavMeshQuery()->findNearestPoly(&pos.x, &m_defaultQueryExtent.x, &filter, &polyRef, 0);
-
-    // todo: remove
-    printf("agentTeleport Test 3\n");
 
     dtCrowdAgent *ag = m_crowd->getEditableAgent(idx);
 
@@ -1430,9 +1409,13 @@ void Crowd::agentTeleport(int idx, const Vec3 &destination)
     ag->desiredSpeed = 0;
 
     if (polyRef)
+    {
         ag->state = DT_CROWDAGENT_STATE_WALKING;
+    }
     else
+    {
         ag->state = DT_CROWDAGENT_STATE_INVALID;
+    }
 
     ag->targetState = DT_CROWDAGENT_TARGET_NONE;
 }

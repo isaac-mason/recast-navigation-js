@@ -1,1 +1,1 @@
-# @recast-navigation/core
+# @recast-navigation/wasm

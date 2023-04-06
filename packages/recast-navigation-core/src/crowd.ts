@@ -9,7 +9,6 @@ export type CrowdParams = {
   navMesh: NavMesh;
 };
 
-// todo - defaults for these
 export type CrowdAgentParams = {
   /**
    * @default 0.5
@@ -86,6 +85,8 @@ const Epsilon = 0.001;
 export class Crowd {
   raw: R.Crowd;
 
+  agents: number[] = [];
+
   /**
    * The NavMesh the crowd is interacting with
    */
@@ -111,10 +112,13 @@ export class Crowd {
 
   constructor({ maxAgents, maxAgentRadius, navMesh }: CrowdParams) {
     this.navMesh = navMesh;
-    this.raw = new Raw.Recast.Crowd(maxAgents, maxAgentRadius, navMesh.raw);
+    this.raw = new Raw.Recast.Crowd(maxAgents, maxAgentRadius, navMesh.raw.getNavMesh());
   }
 
-  addAgent(position: Vector3, crowdAgentParams: Partial<CrowdAgentParams>): number {
+  addAgent(
+    position: Vector3,
+    crowdAgentParams: Partial<CrowdAgentParams>
+  ): number {
     const params = {
       ...crowdAgentParamsDefaults,
       ...crowdAgentParams,
@@ -135,11 +139,18 @@ export class Crowd {
 
     const agentId = this.raw.addAgent(vec3.toRaw(position), dtCrowdAgentParams);
 
+    this.agents.push(agentId);
+
     return agentId;
   }
 
   removeAgent(agentIndex: number) {
     this.raw.removeAgent(agentIndex);
+
+    const i = this.agents.indexOf(agentIndex);
+    if (i > -1) {
+      this.agents.splice(i, 1);
+    }
   }
 
   goto(agentIndex: number, position: Vector3) {
@@ -198,6 +209,10 @@ export class Crowd {
     return this.raw.getActiveAgentCount();
   }
 
+  getAgents(): number[] {
+    return this.agents;
+  }
+
   getAgentPosition(agentIndex: number): Vector3 {
     return vec3.fromRaw(this.raw.getAgentPosition(agentIndex));
   }
@@ -238,7 +253,10 @@ export class Crowd {
     };
   }
 
-  setAgentParameters(agentIndex: number, crowdAgentParams: Partial<CrowdAgentParams>) {
+  setAgentParameters(
+    agentIndex: number,
+    crowdAgentParams: Partial<CrowdAgentParams>
+  ) {
     const params = {
       ...crowdAgentParamsDefaults,
       ...crowdAgentParams,
@@ -261,27 +279,16 @@ export class Crowd {
     this.raw.setAgentParameters(agentIndex, dtCrowdAgentParams);
   }
 
-  updateAgentParameters(agentIndex: number, crowdAgentParams: Partial<CrowdAgentParams>) {
+  updateAgentParameters(
+    agentIndex: number,
+    crowdAgentParams: Partial<CrowdAgentParams>
+  ) {
     const params = {
       ...this.getAgentParameters(agentIndex),
       ...crowdAgentParams,
     } as CrowdAgentParams;
 
-    const dtCrowdAgentParams = new Raw.Recast.dtCrowdAgentParams();
-
-    dtCrowdAgentParams.radius = params.radius;
-    dtCrowdAgentParams.height = params.height;
-    dtCrowdAgentParams.maxAcceleration = params.maxAcceleration;
-    dtCrowdAgentParams.maxSpeed = params.maxSpeed;
-    dtCrowdAgentParams.collisionQueryRange = params.collisionQueryRange;
-    dtCrowdAgentParams.pathOptimizationRange = params.pathOptimizationRange;
-    dtCrowdAgentParams.separationWeight = params.separationWeight;
-    dtCrowdAgentParams.updateFlags = params.updateFlags;
-    dtCrowdAgentParams.obstacleAvoidanceType = params.obstacleAvoidanceType;
-    dtCrowdAgentParams.queryFilterType = params.queryFilterType;
-    dtCrowdAgentParams.userData = params.userData;
-
-    this.raw.setAgentParameters(agentIndex, dtCrowdAgentParams);
+    this.setAgentParameters(agentIndex, params);
   }
 
   getDefaultQueryExtent(): Vector3 {
