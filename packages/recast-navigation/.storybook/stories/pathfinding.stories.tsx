@@ -1,7 +1,6 @@
 import { useThree } from '@react-three/fiber';
-import { NavMesh } from '@recast-navigation/core';
 import React, { useEffect, useState } from 'react';
-import { NavMeshHelper, threeToNavMeshArgs } from 'recast-navigation/three';
+import { NavMeshHelper, threeToNavMesh } from 'recast-navigation/three';
 import { Group, MeshStandardMaterial } from 'three';
 import { BasicEnvironment } from '../utils/basic-environment';
 import { createLine } from '../utils/create-line';
@@ -19,12 +18,7 @@ export const Basic = () => {
   useEffect(() => {
     if (!group) return;
 
-    const args = threeToNavMeshArgs(group);
-
-    console.log(args);
-
-    const navMesh = new NavMesh();
-    navMesh.build(...args, {
+    const navMesh = threeToNavMesh(group, {
       cs: 0.05,
       ch: 0.02,
     });

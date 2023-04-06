@@ -1,11 +1,10 @@
-import { useFrame, useThree } from '@react-three/fiber';
-import { Crowd, NavMesh } from '@recast-navigation/core';
+import { useFrame } from '@react-three/fiber';
+import { Crowd } from '@recast-navigation/core';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   CrowdHelper,
   NavMeshHelper,
   threeToNavMesh,
-  threeToNavMeshArgs,
 } from 'recast-navigation/three';
 import { Group, Mesh, MeshStandardMaterial } from 'three';
 import { BasicEnvironment } from '../utils/basic-environment';
@@ -17,8 +16,6 @@ export default {
 };
 
 export const Basic = () => {
-  const scene = useThree((state) => state.scene);
-
   const [group, setGroup] = useState<Group | null>(null);
   const [threeNavMesh, setThreeNavMesh] = useState<Mesh | null>(null);
   const [threeCrowdAgents, setThreeCrowdAgents] = useState<Group | null>(null);
