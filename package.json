@@ -13,6 +13,7 @@
   "scripts": {
     "build": "yarn workspaces foreach -t run build",
     "build:packages": "yarn workspaces foreach -t --include recast-navigation --include @recast-navigation/core --include @recast-navigation/three --include @recast-navigation/wasm run build",
+    "test": "yarn workspaces foreach -t run test",
     "change": "yarn changeset",
     "version": "yarn changeset version && yarn install --mode update-lockfile"
   },
