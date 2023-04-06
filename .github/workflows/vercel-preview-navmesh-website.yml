@@ -9,6 +9,8 @@ on:
     branches-ignore:
       - main
 
+concurrency: vercel-preview-navmesh-${{ github.workflow }}-${{ github.ref }}
+
 jobs:
   navmesh-website:
     name: NavMesh Website

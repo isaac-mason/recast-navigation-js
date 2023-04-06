@@ -9,6 +9,8 @@ on:
     branches:
       - main
 
+concurrency: vercel-prod-storybook-${{ github.workflow }}-${{ github.ref }}
+
 jobs:
   storybook:
     name: Storybook
