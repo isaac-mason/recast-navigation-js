@@ -186,7 +186,7 @@ const debugNavMesh = navMesh.getDebugNavMesh();
 const { positions, indices } = debugNavMesh.positions;
 ```
 
-If you are using `@recast-navigation/three`, you can use `NavMeshHelper` to easily visualize the NavMesh.
+If you are using `@recast-navigation/three`, you can use `NavMeshHelper` and `CrowdHelper` to visualize NavMeshes and Crowds.
 
 ### Exporting and Importing a NavMesh
 
