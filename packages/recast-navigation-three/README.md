@@ -1,11 +1,11 @@
-# @recast-navigation/core
+# @recast-navigation/three
 
 Three.js glue for [`recast-navigation`](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation).
 
 ## Installation
 
 ```bash
-> yarn add @recast-navigation/three
+> npm install @recast-navigation/three
 ```
 
 ## Usage
@@ -24,7 +24,7 @@ Or you can use this package directly:
 import * as RecastNavigationThree from '@recast-navigation/three';
 ```
 
-### threeToNavMesh
+### `threeToNavMesh`
 
 As a convenience, this package exports a function for converting all descendants within three.js `Object3D` to a `NavMesh`:
 
@@ -47,7 +47,7 @@ You can also use `threeToNavMeshArgs` to get the arguments for `NavMesh.build`:
 const [positions, indices] = threeToNavMeshArgs(scene);
 ```
 
-### NavMeshHelper
+### `NavMeshHelper`
 
 ```ts
 import * as THREE from 'three';
@@ -82,7 +82,7 @@ const navMeshHelper = new NavMeshHelper({
 });
 ```
 
-### CrowdHelper
+### `CrowdHelper`
 
 ```ts
 import * as THREE from 'three';
