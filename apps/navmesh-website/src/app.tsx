@@ -139,11 +139,14 @@ const App = () => {
   useControls(
     'Actions',
     {
-      'Generate Nav Mesh': button(() => generateNavMesh(), {
+      'Generate NavMesh': button(() => generateNavMesh(), {
         disabled: loading,
       }),
-      'Export as GLTF': button(() => console.log('exporting!'), {
-        disabled: loading,
+      'Export as GLTF': button(() => {}, {
+        disabled: true,
+      }),
+      'Export as Recast NavMeshData': button(() => {}, {
+        disabled: true,
       }),
     },
     [navMeshConfig, gltf, loading]
