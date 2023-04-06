@@ -3,10 +3,9 @@ import { Canvas, useThree } from '@react-three/fiber';
 import { useEffect, useRef } from 'react';
 import { init, NavMesh } from 'recast-navigation';
 import { NavMeshHelper, threeToNavMeshArgs } from 'recast-navigation/three';
+import { suspend } from 'suspend-react';
 import { Color, Group, MeshBasicMaterial, Vector2, Vector3 } from 'three';
 import { Line2, LineGeometry, LineMaterial } from 'three-stdlib';
-
-await init();
 
 const App = () => {
   const scene = useThree((state) => state.scene);
@@ -92,12 +91,20 @@ const App = () => {
   );
 };
 
+const RecastInit = (props: { children: JSX.Element }) => {
+  suspend(() => init(), []);
+
+  return props.children;
+};
+
 export default () => (
-  <Canvas camera={{ position: [5, 5, 5] }}>
-    <App />
+  <RecastInit>
+    <Canvas camera={{ position: [5, 5, 5] }}>
+      <App />
 
-    <Environment preset="city" />
+      <Environment preset="city" />
 
-    <OrbitControls />
-  </Canvas>
+      <OrbitControls />
+    </Canvas>
+  </RecastInit>
 );

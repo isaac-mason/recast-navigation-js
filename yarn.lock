@@ -3264,12 +3264,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@recast-navigation/core@0.0.0, @recast-navigation/core@workspace:packages/recast-navigation-core":
+"@recast-navigation/core@0.0.0-development-0, @recast-navigation/core@workspace:packages/recast-navigation-core":
   version: 0.0.0-use.local
   resolution: "@recast-navigation/core@workspace:packages/recast-navigation-core"
   dependencies:
     "@babel/core": ^7.18.6
-    "@recast-navigation/wasm": 0.0.0
+    "@recast-navigation/wasm": 0.0.0-development-0
     "@rollup/plugin-commonjs": ^24.0.1
     "@rollup/plugin-node-resolve": ^15.0.1
     "@rollup/plugin-terser": ^0.4.0
@@ -3297,11 +3297,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@recast-navigation/three@0.0.0, @recast-navigation/three@workspace:packages/recast-navigation-three":
+"@recast-navigation/three@0.0.0-development-0, @recast-navigation/three@workspace:packages/recast-navigation-three":
   version: 0.0.0-use.local
   resolution: "@recast-navigation/three@workspace:packages/recast-navigation-three"
   dependencies:
-    "@recast-navigation/core": 0.0.0
+    "@recast-navigation/core": 0.0.0-development-0
     "@rollup/plugin-commonjs": ^24.0.1
     "@rollup/plugin-node-resolve": ^15.0.1
     "@rollup/plugin-terser": ^0.4.0
@@ -3330,7 +3330,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@recast-navigation/wasm@0.0.0, @recast-navigation/wasm@workspace:packages/recast-navigation-wasm":
+"@recast-navigation/wasm@0.0.0-development-0, @recast-navigation/wasm@workspace:packages/recast-navigation-wasm":
   version: 0.0.0-use.local
   resolution: "@recast-navigation/wasm@workspace:packages/recast-navigation-wasm"
   dependencies:
@@ -7680,6 +7680,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"concurrently@npm:^8.0.1":
+  version: 8.0.1
+  resolution: "concurrently@npm:8.0.1"
+  dependencies:
+    chalk: ^4.1.2
+    date-fns: ^2.29.3
+    lodash: ^4.17.21
+    rxjs: ^7.8.0
+    shell-quote: ^1.8.0
+    spawn-command: 0.0.2-1
+    supports-color: ^8.1.1
+    tree-kill: ^1.2.2
+    yargs: ^17.7.1
+  bin:
+    conc: dist/bin/concurrently.js
+    concurrently: dist/bin/concurrently.js
+  checksum: cce10ab1bbd7fd099300234637cdbc8e12622a5fe53f8dd31dcd9562d9803f25d3d0410bdb6fffd54e8f4e11b852366c03994bd319843cce70e449c8a8a69526
+  languageName: node
+  linkType: hard
+
 "confusing-browser-globals@npm:^1.0.10":
   version: 1.0.11
   resolution: "confusing-browser-globals@npm:1.0.11"
@@ -8099,6 +8119,13 @@ __metadata:
     whatwg-mimetype: ^2.3.0
     whatwg-url: ^8.0.0
   checksum: 97caf828aac25e25e04ba6869db0f99c75e6859bb5b424ada28d3e7841941ebf08ddff3c1b1bb4585986bd507a5d54c2a716853ea6cb98af877400e637393e71
+  languageName: node
+  linkType: hard
+
+"date-fns@npm:^2.29.3":
+  version: 2.29.3
+  resolution: "date-fns@npm:2.29.3"
+  checksum: e01cf5b62af04e05dfff921bb9c9933310ed0e1ae9a81eb8653452e64dc841acf7f6e01e1a5ae5644d0337e9a7f936175fd2cb6819dc122fdd9c5e86c56be484
   languageName: node
   linkType: hard
 
@@ -13325,7 +13352,9 @@ __metadata:
     leva: ^0.9.34
     react: ^18.2.0
     react-dom: ^18.2.0
+    react-dropzone: ^14.2.3
     recast-navigation: "workspace:^"
+    styled-components: ^5.3.9
     suspend-react: ^0.0.9
     three: ^0.150.1
     tunnel-rat: ^0.1.1
@@ -13378,7 +13407,7 @@ __metadata:
   resolution: "node-cjs-recast-navigation-example@workspace:examples/node-cjs-recast-navigation-example"
   dependencies:
     "@types/three": ^0.150.0
-    recast-navigation: 0.0.0
+    recast-navigation: 0.0.0-development-0
     three: ^0.150.1
   languageName: unknown
   linkType: soft
@@ -13397,7 +13426,7 @@ __metadata:
   resolution: "node-esm-recast-navigation-example@workspace:examples/node-esm-recast-navigation-example"
   dependencies:
     "@types/three": ^0.150.0
-    recast-navigation: 0.0.0
+    recast-navigation: 0.0.0-development-0
     three: ^0.150.1
   languageName: unknown
   linkType: soft
@@ -15319,12 +15348,11 @@ __metadata:
   dependencies:
     "@changesets/cli": ^2.26.0
     "@types/styled-components": ^5.1.26
-    react-dropzone: ^14.2.3
-    styled-components: ^5.3.9
+    concurrently: ^8.0.1
   languageName: unknown
   linkType: soft
 
-"recast-navigation@0.0.0, recast-navigation@workspace:^, recast-navigation@workspace:packages/recast-navigation":
+"recast-navigation@0.0.0-development-0, recast-navigation@workspace:^, recast-navigation@workspace:packages/recast-navigation":
   version: 0.0.0-use.local
   resolution: "recast-navigation@workspace:packages/recast-navigation"
   dependencies:
@@ -15333,8 +15361,8 @@ __metadata:
     "@react-three/csg": ^2.2.0
     "@react-three/drei": ^9.58.5
     "@react-three/fiber": ^8.12.0
-    "@recast-navigation/core": 0.0.0
-    "@recast-navigation/three": 0.0.0
+    "@recast-navigation/core": 0.0.0-development-0
+    "@recast-navigation/three": 0.0.0-development-0
     "@rollup/plugin-commonjs": ^24.0.1
     "@rollup/plugin-multi-entry": ^6.0.0
     "@rollup/plugin-node-resolve": ^15.0.1
@@ -15822,6 +15850,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rxjs@npm:^7.8.0":
+  version: 7.8.0
+  resolution: "rxjs@npm:7.8.0"
+  dependencies:
+    tslib: ^2.1.0
+  checksum: 61b4d4fd323c1043d8d6ceb91f24183b28bcf5def4f01ca111511d5c6b66755bc5578587fe714ef5d67cf4c9f2e26f4490d4e1d8cabf9bd5967687835e9866a2
+  languageName: node
+  linkType: hard
+
 "safe-buffer@npm:5.1.1":
   version: 5.1.1
   resolution: "safe-buffer@npm:5.1.1"
@@ -16164,6 +16201,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"shell-quote@npm:^1.8.0":
+  version: 1.8.0
+  resolution: "shell-quote@npm:1.8.0"
+  checksum: 6ef7c5e308b9c77eedded882653a132214fa98b4a1512bb507588cf6cd2fc78bfee73e945d0c3211af028a1eabe09c6a19b96edd8977dc149810797e93809749
+  languageName: node
+  linkType: hard
+
 "side-channel@npm:^1.0.4":
   version: 1.0.4
   resolution: "side-channel@npm:1.0.4"
@@ -16396,6 +16440,13 @@ __metadata:
   version: 1.1.5
   resolution: "space-separated-tokens@npm:1.1.5"
   checksum: 8ef68f1cfa8ccad316b7f8d0df0919d0f1f6d32101e8faeee34ea3a923ce8509c1ad562f57388585ee4951e92d27afa211ed0a077d3d5995b5ba9180331be708
+  languageName: node
+  linkType: hard
+
+"spawn-command@npm:0.0.2-1":
+  version: 0.0.2-1
+  resolution: "spawn-command@npm:0.0.2-1"
+  checksum: 2cac8519332193d1ed37d57298c4a1f73095e9edd20440fbab4aa47f531da83831734f2b51c44bb42b2747bf3485dec3fa2b0a1003f74c67561f2636622e328b
   languageName: node
   linkType: hard
 
@@ -16880,7 +16931,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"supports-color@npm:^8.0.0":
+"supports-color@npm:^8.0.0, supports-color@npm:^8.1.1":
   version: 8.1.1
   resolution: "supports-color@npm:8.1.1"
   dependencies:
@@ -17320,6 +17371,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tree-kill@npm:^1.2.2":
+  version: 1.2.2
+  resolution: "tree-kill@npm:1.2.2"
+  bin:
+    tree-kill: cli.js
+  checksum: 49117f5f410d19c84b0464d29afb9642c863bc5ba40fcb9a245d474c6d5cc64d1b177a6e6713129eb346b40aebb9d4631d967517f9fbe8251c35b21b13cd96c7
+  languageName: node
+  linkType: hard
+
 "trim-newlines@npm:^1.0.0":
   version: 1.0.0
   resolution: "trim-newlines@npm:1.0.0"
@@ -17421,7 +17481,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.0.0, tslib@npm:^2.0.1, tslib@npm:^2.4.0":
+"tslib@npm:^2.0.0, tslib@npm:^2.0.1, tslib@npm:^2.1.0, tslib@npm:^2.4.0":
   version: 2.5.0
   resolution: "tslib@npm:2.5.0"
   checksum: ae3ed5f9ce29932d049908ebfdf21b3a003a85653a9a140d614da6b767a93ef94f460e52c3d787f0e4f383546981713f165037dc2274df212ea9f8a4541004e1
@@ -18157,7 +18217,8 @@ __metadata:
     "@vitejs/plugin-react": ^3.1.0
     react: ^18.2.0
     react-dom: ^18.2.0
-    recast-navigation: 0.0.0
+    recast-navigation: 0.0.0-development-0
+    suspend-react: ^0.0.9
     three: ^0.150.1
     typescript: ^4.9.3
     vite: ^4.2.0

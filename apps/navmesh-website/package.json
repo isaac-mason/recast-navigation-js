@@ -1,7 +1,6 @@
 {
   "name": "navmesh-website",
   "private": true,
-  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -14,7 +13,9 @@
     "leva": "^0.9.34",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-dropzone": "^14.2.3",
     "recast-navigation": "workspace:^",
+    "styled-components": "^5.3.9",
     "suspend-react": "^0.0.9",
     "three": "^0.150.1",
     "tunnel-rat": "^0.1.1",

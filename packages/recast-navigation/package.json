@@ -1,12 +1,24 @@
 {
   "name": "recast-navigation",
-  "description": "A WASM port of recast-navigation",
+  "description": "Recast Navigation for JavaScript!",
+  "keywords": [
+    "recastnavigation",
+    "recast-navigation",
+    "recast",
+    "detour",
+    "navmesh",
+    "pathfinding",
+    "navigation",
+    "crowd-simulation",
+    "wasm",
+    "webassembly"
+  ],
   "author": {
     "name": "Isaac Mason",
     "email": "isaac@isaacmason.com",
-    "url": "https://isaacmason.com"
+    "url": "https://isaacmason.com/"
   },
-  "version": "0.0.0",
+  "version": "0.0.0-development-0",
   "license": "MIT",
   "homepage": "https://github.com/isaac-mason/recast-navigation-js",
   "bugs": {
@@ -37,8 +49,8 @@
     "build-storybook": "build-storybook"
   },
   "dependencies": {
-    "@recast-navigation/core": "0.0.0",
-    "@recast-navigation/three": "0.0.0"
+    "@recast-navigation/core": "0.0.0-development-0",
+    "@recast-navigation/three": "0.0.0-development-0"
   },
   "peerDependencies": {
     "three": "^0.150.1"
