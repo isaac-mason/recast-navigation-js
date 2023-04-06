@@ -18,6 +18,8 @@ export default {
 export const Basic = () => {
   const [group, setGroup] = useState<Group | null>(null);
   const [threeNavMesh, setThreeNavMesh] = useState<Mesh | null>(null);
+  const [threeNavMeshObstacles, setThreeNavMeshObstacles] =
+    useState<Group | null>(null);
   const [threeCrowdAgents, setThreeCrowdAgents] = useState<Group | null>(null);
 
   const crowdRef = useRef<Crowd>(null!);
@@ -29,6 +31,7 @@ export const Basic = () => {
     const navMesh = threeToNavMesh(group, {
       cs: 0.2,
       ch: 0.2,
+      tileSize: 20,
       walkableSlopeAngle: 90,
       walkableHeight: 1.0,
       walkableClimb: 1,
@@ -41,6 +44,12 @@ export const Basic = () => {
       detailSampleDist: 6,
       detailSampleMaxError: 1,
     });
+
+    navMesh.addCylinderObstacle({ x: 2, y: 0, z: 0 }, 0.5, 2);
+
+    navMesh.addBoxObstacle({ x: -2.5, y: 1, z: 1 }, { x: 1, y: 1, z: 1 }, 0);
+
+    navMesh.update();
 
     const crowd = new Crowd({
       navMesh,
@@ -64,13 +73,13 @@ export const Basic = () => {
       navMesh,
       navMeshMaterial: new MeshStandardMaterial({
         color: 'orange',
-        transparent: true,
-        opacity: 0.5,
+        wireframe: true,
         wireframeLinewidth: 3,
       }),
     });
 
     setThreeNavMesh(navMeshHelper.navMesh);
+    setThreeNavMeshObstacles(navMeshHelper.obstacles);
 
     const crowdHelper = new CrowdHelper({
       crowd,
@@ -87,6 +96,10 @@ export const Basic = () => {
       crowd.destroy();
       navMesh.destroy();
 
+      setThreeNavMesh(null);
+      setThreeNavMeshObstacles(null);
+      setThreeCrowdAgents(null);
+
       crowdRef.current = null!;
       crowdHelperRef.current = null!;
     };
@@ -102,7 +115,11 @@ export const Basic = () => {
   return (
     <>
       <group ref={setGroup}>
-        <BasicEnvironment />
+        {/* <BasicEnvironment /> */}
+        <mesh rotation={[-Math.PI / 2, 0, 0]}>
+          <planeGeometry args={[10, 10]} />
+          <meshStandardMaterial color="grey" />
+        </mesh>
       </group>
 
       <group>
@@ -121,6 +138,7 @@ export const Basic = () => {
         }}
       >
         {threeNavMesh && <primitive object={threeNavMesh} />}
+        {threeNavMeshObstacles && <primitive object={threeNavMeshObstacles} />}
       </group>
     </>
   );

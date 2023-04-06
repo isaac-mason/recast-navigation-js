@@ -100,8 +100,28 @@ const navMeshConfigDefaults: NavMeshConfig = {
   detailSampleMaxError: 1,
 };
 
+export type BoxObstacle = {
+  type: 'box';
+  ref: ObstacleRef;
+  position: Vector3;
+  extent: Vector3;
+  angle: number;
+};
+
+export type CylinderObstacle = {
+  type: 'cylinder';
+  ref: ObstacleRef;
+  position: Vector3;
+  radius: number;
+  height: number;
+};
+
+export type Obstacle = BoxObstacle | CylinderObstacle;
+
 export class NavMesh {
   raw: R.NavMesh;
+
+  obstacles: Map<ObstacleRef, Obstacle> = new Map();
 
   constructor() {
     this.raw = new Raw.Recast.NavMesh();
@@ -144,7 +164,7 @@ export class NavMesh {
       positions.length / 3,
       indices as number[],
       indices.length,
-      rcConfig,
+      rcConfig
     );
   }
 
@@ -243,31 +263,52 @@ export class NavMesh {
     position: Vector3,
     radius: number,
     height: number
-  ): ObstacleRef {
+  ): CylinderObstacle {
     const positionRaw = vec3.toRaw(position);
-    const obstacleRef = this.raw.addCylinderObstacle(
-      positionRaw,
-      radius,
-      height
-    );
 
-    return obstacleRef;
+    const ref = this.raw.addCylinderObstacle(positionRaw, radius, height);
+    console.log(ref)
+
+    const obstacle: CylinderObstacle = {
+      type: 'cylinder',
+      ref,
+      position,
+      radius,
+      height,
+    };
+
+    this.obstacles.set(ref, obstacle);
+
+    return obstacle;
   }
 
   addBoxObstacle(
     position: Vector3,
     extent: Vector3,
     angle: number
-  ): ObstacleRef {
+  ): BoxObstacle {
     const positionRaw = vec3.toRaw(position);
     const extentRaw = vec3.toRaw(extent);
-    const obstacleRef = this.raw.addBoxObstacle(positionRaw, extentRaw, angle);
 
-    return obstacleRef;
+    const ref = this.raw.addBoxObstacle(positionRaw, extentRaw, angle);
+    console.log(ref)
+
+    const obstacle: BoxObstacle = {
+      type: 'box',
+      ref,
+      position,
+      extent,
+      angle,
+    };
+
+    this.obstacles.set(ref, obstacle);
+
+    return obstacle;
   }
 
   removeObstacle(obstacleRef: ObstacleRef): void {
-    this.raw.removeObstacle(obstacleRef as R.dtObstacleRef);
+    this.obstacles.delete(obstacleRef);
+    this.raw.removeObstacle(obstacleRef);
   }
 
   createCrowd(config: { maxAgents: number; maxAgentRadius: number }): Crowd {
