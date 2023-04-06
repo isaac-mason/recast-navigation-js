@@ -2,6 +2,7 @@ import { Crowd, CrowdAgentParams } from '@recast-navigation/core';
 import {
   CapsuleGeometry,
   Group,
+  Material,
   Mesh,
   MeshBasicMaterial,
   Vector3,
@@ -9,6 +10,7 @@ import {
 
 export type CrowdHelperParams = {
   crowd: Crowd;
+  crowdMaterial?: Material;
 };
 
 export class CrowdHelper {
@@ -18,8 +20,12 @@ export class CrowdHelper {
 
   recastCrowd: Crowd;
 
-  constructor({ crowd }: CrowdHelperParams) {
+  crowdMaterial: Material;
+
+  constructor({ crowd, crowdMaterial }: CrowdHelperParams) {
     this.recastCrowd = crowd;
+    
+    this.crowdMaterial = crowdMaterial ?? new MeshBasicMaterial({ color: 'blue', wireframe: true });
 
     this.agents = new Group();
   }
@@ -70,8 +76,6 @@ export class CrowdHelper {
       agentParams.height - agentParams.radius * 2
     );
 
-    const material = new MeshBasicMaterial({ color: 'blue', wireframe: true });
-
-    return new Mesh(geometry, material);
+    return new Mesh(geometry, this.crowdMaterial);
   }
 }

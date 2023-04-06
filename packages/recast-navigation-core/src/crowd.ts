@@ -112,7 +112,11 @@ export class Crowd {
 
   constructor({ maxAgents, maxAgentRadius, navMesh }: CrowdParams) {
     this.navMesh = navMesh;
-    this.raw = new Raw.Recast.Crowd(maxAgents, maxAgentRadius, navMesh.raw.getNavMesh());
+    this.raw = new Raw.Recast.Crowd(
+      maxAgents,
+      maxAgentRadius,
+      navMesh.raw.getNavMesh()
+    );
   }
 
   addAgent(

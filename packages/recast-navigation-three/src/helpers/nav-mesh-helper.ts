@@ -10,31 +10,35 @@ import {
 export type NavMeshHelperParams = {
   navMesh: NavMesh;
   navMeshMaterial?: Material;
+  obstaclesMaterial?: Material;
 };
 
 export class NavMeshHelper {
   navMesh: Mesh;
 
-  navMeshTiles: Group;
-
   obstacles: Group;
 
   recastNavMesh: NavMesh;
 
-  constructor({ navMesh, navMeshMaterial }: NavMeshHelperParams) {
+  navMeshMaterial: Material;
+
+  obstaclesMaterial: Material;
+
+  constructor({ navMesh, navMeshMaterial, obstaclesMaterial }: NavMeshHelperParams) {
     this.recastNavMesh = navMesh;
+
+    this.navMeshMaterial = navMeshMaterial ? navMeshMaterial : new MeshBasicMaterial({ color: 'blue', wireframe: true });
+    this.obstaclesMaterial = obstaclesMaterial ? obstaclesMaterial : new MeshBasicMaterial({ color: 'red', wireframe: true });
 
     this.navMesh = new Mesh(
       new BufferGeometry(),
-      navMeshMaterial ?? new MeshBasicMaterial({ color: 'red' })
+      
     );
-
-    this.navMeshTiles = new Group();
 
     this.obstacles = new Group();
 
     this.updateNavMesh();
-    this.updateNavMeshObstacles();
+    this.updateObstacles();
   }
 
   updateNavMesh() {
@@ -61,7 +65,7 @@ export class NavMeshHelper {
     this.navMesh.geometry = geometry;
   }
 
-  updateNavMeshObstacles() {
+  updateObstacles() {
     /* todo! */
   }
 }
