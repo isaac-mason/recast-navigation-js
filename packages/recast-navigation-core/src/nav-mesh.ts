@@ -267,7 +267,6 @@ export class NavMesh {
     const positionRaw = vec3.toRaw(position);
 
     const ref = this.raw.addCylinderObstacle(positionRaw, radius, height);
-    console.log(ref)
 
     const obstacle: CylinderObstacle = {
       type: 'cylinder',
@@ -291,7 +290,6 @@ export class NavMesh {
     const extentRaw = vec3.toRaw(extent);
 
     const ref = this.raw.addBoxObstacle(positionRaw, extentRaw, angle);
-    console.log(ref)
 
     const obstacle: BoxObstacle = {
       type: 'box',
