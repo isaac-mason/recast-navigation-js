@@ -1,0 +1,77 @@
+{
+  "name": "recast-navigation",
+  "description": "A WASM port of recast-navigation",
+  "author": {
+    "name": "Isaac Mason",
+    "email": "isaac@isaacmason.com",
+    "url": "https://isaacmason.com"
+  },
+  "version": "0.0.0",
+  "license": "MIT",
+  "homepage": "https://github.com/isaac-mason/recast-navigation-js",
+  "bugs": {
+    "url": "https://github.com/isaac-mason/recast-navigation-js/issues"
+  },
+  "type": "module",
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./index.js"
+    },
+    "./three": {
+      "import": "./three.js"
+    }
+  },
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "three.js",
+    "three.d.ts",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "rollup --config rollup.config.js --bundleConfigAsCjs",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
+  },
+  "dependencies": {
+    "@recast-navigation/core": "0.0.0",
+    "@recast-navigation/three": "0.0.0"
+  },
+  "peerDependencies": {
+    "three": "^0.150.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.21.3",
+    "@mdx-js/react": "^1.6.22",
+    "@react-three/csg": "^2.2.0",
+    "@react-three/drei": "^9.58.5",
+    "@react-three/fiber": "^8.12.0",
+    "@rollup/plugin-commonjs": "^24.0.1",
+    "@rollup/plugin-multi-entry": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@rollup/plugin-terser": "^0.4.0",
+    "@rollup/plugin-typescript": "^11.0.0",
+    "@storybook/addon-actions": "^6.5.16",
+    "@storybook/addon-docs": "^6.5.16",
+    "@storybook/addon-essentials": "^6.5.16",
+    "@storybook/addon-interactions": "^6.5.16",
+    "@storybook/addon-links": "^6.5.16",
+    "@storybook/builder-vite": "^0.4.2",
+    "@storybook/builder-webpack4": "^6.5.16",
+    "@storybook/manager-webpack4": "^6.5.16",
+    "@storybook/react": "^6.5.16",
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "@types/three": "^0.150.0",
+    "babel-loader": "^8.3.0",
+    "rollup": "^3.20.0",
+    "rollup-plugin-copy": "^3.4.0",
+    "rollup-plugin-filesize": "^10.0.0",
+    "suspend-react": "^0.0.9",
+    "three": "^0.150.1"
+  },
+  "packageManager": "yarn@3.2.2"
+}

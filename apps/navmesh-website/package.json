@@ -1,0 +1,31 @@
+{
+  "name": "navmesh-website",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@react-three/drei": "^9.57.3",
+    "@react-three/fiber": "^8.12.0",
+    "leva": "^0.9.34",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "recast-navigation": "workspace:^",
+    "suspend-react": "^0.0.9",
+    "three": "^0.150.1",
+    "tunnel-rat": "^0.1.1",
+    "zustand": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "@types/three": "^0.150.0",
+    "@vitejs/plugin-react": "^3.1.0",
+    "typescript": "^4.9.3",
+    "vite": "^4.2.0"
+  }
+}

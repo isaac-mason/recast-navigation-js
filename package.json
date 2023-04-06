@@ -1,0 +1,28 @@
+{
+  "name": "recast-navigation-root",
+  "private": true,
+  "packageManager": "yarn@3.5.0",
+  "workspaces": [
+    "packages/recast-navigation-wasm",
+    "packages/recast-navigation-core",
+    "packages/recast-navigation-three",
+    "packages/recast-navigation",
+    "apps/*",
+    "examples/*"
+  ],
+  "scripts": {
+    "build": "yarn workspaces foreach -t run build",
+    "build:packages": "yarn workspaces foreach -t --include recast-navigation --include @recast-navigation/core --include @recast-navigation/three --include @recast-navigation/wasm run build",
+    "test": "yarn workspaces foreach -t run test",
+    "change": "yarn changeset",
+    "version": "yarn changeset version && yarn install --mode update-lockfile"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.26.0",
+    "@types/styled-components": "^5.1.26"
+  },
+  "dependencies": {
+    "react-dropzone": "^14.2.3",
+    "styled-components": "^5.3.9"
+  }
+}
