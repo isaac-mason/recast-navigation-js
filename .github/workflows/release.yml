@@ -1,0 +1,49 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  release:
+    name: Release
+    if: github.repository_owner == 'isaac-mason'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js 16.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+
+      - name: Setup emsdk
+        run: >
+          cd ..;
+          git clone https://github.com/emscripten-core/emsdk.git;
+          cd emsdk;
+          ./emsdk install 3.1.34;
+          ./emsdk activate 3.1.34;
+
+      - name: Install Dependencies
+        run: yarn
+
+      - name: Build & Test
+        run: >
+          source "/home/runner/work/recast-navigation-js/emsdk/emsdk_env.sh";
+          yarn release;
+
+      - name: Create Release Pull Request or Publish to npm
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          version: yarn version
+          publish: yarn publish
+          commit: "chore(changeset): release packages"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
