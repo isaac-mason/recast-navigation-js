@@ -1,7 +1,8 @@
-import R from '@recast-navigation/wasm';
-import { NavMesh } from './nav-mesh';
+import type R from '@recast-navigation/wasm';
+import type { NavMesh } from './nav-mesh';
 import { Raw } from './raw';
-import { navPath, NavPath, vec3, Vector3 } from './utils';
+import type { NavPath, Vector3 } from './utils';
+import { navPath, vec3 } from './utils';
 
 export type CrowdParams = {
   maxAgents: number;
