@@ -178,7 +178,6 @@ export class NavMesh {
     this.raw = new Raw.Recast.NavMesh();
     this.raw.buildFromNavMeshData(buf);
 
-    // Free memory
     Raw.Recast._free(dataHeap.byteOffset);
   }
 
