@@ -292,9 +292,17 @@ export class NavMesh {
     return obstacle;
   }
 
-  removeObstacle(obstacleRef: ObstacleRef): void {
-    this.obstacles.delete(obstacleRef);
-    this.raw.removeObstacle(obstacleRef);
+  removeObstacle(obstacle: Obstacle | ObstacleRef): void {
+    let ref: ObstacleRef;
+    
+    if (typeof obstacle === 'object') {
+      ref = (obstacle as Obstacle).ref;
+    } else {
+      ref = obstacle;
+    }
+
+    this.obstacles.delete(ref);
+    this.raw.removeObstacle(ref);
   }
 
   createCrowd(config: { maxAgents: number; maxAgentRadius: number }): Crowd {

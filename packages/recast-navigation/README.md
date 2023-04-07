@@ -83,12 +83,12 @@ Note that in order to use obstacles, you must specify a `tileSize` in the `NavMe
 const position = { x: 0, y: 0, z: 0 };
 const extent = { x: 1, y: 1, z: 1 };
 const angle = 0;
-const boxObstacleRef = navMesh.addBoxObstacle(position, extent, angle);
+const boxObstacle = navMesh.addBoxObstacle(position, extent, angle);
 
 /* add a Cylinder obstacle to the NavMesh */
 const radius = 1;
 const height = 1;
-const cylinderObstacleRef = navMesh.addCylinderObstacle(
+const cylinderObstacle = navMesh.addCylinderObstacle(
   position,
   radius,
   height,
@@ -96,8 +96,8 @@ const cylinderObstacleRef = navMesh.addCylinderObstacle(
 );
 
 /* remove the obstacles from the NavMesh */
-navMesh.removeObstacle(boxObstacleRef);
-navMesh.removeObstacle(cylinderObstacleRef);
+navMesh.removeObstacle(boxObstacle);
+navMesh.removeObstacle(cylinderObstacle);
 ```
 
 ### Crowds and Agents
