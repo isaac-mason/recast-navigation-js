@@ -10,6 +10,7 @@ import type {
 import { Raw } from './raw';
 import type { NavPath, Vector3 } from './utils';
 import { navPath, vec3 } from './utils';
+import { Topic } from './topic';
 
 export type NavMeshConfig = {
   /**
@@ -111,6 +112,10 @@ export class NavMesh {
 
   obstacles: Map<ObstacleRef, Obstacle> = new Map();
 
+  onNavMeshChange = new Topic<void>();
+
+  onObstacleChange = new Topic<void>();
+
   constructor() {
     this.raw = new Raw.Recast.NavMesh();
   }
@@ -120,7 +125,7 @@ export class NavMesh {
   }
 
   destroy(): void {
-    this.raw.destroy();
+    this.raw?.destroy();
   }
 
   build(
@@ -154,6 +159,8 @@ export class NavMesh {
       indices.length,
       rcConfig
     );
+
+    this.onNavMeshChange.emit();
   }
 
   /**
@@ -179,6 +186,8 @@ export class NavMesh {
     this.raw.buildFromNavMeshData(buf);
 
     Raw.Recast._free(dataHeap.byteOffset);
+
+    this.onNavMeshChange.emit();
   }
 
   /**
@@ -265,6 +274,8 @@ export class NavMesh {
 
     this.obstacles.set(ref, obstacle);
 
+    this.onObstacleChange.emit();
+
     return obstacle;
   }
 
@@ -288,6 +299,8 @@ export class NavMesh {
 
     this.obstacles.set(ref, obstacle);
 
+    this.onObstacleChange.emit();
+
     return obstacle;
   }
 
@@ -302,6 +315,8 @@ export class NavMesh {
 
     this.obstacles.delete(ref);
     this.raw.removeObstacle(ref);
+
+    this.onObstacleChange.emit();
   }
 
   createCrowd(config: { maxAgents: number; maxAgentRadius: number }): Crowd {

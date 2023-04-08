@@ -1,6 +1,7 @@
 import type R from '@recast-navigation/wasm';
 import type { NavMesh } from './nav-mesh';
 import { Raw } from './raw';
+import { Topic } from './topic';
 import type { NavPath, Vector3 } from './utils';
 import { navPath, vec3 } from './utils';
 
@@ -111,6 +112,8 @@ export class Crowd {
    */
   timeFactor = 1;
 
+  onPostUpdate = new Topic<void>();
+
   constructor({ maxAgents, maxAgentRadius, navMesh }: CrowdParams) {
     this.navMesh = navMesh;
     this.raw = new Raw.Recast.Crowd(
@@ -198,6 +201,8 @@ export class Crowd {
         this.raw.update(step);
       }
     }
+
+    this.onPostUpdate.emit();
   }
 
   destroy() {
