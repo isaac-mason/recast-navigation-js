@@ -50,9 +50,17 @@ export class NavMeshHelper {
 
     this.updateNavMesh();
     this.updateObstacles();
+
+    navMesh.onNavMeshChange.add(() => {
+      this.updateNavMesh();
+    });
+
+    navMesh.onObstacleChange.add(() => {
+      this.updateObstacles();
+    });
   }
 
-  updateNavMesh() {
+  private updateNavMesh() {
     const { positions, indices } = this.recastNavMesh.getDebugNavMesh();
 
     // Set the winding order of the affected faces to clockwise
@@ -76,7 +84,7 @@ export class NavMeshHelper {
     this.navMesh.geometry = geometry;
   }
 
-  updateObstacles() {
+  private updateObstacles() {    
     const unseen = new Set(this.obstacleMeshes.keys());
 
     for (const [ref, obstacle] of this.recastNavMesh.obstacles) {
@@ -85,24 +93,30 @@ export class NavMeshHelper {
       unseen.delete(ref);
 
       if (!obstacleMesh) {
-        const mesh = new Mesh();
-        mesh.material = this.obstaclesMaterial;
-
         const { position } = obstacle;
+
+        const mesh = new Mesh(undefined, this.obstaclesMaterial);
+
         mesh.position.copy(position as Vector3);
 
         if (obstacle.type === 'box') {
           const { extent, angle } = obstacle;
 
-          mesh.geometry = new BoxGeometry(extent.x * 2, extent.y * 2, extent.z * 2)
+          mesh.geometry = new BoxGeometry(
+            extent.x * 2,
+            extent.y * 2,
+            extent.z * 2
+          );
 
           mesh.rotation.y = angle;
-        } else {
+        } else if (obstacle.type === 'cylinder') {
           const { radius, height } = obstacle;
 
-          mesh.geometry = new CylinderGeometry(radius, radius, height, 16),
+          mesh.geometry = new CylinderGeometry(radius, radius, height, 16);
 
           mesh.position.y += height / 2;
+        } else {
+          throw new Error(`Unknown obstacle type: ${obstacle}`);
         }
 
         this.obstacles.add(mesh);

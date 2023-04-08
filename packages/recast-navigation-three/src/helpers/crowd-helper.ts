@@ -28,9 +28,15 @@ export class CrowdHelper {
     this.crowdMaterial = crowdMaterial ?? new MeshBasicMaterial({ color: 'blue', wireframe: true });
 
     this.agents = new Group();
+
+    this.updateAgents();
+
+    crowd.onPostUpdate.add(() => {
+      this.updateAgents()
+    })
   }
 
-  updateAgents() {
+  private updateAgents() {
     const agentsIndices = this.recastCrowd.getAgents();
 
     const unseen = new Set(this.agentMeshes.keys());
@@ -44,8 +50,9 @@ export class CrowdHelper {
 
       let agentMesh = this.agentMeshes.get(i);
 
-      if (!agentMesh) {
+      if (agentMesh === undefined) {
         agentMesh = this.createAgentMesh(agentParams);
+        
         this.agents.add(agentMesh);
         this.agentMeshes.set(i, agentMesh);
       }

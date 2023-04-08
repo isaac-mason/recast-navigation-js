@@ -81,4 +81,5 @@ To build the project, run the following:
 ## Acknowledgements
 
 - This would not exist without [Recast Navigation](https://github.com/recastnavigation/recastnavigation) itself!
+- The demos use recastnavigation's level mesh
 - The WASM build was based on the [Babylon.js Recast Extension](https://github.com/BabylonJS/Extensions/tree/master/recastjs)
