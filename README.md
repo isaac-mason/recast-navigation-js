@@ -59,7 +59,7 @@ Helpers for three.js.
 
 A website for generating navmeshes for your game. Drag 'n' drop your GLTF, fine tune your settings, and download your navmesh!
 
-([source](./apps/navmesh-website/dist/))
+([source](./apps/navmesh-website/))
 
 ## Development
 
