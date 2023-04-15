@@ -24,11 +24,9 @@
     "build": "rollup --config rollup.config.js --bundleConfigAsCjs",
     "test": "vitest run"
   },
-  "dependencies": {
-    "@recast-navigation/wasm": "0.0.2"
-  },
   "devDependencies": {
     "@babel/core": "^7.18.6",
+    "@recast-navigation/wasm": "0.0.2",
     "@rollup/plugin-commonjs": "^24.0.1",
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@rollup/plugin-terser": "^0.4.0",
