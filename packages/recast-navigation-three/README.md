@@ -26,7 +26,9 @@ import * as RecastNavigationThree from '@recast-navigation/three';
 
 ### `threeToNavMesh`
 
-As a convenience, this package exports a function for converting an array of `Mesh` objects to a `NavMesh`:
+As a convenience, this package exports a function for converting an array of `Mesh` objects to a `NavMesh`.
+
+Currently only indexed geometries are supported.
 
 ```ts
 import * as THREE from 'three';

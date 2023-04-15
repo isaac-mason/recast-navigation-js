@@ -41,11 +41,12 @@ import { NavMesh } from 'recast-navigation';
 const navMesh = new NavMesh();
 
 const positions = [
-  /* ... */
+  /* flat array of positions */
+  /* e.g. x1, y1, z1, x2, y2, z2, ... */
 ];
 
 const indices = [
-  /* ... */
+  /* flat array of indices */
 ];
 
 const navMeshConfig = {
