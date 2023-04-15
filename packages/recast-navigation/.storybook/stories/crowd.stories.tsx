@@ -26,7 +26,15 @@ export const SingleAgent = () => {
   useEffect(() => {
     if (!group) return;
 
-    const navMesh = threeToNavMesh(group, {
+    const meshes: Mesh[] = [];
+
+    group.traverse((child) => {
+      if (child instanceof Mesh) {
+        meshes.push(child);
+      }
+    });
+
+    const navMesh = threeToNavMesh(meshes, {
       cs: 0.05,
       ch: 0.2,
       walkableHeight: 1,
@@ -141,7 +149,15 @@ export const MultipleAgents = () => {
   useEffect(() => {
     if (!group) return;
 
-    const navMesh = threeToNavMesh(group, {
+    const meshes: Mesh[] = [];
+
+    group.traverse((child) => {
+      if (child instanceof Mesh) {
+        meshes.push(child);
+      }
+    });
+
+    const navMesh = threeToNavMesh(meshes, {
       cs: 0.05,
       ch: 0.2,
       walkableHeight: 1,

@@ -26,7 +26,7 @@ import * as RecastNavigationThree from '@recast-navigation/three';
 
 ### `threeToNavMesh`
 
-As a convenience, this package exports a function for converting all descendants within three.js `Object3D` to a `NavMesh`:
+As a convenience, this package exports a function for converting an array of `Mesh` objects to a `NavMesh`:
 
 ```ts
 import * as THREE from 'three';
@@ -38,13 +38,21 @@ const scene = new THREE.Scene();
 /* add some objects to the scene */
 // ...
 
-const navMesh: NavMesh = threeToNavMesh(scene, { /* NavMesh config */ }});
+const meshes: Mesh[] = [];
+
+scene.traverse((child) => {
+  if (child instanceof Mesh) {
+    meshes.push(child);
+  }
+});
+
+const navMesh: NavMesh = threeToNavMesh(meshes, { /* NavMesh config */ }});
 ```
 
 You can also use `threeToNavMeshArgs` to get the arguments for `NavMesh.build`:
 
 ```ts
-const [positions, indices] = threeToNavMeshArgs(scene);
+const [positions, indices] = threeToNavMeshArgs(meshes);
 ```
 
 ### `NavMeshHelper`

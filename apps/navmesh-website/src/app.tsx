@@ -105,7 +105,15 @@ const App = () => {
     setDebugNavMesh(null);
 
     try {
-      const navMesh = threeToNavMesh(gltf, {
+      const meshes: Mesh[] = [];
+
+      gltf.traverse((child) => {
+        if (child instanceof Mesh) {
+          meshes.push(child);
+        }
+      });
+
+      const navMesh = threeToNavMesh(meshes, {
         cs: 0.05,
         borderSize: 0.5
       });

@@ -1,14 +1,9 @@
 import { OrbitControls } from '@react-three/drei';
 import { ThreeEvent, useFrame } from '@react-three/fiber';
 import { Crowd, NavMesh } from '@recast-navigation/core';
-import React, { useEffect, useRef, useState } from 'react';
-import {
-  CrowdHelper,
-  NavMeshHelper,
-  threeToNavMesh,
-} from 'recast-navigation/three';
+import React, { useEffect, useState } from 'react';
+import { threeToNavMesh } from 'recast-navigation/three';
 import { Group, Mesh, MeshStandardMaterial } from 'three';
-import { ComplexEnvironment } from '../components/complex-environment';
 import { Debug } from '../components/debug';
 import { decorators } from '../decorators';
 
@@ -35,13 +30,25 @@ export const Obstacles = () => {
   useEffect(() => {
     if (!group) return;
 
-    const navMesh = threeToNavMesh(group, {
+    const meshes: Mesh[] = [];
+
+    group.traverse((child) => {
+      if (child instanceof Mesh) {
+        meshes.push(child);
+      }
+    });
+
+    const navMesh = threeToNavMesh(meshes, {
       ch: 0.2,
       cs: 0.2,
       tileSize: 10,
     });
 
-    navMesh.addBoxObstacle({ x: -1.5, y: 0, z: 1.5 }, { x: 1, y: 1, z: 1 }, 0.2);
+    navMesh.addBoxObstacle(
+      { x: -1.5, y: 0, z: 1.5 },
+      { x: 1, y: 1, z: 1 },
+      0.2
+    );
     navMesh.addCylinderObstacle({ x: 1.5, y: 0, z: -1.5 }, 1, 0.5);
 
     navMesh.update();

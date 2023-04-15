@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { init, NavMesh } from 'recast-navigation';
 import { NavMeshHelper, threeToNavMeshArgs } from 'recast-navigation/three';
 import { suspend } from 'suspend-react';
-import { Color, Group, MeshBasicMaterial, Vector2, Vector3 } from 'three';
+import { Color, Group, Mesh, MeshBasicMaterial, Vector2, Vector3 } from 'three';
 import { Line2, LineGeometry, LineMaterial } from 'three-stdlib';
 
 const App = () => {
@@ -13,7 +13,15 @@ const App = () => {
   const groupRef = useRef<Group>(null!);
 
   useEffect(() => {
-    const navMeshArgs = threeToNavMeshArgs(groupRef.current);
+    const meshes: Mesh[] = [];
+
+    groupRef.current.traverse((child) => {
+      if (child instanceof Mesh) {
+        meshes.push(child);
+      }
+    });
+
+    const navMeshArgs = threeToNavMeshArgs(meshes);
 
     const navMesh = new NavMesh();
 

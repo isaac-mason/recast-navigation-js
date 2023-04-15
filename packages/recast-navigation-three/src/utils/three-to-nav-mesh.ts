@@ -1,17 +1,9 @@
 import { NavMesh, NavMeshConfig } from '@recast-navigation/core';
-import { BufferAttribute, Mesh, Object3D, Vector3 } from 'three';
+import { BufferAttribute, Mesh, Vector3 } from 'three';
 
 export const threeToNavMeshArgs = (
-  object: Object3D
+  meshes: Mesh[]
 ): [positions: number[], indices: number[]] => {
-  const meshes: Mesh[] = [];
-
-  object.traverse((child) => {
-    if (child instanceof Mesh) {
-      meshes.push(child);
-    }
-  });
-
   let index: number;
   let tri: number;
   let pt: number;
@@ -61,10 +53,10 @@ export const threeToNavMeshArgs = (
 };
 
 export const threeToNavMesh = (
-  object: Object3D,
+  meshes: Mesh[],
   navMeshConfig: Partial<NavMeshConfig> = {}
 ): NavMesh => {
-  const [positions, indices] = threeToNavMeshArgs(object);
+  const [positions, indices] = threeToNavMeshArgs(meshes);
 
   const navMesh = new NavMesh();
   navMesh.build(positions, indices, navMeshConfig);
