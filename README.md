@@ -15,6 +15,14 @@ A WebAssembly port of [Recast Navigation](https://github.com/recastnavigation/re
 - 💙 ‎ TypeScript support
 - 🖇 ‎ [Easy integration with three.js via @recast-navigation/three](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-three)
 
+## Documentation
+
+Please see the documentation in the package READMEs:
+- [recast-navigation](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation/README.md)
+- [recast-navigation/three](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-three/README.md)
+
+*API docs are coming soon :)*
+
 ## Packages
 
 Functionality is spread across packages in the `@recast-navigation/*` organization, with the `recast-navigation` acting as an umbrella package.
