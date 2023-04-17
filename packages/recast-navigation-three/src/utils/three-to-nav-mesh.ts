@@ -16,17 +16,22 @@ export const threeToNavMeshArgs = (
     if (meshes[index]) {
       const mesh = meshes[index];
 
-      const meshIndices = mesh.geometry.getIndex()?.array;
-      if (!meshIndices) {
-        // todo: to indexed?
-        continue;
-      }
-
       const meshPositions = (mesh.geometry.getAttribute(
         'position'
       ) as BufferAttribute)!.array;
+
       if (!meshPositions) {
         continue;
+      }
+
+      let meshIndices = mesh.geometry.getIndex()?.array;
+
+      if (!meshIndices) {
+        const indices = [];
+        for (let i = 0; i < meshPositions.length / 3; i++) {
+          indices.push(i);
+        }
+        meshIndices = indices;
       }
 
       for (tri = 0; tri < meshIndices.length; tri++) {
