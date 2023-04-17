@@ -1,5 +1,11 @@
 # @recast-navigation/core
 
+## 0.0.4
+
+### Patch Changes
+
+- 0e68563: feat: remove events, expose update methods on three helpers
+
 ## 0.0.3
 
 ### Patch Changes
