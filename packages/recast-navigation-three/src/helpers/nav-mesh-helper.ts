@@ -50,17 +50,14 @@ export class NavMeshHelper {
 
     this.updateNavMesh();
     this.updateObstacles();
-
-    navMesh.onNavMeshChange.add(() => {
-      this.updateNavMesh();
-    });
-
-    navMesh.onObstacleChange.add(() => {
-      this.updateObstacles();
-    });
   }
 
-  private updateNavMesh() {
+  /**
+   * Update the three debug nav mesh.
+   * 
+   * This should be called after updating the nav mesh.
+   */
+  updateNavMesh() {
     const { positions, indices } = this.recastNavMesh.getDebugNavMesh();
 
     // Set the winding order of the affected faces to clockwise
@@ -70,7 +67,7 @@ export class NavMeshHelper {
       indices[i + 2] = tmp;
     }
 
-    const geometry = new BufferGeometry();
+    const geometry = this.navMesh.geometry;
 
     geometry.setAttribute(
       'position',
@@ -80,11 +77,14 @@ export class NavMeshHelper {
     geometry.setIndex(new BufferAttribute(new Uint16Array(indices), 1));
 
     geometry.computeVertexNormals();
-
-    this.navMesh.geometry = geometry;
   }
 
-  private updateObstacles() {    
+  /**
+   * Update the obstacle meshes.
+   *
+   * This should be called after adding or removing obstacles.
+   */
+  updateObstacles() {    
     const unseen = new Set(this.obstacleMeshes.keys());
 
     for (const [ref, obstacle] of this.recastNavMesh.obstacles) {

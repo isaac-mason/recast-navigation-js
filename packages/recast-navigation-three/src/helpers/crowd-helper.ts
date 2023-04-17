@@ -29,14 +29,15 @@ export class CrowdHelper {
 
     this.agents = new Group();
 
-    this.updateAgents();
-
-    crowd.onPostUpdate.add(() => {
-      this.updateAgents()
-    })
+    this.update();
   }
 
-  private updateAgents() {
+  /**
+   * Update the three debug view of the crowd agents.
+   * 
+   * This should be called after updating the crowd.
+   */
+  update() {
     const agentsIndices = this.recastCrowd.getAgents();
 
     const unseen = new Set(this.agentMeshes.keys());
