@@ -1,4 +1,5 @@
 #pragma once
+#include "../recastnavigation/Recast/Include/Recast.h"
 #include "../recastnavigation/Detour/Include/DetourNavMesh.h"
 #include "../recastnavigation/Detour/Include/DetourCommon.h"
 #include "../recastnavigation/Detour/Include/DetourNavMeshBuilder.h"
@@ -282,7 +283,18 @@ protected:
         const std::vector<int> &tris,
         rcConfig &cfg,
         NavMeshIntermediates &intermediates,
-        const std::vector<unsigned char> &triareas);
+        std::vector<unsigned char> &triareas);
+
+    bool computeSoloNavMesh(
+        rcContext &ctx,
+        const std::vector<float> &verts,
+        const std::vector<int> &tris,
+        int nverts,
+        int ntris,
+        rcConfig &cfg,
+        NavMeshIntermediates &intermediates,
+        std::vector<unsigned char> &triareas,
+        bool keepInterResults);
 
     int rasterizeTileLayers(
         const int tx,
@@ -291,7 +303,7 @@ protected:
         TileCacheData *tiles,
         const int maxTiles,
         NavMeshIntermediates &intermediates,
-        const std::vector<unsigned char> &triareas,
+        std::vector<unsigned char> &triareas,
         const std::vector<float> &verts);
 };
 
