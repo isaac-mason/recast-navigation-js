@@ -1,15 +1,24 @@
+import { useFrame } from '@react-three/fiber';
 import { Crowd, NavMesh } from '@recast-navigation/core';
 import { CrowdHelper, NavMeshHelper } from '@recast-navigation/three';
 import React, { useEffect, useState } from 'react';
-import { MeshStandardMaterial } from 'three';
+import { Material, MeshBasicMaterial, MeshStandardMaterial } from 'three';
 
 export type DebugProps = {
   navMesh?: NavMesh;
-  navMeshMaterial?: MeshStandardMaterial;
+  navMeshMaterial?: Material;
+  obstaclesMaterial?: Material;
   crowd?: Crowd;
+  crowdMaterial?: Material;
 };
 
-export const Debug = ({ navMesh, navMeshMaterial, crowd }: DebugProps) => {
+export const Debug = ({
+  navMesh,
+  navMeshMaterial,
+  obstaclesMaterial,
+  crowd,
+  crowdMaterial,
+}: DebugProps) => {
   const [navMeshHelper, setNavMeshHelper] = useState<NavMeshHelper | null>(
     null
   );
@@ -21,11 +30,14 @@ export const Debug = ({ navMesh, navMeshMaterial, crowd }: DebugProps) => {
 
     const navMeshHelper = new NavMeshHelper({
       navMesh,
-      navMeshMaterial: navMeshMaterial ?? new MeshStandardMaterial({
-        color: 'orange',
-        transparent: true,
-        opacity: 0.8,
-      }),
+      navMeshMaterial:
+        navMeshMaterial ??
+        new MeshBasicMaterial({
+          color: 'orange',
+          transparent: true,
+          opacity: 0.7,
+        }),
+      obstaclesMaterial: obstaclesMaterial,
     });
 
     setNavMeshHelper(navMeshHelper);
@@ -33,16 +45,18 @@ export const Debug = ({ navMesh, navMeshMaterial, crowd }: DebugProps) => {
     return () => {
       setNavMeshHelper(null);
     };
-  }, [navMesh]);
+  }, [navMesh, navMeshMaterial, obstaclesMaterial]);
 
   useEffect(() => {
     if (!crowd) return;
 
     const crowdHelper = new CrowdHelper({
       crowd,
-      crowdMaterial: new MeshStandardMaterial({
-        color: 'red',
-      }),
+      crowdMaterial:
+        crowdMaterial ??
+        new MeshStandardMaterial({
+          color: 'red',
+        }),
     });
 
     setCrowdHelper(crowdHelper);
@@ -50,7 +64,26 @@ export const Debug = ({ navMesh, navMeshMaterial, crowd }: DebugProps) => {
     return () => {
       setCrowdHelper(null);
     };
-  }, [crowd]);
+  }, [crowd, crowdMaterial]);
+
+  useFrame(() => {
+    if (crowdHelper) {
+      crowdHelper.update();
+    }
+  });
+
+  useEffect(() => {
+    if (!navMeshHelper) return;
+
+    const interval = setInterval(() => {
+      navMeshHelper.updateObstacles();
+      navMeshHelper.updateNavMesh();
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [navMeshHelper]);
 
   return (
     <>

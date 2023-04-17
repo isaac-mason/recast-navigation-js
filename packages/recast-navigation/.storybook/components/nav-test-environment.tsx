@@ -2,12 +2,12 @@ import { useGLTF } from '@react-three/drei';
 import React from 'react';
 import { GLTF } from 'three-stdlib';
 
-const dungeonUrl = 'level.glb';
+const assetUrl = 'nav_test.glb';
 
-export const ComplexEnvironment = () => {
-  const gltf = useGLTF(dungeonUrl) as GLTF;
+export const NavTestEnvirionment = () => {
+  const gltf = useGLTF(assetUrl) as GLTF;
 
   return <primitive object={gltf.scene} />;
 };
 
-useGLTF.preload(dungeonUrl);
+useGLTF.preload(assetUrl);

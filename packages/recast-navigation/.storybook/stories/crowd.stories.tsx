@@ -4,7 +4,7 @@ import { Crowd, NavMesh } from '@recast-navigation/core';
 import React, { useEffect, useState } from 'react';
 import { threeToNavMesh } from 'recast-navigation/three';
 import { Group, Mesh, Vector3 } from 'three';
-import { ComplexEnvironment } from '../components/complex-environment';
+import { NavTestEnvirionment } from '../components/nav-test-environment';
 import { Debug } from '../components/debug';
 import { decorators } from '../decorators';
 import { createLineMesh } from '../utils/create-line-mesh';
@@ -35,11 +35,11 @@ export const SingleAgent = () => {
     });
 
     const navMesh = threeToNavMesh(meshes, {
-      cs: 0.05,
+      cs: 0.15,
       ch: 0.2,
-      walkableHeight: 1,
-      walkableClimb: 2.5,
-      walkableRadius: 1,
+      walkableRadius: 0.6,
+      walkableClimb: 2.1,
+      walkableSlopeAngle: 45,
     });
 
     const crowd = new Crowd({ navMesh, maxAgents: 1, maxAgentRadius: 0.2 });
@@ -130,7 +130,7 @@ export const SingleAgent = () => {
 
       <group onPointerDown={onClick}>
         <group ref={setGroup}>
-          <ComplexEnvironment />
+          <NavTestEnvirionment />
         </group>
         <Debug navMesh={navMesh} crowd={crowd} />
       </group>
@@ -158,11 +158,11 @@ export const MultipleAgents = () => {
     });
 
     const navMesh = threeToNavMesh(meshes, {
-      cs: 0.05,
+      cs: 0.15,
       ch: 0.2,
-      walkableHeight: 1,
-      walkableClimb: 2.5,
-      walkableRadius: 1,
+      walkableRadius: 0.6,
+      walkableClimb: 2.1,
+      walkableSlopeAngle: 45,
     });
 
     const crowd = new Crowd({
@@ -177,8 +177,6 @@ export const MultipleAgents = () => {
         height: 0.5,
         maxAcceleration: 4.0,
         maxSpeed: 1.0,
-        collisionQueryRange: 0.5,
-        pathOptimizationRange: 0.0,
         separationWeight: 1.0,
       });
     }
@@ -215,7 +213,7 @@ export const MultipleAgents = () => {
     <>
       <group onClick={onClick}>
         <group ref={setGroup}>
-          <ComplexEnvironment />
+          <NavTestEnvirionment />
         </group>
       </group>
 

@@ -3,7 +3,7 @@ import { ThreeEvent, useFrame } from '@react-three/fiber';
 import { Crowd, NavMesh } from '@recast-navigation/core';
 import React, { useEffect, useState } from 'react';
 import { threeToNavMesh } from 'recast-navigation/three';
-import { Group, Mesh, MeshStandardMaterial } from 'three';
+import { Group, Mesh, MeshBasicMaterial } from 'three';
 import { Debug } from '../components/debug';
 import { decorators } from '../decorators';
 
@@ -12,17 +12,18 @@ export default {
   decorators,
 };
 
-const navMeshMaterial = new MeshStandardMaterial({
+const navMeshMaterial = new MeshBasicMaterial({
   color: 'blue',
+  wireframe: true,
+});
+
+const obstaclesMaterial = new MeshBasicMaterial({
+  color: 'red',
   wireframe: true,
 });
 
 export const Obstacles = () => {
   const [group, setGroup] = useState<Group | null>(null);
-  const [threeNavMesh, setThreeNavMesh] = useState<Mesh | null>(null);
-  const [threeNavMeshObstacles, setThreeNavMeshObstacles] =
-    useState<Group | null>(null);
-  const [threeCrowdAgents, setThreeCrowdAgents] = useState<Group | null>(null);
 
   const [navMesh, setNavMesh] = useState<NavMesh | undefined>();
   const [crowd, setCrowd] = useState<Crowd | undefined>();
@@ -41,7 +42,7 @@ export const Obstacles = () => {
     const navMesh = threeToNavMesh(meshes, {
       ch: 0.2,
       cs: 0.2,
-      tileSize: 10,
+      tileSize: 8,
     });
 
     navMesh.addBoxObstacle(
@@ -49,6 +50,7 @@ export const Obstacles = () => {
       { x: 1, y: 1, z: 1 },
       0.2
     );
+
     navMesh.addCylinderObstacle({ x: 1.5, y: 0, z: -1.5 }, 1, 0.5);
 
     navMesh.update();
@@ -73,15 +75,11 @@ export const Obstacles = () => {
     setCrowd(crowd);
 
     return () => {
-      crowd.destroy();
-      navMesh.destroy();
-
-      setThreeNavMesh(null);
-      setThreeNavMeshObstacles(null);
-      setThreeCrowdAgents(null);
-
       setNavMesh(undefined);
       setCrowd(undefined);
+
+      crowd.destroy();
+      navMesh.destroy();
     };
   }, [group]);
 
@@ -108,17 +106,14 @@ export const Obstacles = () => {
             <meshStandardMaterial color="#ccc" />
           </mesh>
         </group>
-        {threeNavMesh && <primitive object={threeNavMesh} />}
       </group>
 
       <Debug
         navMesh={navMesh}
         navMeshMaterial={navMeshMaterial}
+        obstaclesMaterial={obstaclesMaterial}
         crowd={crowd}
       />
-
-      {threeNavMeshObstacles && <primitive object={threeNavMeshObstacles} />}
-      {threeCrowdAgents && <primitive object={threeCrowdAgents} />}
 
       <OrbitControls />
     </>
