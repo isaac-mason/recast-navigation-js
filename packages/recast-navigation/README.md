@@ -15,9 +15,13 @@ A WebAssembly port of [Recast Navigation](https://github.com/recastnavigation/re
 
 ## Installation
 
+You can install the library using npm:
+
 ```sh
 npm install recast-navigation
 ```
+
+This package ships as ECMAScript modules, and is compatible with Node.js and browser environments.
 
 ## Usage
 
