@@ -10,7 +10,7 @@
     "examples/*"
   ],
   "scripts": {
-    "build": "(cd packages/recast-navigation-wasm && yarn build) && yarn workspaces foreach -t run build --exclude @recast-navigation/wasm",
+    "build": "(cd packages/recast-navigation-wasm && yarn build) && yarn workspaces foreach -t --exclude @recast-navigation/wasm run build",
     "build:packages": "(cd packages/recast-navigation-wasm && yarn build) && yarn workspaces foreach -t --include recast-navigation --include @recast-navigation/core --include @recast-navigation/three run build",
     "build:navmesh-website": "(cd apps/navmesh-website && yarn build)",
     "test": "concurrently --kill-others-on-fail \"yarn test:unit-tests\" \"yarn test:node-smoke-test\"",
