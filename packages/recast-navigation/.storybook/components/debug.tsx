@@ -7,17 +7,17 @@ import { Material, MeshBasicMaterial, MeshStandardMaterial } from 'three';
 export type DebugProps = {
   navMesh?: NavMesh;
   navMeshMaterial?: Material;
-  obstaclesMaterial?: Material;
+  obstacleMaterial?: Material;
   crowd?: Crowd;
-  crowdMaterial?: Material;
+  agentMaterial?: Material;
 };
 
 export const Debug = ({
   navMesh,
   navMeshMaterial,
-  obstaclesMaterial,
+  obstacleMaterial,
   crowd,
-  crowdMaterial,
+  agentMaterial,
 }: DebugProps) => {
   const [navMeshHelper, setNavMeshHelper] = useState<NavMeshHelper | null>(
     null
@@ -37,7 +37,7 @@ export const Debug = ({
           transparent: true,
           opacity: 0.7,
         }),
-      obstaclesMaterial: obstaclesMaterial,
+      obstacleMaterial,
     });
 
     setNavMeshHelper(navMeshHelper);
@@ -45,15 +45,15 @@ export const Debug = ({
     return () => {
       setNavMeshHelper(null);
     };
-  }, [navMesh, navMeshMaterial, obstaclesMaterial]);
+  }, [navMesh, navMeshMaterial, obstacleMaterial]);
 
   useEffect(() => {
     if (!crowd) return;
 
     const crowdHelper = new CrowdHelper({
       crowd,
-      crowdMaterial:
-        crowdMaterial ??
+      agentMaterial:
+        agentMaterial ??
         new MeshStandardMaterial({
           color: 'red',
         }),
@@ -64,7 +64,7 @@ export const Debug = ({
     return () => {
       setCrowdHelper(null);
     };
-  }, [crowd, crowdMaterial]);
+  }, [crowd, agentMaterial]);
 
   useFrame(() => {
     if (crowdHelper) {

@@ -111,7 +111,7 @@ export const Obstacles = () => {
       <Debug
         navMesh={navMesh}
         navMeshMaterial={navMeshMaterial}
-        obstaclesMaterial={obstaclesMaterial}
+        obstacleMaterial={obstaclesMaterial}
         crowd={crowd}
       />
 

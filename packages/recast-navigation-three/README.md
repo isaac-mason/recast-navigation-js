@@ -83,12 +83,12 @@ You can optionally pass custom materials to the NavMeshHelper constructor.
 
 ```ts
 const navMeshMaterial = new THREE.MeshBasicMaterial({ color: 'red' });
-const obstaclesMaterial = new THREE.MeshBasicMaterial({ color: 'blue' });
+const obstacleMaterial = new THREE.MeshBasicMaterial({ color: 'blue' });
 
 const navMeshHelper = new NavMeshHelper({
   navMesh,
   navMeshMaterial,
-  obstaclesMaterial,
+  obstacleMaterial,
 });
 ```
 
@@ -101,23 +101,22 @@ import { CrowdHelper } from 'recast-navigation/three';
 
 const navMesh = new NavMesh();
 /* ... */
+
 const crowd = new Crowd({ navMesh, maxAgents: 1, maxAgentRadius: 1 });
 
 const crowdHelper = new CrowdHelper({ crowd });
 
 const scene = new THREE.Scene();
 
-scene.add(navMeshHelper.navMesh);
-scene.add(navMeshHelper.obstacles);
+scene.add(crowdHelper.agents);
 
-navMeshHelper.updateNavMesh();
-navMeshHelper.updateObstacles();
+crowdHelper.update();
 ```
 
-You can optionally pass a custom crowd material to the CrowdHelper constructor.
+You can optionally provide a custom material for displaying agents.
 
 ```ts
-const material = new THREE.MeshBasicMaterial({ color: 'red' });
+const agentMaterial = new THREE.MeshBasicMaterial({ color: 'red' });
 
-const crowdHelper = new CrowdHelper({ crowd, material });
+const crowdHelper = new CrowdHelper({ crowd, agentMaterial });
 ```

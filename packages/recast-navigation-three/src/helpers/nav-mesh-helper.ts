@@ -14,7 +14,7 @@ import {
 export type NavMeshHelperParams = {
   navMesh: NavMesh;
   navMeshMaterial?: Material;
-  obstaclesMaterial?: Material;
+  obstacleMaterial?: Material;
 };
 
 export class NavMeshHelper {
@@ -26,22 +26,22 @@ export class NavMeshHelper {
 
   navMeshMaterial: Material;
 
-  obstaclesMaterial: Material;
+  obstacleMaterial: Material;
 
   recastNavMesh: NavMesh;
 
   constructor({
     navMesh,
     navMeshMaterial,
-    obstaclesMaterial,
+    obstacleMaterial,
   }: NavMeshHelperParams) {
     this.recastNavMesh = navMesh;
 
     this.navMeshMaterial = navMeshMaterial
       ? navMeshMaterial
       : new MeshBasicMaterial({ color: 'blue', wireframe: true });
-    this.obstaclesMaterial = obstaclesMaterial
-      ? obstaclesMaterial
+    this.obstacleMaterial = obstacleMaterial
+      ? obstacleMaterial
       : new MeshBasicMaterial({ color: 'red', wireframe: true });
 
     this.navMesh = new Mesh(new BufferGeometry(), this.navMeshMaterial);
@@ -95,7 +95,7 @@ export class NavMeshHelper {
       if (!obstacleMesh) {
         const { position } = obstacle;
 
-        const mesh = new Mesh(undefined, this.obstaclesMaterial);
+        const mesh = new Mesh(undefined, this.obstacleMaterial);
 
         mesh.position.copy(position as Vector3);
 

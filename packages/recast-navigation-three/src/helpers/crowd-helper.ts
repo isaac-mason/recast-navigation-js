@@ -10,7 +10,7 @@ import {
 
 export type CrowdHelperParams = {
   crowd: Crowd;
-  crowdMaterial?: Material;
+  agentMaterial?: Material;
 };
 
 export class CrowdHelper {
@@ -20,12 +20,12 @@ export class CrowdHelper {
 
   recastCrowd: Crowd;
 
-  crowdMaterial: Material;
+  agentMaterial: Material;
 
-  constructor({ crowd, crowdMaterial }: CrowdHelperParams) {
+  constructor({ crowd, agentMaterial }: CrowdHelperParams) {
     this.recastCrowd = crowd;
     
-    this.crowdMaterial = crowdMaterial ?? new MeshBasicMaterial({ color: 'blue', wireframe: true });
+    this.agentMaterial = agentMaterial ?? new MeshBasicMaterial({ color: 'blue', wireframe: true });
 
     this.agents = new Group();
 
@@ -84,6 +84,6 @@ export class CrowdHelper {
       agentParams.height - agentParams.radius * 2
     );
 
-    return new Mesh(geometry, this.crowdMaterial);
+    return new Mesh(geometry, this.agentMaterial);
   }
 }
