@@ -17,27 +17,31 @@ export default {
 const Levels = {
   Dungeon: {
     Environment: DungeonEnvirionment,
-    from: {x: -4.207291347964981, y: 9.998181343078613, z: -19.585846142566375},
+    from: {
+      x: -4.207291347964981,
+      y: 9.998181343078613,
+      z: -19.585846142566375,
+    },
     to: { x: 19.77, y: 15, z: -74 },
     camera: {
       position: [-100, 75, -75] as const,
       lookAt: [15, 15, -51] as const,
-    }
+    },
   },
   NavTest: {
     Environment: NavTestEnvirionment,
     from: { x: 0.57, y: 0.2, z: 1.55 },
-    to: {x: -3, y: 2.32, z: 0.63},
+    to: { x: -3, y: 2.32, z: 0.63 },
     camera: {
       position: [-10, 15, 10] as const,
       lookAt: [0, 0, 0] as const,
-    }
+    },
   },
-}
+};
 
 type CommonProps = {
   level: typeof Levels[keyof typeof Levels];
-}
+};
 
 const Common = ({ level }: CommonProps) => {
   const [group, setGroup] = useState<Group | null>(null);
@@ -65,11 +69,7 @@ const Common = ({ level }: CommonProps) => {
       borderSize: 0.2,
     });
 
-    navMesh.update();
-
-    const from = navMesh.getClosestPoint(level.from);
-    const to = navMesh.getClosestPoint(level.to);
-    const path = navMesh.computePath(from, to);
+    const path = navMesh.computePath(level.from, level.to);
 
     const pathMesh = createLineMesh(path);
 
@@ -101,8 +101,8 @@ const Common = ({ level }: CommonProps) => {
       <PerspectiveCamera makeDefault position={level.camera.position} />
     </>
   );
-}
+};
 
-export const NavTest = () => <Common level={Levels.NavTest} />
+export const NavTest = () => <Common level={Levels.NavTest} />;
 
-export const Dungeon = () => <Common level={Levels.Dungeon} />
+export const Dungeon = () => <Common level={Levels.Dungeon} />;
