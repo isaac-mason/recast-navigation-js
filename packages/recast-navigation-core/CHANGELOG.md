@@ -1,5 +1,11 @@
 # @recast-navigation/core
 
+## 0.0.6
+
+### Patch Changes
+
+- ad1adaa: feat: improve jsdoc
+
 ## 0.0.5
 
 ## 0.0.4
