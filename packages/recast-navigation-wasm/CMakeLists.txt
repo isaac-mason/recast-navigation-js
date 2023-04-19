@@ -73,7 +73,7 @@ set(CMAKE_BUILD_TYPE Release CACHE STRING "Build Type")
 set(TOTAL_MEMORY 67108864 CACHE STRING "Total Memory")
 
 # Enable for resizable heap, with some amount of slowness
-set(ALLOW_MEMORY_GROWTH 0 CACHE STRING "Allow Memory Growth")
+set(ALLOW_MEMORY_GROWTH 1 CACHE STRING "Allow Memory Growth")
 
 set(EMCC_ARGS
   -flto
