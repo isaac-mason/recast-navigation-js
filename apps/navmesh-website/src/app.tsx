@@ -4,7 +4,7 @@ import { button, Leva, useControls } from 'leva';
 import { Suspense, useEffect, useState } from 'react';
 import { NavMeshHelper, threeToNavMesh } from 'recast-navigation/three';
 import styled from 'styled-components';
-import { DoubleSide, Group, Mesh, MeshStandardMaterial } from 'three';
+import { DoubleSide, Group, Mesh, MeshBasicMaterial, MeshStandardMaterial } from 'three';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 import dungeonGltfUrl from './assets/dungeon.gltf?url';
 import { DropZone } from './components/drop-zone';
@@ -113,19 +113,14 @@ const App = () => {
         }
       });
 
-      const navMesh = threeToNavMesh(meshes, {
-        cs: 0.05,
-        borderSize: 0.5
-      });
+      const navMesh = threeToNavMesh(meshes, navMeshConfig);
 
       const navMeshHelper = new NavMeshHelper({
         navMesh,
-        navMeshMaterial: new MeshStandardMaterial({
+        navMeshMaterial: new MeshBasicMaterial({
           color: 'orange',
-          flatShading: true,
-          opacity: 0.5,
           transparent: true,
-          side: DoubleSide,
+          opacity: 0.65,
         }),
       });
 
@@ -139,10 +134,6 @@ const App = () => {
 
     setLoading(false);
   };
-
-  useEffect(() => {
-    generateNavMesh();
-  }, [gltf]);
 
   useControls(
     'Actions',
@@ -209,5 +200,3 @@ export default () => (
     </Suspense>
   </RecastInit>
 );
-
-useGLTF.preload(dungeonGltfUrl);
