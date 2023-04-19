@@ -1,5 +1,11 @@
 # @recast-navigation/wasm
 
+## 0.0.5
+
+### Patch Changes
+
+- 1afdacc: feat: enable resizable heap for complex navmesh generation
+
 ## 0.0.4
 
 ### Patch Changes
