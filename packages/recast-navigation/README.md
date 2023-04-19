@@ -131,12 +131,9 @@ crowd.update(dt);
 Next, you can create and interface with agents in the crowd.
 
 ```ts
-const position = { x: 0, y: 0, z: 0 };
-const radius = 0.6;
-
 const initialAgentPosition = navMesh.getRandomPointAround(
-  { x: 0, y: 0, z: 0 },
-  2
+  { x: 0, y: 0, z: 0 }, // position
+  2 // radius
 );
 
 const agentIndex = crowd.addAgent(initialAgentPosition, {

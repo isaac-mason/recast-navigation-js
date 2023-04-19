@@ -5,63 +5,91 @@ import type { NavPath, Vector3 } from './utils';
 import { navPath, vec3 } from './utils';
 
 export type CrowdParams = {
+  /**
+   * The maximum number of agents that can be managed by the crowd.
+   * [Limit: >= 1]
+   */
   maxAgents: number;
+
+  /**
+   * The maximum radius of any agent that will be added to the crowd.
+   * [Limit: > 0]
+   */
   maxAgentRadius: number;
+
+  /**
+   * The navigation mesh to use for planning.
+   */
   navMesh: NavMesh;
 };
 
 export type CrowdAgentParams = {
   /**
+   * The radius of the agent.
    * @default 0.5
    */
   radius: number;
 
   /**
+   * The height of the agent.
    * @default 1
    */
   height: number;
 
   /**
+   * The maximum allowed acceleration for the agent.
    * @default 20
    */
   maxAcceleration: number;
 
   /**
+   * The maximum allowed speed for the agent.
    * @default 6
    */
   maxSpeed: number;
 
   /**
+   * Defines how close a collision element must be before it is considered for steering behaviors.
+   * [Limits: > 0]
    * @default 2.5
    */
   collisionQueryRange: number;
 
   /**
+   * The path visibility optimization range.
+   * [Limit: > 0]
    * @default 0
    */
   pathOptimizationRange: number;
 
   /**
+   * How aggresive the agent manager should be at avoiding collisions with this agent.
+   * [Limit: >= 0]
    * @default 0
    */
   separationWeight: number;
 
   /**
+   * Flags that impact steering behavior.
    * @default 7
    */
   updateFlags: number;
 
   /**
+   * The index of the avoidance configuration to use for the agent.
+   * [Limits: 0 <= value <= #DT_CROWD_MAX_OBSTAVOIDANCE_PARAMS]
    * @default 0
    */
   obstacleAvoidanceType: number;
 
   /**
+   * The index of the query filter used by this agent.
    * @default 0
    */
   queryFilterType: number;
 
   /**
+   * User defined data attached to the agent.
    * @default 0
    */
   userData: unknown;
@@ -86,18 +114,20 @@ const Epsilon = 0.001;
 export class Crowd {
   raw: R.Crowd;
 
+  /**
+   * The indices of the active agents in the crowd.
+   */
   agents: number[] = [];
 
   /**
-   * The NavMesh the crowd is interacting with
+   * The NavMesh the crowd is interacting with.
    */
   navMesh: NavMesh;
 
   /**
-   * If delta time in navigation tick update is greater than the time step
-   * a number of sub iterations are done. If more iterations are need to reach deltatime
-   * they will be discarded.
-   * A value of 0 will set to no maximum and update will use as many substeps as needed
+   * If delta time in navigation tick update is greater than the time step a number of sub iterations are done.
+   * If more iterations are need to reach deltatime they will be discarded.
+   * A value of 0 will set to no maximum and update will use as many substeps as needed.
    */
   maximumSubStepCount = 10;
 
@@ -120,6 +150,9 @@ export class Crowd {
     );
   }
 
+  /**
+   * Adds a new agent to the crowd.
+   */
   addAgent(
     position: Vector3,
     crowdAgentParams: Partial<CrowdAgentParams>
@@ -149,6 +182,9 @@ export class Crowd {
     return agentId;
   }
 
+  /**
+   * Removes the agent from the crowd.
+   */
   removeAgent(agentIndex: number) {
     this.raw.removeAgent(agentIndex);
 
@@ -158,18 +194,30 @@ export class Crowd {
     }
   }
 
+  /**
+   * Submits a new move request for the specified agent.
+   */
   goto(agentIndex: number, position: Vector3) {
     this.raw.agentGoto(agentIndex, vec3.toRaw(position));
   }
 
+  /**
+   * Teleports the agent to the given position.
+   */
   teleport(agentIndex: number, position: Vector3) {
     this.raw.agentTeleport(agentIndex, vec3.toRaw(position));
   }
 
+  /**
+   * Resets the current move request for the specified agent.
+   */
   resetMoveTarget(agentIndex: number) {
     this.raw.agentResetMoveTarget(agentIndex);
   }
 
+  /**
+   * Updates the crowd
+   */
   update(deltaTime: number) {
     // update navmesh obstacles
     this.navMesh.update();
@@ -200,6 +248,9 @@ export class Crowd {
     }
   }
 
+  /**
+   * Destroys the crowd.
+   */
   destroy() {
     this.raw.destroy();
   }
@@ -218,32 +269,57 @@ export class Crowd {
     return this.raw.getActiveAgentCount();
   }
 
+  /**
+   * Returns the indices of all active agents.
+   */
   getAgents(): number[] {
     return this.agents;
   }
 
+  /**
+   * Returns the position of the specified agent.
+   */
   getAgentPosition(agentIndex: number): Vector3 {
     return vec3.fromRaw(this.raw.getAgentPosition(agentIndex));
   }
 
+  /**
+   * Returns the velocity of the specified agent.
+   */
   getAgentVelocity(agentIndex: number): Vector3 {
     return vec3.fromRaw(this.raw.getAgentVelocity(agentIndex));
   }
 
+  /**
+   * Returns the next target position on the path to the specified agents target.
+   */
   getAgentNextTargetPath(agentIndex: number): Vector3 {
     return vec3.fromRaw(this.raw.getAgentNextTargetPath(agentIndex));
   }
 
+  /**
+   * Returns the state of the specified agent.
+   *
+   * 0 = DT_CROWDAGENT_STATE_INVALID
+   * 1 = DT_CROWDAGENT_STATE_WALKING
+   * 2 = DT_CROWDAGENT_STATE_OFFMESH
+   */
   getAgentState(agentIndex: number): number {
     return this.raw.getAgentState(agentIndex);
   }
 
+  /**
+   * Returns the local path corridor corners for the specified agent.
+   */
   getAgentCorners(agentIndex: number): NavPath {
     const corners = this.raw.getCorners(agentIndex);
 
     return navPath.fromRaw(corners);
   }
 
+  /**
+   * Returns the parameters for the specified agent.
+   */
   getAgentParameters(agentIndex: number): CrowdAgentParams {
     const params = this.raw.getAgentParameters(agentIndex);
 
@@ -262,6 +338,12 @@ export class Crowd {
     };
   }
 
+  /**
+   * Sets the parameters for the specified agent.
+   * Any parameters not specified in the crowdAgentParams object will be set to their default values.
+   * @param agentIndex
+   * @param crowdAgentParams
+   */
   setAgentParameters(
     agentIndex: number,
     crowdAgentParams: Partial<CrowdAgentParams>
@@ -288,6 +370,12 @@ export class Crowd {
     this.raw.setAgentParameters(agentIndex, dtCrowdAgentParams);
   }
 
+  /**
+   * Updates the parameters for the specified agent.
+   * Any parameters not specified in the crowdAgentParams object will be unchanged.
+   * @param agentIndex
+   * @param crowdAgentParams
+   */
   updateAgentParameters(
     agentIndex: number,
     crowdAgentParams: Partial<CrowdAgentParams>
@@ -300,10 +388,18 @@ export class Crowd {
     this.setAgentParameters(agentIndex, params);
   }
 
+  /**
+   * Gets the bounding box extent for doing spatial queries.
+   */
   getDefaultQueryExtent(): Vector3 {
     return vec3.fromRaw(this.raw.getDefaultQueryExtent());
   }
 
+  /**
+   * Sets the Bounding box extent for doing spatial queries (getClosestPoint, getRandomPointAround, ...)
+   * The queries will try to find a solution within those bounds.
+   * The default is (1,1,1)
+   */
   setDefaultQueryExtent(extent: Vector3): void {
     this.raw.setDefaultQueryExtent(vec3.toRaw(extent));
   }
