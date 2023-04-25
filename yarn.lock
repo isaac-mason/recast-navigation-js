@@ -3258,7 +3258,7 @@ __metadata:
     three: ^0.150.1
     typescript: ^4.5.4
   peerDependencies:
-    three: ^0.150.1
+    three: 0.x.x
   languageName: unknown
   linkType: soft
 
