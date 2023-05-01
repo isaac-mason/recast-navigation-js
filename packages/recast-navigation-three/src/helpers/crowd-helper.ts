@@ -25,11 +25,11 @@ export class CrowdHelper {
   constructor({ crowd, agentMaterial }: CrowdHelperParams) {
     this.recastCrowd = crowd;
     
-    this.agentMaterial = agentMaterial ?? new MeshBasicMaterial({ color: 'blue', wireframe: true });
+    this.agentMaterial = agentMaterial ?? new MeshBasicMaterial({ color: 'red' });
 
     this.agents = new Group();
 
-    this.update();
+    this.updateAgents();
   }
 
   /**
@@ -37,7 +37,7 @@ export class CrowdHelper {
    * 
    * This should be called after updating the crowd.
    */
-  update() {
+  updateAgents() {
     const agentsIndices = this.recastCrowd.getAgents();
 
     const unseen = new Set(this.agentMeshes.keys());

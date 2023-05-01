@@ -7,7 +7,7 @@ Promise.all([
   Recast.init().then(() => {
     console.log(RecastThree);
 
-    const navMesh = new Recast.NavMesh();
+    const navMeshGenerator = new Recast.NavMeshGenerator();
 
     const groundMesh = new THREE.Mesh(new THREE.BoxGeometry(5, 0.5, 5));
 
@@ -35,9 +35,11 @@ Promise.all([
     const positions = groundMesh.geometry.attributes.position.array;
     const indices = groundMesh.geometry.index.array;
 
-    navMesh.build(positions, indices, config);
+    const { navMesh } = navMeshGenerator.generate(positions, indices, config);
 
-    const closestPoint = navMesh.getClosestPoint({ x: 2, y: 1, z: 2 });
+    const navMeshQuery = new Recast.NavMeshQuery({ navMesh });
+
+    const closestPoint = navMeshQuery.getClosestPoint({ x: 2, y: 1, z: 2 });
 
     console.log(closestPoint.x, closestPoint.y, closestPoint.z);
   });

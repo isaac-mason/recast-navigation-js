@@ -1,23 +1,33 @@
 import { OrbitControls } from '@react-three/drei';
 import { ThreeEvent, useFrame } from '@react-three/fiber';
-import { Crowd, NavMesh } from '@recast-navigation/core';
+import {
+  Crowd,
+  NavMesh,
+  NavMeshQuery,
+  TileCache,
+} from '@recast-navigation/core';
 import React, { useEffect, useState } from 'react';
 import { threeToNavMesh } from 'recast-navigation/three';
-import { Group, Mesh, Vector3 } from 'three';
-import { NavTestEnvirionment } from '../components/nav-test-environment';
-import { Debug } from '../components/debug';
+import { Group, Mesh, MeshStandardMaterial, Vector3 } from 'three';
+import { NavTestEnvirionment } from '../common/nav-test-environment';
+import { Debug } from '../common/debug';
 import { decorators } from '../decorators';
 import { createLineMesh } from '../utils/create-line-mesh';
 
 export default {
-  title: 'Crowd',
+  title: 'Crowd / Agents',
   decorators,
 };
+
+const agentMaterial = new MeshStandardMaterial({
+  color: 'red',
+});
 
 export const SingleAgent = () => {
   const [group, setGroup] = useState<Group | null>(null);
 
   const [navMesh, setNavMesh] = useState<NavMesh | undefined>();
+  const [navMeshQuery, setNavMeshQuery] = useState<NavMeshQuery | undefined>();
   const [crowd, setCrowd] = useState<Crowd | undefined>();
 
   const [agentTarget, setAgentTarget] = useState<Vector3 | undefined>();
@@ -34,7 +44,7 @@ export const SingleAgent = () => {
       }
     });
 
-    const navMesh = threeToNavMesh(meshes, {
+    const { navMesh } = threeToNavMesh(meshes, {
       cs: 0.15,
       ch: 0.2,
       walkableRadius: 0.6,
@@ -42,22 +52,29 @@ export const SingleAgent = () => {
       walkableSlopeAngle: 45,
     });
 
+    const navMeshQuery = new NavMeshQuery({ navMesh });
+
     const crowd = new Crowd({ navMesh, maxAgents: 1, maxAgentRadius: 0.2 });
 
-    crowd.addAgent(navMesh.getClosestPoint({ x: -2.9, y: 2.366, z: 0.9 }), {
-      radius: 0.1,
-      height: 0.5,
-      maxAcceleration: 4.0,
-      maxSpeed: 1.0,
-      collisionQueryRange: 0.5,
-      pathOptimizationRange: 0.0,
-    });
+    crowd.addAgent(
+      navMeshQuery.getClosestPoint({ x: -2.9, y: 2.366, z: 0.9 }),
+      {
+        radius: 0.1,
+        height: 0.5,
+        maxAcceleration: 4.0,
+        maxSpeed: 1.0,
+        collisionQueryRange: 0.5,
+        pathOptimizationRange: 0.0,
+      }
+    );
 
     setNavMesh(navMesh);
+    setNavMeshQuery(navMeshQuery);
     setCrowd(crowd);
 
     return () => {
       setNavMesh(undefined);
+      setNavMeshQuery(undefined);
       setCrowd(undefined);
     };
   }, [group]);
@@ -94,11 +111,11 @@ export const SingleAgent = () => {
   }, [crowd, agentTarget]);
 
   const onClick = (e: ThreeEvent<MouseEvent>) => {
-    if (!navMesh || !crowd) return;
+    if (!navMesh || !navMeshQuery || !crowd) return;
 
     e.stopPropagation();
 
-    const target = navMesh.getClosestPoint(e.point);
+    const target = navMeshQuery.getClosestPoint(e.point);
 
     if (e.button === 2) {
       crowd.teleport(0, target);
@@ -132,7 +149,7 @@ export const SingleAgent = () => {
         <group ref={setGroup}>
           <NavTestEnvirionment />
         </group>
-        <Debug navMesh={navMesh} crowd={crowd} />
+        <Debug navMesh={navMesh} crowd={crowd} agentMaterial={agentMaterial} />
       </group>
 
       <OrbitControls makeDefault />
@@ -144,6 +161,7 @@ export const MultipleAgents = () => {
   const [group, setGroup] = useState<Group | null>(null);
 
   const [navMesh, setNavMesh] = useState<NavMesh | undefined>();
+  const [navMeshQuery, setNavMeshQuery] = useState<NavMeshQuery | undefined>();
   const [crowd, setCrowd] = useState<Crowd | undefined>();
 
   useEffect(() => {
@@ -157,13 +175,15 @@ export const MultipleAgents = () => {
       }
     });
 
-    const navMesh = threeToNavMesh(meshes, {
+    const { navMesh } = threeToNavMesh(meshes, {
       cs: 0.15,
       ch: 0.2,
       walkableRadius: 0.6,
       walkableClimb: 2.1,
       walkableSlopeAngle: 45,
     });
+
+    const navMeshQuery = new NavMeshQuery({ navMesh });
 
     const crowd = new Crowd({
       navMesh,
@@ -172,16 +192,20 @@ export const MultipleAgents = () => {
     });
 
     for (let i = 0; i < 10; i++) {
-      crowd.addAgent(navMesh.getRandomPointAround({ x: -2, y: 0, z: 3 }, 1), {
-        radius: 0.1 + Math.random() * 0.05,
-        height: 0.5,
-        maxAcceleration: 4.0,
-        maxSpeed: 1.0,
-        separationWeight: 1.0,
-      });
+      crowd.addAgent(
+        navMeshQuery.getRandomPointAround({ x: -2, y: 0, z: 3 }, 1),
+        {
+          radius: 0.1 + Math.random() * 0.05,
+          height: 0.5,
+          maxAcceleration: 4.0,
+          maxSpeed: 1.0,
+          separationWeight: 1.0,
+        }
+      );
     }
 
     setNavMesh(navMesh);
+    setNavMeshQuery(navMeshQuery);
     setCrowd(crowd);
 
     return () => {
@@ -189,6 +213,7 @@ export const MultipleAgents = () => {
       navMesh.destroy();
 
       setNavMesh(undefined);
+      setNavMeshQuery(undefined);
       setCrowd(undefined);
     };
   }, [group]);
@@ -200,9 +225,9 @@ export const MultipleAgents = () => {
   });
 
   const onClick = (e: ThreeEvent<MouseEvent>) => {
-    if (!navMesh || !crowd) return;
+    if (!navMesh || !navMeshQuery || !crowd) return;
 
-    const target = navMesh.getClosestPoint(e.point);
+    const target = navMeshQuery.getClosestPoint(e.point);
 
     for (const agent of crowd.getAgents()) {
       crowd.goto(agent, target);
@@ -217,7 +242,7 @@ export const MultipleAgents = () => {
         </group>
       </group>
 
-      <Debug navMesh={navMesh} crowd={crowd} />
+      <Debug navMesh={navMesh} crowd={crowd} agentMaterial={agentMaterial} />
 
       <OrbitControls />
     </>

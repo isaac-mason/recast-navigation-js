@@ -1,14 +1,19 @@
 import { OrbitControls } from '@react-three/drei';
 import { ThreeEvent, useFrame } from '@react-three/fiber';
-import { Crowd, NavMesh } from '@recast-navigation/core';
+import {
+  Crowd,
+  NavMesh,
+  NavMeshQuery,
+  TileCache,
+} from '@recast-navigation/core';
 import React, { useEffect, useState } from 'react';
 import { threeToNavMesh } from 'recast-navigation/three';
 import { Group, Mesh, MeshBasicMaterial } from 'three';
-import { Debug } from '../components/debug';
+import { Debug } from '../common/debug';
 import { decorators } from '../decorators';
 
 export default {
-  title: 'Obstacles',
+  title: 'TileCache / Obstacles',
   decorators,
 };
 
@@ -26,6 +31,8 @@ export const Obstacles = () => {
   const [group, setGroup] = useState<Group | null>(null);
 
   const [navMesh, setNavMesh] = useState<NavMesh | undefined>();
+  const [navMeshQuery, setNavMeshQuery] = useState<NavMeshQuery | undefined>();
+  const [tileCache, setTileCache] = useState<TileCache | undefined>();
   const [crowd, setCrowd] = useState<Crowd | undefined>();
 
   useEffect(() => {
@@ -39,21 +46,23 @@ export const Obstacles = () => {
       }
     });
 
-    const navMesh = threeToNavMesh(meshes, {
-      ch: 0.2,
+    const { navMesh, tileCache } = threeToNavMesh(meshes, {
+      ch: 0.05,
       cs: 0.2,
-      tileSize: 8,
+      tileSize: 16,
     });
 
-    navMesh.addBoxObstacle(
-      { x: -1.5, y: 0, z: 1.5 },
-      { x: 1, y: 1, z: 1 },
-      0.2
-    );
+    tileCache.addBoxObstacle({ x: -2, y: 1, z: 1 }, { x: 1, y: 1, z: 1 }, 0.2);
 
-    navMesh.addCylinderObstacle({ x: 1.5, y: 0, z: -1.5 }, 1, 0.5);
+    tileCache.addCylinderObstacle({ x: 1.5, y: 0, z: -1.5 }, 1, 0.5);
 
-    navMesh.update();
+    let upToDate = false;
+    while (!upToDate) {
+      const result = tileCache.update(navMesh);
+      upToDate = result.upToDate;
+    }
+
+    const navMeshQuery = new NavMeshQuery({ navMesh });
 
     const crowd = new Crowd({
       navMesh,
@@ -61,7 +70,7 @@ export const Obstacles = () => {
       maxAgentRadius: 0.2,
     });
 
-    crowd.addAgent(navMesh.getClosestPoint({ x: 0, y: 0, z: 0 }), {
+    crowd.addAgent(navMeshQuery.getClosestPoint({ x: 0, y: 0, z: 0 }), {
       radius: 0.2,
       height: 1,
       maxAcceleration: 4.0,
@@ -72,10 +81,14 @@ export const Obstacles = () => {
     });
 
     setNavMesh(navMesh);
+    setNavMeshQuery(navMeshQuery);
+    setTileCache(tileCache);
     setCrowd(crowd);
 
     return () => {
       setNavMesh(undefined);
+      setNavMeshQuery(undefined);
+      setTileCache(undefined);
       setCrowd(undefined);
 
       crowd.destroy();
@@ -90,9 +103,9 @@ export const Obstacles = () => {
   });
 
   const onClick = (e: ThreeEvent<MouseEvent>) => {
-    if (!navMesh || !crowd) return;
+    if (!navMesh || !navMeshQuery || !crowd) return;
 
-    const target = navMesh.getClosestPoint(e.point);
+    const target = navMeshQuery.getClosestPoint(e.point);
 
     crowd.goto(0, target);
   };
@@ -111,6 +124,7 @@ export const Obstacles = () => {
       <Debug
         navMesh={navMesh}
         navMeshMaterial={navMeshMaterial}
+        tileCache={tileCache}
         obstacleMaterial={obstaclesMaterial}
         crowd={crowd}
       />

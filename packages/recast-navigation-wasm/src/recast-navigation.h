@@ -7,6 +7,7 @@
 #include "../recastnavigation/DetourTileCache/Include/DetourTileCache.h"
 #include "../recastnavigation/DetourTileCache/Include/DetourTileCacheBuilder.h"
 #include "../recastnavigation/RecastDemo/Contrib/fastlz/fastlz.h"
+
 #include <vector>
 #include <iostream>
 #include <list>
@@ -65,22 +66,6 @@ struct Triangle
     }
 };
 
-struct DebugNavMesh
-{
-    std::vector<Triangle> mTriangles;
-
-    int getTriangleCount() { return int(mTriangles.size()); }
-
-    const Triangle &getTriangle(int n)
-    {
-        if (n < int(mTriangles.size()))
-        {
-            return mTriangles[n];
-        }
-        return mTriangles.back();
-    }
-};
-
 struct NavPath
 {
     std::vector<Vec3> mPoints;
@@ -97,10 +82,189 @@ struct NavPath
     }
 };
 
-struct NavMeshData
+struct DebugNavMesh
 {
-    void *dataPointer;
-    int size;
+    std::vector<Triangle> mTriangles;
+
+    int getTriangleCount() { return int(mTriangles.size()); }
+
+    const Triangle &getTriangle(int n)
+    {
+        if (n < int(mTriangles.size()))
+        {
+            return mTriangles[n];
+        }
+        return mTriangles.back();
+    }
+};
+
+struct NavMeshCreateParams
+{
+    dtNavMeshCreateParams params;
+
+    dtNavMeshCreateParams getParams()
+    {
+        return params;
+    }
+
+    void setVerts(unsigned short *verts)
+    {
+        params.verts = verts;
+    }
+
+    void setVertCount(int vertCount)
+    {
+        params.vertCount = vertCount;
+    }
+
+    void setPolys(unsigned short *polys)
+    {
+        params.polys = polys;
+    }
+
+    void setPolyFlags(unsigned short *polyFlags)
+    {
+        params.polyFlags = polyFlags;
+    }
+
+    void setPolyAreas(unsigned char *polyAreas)
+    {
+        params.polyAreas = polyAreas;
+    }
+
+    void setPolyCount(int polyCount)
+    {
+        params.polyCount = polyCount;
+    }
+
+    void setNvp(int nvp)
+    {
+        params.nvp = nvp;
+    }
+
+    void setDetailMeshes(unsigned int *detailMeshes)
+    {
+        params.detailMeshes = detailMeshes;
+    }
+
+    void setDetailVerts(float *detailVerts)
+    {
+        params.detailVerts = detailVerts;
+    }
+
+    void setDetailVertsCount(int detailVertsCount)
+    {
+        params.detailVertsCount = detailVertsCount;
+    }
+
+    void setDetailTris(unsigned char *detailTris)
+    {
+        params.detailTris = detailTris;
+    }
+
+    void setDetailTriCount(int detailTriCount)
+    {
+        params.detailTriCount = detailTriCount;
+    }
+
+    void setOffMeshConVerts(float *offMeshConVerts)
+    {
+        params.offMeshConVerts = offMeshConVerts;
+    }
+
+    void setOffMeshConRad(float *offMeshConRad)
+    {
+        params.offMeshConRad = offMeshConRad;
+    }
+
+    void setOffMeshConFlags(unsigned short *offMeshConFlags)
+    {
+        params.offMeshConFlags = offMeshConFlags;
+    }
+
+    void setOffMeshConAreas(unsigned char *offMeshConAreas)
+    {
+        params.offMeshConAreas = offMeshConAreas;
+    }
+
+    void setOffMeshConDir(unsigned char *offMeshConDir)
+    {
+        params.offMeshConDir = offMeshConDir;
+    }
+
+    void setOffMeshConUserID(unsigned int *offMeshConUserID)
+    {
+        params.offMeshConUserID = offMeshConUserID;
+    }
+
+    void setOffMeshConCount(int offMeshConCount)
+    {
+        params.offMeshConCount = offMeshConCount;
+    }
+
+    void setUserId(unsigned int userId)
+    {
+        params.userId = userId;
+    }
+
+    void setTileX(int tileX)
+    {
+        params.tileX = tileX;
+    }
+
+    void setTileY(int tileY)
+    {
+        params.tileY = tileY;
+    }
+
+    void setTileLayer(int tileLayer)
+    {
+        params.tileLayer = tileLayer;
+    }
+
+    void setBmin(float *bmin)
+    {
+        params.bmin[0] = bmin[0];
+        params.bmin[1] = bmin[1];
+        params.bmin[2] = bmin[2];
+    }
+
+    void setBmax(float *bmax)
+    {
+        params.bmax[0] = bmax[0];
+        params.bmax[1] = bmax[1];
+        params.bmax[2] = bmax[2];
+    }
+
+    void setWalkableHeight(float walkableHeight)
+    {
+        params.walkableHeight = walkableHeight;
+    }
+
+    void setWalkableRadius(float walkableRadius)
+    {
+        params.walkableRadius = walkableRadius;
+    }
+
+    void setWalkableClimb(float walkableClimb)
+    {
+        params.walkableClimb = walkableClimb;
+    }
+
+    void setCs(float cs)
+    {
+        params.cs = cs;
+    }
+
+    void setCh(float ch)
+    {
+        params.ch = ch;
+    }
+
+    void setBuildBvTree(bool buildBvTree)
+    {
+        params.buildBvTree = buildBvTree;
+    }
 };
 
 struct RecastFastLZCompressor : public dtTileCacheCompressor
@@ -139,7 +303,8 @@ struct RecastLinearAllocator : public dtTileCacheAlloc
 
     ~RecastLinearAllocator()
     {
-        dtFree(buffer);
+        if (buffer)
+            dtFree(buffer);
     }
 
     void resize(const size_t cap)
@@ -198,44 +363,110 @@ struct RecastMeshProcess : public dtTileCacheMeshProcess
     }
 };
 
-class NavMesh
+struct CreateNavMeshDataResult
+{
+    bool success;
+    unsigned char *navMeshData;
+    int navMeshDataSize;
+};
+
+struct NavMeshAddTileResult
+{
+    unsigned int status;
+    unsigned int tileRef;
+};
+
+class NavMeshBuilder
+{
+public:
+    CreateNavMeshDataResult createNavMeshData(NavMeshCreateParams &params);
+};
+
+struct TileCacheAddTileResult
+{
+    unsigned int status;
+    unsigned int tileRef;
+};
+
+struct TileCacheUpdateResult
+{
+    unsigned int status;
+    bool upToDate;
+};
+
+class TileCache
 {
 public:
     dtTileCache *m_tileCache;
 
-    dtNavMeshQuery *m_navQuery;
+    TileCache() : m_tileCache(0), m_talloc(32000) {}
 
-    NavMesh() : m_navQuery(0), m_navMesh(0), m_tileCache(0), m_pmesh(0), m_dmesh(0), m_navData(0), m_defaultQueryExtent(1.f), m_talloc(32000) {}
+    bool init(const dtTileCacheParams &params);
+    TileCacheAddTileResult addTile(unsigned char *data, const int dataSize, unsigned char flags);
+    dtStatus buildNavMeshTile(const dtCompressedTileRef *ref, NavMesh *navMesh);
+    dtStatus buildNavMeshTilesAt(const int tx, const int ty, NavMesh *navMesh);
+    TileCacheUpdateResult update(NavMesh *navMesh);
+    dtObstacleRef *addCylinderObstacle(const Vec3 &position, float radius, float height);
+    dtObstacleRef *addBoxObstacle(const Vec3 &position, const Vec3 &extent, float angle);
+    void removeObstacle(dtObstacleRef *obstacle);
+    void destroy();
 
-    void build(
-        const float *positions,
-        const int positionCount,
-        const int *indices,
-        const int indexCount,
-        const rcConfig &config);
+protected:
+    std::list<dtObstacleRef> m_obstacles;
 
-    void buildFromNavMeshData(NavMeshData *navMeshData);
+    RecastLinearAllocator m_talloc;
+    RecastFastLZCompressor m_tcomp;
+    RecastMeshProcess m_tmproc;
+};
+
+class NavMesh
+{
+public:
+    dtNavMesh *m_navMesh;
+
+    NavMesh() : m_navMesh(0) {}
+
+    bool initSolo(unsigned char *data, const int dataSize, const int flags);
+
+    bool initTiled(const dtNavMeshParams *params);
 
     void destroy();
 
-    NavMeshData getNavMeshData() const;
-
-    void freeNavMeshData(NavMeshData *navMeshData);
+    NavMeshAddTileResult addTile(unsigned char *data, int dataSize, int flags, dtTileRef lastRef);
 
     DebugNavMesh getDebugNavMesh();
-
-    Vec3 getClosestPoint(const Vec3 &position);
-
-    Vec3 getRandomPointAround(const Vec3 &position, float maxRadius);
-
-    Vec3 moveAlong(const Vec3 &position, const Vec3 &destination);
 
     dtNavMesh *getNavMesh()
     {
         return m_navMesh;
     }
 
+protected:
+    void navMeshPoly(
+        DebugNavMesh &debugNavMesh,
+        const dtNavMesh &mesh,
+        dtPolyRef ref);
+
+    void navMeshPolysWithFlags(
+        DebugNavMesh &debugNavMesh,
+        const dtNavMesh &mesh,
+        const unsigned short polyFlags);
+};
+
+class NavMeshQuery
+{
+    Vec3 m_defaultQueryExtent;
+
+public:
+    dtNavMeshQuery *m_navQuery;
+
+    NavMeshQuery(NavMesh *navMesh, const int maxNodes);
+
+    Vec3 getClosestPoint(const Vec3 &position);
+    Vec3 getRandomPointAround(const Vec3 &position, float maxRadius);
+    Vec3 moveAlong(const Vec3 &position, const Vec3 &destination);
     NavPath computePath(const Vec3 &start, const Vec3 &end) const;
+    void destroy();
 
     void setDefaultQueryExtent(const Vec3 &extent)
     {
@@ -246,46 +477,92 @@ public:
     {
         return m_defaultQueryExtent;
     }
+};
 
-    dtObstacleRef *addCylinderObstacle(const Vec3 &position, float radius, float height);
+struct NavMeshExport
+{
+    void *dataPointer;
+    int size;
+};
 
-    dtObstacleRef *addBoxObstacle(const Vec3 &position, const Vec3 &extent, float angle);
+class NavMeshExporter
+{
+public:
+    NavMeshExporter() {}
 
-    void removeObstacle(dtObstacleRef *obstacle);
+    NavMeshExport exportNavMesh(NavMesh *navMesh, TileCache *tileCache) const;
+    void freeNavMeshExport(NavMeshExport *navMeshExport);
+};
 
-    void update();
+struct NavMeshImporterResult
+{
+    bool success;
+    NavMesh *navMesh;
+    TileCache *tileCache;
 
-protected:
-    std::list<dtObstacleRef> m_obstacles;
-    dtNavMesh *m_navMesh;
+    const NavMesh &getNavMesh()
+    {
+        return *navMesh;
+    }
 
+    const TileCache &getTileCache()
+    {
+        return *tileCache;
+    }
+};
+
+class NavMeshImporter
+{
+public:
+    NavMeshImporter() {}
+
+    NavMeshImporterResult importNavMesh(NavMeshExport *navMeshExport);
+};
+
+struct NavMeshGeneratorResult
+{
+    bool success;
+    NavMesh *navMesh;
+    TileCache *tileCache;
+
+    const NavMesh &getNavMesh()
+    {
+        return *navMesh;
+    }
+
+    const TileCache &getTileCache()
+    {
+        return *tileCache;
+    }
+};
+
+class NavMeshGenerator
+{
     rcPolyMesh *m_pmesh;
     rcPolyMeshDetail *m_dmesh;
     unsigned char *m_navData;
-    Vec3 m_defaultQueryExtent;
 
-    RecastLinearAllocator m_talloc;
-    RecastFastLZCompressor m_tcomp;
-    RecastMeshProcess m_tmproc;
+public:
+    NavMeshGenerator() : m_pmesh(0), m_dmesh(0), m_navData(0) {}
 
-    void navMeshPoly(
-        DebugNavMesh &debugNavMesh,
-        const dtNavMesh &mesh,
-        dtPolyRef ref);
+    NavMeshGeneratorResult generate(
+        const float *positions,
+        const int positionCount,
+        const int *indices,
+        const int indexCount,
+        const rcConfig &config);
 
-    void navMeshPolysWithFlags(
-        DebugNavMesh &debugNavMesh,
-        const dtNavMesh &mesh,
-        const unsigned short polyFlags);
+    void destroy();
 
-    bool computeTiledNavMesh(
+protected:
+    NavMeshGeneratorResult *computeTiledNavMesh(
         const std::vector<float> &verts,
         const std::vector<int> &tris,
         rcConfig &cfg,
         NavMeshIntermediates &intermediates,
         std::vector<unsigned char> &triareas);
 
-    bool computeSoloNavMesh(
+    NavMeshGeneratorResult *computeSoloNavMesh(
         rcContext &ctx,
         const std::vector<float> &verts,
         const std::vector<int> &tris,
@@ -297,6 +574,8 @@ protected:
         bool keepInterResults);
 
     int rasterizeTileLayers(
+        NavMesh *navMesh,
+        TileCache *tileCache,
         const int tx,
         const int ty,
         const rcConfig &cfg,
@@ -310,7 +589,7 @@ protected:
 class Crowd
 {
 public:
-    Crowd(const int maxAgents, const float maxAgentRadius, dtNavMesh *nav);
+    Crowd(const int maxAgents, const float maxAgentRadius, NavMesh *navMesh);
 
     void destroy();
 

@@ -1,8 +1,8 @@
 import type R from '@recast-navigation/wasm';
 import type { NavMesh } from './nav-mesh';
-import { Raw } from './raw';
 import type { NavPath, Vector3 } from './utils';
 import { navPath, vec3 } from './utils';
+import { Wasm } from './wasm';
 
 export type CrowdParams = {
   /**
@@ -143,11 +143,7 @@ export class Crowd {
 
   constructor({ maxAgents, maxAgentRadius, navMesh }: CrowdParams) {
     this.navMesh = navMesh;
-    this.raw = new Raw.Recast.Crowd(
-      maxAgents,
-      maxAgentRadius,
-      navMesh.raw.getNavMesh()
-    );
+    this.raw = new Wasm.Recast.Crowd(maxAgents, maxAgentRadius, navMesh.raw);
   }
 
   /**
@@ -162,7 +158,7 @@ export class Crowd {
       ...crowdAgentParams,
     } as Required<CrowdAgentParams>;
 
-    const dtCrowdAgentParams = new Raw.Recast.dtCrowdAgentParams();
+    const dtCrowdAgentParams = new Wasm.Recast.dtCrowdAgentParams();
     dtCrowdAgentParams.radius = params.radius;
     dtCrowdAgentParams.height = params.height;
     dtCrowdAgentParams.maxAcceleration = params.maxAcceleration;
@@ -188,9 +184,9 @@ export class Crowd {
   removeAgent(agentIndex: number) {
     this.raw.removeAgent(agentIndex);
 
-    const i = this.agents.indexOf(agentIndex);
-    if (i > -1) {
-      this.agents.splice(i, 1);
+    const index = this.agents.indexOf(agentIndex);
+    if (index !== -1) {
+      this.agents.splice(index, 1);
     }
   }
 
@@ -219,9 +215,6 @@ export class Crowd {
    * Updates the crowd
    */
   update(deltaTime: number) {
-    // update navmesh obstacles
-    this.navMesh.update();
-
     if (deltaTime <= Epsilon) {
       return;
     }
@@ -353,7 +346,7 @@ export class Crowd {
       ...crowdAgentParams,
     } as CrowdAgentParams;
 
-    const dtCrowdAgentParams = new Raw.Recast.dtCrowdAgentParams();
+    const dtCrowdAgentParams = new Wasm.Recast.dtCrowdAgentParams();
 
     dtCrowdAgentParams.radius = params.radius;
     dtCrowdAgentParams.height = params.height;

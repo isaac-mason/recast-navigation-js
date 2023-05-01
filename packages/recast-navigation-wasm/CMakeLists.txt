@@ -69,18 +69,13 @@ ADD_LIBRARY(${EXE_NAME} ${SRC_FILES} ${RECASTDETOUR_FILES})
 # Build Release by default
 set(CMAKE_BUILD_TYPE Release CACHE STRING "Build Type")
 
-# Default is 64*1024*1024 = 64MB
-set(TOTAL_MEMORY 67108864 CACHE STRING "Total Memory")
-
-# Enable for resizable heap, with some amount of slowness
-set(ALLOW_MEMORY_GROWTH 1 CACHE STRING "Allow Memory Growth")
-
 set(EMCC_ARGS
   -flto
   --extern-pre-js ${RECAST_FRONT_MATTER_FILE}
   --post-js glue.js
   -O3
-  -s ALLOW_MEMORY_GROWTH=${ALLOW_MEMORY_GROWTH}
+  -s INITIAL_MEMORY=67108864 # 64*1024*1024 = 64MB
+  -s ALLOW_MEMORY_GROWTH=1
   -s ALLOW_TABLE_GROWTH=1
   -s EXPORTED_FUNCTIONS=["_malloc","_free"]
   -s EXPORTED_RUNTIME_METHODS=["UTF8ToString","addFunction"]
@@ -89,10 +84,15 @@ set(EMCC_ARGS
   -s ENVIRONMENT='web,node'
   -s NO_EXIT_RUNTIME=1
   -s NO_FILESYSTEM=1
-  -s TOTAL_MEMORY=${TOTAL_MEMORY}
   -s FILESYSTEM=0
   -s EXPORT_ES6=1
-  -s BINARYEN_IGNORE_IMPLICIT_TRAPS=1)
+  -s BINARYEN_IGNORE_IMPLICIT_TRAPS=1
+  # Start: Uncomment for debugging
+  # -O0
+  # -g
+  # -s ASSERTIONS=2
+  # End: Uncomment for debugging
+)
 
 if(${CLOSURE})
   LIST(APPEND EMCC_ARGS
@@ -118,7 +118,7 @@ set(EMCC_GLUE_ARGS
   -include${RECASTAPI_HEADER_FILE}
   -include${RECAST_HEADER_FILE}
   -include${NAVMESHQUERY_HEADER_FILE}
-  )
+)
 
 # GLUE
 add_custom_command(

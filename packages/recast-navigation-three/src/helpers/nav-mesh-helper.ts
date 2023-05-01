@@ -1,60 +1,43 @@
-import { NavMesh, ObstacleRef } from '@recast-navigation/core';
+import { NavMesh } from '@recast-navigation/core';
 import {
-  BoxGeometry,
   BufferAttribute,
   BufferGeometry,
-  CylinderGeometry,
-  Group,
   Material,
   Mesh,
   MeshBasicMaterial,
-  Vector3,
 } from 'three';
 
 export type NavMeshHelperParams = {
   navMesh: NavMesh;
   navMeshMaterial?: Material;
-  obstacleMaterial?: Material;
 };
 
 export class NavMeshHelper {
   navMesh: Mesh;
 
-  obstacles: Group;
-
-  obstacleMeshes: Map<ObstacleRef, Mesh> = new Map();
-
   navMeshMaterial: Material;
-
-  obstacleMaterial: Material;
 
   recastNavMesh: NavMesh;
 
-  constructor({
-    navMesh,
-    navMeshMaterial,
-    obstacleMaterial,
-  }: NavMeshHelperParams) {
+  constructor({ navMesh, navMeshMaterial }: NavMeshHelperParams) {
     this.recastNavMesh = navMesh;
 
     this.navMeshMaterial = navMeshMaterial
       ? navMeshMaterial
-      : new MeshBasicMaterial({ color: 'blue', wireframe: true });
-    this.obstacleMaterial = obstacleMaterial
-      ? obstacleMaterial
-      : new MeshBasicMaterial({ color: 'red', wireframe: true });
+      : new MeshBasicMaterial({
+        color: 'orange',
+        transparent: true,
+        opacity: 0.7,
+      });
 
     this.navMesh = new Mesh(new BufferGeometry(), this.navMeshMaterial);
 
-    this.obstacles = new Group();
-
     this.updateNavMesh();
-    this.updateObstacles();
   }
 
   /**
    * Update the three debug nav mesh.
-   * 
+   *
    * This should be called after updating the nav mesh.
    */
   updateNavMesh() {
@@ -77,60 +60,5 @@ export class NavMeshHelper {
     geometry.setIndex(new BufferAttribute(new Uint16Array(indices), 1));
 
     geometry.computeVertexNormals();
-  }
-
-  /**
-   * Update the obstacle meshes.
-   *
-   * This should be called after adding or removing obstacles.
-   */
-  updateObstacles() {    
-    const unseen = new Set(this.obstacleMeshes.keys());
-
-    for (const [ref, obstacle] of this.recastNavMesh.obstacles) {
-      let obstacleMesh = this.obstacleMeshes.get(ref);
-
-      unseen.delete(ref);
-
-      if (!obstacleMesh) {
-        const { position } = obstacle;
-
-        const mesh = new Mesh(undefined, this.obstacleMaterial);
-
-        mesh.position.copy(position as Vector3);
-
-        if (obstacle.type === 'box') {
-          const { extent, angle } = obstacle;
-
-          mesh.geometry = new BoxGeometry(
-            extent.x * 2,
-            extent.y * 2,
-            extent.z * 2
-          );
-
-          mesh.rotation.y = angle;
-        } else if (obstacle.type === 'cylinder') {
-          const { radius, height } = obstacle;
-
-          mesh.geometry = new CylinderGeometry(radius, radius, height, 16);
-
-          mesh.position.y += height / 2;
-        } else {
-          throw new Error(`Unknown obstacle type: ${obstacle}`);
-        }
-
-        this.obstacles.add(mesh);
-        this.obstacleMeshes.set(ref, mesh);
-      }
-    }
-
-    for (const ref of unseen) {
-      const obstacleMesh = this.obstacleMeshes.get(ref);
-
-      if (obstacleMesh) {
-        this.obstacles.remove(obstacleMesh);
-        this.obstacleMeshes.delete(ref);
-      }
-    }
   }
 }

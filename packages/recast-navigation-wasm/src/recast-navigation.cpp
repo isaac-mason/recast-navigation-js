@@ -33,7 +33,7 @@ inline float r01()
 
 // This value specifies how many layers (or "floors") each navmesh tile is expected to have.
 // todo - pass in from params ...
-static const int EXPECTED_LAYERS_PER_TILE = 4;
+static const int EXPECTED_LAYERS_PER_TILE = 32;
 static const int MAX_LAYERS = 32;
 
 struct TileCacheData
@@ -41,6 +41,267 @@ struct TileCacheData
     unsigned char *data;
     int dataSize;
 };
+
+CreateNavMeshDataResult NavMeshBuilder::createNavMeshData(NavMeshCreateParams &navMeshCreateParams)
+{
+    CreateNavMeshDataResult *createNavMeshDataResult = new CreateNavMeshDataResult;
+
+    unsigned char *navMeshData;
+    int navMeshDataSize = 0;
+
+    if (!dtCreateNavMeshData(&navMeshCreateParams.params, &createNavMeshDataResult->navMeshData, &createNavMeshDataResult->navMeshDataSize))
+    {
+        Log("Could not build NavMeshData");
+
+        createNavMeshDataResult->success = false;
+        createNavMeshDataResult->navMeshData = 0;
+        createNavMeshDataResult->navMeshDataSize = 0;
+    }
+    else
+    {
+        createNavMeshDataResult->success = true;
+        createNavMeshDataResult->navMeshData = navMeshData;
+        createNavMeshDataResult->navMeshDataSize = navMeshDataSize;
+    }
+
+    return *createNavMeshDataResult;
+}
+
+bool TileCache::init(const dtTileCacheParams &params)
+{
+    m_tileCache = dtAllocTileCache();
+    if (!m_tileCache)
+    {
+        return false;
+    }
+
+    dtStatus status = m_tileCache->init(&params, &m_talloc, &m_tcomp, &m_tmproc);
+    if (dtStatusFailed(status))
+    {
+        return false;
+    }
+
+    return true;
+};
+
+TileCacheAddTileResult TileCache::addTile(unsigned char *data, const int dataSize, unsigned char flags)
+{
+    TileCacheAddTileResult *result = new TileCacheAddTileResult;
+
+    dtStatus status = m_tileCache->addTile(data, dataSize, flags, &result->tileRef);
+    result->status = status;
+
+    return *result;
+}
+
+dtStatus TileCache::buildNavMeshTile(const dtCompressedTileRef *ref, NavMesh *navMesh)
+{
+    return m_tileCache->buildNavMeshTile(*ref, navMesh->getNavMesh());
+};
+
+dtStatus TileCache::buildNavMeshTilesAt(const int tx, const int ty, NavMesh *navMesh)
+{
+    return m_tileCache->buildNavMeshTilesAt(tx, ty, navMesh->getNavMesh());
+};
+
+TileCacheUpdateResult TileCache::update(NavMesh *navMesh)
+{
+    TileCacheUpdateResult *result = new TileCacheUpdateResult;
+    dtStatus status = m_tileCache->update(0, navMesh->getNavMesh(), &result->upToDate);
+
+    result->status = status;
+
+    return *result;
+};
+
+dtObstacleRef *TileCache::addCylinderObstacle(const Vec3 &position, float radius, float height)
+{
+    dtObstacleRef ref(-1);
+    if (!m_tileCache)
+    {
+        return nullptr;
+    }
+
+    m_tileCache->addObstacle(&position.x, radius, height, &ref);
+    m_obstacles.push_back(ref);
+    return &m_obstacles.back();
+}
+
+dtObstacleRef *TileCache::addBoxObstacle(const Vec3 &position, const Vec3 &extent, float angle)
+{
+    dtObstacleRef ref(-1);
+    if (!m_tileCache)
+    {
+        return nullptr;
+    }
+
+    m_tileCache->addBoxObstacle(&position.x, &extent.x, angle, &ref);
+    m_obstacles.push_back(ref);
+    return &m_obstacles.back();
+}
+
+void TileCache::removeObstacle(dtObstacleRef *obstacle)
+{
+    if (!m_tileCache || !obstacle || *obstacle == -1)
+    {
+        return;
+    }
+
+    m_tileCache->removeObstacle(*obstacle);
+    auto iter = std::find(m_obstacles.begin(), m_obstacles.end(), *obstacle);
+    if (iter != m_obstacles.end())
+    {
+        m_obstacles.erase(iter);
+    }
+}
+
+void TileCache::destroy()
+{
+    if (m_tileCache)
+    {
+        dtFreeTileCache(m_tileCache);
+    }
+
+    m_talloc.reset();
+}
+
+NavMeshQuery::NavMeshQuery(NavMesh *navMesh, const int maxNodes)
+{
+    m_defaultQueryExtent = 1.0f;
+
+    m_navQuery = dtAllocNavMeshQuery();
+
+    const dtNavMesh *nav = navMesh->getNavMesh();
+    m_navQuery->init(nav, maxNodes);
+}
+
+Vec3 NavMeshQuery::getClosestPoint(const Vec3 &position)
+{
+    dtQueryFilter filter;
+    filter.setIncludeFlags(0xffff);
+    filter.setExcludeFlags(0);
+
+    dtPolyRef polyRef;
+
+    Vec3 pos(position.x, position.y, position.z);
+    m_navQuery->findNearestPoly(&pos.x, &m_defaultQueryExtent.x, &filter, &polyRef, 0);
+
+    bool posOverlay;
+    Vec3 resDetour;
+    dtStatus status = m_navQuery->closestPointOnPoly(polyRef, &pos.x, &resDetour.x, &posOverlay);
+
+    if (dtStatusFailed(status))
+    {
+        return Vec3(0.f, 0.f, 0.f);
+    }
+    return Vec3(resDetour.x, resDetour.y, resDetour.z);
+}
+
+Vec3 NavMeshQuery::getRandomPointAround(const Vec3 &position, float maxRadius)
+{
+    dtQueryFilter filter;
+    filter.setIncludeFlags(0xffff);
+    filter.setExcludeFlags(0);
+
+    dtPolyRef polyRef;
+
+    Vec3 pos(position.x, position.y, position.z);
+
+    m_navQuery->findNearestPoly(&pos.x, &m_defaultQueryExtent.x, &filter, &polyRef, 0);
+
+    dtPolyRef randomRef;
+    Vec3 resDetour;
+    dtStatus status = m_navQuery->findRandomPointAroundCircle(polyRef, &position.x, maxRadius,
+                                                              &filter, r01,
+                                                              &randomRef, &resDetour.x);
+    if (dtStatusFailed(status))
+    {
+        return Vec3(0.f, 0.f, 0.f);
+    }
+
+    return Vec3(resDetour.x, resDetour.y, resDetour.z);
+}
+
+Vec3 NavMeshQuery::moveAlong(const Vec3 &position, const Vec3 &destination)
+{
+    dtQueryFilter filter;
+    filter.setIncludeFlags(0xffff);
+    filter.setExcludeFlags(0);
+
+    dtPolyRef polyRef;
+
+    Vec3 pos(position.x, position.y, position.z);
+    Vec3 dest(destination.x, destination.y, destination.z);
+
+    m_navQuery->findNearestPoly(&pos.x, &m_defaultQueryExtent.x, &filter, &polyRef, 0);
+
+    Vec3 resDetour;
+    dtPolyRef visitedPoly[128];
+    int visitedPolyCount;
+    dtStatus status = m_navQuery->moveAlongSurface(polyRef, &pos.x, &dest.x,
+                                                   &filter,
+                                                   &resDetour.x, visitedPoly, &visitedPolyCount, sizeof(visitedPoly) / sizeof(dtPolyRef));
+    if (dtStatusFailed(status))
+    {
+        return Vec3(0.f, 0.f, 0.f);
+    }
+    return Vec3(resDetour.x, resDetour.y, resDetour.z);
+}
+
+NavPath NavMeshQuery::computePath(const Vec3 &start, const Vec3 &end) const
+{
+    NavPath navpath;
+    static const int MAX_POLYS = 256;
+    float straightPath[MAX_POLYS * 3];
+
+    dtPolyRef startRef;
+    dtPolyRef endRef;
+
+    dtQueryFilter filter;
+    filter.setIncludeFlags(0xffff);
+    filter.setExcludeFlags(0);
+
+    Vec3 posStart(start.x, start.y, start.z);
+    Vec3 posEnd(end.x, end.y, end.z);
+
+    m_navQuery->findNearestPoly(&posStart.x, &m_defaultQueryExtent.x, &filter, &startRef, 0);
+    m_navQuery->findNearestPoly(&posEnd.x, &m_defaultQueryExtent.x, &filter, &endRef, 0);
+
+    dtPolyRef polys[MAX_POLYS];
+    int npolys;
+
+    m_navQuery->findPath(startRef, endRef, &posStart.x, &posEnd.x, &filter, polys, &npolys, MAX_POLYS);
+    int mNstraightPath = 0;
+    if (npolys)
+    {
+        unsigned char straightPathFlags[MAX_POLYS];
+        dtPolyRef straightPathPolys[MAX_POLYS];
+        int straightPathOptions;
+        bool posOverPoly;
+        Vec3 closestEnd = posEnd;
+
+        if (polys[npolys - 1] != endRef)
+        {
+            m_navQuery->closestPointOnPoly(polys[npolys - 1], &end.x, &closestEnd.x, &posOverPoly);
+        }
+        straightPathOptions = 0;
+        m_navQuery->findStraightPath(&posStart.x, &closestEnd.x, polys, npolys,
+                                     straightPath, straightPathFlags,
+                                     straightPathPolys, &mNstraightPath, MAX_POLYS, straightPathOptions);
+
+        navpath.mPoints.resize(mNstraightPath);
+        for (int i = 0; i < mNstraightPath; i++)
+        {
+            navpath.mPoints[i] = Vec3(straightPath[i * 3], straightPath[i * 3 + 1], straightPath[i * 3 + 2]);
+        }
+    }
+    return navpath;
+}
+
+void NavMeshQuery::destroy()
+{
+    dtFreeNavMeshQuery(m_navQuery);
+}
 
 struct NavMeshIntermediates
 {
@@ -77,28 +338,193 @@ struct NavMeshIntermediates
 
 void NavMesh::destroy()
 {
-    if (m_pmesh)
-    {
-        rcFreePolyMesh(m_pmesh);
-    }
-    if (m_dmesh)
-    {
-        rcFreePolyMeshDetail(m_dmesh);
-    }
-    if (m_navData)
-    {
-        dtFree(m_navData);
-    }
     dtFreeNavMesh(m_navMesh);
-    dtFreeNavMeshQuery(m_navQuery);
-    if (m_tileCache)
-    {
-        dtFreeTileCache(m_tileCache);
-    }
-    m_talloc.reset();
 }
 
-int NavMesh::rasterizeTileLayers(
+bool NavMesh::initSolo(unsigned char *data, const int dataSize, const int flags)
+{
+    m_navMesh = dtAllocNavMesh();
+    if (!m_navMesh)
+    {
+        Log("Could not allocate solo Detour navmesh");
+        return false;
+    }
+
+    dtStatus status = m_navMesh->init(data, dataSize, flags);
+
+    return dtStatusSucceed(status);
+};
+
+bool NavMesh::initTiled(const dtNavMeshParams *params)
+{
+    m_navMesh = dtAllocNavMesh();
+    if (!m_navMesh)
+    {
+        Log("Could not allocate tiled Detour navmesh");
+        return false;
+    }
+
+    dtStatus status = m_navMesh->init(params);
+
+    return dtStatusSucceed(status);
+};
+
+static const int NAVMESHSET_MAGIC = 'M' << 24 | 'S' << 16 | 'E' << 8 | 'T'; //'MSET';
+static const int NAVMESHSET_VERSION = 1;
+static const int TILECACHESET_MAGIC = 'T' << 24 | 'S' << 16 | 'E' << 8 | 'T'; //'TSET';
+static const int TILECACHESET_VERSION = 1;
+
+struct RecastHeader
+{
+    int magic;
+    int version;
+    int numTiles;
+};
+
+struct TileCacheSetHeader
+{
+    dtNavMeshParams meshParams;
+    dtTileCacheParams cacheParams;
+};
+
+struct TileCacheTileHeader
+{
+    dtCompressedTileRef tileRef;
+    int dataSize;
+};
+
+struct NavMeshSetHeader
+{
+    dtNavMeshParams params;
+};
+
+struct NavMeshTileHeader
+{
+    dtTileRef tileRef;
+    int dataSize;
+};
+
+NavMeshExport NavMeshExporter::exportNavMesh(NavMesh *navMesh, TileCache *tileCache) const
+{
+    if (!navMesh->m_navMesh)
+    {
+        return {0, 0};
+    }
+
+    unsigned char *bits = nullptr;
+    size_t bitsSize = 0;
+
+    const dtNavMesh *m_navMesh = navMesh->m_navMesh;
+    const dtTileCache *m_tileCache = tileCache->m_tileCache;
+
+    if (m_tileCache)
+    {
+        // tilecache set
+        // Store header.
+        RecastHeader recastHeader;
+        TileCacheSetHeader header;
+        recastHeader.magic = TILECACHESET_MAGIC;
+        recastHeader.version = TILECACHESET_VERSION;
+        recastHeader.numTiles = 0;
+        for (int i = 0; i < m_tileCache->getTileCount(); ++i)
+        {
+            const dtCompressedTile *tile = m_tileCache->getTile(i);
+            if (!tile || !tile->header || !tile->dataSize)
+                continue;
+            recastHeader.numTiles++;
+        }
+        memcpy(&header.cacheParams, m_tileCache->getParams(), sizeof(dtTileCacheParams));
+        memcpy(&header.meshParams, m_navMesh->getParams(), sizeof(dtNavMeshParams));
+
+        bits = (unsigned char *)realloc(bits, bitsSize + sizeof(RecastHeader));
+        memcpy(&bits[bitsSize], &recastHeader, sizeof(RecastHeader));
+        bitsSize += sizeof(RecastHeader);
+
+        bits = (unsigned char *)realloc(bits, bitsSize + sizeof(TileCacheSetHeader));
+        memcpy(&bits[bitsSize], &header, sizeof(TileCacheSetHeader));
+        bitsSize += sizeof(TileCacheSetHeader);
+
+        // Store tiles.
+        for (int i = 0; i < m_tileCache->getTileCount(); ++i)
+        {
+            const dtCompressedTile *tile = m_tileCache->getTile(i);
+            if (!tile || !tile->header || !tile->dataSize)
+                continue;
+
+            TileCacheTileHeader tileHeader;
+            tileHeader.tileRef = m_tileCache->getTileRef(tile);
+            tileHeader.dataSize = tile->dataSize;
+
+            bits = (unsigned char *)realloc(bits, bitsSize + sizeof(tileHeader));
+            memcpy(&bits[bitsSize], &tileHeader, sizeof(tileHeader));
+            bitsSize += sizeof(tileHeader);
+
+            bits = (unsigned char *)realloc(bits, bitsSize + tile->dataSize);
+            memcpy(&bits[bitsSize], tile->data, tile->dataSize);
+            bitsSize += tile->dataSize;
+        }
+    }
+    else
+    {
+        // Mesh set
+        // Store header.
+        RecastHeader recastHeader;
+        NavMeshSetHeader header;
+        recastHeader.magic = NAVMESHSET_MAGIC;
+        recastHeader.version = NAVMESHSET_VERSION;
+        recastHeader.numTiles = 0;
+        for (int i = 0; i < m_navMesh->getMaxTiles(); ++i)
+        {
+            const dtMeshTile *tile = m_navMesh->getTile(i);
+            if (!tile || !tile->header || !tile->dataSize)
+                continue;
+            recastHeader.numTiles++;
+        }
+        memcpy(&header.params, m_navMesh->getParams(), sizeof(dtNavMeshParams));
+        bits = (unsigned char *)realloc(bits, bitsSize + sizeof(RecastHeader));
+        memcpy(&bits[bitsSize], &recastHeader, sizeof(RecastHeader));
+        bitsSize += sizeof(RecastHeader);
+
+        bits = (unsigned char *)realloc(bits, bitsSize + sizeof(NavMeshSetHeader));
+        memcpy(&bits[bitsSize], &header, sizeof(NavMeshSetHeader));
+        bitsSize += sizeof(NavMeshSetHeader);
+
+        // Store tiles.
+        for (int i = 0; i < m_navMesh->getMaxTiles(); ++i)
+        {
+            const dtMeshTile *tile = m_navMesh->getTile(i);
+            if (!tile || !tile->header || !tile->dataSize)
+                continue;
+
+            NavMeshTileHeader tileHeader;
+            tileHeader.tileRef = m_navMesh->getTileRef(tile);
+            tileHeader.dataSize = tile->dataSize;
+
+            bits = (unsigned char *)realloc(bits, bitsSize + sizeof(tileHeader));
+            memcpy(&bits[bitsSize], &tileHeader, sizeof(tileHeader));
+            bitsSize += sizeof(tileHeader);
+
+            bits = (unsigned char *)realloc(bits, bitsSize + tile->dataSize);
+            memcpy(&bits[bitsSize], tile->data, tile->dataSize);
+            bitsSize += tile->dataSize;
+        }
+    }
+
+    NavMeshExport navMeshExport;
+    navMeshExport.dataPointer = bits;
+    navMeshExport.size = int(bitsSize);
+
+    return navMeshExport;
+}
+
+void NavMeshExporter::freeNavMeshExport(NavMeshExport *navMeshExport)
+{
+    free(navMeshExport->dataPointer);
+}
+
+int NavMeshGenerator::rasterizeTileLayers(
+    NavMesh *navMesh,
+    TileCache *tileCache,
     const int tx,
     const int ty,
     const rcConfig &cfg,
@@ -163,6 +589,9 @@ int NavMesh::rasterizeTileLayers(
         const int *ctris = &chunkyMesh->tris[node.i * 3];
         const int ntris = node.n;
 
+        // Find triangles which are walkable based on their slope and rasterize them.
+        // If your input data is multiple meshes, you can transform them here, calculate
+        // the are type for each of the meshes and rasterize them.
         rcMarkWalkableTriangles(&ctx, cfg.walkableSlopeAngle, verts.data(), verts.size(), ctris, ntris, triareas.data());
         if (!rcRasterizeTriangles(&ctx, verts.data(), verts.size(), ctris, triareas.data(), ntris, *tileIntermediates.m_solid, tcfg.walkableClimb))
         {
@@ -174,11 +603,10 @@ int NavMesh::rasterizeTileLayers(
     // remove unwanted overhangs caused by the conservative rasterization
     // as well as filter spans where the character cannot possibly stand.
 
-    // if (m_filterLowHangingObstacles)
     rcFilterLowHangingWalkableObstacles(&ctx, tcfg.walkableClimb, *tileIntermediates.m_solid);
-    // if (m_filterLedgeSpans)
+
     rcFilterLedgeSpans(&ctx, tcfg.walkableHeight, tcfg.walkableClimb, *tileIntermediates.m_solid);
-    // if (m_filterWalkableLowHeightSpans)
+
     rcFilterWalkableLowHeightSpans(&ctx, tcfg.walkableHeight, *tileIntermediates.m_solid);
 
     tileIntermediates.m_chf = rcAllocCompactHeightfield();
@@ -261,7 +689,7 @@ int NavMesh::rasterizeTileLayers(
     return n;
 }
 
-bool NavMesh::computeSoloNavMesh(
+NavMeshGeneratorResult *NavMeshGenerator::computeSoloNavMesh(
     rcContext &ctx,
     const std::vector<float> &verts,
     const std::vector<int> &tris,
@@ -272,6 +700,9 @@ bool NavMesh::computeSoloNavMesh(
     std::vector<unsigned char> &triareas,
     bool keepInterResults)
 {
+    NavMeshGeneratorResult *result = new NavMeshGeneratorResult;
+    result->success = false;
+
     //
     // Step 2. Rasterize input polygon soup.
     //
@@ -281,15 +712,18 @@ bool NavMesh::computeSoloNavMesh(
     if (!intermediates.m_solid)
     {
         Log("buildNavigation: Out of memory 'solid'.");
-        return false;
+        return result;
     }
     if (!rcCreateHeightfield(&ctx, *intermediates.m_solid, cfg.width, cfg.height, cfg.bmin, cfg.bmax, cfg.cs, cfg.ch))
     {
         Log("buildNavigation: Could not create solid heightfield.");
-        return false;
+        return result;
     }
 
-	rcMarkWalkableTriangles(&ctx, cfg.walkableSlopeAngle, verts.data(), nverts, tris.data(), ntris, triareas.data());
+    // Find triangles which are walkable based on their slope and rasterize them.
+    // If your input data is multiple meshes, you can transform them here, calculate
+    // the are type for each of the meshes and rasterize them.
+    rcMarkWalkableTriangles(&ctx, cfg.walkableSlopeAngle, verts.data(), nverts, tris.data(), ntris, triareas.data());
     rcRasterizeTriangles(&ctx, verts.data(), nverts, tris.data(), triareas.data(), ntris, *intermediates.m_solid, cfg.walkableClimb);
 
     //
@@ -316,13 +750,13 @@ bool NavMesh::computeSoloNavMesh(
     if (!intermediates.m_chf)
     {
         Log("buildNavigation: Out of memory 'chf'.");
-        return false;
+        return result;
     }
 
     if (!rcBuildCompactHeightfield(&ctx, cfg.walkableHeight, cfg.walkableClimb, *intermediates.m_solid, *intermediates.m_chf))
     {
         Log("buildNavigation: Could not build compact data.");
-        return false;
+        return result;
     }
 
     if (!keepInterResults)
@@ -335,21 +769,21 @@ bool NavMesh::computeSoloNavMesh(
     if (!rcErodeWalkableArea(&ctx, cfg.walkableRadius, *intermediates.m_chf))
     {
         Log("buildNavigation: Could not erode.");
-        return false;
+        return result;
     }
 
     // Prepare for region partitioning, by calculating Distance field along the walkable surface.
     if (!rcBuildDistanceField(&ctx, *intermediates.m_chf))
     {
         Log("buildNavigation: Could not build Distance field.");
-        return false;
+        return result;
     }
 
     // Partition the walkable surface into simple regions without holes.
     if (!rcBuildRegions(&ctx, *intermediates.m_chf, 0, cfg.minRegionArea, cfg.mergeRegionArea))
     {
         Log("buildNavigation: Could not build regions.");
-        return false;
+        return result;
     }
 
     //
@@ -362,12 +796,12 @@ bool NavMesh::computeSoloNavMesh(
     if (!intermediates.m_cset)
     {
         Log("buildNavigation: Out of memory 'cset'.");
-        return false;
+        return result;
     }
     if (!rcBuildContours(&ctx, *intermediates.m_chf, cfg.maxSimplificationError, cfg.maxEdgeLen, *intermediates.m_cset))
     {
         Log("buildNavigation: Could not create contours.");
-        return false;
+        return result;
     }
 
     //
@@ -378,12 +812,12 @@ bool NavMesh::computeSoloNavMesh(
     if (!m_pmesh)
     {
         Log("buildNavigation: Out of memory 'pmesh'.");
-        return false;
+        return result;
     }
     if (!rcBuildPolyMesh(&ctx, *intermediates.m_cset, cfg.maxVertsPerPoly, *m_pmesh))
     {
         Log("buildNavigation: Could not triangulate contours.");
-        return false;
+        return result;
     }
 
     //
@@ -393,13 +827,13 @@ bool NavMesh::computeSoloNavMesh(
     if (!m_dmesh)
     {
         Log("buildNavigation: Out of memory 'pmdtl'.");
-        return false;
+        return result;
     }
 
     if (!rcBuildPolyMeshDetail(&ctx, *m_pmesh, *intermediates.m_chf, cfg.detailSampleDist, cfg.detailSampleMaxError, *m_dmesh))
     {
         Log("buildNavigation: Could not build detail mesh.");
-        return false;
+        return result;
     }
 
     if (!keepInterResults)
@@ -469,37 +903,36 @@ bool NavMesh::computeSoloNavMesh(
         if (!dtCreateNavMeshData(&params, &m_navData, &navDataSize))
         {
             Log("Could not build Detour navmesh.");
-            return false;
+            return result;
         }
 
-        m_navMesh = dtAllocNavMesh();
-        if (!m_navMesh)
+        NavMesh *navMesh = new NavMesh;
+
+        if (!navMesh->initSolo(m_navData, navDataSize, DT_TILE_FREE_DATA))
         {
-            Log("Could not create Detour navmesh");
-            return false;
+            Log("Could not init solo Detour navmesh");
+            return result;
         }
 
-        dtStatus status;
-
-        status = m_navMesh->init(m_navData, navDataSize, DT_TILE_FREE_DATA);
-        if (dtStatusFailed(status))
-        {
-            Log("Could not init Detour navmesh");
-            return false;
-        }
+        result->navMesh = navMesh;
     }
 
-    return true;
+    result->success = true;
+    return result;
 }
 
-bool NavMesh::computeTiledNavMesh(
+NavMeshGeneratorResult *NavMeshGenerator::computeTiledNavMesh(
     const std::vector<float> &verts,
     const std::vector<int> &tris,
     rcConfig &cfg,
     NavMeshIntermediates &intermediates,
     std::vector<unsigned char> &triareas)
 {
-    dtStatus status;
+    NavMeshGeneratorResult *result = new NavMeshGeneratorResult;
+    result->success = false;
+
+    TileCache *tileCache = new TileCache;
+    NavMesh *navMesh = new NavMesh;
 
     const int ts = (int)cfg.tileSize;
     const int tw = (cfg.width + ts - 1) / ts;
@@ -525,24 +958,10 @@ bool NavMesh::computeTiledNavMesh(
     tcparams.maxTiles = tw * th * EXPECTED_LAYERS_PER_TILE;
     tcparams.maxObstacles = 128;
 
-    m_tileCache = dtAllocTileCache();
-    if (!m_tileCache)
+    if (!tileCache->init(tcparams))
     {
-        Log("buildTiledNavigation: Could not allocate tile cache.");
-        return false;
-    }
-    status = m_tileCache->init(&tcparams, &m_talloc, &m_tcomp, &m_tmproc);
-    if (dtStatusFailed(status))
-    {
-        Log("buildTiledNavigation: Could not init tile cache.");
-        return false;
-    }
-
-    m_navMesh = dtAllocNavMesh();
-    if (!m_navMesh)
-    {
-        Log("buildTiledNavigation: Could not allocate navmesh.");
-        return false;
+        Log("buildTiledNavMesh: Could not init tile cache.");
+        return result;
     }
 
     dtNavMeshParams params;
@@ -559,18 +978,17 @@ bool NavMesh::computeTiledNavMesh(
     params.maxTiles = 1 << tileBits;
     params.maxPolys = 1 << polyBits;
 
-    status = m_navMesh->init(&params);
-    if (dtStatusFailed(status))
+    if (!navMesh->initTiled(&params))
     {
-        Log("buildTiledNavigation: Could not init navmesh.");
-        return false;
+        Log("buildTiledNavMesh: Could not init tiled navmesh.");
+        return result;
     }
 
     intermediates.m_chunkyMesh = new rcChunkyTriMesh;
     if (!rcCreateChunkyTriMesh(verts.data(), tris.data(), tris.size() / 3, 256, intermediates.m_chunkyMesh))
     {
-        Log("Unable to create chunky trimesh.");
-        return false;
+        Log("buildTiledNavMesh: Unable to create chunky trimesh.");
+        return result;
     }
 
     // Preprocess tiles.
@@ -580,14 +998,15 @@ bool NavMesh::computeTiledNavMesh(
         {
             TileCacheData tiles[MAX_LAYERS];
             memset(tiles, 0, sizeof(tiles));
-            int ntiles = rasterizeTileLayers(x, y, cfg, tiles, MAX_LAYERS, intermediates, triareas, verts);
+            int ntiles = rasterizeTileLayers(navMesh, tileCache, x, y, cfg, tiles, MAX_LAYERS, intermediates, triareas, verts);
             for (int i = 0; i < ntiles; ++i)
             {
                 TileCacheData *tile = &tiles[i];
-                status = m_tileCache->addTile(tile->data, tile->dataSize, DT_COMPRESSEDTILE_FREE_DATA, 0);
-                if (dtStatusFailed(status))
+                TileCacheAddTileResult result = tileCache->addTile(tile->data, tile->dataSize, DT_COMPRESSEDTILE_FREE_DATA);
+
+                if (dtStatusFailed(result.status))
                 {
-                    Log("Failed adding tile to tile cache.");
+                    Log("buildTiledNavMesh: Failed adding tile to tile cache.");
                     dtFree(tile->data);
                     tile->data = 0;
                     continue;
@@ -601,14 +1020,18 @@ bool NavMesh::computeTiledNavMesh(
     {
         for (int x = 0; x < tw; ++x)
         {
-            m_tileCache->buildNavMeshTilesAt(x, y, m_navMesh);
+            tileCache->buildNavMeshTilesAt(x, y, navMesh);
         }
     }
 
-    return true;
+    result->success = true;
+    result->tileCache = tileCache;
+    result->navMesh = navMesh;
+
+    return result;
 }
 
-void NavMesh::build(
+NavMeshGeneratorResult NavMeshGenerator::generate(
     const float *positions,
     const int positionCount,
     const int *indices,
@@ -627,11 +1050,6 @@ void NavMesh::build(
     {
         dtFree(m_navData);
     }
-    if (m_tileCache)
-    {
-        dtFreeTileCache(m_tileCache);
-    }
-    m_talloc.reset();
 
     NavMeshIntermediates intermediates;
     std::vector<Vec3> triangleIndices;
@@ -672,19 +1090,10 @@ void NavMesh::build(
     // If you have multiple meshes you need to process, allocate
     // and array which can hold the max number of triangles you need to process.
     std::vector<unsigned char> triareas(ntris);
-
-    // Find triangles which are walkable based on their slope and rasterize them.
-    // If your input data is multiple meshes, you can transform them here, calculate
-    // the are type for each of the meshes and rasterize them.
     memset(triareas.data(), RC_WALKABLE_AREA, ntris * sizeof(unsigned char));
 
     bool keepInterResults = false;
 
-    // Set the area where the navigation will be build.
-    // Here the bounds of the input mesh are used, but the
-    // area could be specified by an user defined box, etc.
-    // float bmin[3] = {-20.f, 0.f, -20.f};
-    // float bmax[3] = { 20.f, 1.f,  20.f};
     rcConfig cfg = config;
     cfg.walkableHeight = config.walkableHeight;
     cfg.walkableClimb = config.walkableClimb;
@@ -697,89 +1106,45 @@ void NavMesh::build(
     cfg.detailSampleDist = config.detailSampleDist < 0.9f ? 0 : config.cs * config.detailSampleDist;
     cfg.detailSampleMaxError = config.ch * config.detailSampleMaxError;
 
+    // Set the area where the navigation will be build.
+    // Here the bounds of the input mesh are used, but the
+    // area could be specified by an user defined box, etc.
+    // float bmin[3] = {-20.f, 0.f, -20.f};
+    // float bmax[3] = { 20.f, 1.f,  20.f};
     rcVcopy(cfg.bmin, &bbMin.x);
     rcVcopy(cfg.bmax, &bbMax.x);
-
     rcCalcGridSize(cfg.bmin, cfg.bmax, cfg.cs, &cfg.width, &cfg.height);
 
     rcContext ctx;
 
     if (config.tileSize)
     {
-        if (!computeTiledNavMesh(verts, tris, cfg, intermediates, triareas))
+        NavMeshGeneratorResult *result = computeTiledNavMesh(verts, tris, cfg, intermediates, triareas);
+        if (!result->success)
         {
-            Log("Unable to create tiled navmesh");
+            Log("Unable to compute tiled navmesh");
         }
+
+        return *result;
     }
     else
     {
-        if (!computeSoloNavMesh(ctx, verts, tris, nverts, ntris, cfg, intermediates, triareas, keepInterResults))
+        NavMeshGeneratorResult *result = computeSoloNavMesh(ctx, verts, tris, nverts, ntris, cfg, intermediates, triareas, keepInterResults);
+        if (!result->success)
         {
-            Log("Unable to create solo navmesh");
+            Log("Unable to compute solo navmesh");
         }
-    }
 
-    // common path for tile or untiled nav mesh
-    if (m_navMesh)
-    {
-        m_navQuery = dtAllocNavMeshQuery();
-        if (!m_navQuery)
-        {
-            dtFreeNavMesh(m_navMesh);
-            m_navMesh = nullptr;
-            Log("Could not allocate Navmesh query");
-            return;
-        }
-        dtStatus status = m_navQuery->init(m_navMesh, 2048);
-        if (dtStatusFailed(status))
-        {
-            dtFreeNavMesh(m_navMesh);
-            m_navMesh = nullptr;
-            Log("Could not init Detour navmesh query");
-            return;
-        }
+        return *result;
     }
 }
 
-static const int NAVMESHSET_MAGIC = 'M' << 24 | 'S' << 16 | 'E' << 8 | 'T'; //'MSET';
-static const int NAVMESHSET_VERSION = 1;
-static const int TILECACHESET_MAGIC = 'T' << 24 | 'S' << 16 | 'E' << 8 | 'T'; //'TSET';
-static const int TILECACHESET_VERSION = 1;
-
-struct RecastHeader
+NavMeshImporterResult NavMeshImporter::importNavMesh(NavMeshExport *navMeshExport)
 {
-    int magic;
-    int version;
-    int numTiles;
-};
+    NavMeshImporterResult *result = new NavMeshImporterResult;
+    result->success = false;
 
-struct TileCacheSetHeader
-{
-    dtNavMeshParams meshParams;
-    dtTileCacheParams cacheParams;
-};
-
-struct TileCacheTileHeader
-{
-    dtCompressedTileRef tileRef;
-    int dataSize;
-};
-
-struct NavMeshSetHeader
-{
-    dtNavMeshParams params;
-};
-
-struct NavMeshTileHeader
-{
-    dtTileRef tileRef;
-    int dataSize;
-};
-
-void NavMesh::buildFromNavMeshData(NavMeshData *navMeshData)
-{
-    destroy();
-    unsigned char *bits = (unsigned char *)navMeshData->dataPointer;
+    unsigned char *bits = (unsigned char *)navMeshExport->dataPointer;
 
     // Read header.
     RecastHeader recastHeader;
@@ -796,18 +1161,13 @@ void NavMesh::buildFromNavMeshData(NavMeshData *navMeshData)
 
         if (recastHeader.version != NAVMESHSET_VERSION)
         {
-            return;
+            return *result;
         }
 
-        dtNavMesh *mesh = dtAllocNavMesh();
-        if (!mesh)
+        NavMesh *navMesh = new NavMesh;
+        if (!navMesh->initTiled(&header.params))
         {
-            return;
-        }
-        dtStatus status = mesh->init(&header.params);
-        if (dtStatusFailed(status))
-        {
-            return;
+            return *result;
         }
 
         // Read tiles.
@@ -833,16 +1193,16 @@ void NavMesh::buildFromNavMeshData(NavMeshData *navMeshData)
             memcpy(data, bits, readLen);
             bits += readLen;
 
-            mesh->addTile(data, tileHeader.dataSize, DT_TILE_FREE_DATA, tileHeader.tileRef, 0);
+            navMesh->addTile(data, tileHeader.dataSize, DT_TILE_FREE_DATA, tileHeader.tileRef);
         }
 
-        m_navMesh = mesh;
+        result->navMesh = navMesh;
     }
     else if (recastHeader.magic == TILECACHESET_MAGIC)
     {
         if (recastHeader.version != TILECACHESET_VERSION)
         {
-            return;
+            return *result;
         }
 
         TileCacheSetHeader header;
@@ -850,26 +1210,16 @@ void NavMesh::buildFromNavMeshData(NavMeshData *navMeshData)
         memcpy(&header, bits, readLen);
         bits += readLen;
 
-        m_navMesh = dtAllocNavMesh();
-        if (!m_navMesh)
+        NavMesh *navMesh = new NavMesh;
+        if (!navMesh->initTiled(&header.meshParams))
         {
-            return;
-        }
-        dtStatus status = m_navMesh->init(&header.meshParams);
-        if (dtStatusFailed(status))
-        {
-            return;
+            return *result;
         }
 
-        m_tileCache = dtAllocTileCache();
-        if (!m_tileCache)
+        TileCache *tileCache = new TileCache;
+        if (!tileCache->init(header.cacheParams))
         {
-            return;
-        }
-        status = m_tileCache->init(&header.cacheParams, &m_talloc, &m_tcomp, &m_tmproc);
-        if (dtStatusFailed(status))
-        {
-            return;
+            return *result;
         }
 
         // Read tiles.
@@ -897,158 +1247,52 @@ void NavMesh::buildFromNavMeshData(NavMeshData *navMeshData)
             memcpy(data, bits, readLen);
             bits += readLen;
 
-            dtCompressedTileRef tile = 0;
-            dtStatus addTileStatus = m_tileCache->addTile(data, tileHeader.dataSize, DT_COMPRESSEDTILE_FREE_DATA, &tile);
-            if (dtStatusFailed(addTileStatus))
+            TileCacheAddTileResult result = tileCache->addTile(data, tileHeader.dataSize, DT_COMPRESSEDTILE_FREE_DATA);
+            if (dtStatusFailed(result.status))
             {
                 dtFree(data);
             }
 
-            if (tile)
+            if (result.tileRef)
             {
-                m_tileCache->buildNavMeshTile(tile, m_navMesh);
+                tileCache->buildNavMeshTile(&result.tileRef, navMesh);
             }
         }
+
+        result->navMesh = navMesh;
+        result->tileCache = tileCache;
     }
-    m_navQuery = dtAllocNavMeshQuery();
-    if (!m_navQuery)
-    {
-        dtFreeNavMesh(m_navMesh);
-        m_navMesh = nullptr;
-        Log("Load navmesh data: Could not allocate Navmesh query");
-        return;
-    }
-    dtStatus status = m_navQuery->init(m_navMesh, 2048);
-    if (dtStatusFailed(status))
-    {
-        dtFreeNavMesh(m_navMesh);
-        m_navMesh = nullptr;
-        Log("Load navmesh data: Could not init Detour navmesh query");
-        return;
-    }
+
+    result->success = true;
+    return *result;
 }
 
-void NavMesh::update()
+void NavMeshGenerator::destroy()
 {
-    if (!m_navMesh || !m_tileCache)
+    if (m_pmesh)
     {
-        return;
+        rcFreePolyMesh(m_pmesh);
     }
-    m_tileCache->update(0, m_navMesh);
-}
+    if (m_dmesh)
+    {
+        rcFreePolyMeshDetail(m_dmesh);
+    }
+    if (m_navData)
+    {
+        dtFree(m_navData);
+    }
+};
 
-NavMeshData NavMesh::getNavMeshData() const
+NavMeshAddTileResult NavMesh::addTile(unsigned char *data, int dataSize, int flags, dtTileRef lastRef)
 {
-    if (!m_navMesh)
-    {
-        return {0, 0};
-    }
-    unsigned char *bits = nullptr;
-    size_t bitsSize = 0;
-    const dtNavMesh *mesh = m_navMesh;
+    dtTileRef ref;
+    dtStatus status = m_navMesh->addTile(data, dataSize, flags, lastRef, &ref);
 
-    if (m_tileCache)
-    {
-        // tilecache set
-        // Store header.
-        RecastHeader recastHeader;
-        TileCacheSetHeader header;
-        recastHeader.magic = TILECACHESET_MAGIC;
-        recastHeader.version = TILECACHESET_VERSION;
-        recastHeader.numTiles = 0;
-        for (int i = 0; i < m_tileCache->getTileCount(); ++i)
-        {
-            const dtCompressedTile *tile = m_tileCache->getTile(i);
-            if (!tile || !tile->header || !tile->dataSize)
-                continue;
-            recastHeader.numTiles++;
-        }
-        memcpy(&header.cacheParams, m_tileCache->getParams(), sizeof(dtTileCacheParams));
-        memcpy(&header.meshParams, m_navMesh->getParams(), sizeof(dtNavMeshParams));
+    NavMeshAddTileResult result;
+    result.status = status;
+    result.tileRef = ref;
 
-        bits = (unsigned char *)realloc(bits, bitsSize + sizeof(RecastHeader));
-        memcpy(&bits[bitsSize], &recastHeader, sizeof(RecastHeader));
-        bitsSize += sizeof(RecastHeader);
-
-        bits = (unsigned char *)realloc(bits, bitsSize + sizeof(TileCacheSetHeader));
-        memcpy(&bits[bitsSize], &header, sizeof(TileCacheSetHeader));
-        bitsSize += sizeof(TileCacheSetHeader);
-
-        // Store tiles.
-        for (int i = 0; i < m_tileCache->getTileCount(); ++i)
-        {
-            const dtCompressedTile *tile = m_tileCache->getTile(i);
-            if (!tile || !tile->header || !tile->dataSize)
-                continue;
-
-            TileCacheTileHeader tileHeader;
-            tileHeader.tileRef = m_tileCache->getTileRef(tile);
-            tileHeader.dataSize = tile->dataSize;
-
-            bits = (unsigned char *)realloc(bits, bitsSize + sizeof(tileHeader));
-            memcpy(&bits[bitsSize], &tileHeader, sizeof(tileHeader));
-            bitsSize += sizeof(tileHeader);
-
-            bits = (unsigned char *)realloc(bits, bitsSize + tile->dataSize);
-            memcpy(&bits[bitsSize], tile->data, tile->dataSize);
-            bitsSize += tile->dataSize;
-        }
-    }
-    else
-    {
-        // Mesh set
-        // Store header.
-        RecastHeader recastHeader;
-        NavMeshSetHeader header;
-        recastHeader.magic = NAVMESHSET_MAGIC;
-        recastHeader.version = NAVMESHSET_VERSION;
-        recastHeader.numTiles = 0;
-        for (int i = 0; i < mesh->getMaxTiles(); ++i)
-        {
-            const dtMeshTile *tile = mesh->getTile(i);
-            if (!tile || !tile->header || !tile->dataSize)
-                continue;
-            recastHeader.numTiles++;
-        }
-        memcpy(&header.params, mesh->getParams(), sizeof(dtNavMeshParams));
-        bits = (unsigned char *)realloc(bits, bitsSize + sizeof(RecastHeader));
-        memcpy(&bits[bitsSize], &recastHeader, sizeof(RecastHeader));
-        bitsSize += sizeof(RecastHeader);
-
-        bits = (unsigned char *)realloc(bits, bitsSize + sizeof(NavMeshSetHeader));
-        memcpy(&bits[bitsSize], &header, sizeof(NavMeshSetHeader));
-        bitsSize += sizeof(NavMeshSetHeader);
-
-        // Store tiles.
-        for (int i = 0; i < mesh->getMaxTiles(); ++i)
-        {
-            const dtMeshTile *tile = mesh->getTile(i);
-            if (!tile || !tile->header || !tile->dataSize)
-                continue;
-
-            NavMeshTileHeader tileHeader;
-            tileHeader.tileRef = mesh->getTileRef(tile);
-            tileHeader.dataSize = tile->dataSize;
-
-            bits = (unsigned char *)realloc(bits, bitsSize + sizeof(tileHeader));
-            memcpy(&bits[bitsSize], &tileHeader, sizeof(tileHeader));
-            bitsSize += sizeof(tileHeader);
-
-            bits = (unsigned char *)realloc(bits, bitsSize + tile->dataSize);
-            memcpy(&bits[bitsSize], tile->data, tile->dataSize);
-            bitsSize += tile->dataSize;
-        }
-    }
-
-    NavMeshData navMeshData;
-    navMeshData.dataPointer = bits;
-    navMeshData.size = int(bitsSize);
-    return navMeshData;
-}
-
-void NavMesh::freeNavMeshData(NavMeshData *navMeshData)
-{
-    free(navMeshData->dataPointer);
+    return result;
 }
 
 void NavMesh::navMeshPoly(DebugNavMesh &debugNavMesh, const dtNavMesh &mesh, dtPolyRef ref)
@@ -1135,173 +1379,10 @@ DebugNavMesh NavMesh::getDebugNavMesh()
     return debugNavMesh;
 }
 
-Vec3 NavMesh::getClosestPoint(const Vec3 &position)
-{
-    dtQueryFilter filter;
-    filter.setIncludeFlags(0xffff);
-    filter.setExcludeFlags(0);
-
-    dtPolyRef polyRef;
-
-    Vec3 pos(position.x, position.y, position.z);
-    m_navQuery->findNearestPoly(&pos.x, &m_defaultQueryExtent.x, &filter, &polyRef, 0);
-
-    bool posOverlay;
-    Vec3 resDetour;
-    dtStatus status = m_navQuery->closestPointOnPoly(polyRef, &pos.x, &resDetour.x, &posOverlay);
-
-    if (dtStatusFailed(status))
-    {
-        return Vec3(0.f, 0.f, 0.f);
-    }
-    return Vec3(resDetour.x, resDetour.y, resDetour.z);
-}
-
-Vec3 NavMesh::getRandomPointAround(const Vec3 &position, float maxRadius)
-{
-    dtQueryFilter filter;
-    filter.setIncludeFlags(0xffff);
-    filter.setExcludeFlags(0);
-
-    dtPolyRef polyRef;
-
-    Vec3 pos(position.x, position.y, position.z);
-
-    m_navQuery->findNearestPoly(&pos.x, &m_defaultQueryExtent.x, &filter, &polyRef, 0);
-
-    dtPolyRef randomRef;
-    Vec3 resDetour;
-    dtStatus status = m_navQuery->findRandomPointAroundCircle(polyRef, &position.x, maxRadius,
-                                                              &filter, r01,
-                                                              &randomRef, &resDetour.x);
-    if (dtStatusFailed(status))
-    {
-        return Vec3(0.f, 0.f, 0.f);
-    }
-
-    return Vec3(resDetour.x, resDetour.y, resDetour.z);
-}
-
-Vec3 NavMesh::moveAlong(const Vec3 &position, const Vec3 &destination)
-{
-    dtQueryFilter filter;
-    filter.setIncludeFlags(0xffff);
-    filter.setExcludeFlags(0);
-
-    dtPolyRef polyRef;
-
-    Vec3 pos(position.x, position.y, position.z);
-    Vec3 dest(destination.x, destination.y, destination.z);
-
-    m_navQuery->findNearestPoly(&pos.x, &m_defaultQueryExtent.x, &filter, &polyRef, 0);
-
-    Vec3 resDetour;
-    dtPolyRef visitedPoly[128];
-    int visitedPolyCount;
-    dtStatus status = m_navQuery->moveAlongSurface(polyRef, &pos.x, &dest.x,
-                                                   &filter,
-                                                   &resDetour.x, visitedPoly, &visitedPolyCount, sizeof(visitedPoly) / sizeof(dtPolyRef));
-    if (dtStatusFailed(status))
-    {
-        return Vec3(0.f, 0.f, 0.f);
-    }
-    return Vec3(resDetour.x, resDetour.y, resDetour.z);
-}
-
-NavPath NavMesh::computePath(const Vec3 &start, const Vec3 &end) const
-{
-    NavPath navpath;
-    static const int MAX_POLYS = 256;
-    float straightPath[MAX_POLYS * 3];
-
-    dtPolyRef startRef;
-    dtPolyRef endRef;
-
-    dtQueryFilter filter;
-    filter.setIncludeFlags(0xffff);
-    filter.setExcludeFlags(0);
-
-    Vec3 posStart(start.x, start.y, start.z);
-    Vec3 posEnd(end.x, end.y, end.z);
-
-    m_navQuery->findNearestPoly(&posStart.x, &m_defaultQueryExtent.x, &filter, &startRef, 0);
-    m_navQuery->findNearestPoly(&posEnd.x, &m_defaultQueryExtent.x, &filter, &endRef, 0);
-
-    dtPolyRef polys[MAX_POLYS];
-    int npolys;
-
-    m_navQuery->findPath(startRef, endRef, &posStart.x, &posEnd.x, &filter, polys, &npolys, MAX_POLYS);
-    int mNstraightPath = 0;
-    if (npolys)
-    {
-        unsigned char straightPathFlags[MAX_POLYS];
-        dtPolyRef straightPathPolys[MAX_POLYS];
-        int straightPathOptions;
-        bool posOverPoly;
-        Vec3 closestEnd = posEnd;
-
-        if (polys[npolys - 1] != endRef)
-        {
-            m_navQuery->closestPointOnPoly(polys[npolys - 1], &end.x, &closestEnd.x, &posOverPoly);
-        }
-        straightPathOptions = 0;
-        m_navQuery->findStraightPath(&posStart.x, &closestEnd.x, polys, npolys,
-                                     straightPath, straightPathFlags,
-                                     straightPathPolys, &mNstraightPath, MAX_POLYS, straightPathOptions);
-
-        navpath.mPoints.resize(mNstraightPath);
-        for (int i = 0; i < mNstraightPath; i++)
-        {
-            navpath.mPoints[i] = Vec3(straightPath[i * 3], straightPath[i * 3 + 1], straightPath[i * 3 + 2]);
-        }
-    }
-    return navpath;
-}
-
-dtObstacleRef *NavMesh::addCylinderObstacle(const Vec3 &position, float radius, float height)
-{
-    dtObstacleRef ref(-1);
-    if (!m_tileCache)
-    {
-        return nullptr;
-    }
-
-    m_tileCache->addObstacle(&position.x, radius, height, &ref);
-    m_obstacles.push_back(ref);
-    return &m_obstacles.back();
-}
-
-dtObstacleRef *NavMesh::addBoxObstacle(const Vec3 &position, const Vec3 &extent, float angle)
-{
-    dtObstacleRef ref(-1);
-    if (!m_tileCache)
-    {
-        return nullptr;
-    }
-
-    m_tileCache->addBoxObstacle(&position.x, &extent.x, angle, &ref);
-    m_obstacles.push_back(ref);
-    return &m_obstacles.back();
-}
-
-void NavMesh::removeObstacle(dtObstacleRef *obstacle)
-{
-    if (!m_tileCache || !obstacle || *obstacle == -1)
-    {
-        return;
-    }
-    m_tileCache->removeObstacle(*obstacle);
-    auto iter = std::find(m_obstacles.begin(), m_obstacles.end(), *obstacle);
-    if (iter != m_obstacles.end())
-    {
-        m_obstacles.erase(iter);
-    }
-}
-
-Crowd::Crowd(const int maxAgents, const float maxAgentRadius, dtNavMesh *nav) : m_defaultQueryExtent(1.f)
+Crowd::Crowd(const int maxAgents, const float maxAgentRadius, NavMesh *navMesh) : m_defaultQueryExtent(1.f)
 {
     m_crowd = dtAllocCrowd();
-    m_crowd->init(maxAgents, maxAgentRadius, nav);
+    m_crowd->init(maxAgents, maxAgentRadius, navMesh->getNavMesh());
 }
 
 void Crowd::destroy()
