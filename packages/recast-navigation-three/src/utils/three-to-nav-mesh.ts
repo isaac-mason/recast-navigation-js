@@ -1,7 +1,11 @@
-import { NavMesh, NavMeshConfig } from '@recast-navigation/core';
+import {
+  NavMeshConfig,
+  NavMeshGenerator,
+  NavMeshGeneratorResult,
+} from '@recast-navigation/core';
 import { BufferAttribute, Mesh, Vector3 } from 'three';
 
-export const threeToNavMeshArgs = (
+export const getPositionsAndIndices = (
   meshes: Mesh[]
 ): [positions: number[], indices: number[]] => {
   let index: number;
@@ -60,11 +64,10 @@ export const threeToNavMeshArgs = (
 export const threeToNavMesh = (
   meshes: Mesh[],
   navMeshConfig: Partial<NavMeshConfig> = {}
-): NavMesh => {
-  const [positions, indices] = threeToNavMeshArgs(meshes);
+): NavMeshGeneratorResult => {
+  const [positions, indices] = getPositionsAndIndices(meshes);
 
-  const navMesh = new NavMesh();
-  navMesh.build(positions, indices, navMeshConfig);
+  const navMeshGenerator = new NavMeshGenerator();
 
-  return navMesh;
+  return navMeshGenerator.generate(positions, indices, navMeshConfig);
 };

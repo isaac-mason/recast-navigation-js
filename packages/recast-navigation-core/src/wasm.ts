@@ -1,15 +1,15 @@
 import Recast from '@recast-navigation/wasm';
 
-export const Raw: {
+export const Wasm: {
   Recast: typeof Recast;
 } = {
   Recast: null!,
 };
 
 export const init = async () => {
-  if (Raw.Recast !== null) {
+  if (Wasm.Recast !== null) {
     return;
   }
 
-  Raw.Recast = await Recast();
+  Wasm.Recast = await Recast();
 };

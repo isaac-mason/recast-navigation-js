@@ -1,4 +1,6 @@
 interface rcConfig {
+    void rcConfig();
+
     /// The width of the field along the x-axis. [Limit: >= 0] [Units: vx]
     attribute long width;
 
@@ -62,8 +64,6 @@ interface rcConfig {
     /// The maximum distance the detail mesh surface should deviate from heightfield
     /// data. (For height detail only.) [Limit: >=0] [Units: wu] 
     attribute float detailSampleMaxError;
-
-    void rcConfig();
 };
 
 interface Vec3 {
@@ -92,11 +92,86 @@ interface dtNavMesh {
 
 };
 
-interface NavMeshData {
-    attribute any dataPointer;
-    attribute long size;
+interface dtNavMeshCreateParams {
+    readonly attribute unsigned short[] verts;
+    attribute long vertCount;
+    readonly attribute unsigned short[] polys;
+    readonly attribute unsigned short[] polyFlags;
+    readonly attribute octet[] polyAreas;
+    attribute long polyCount;
+    attribute long nvp;
 
-    void NavMeshData();
+    readonly attribute unsigned long[] detailMeshes;
+    readonly attribute float[] detailVerts;
+    attribute long detailVertsCount;
+    readonly attribute octet[] detailTris;
+    attribute long detailTriCount;
+
+    readonly attribute float[] offMeshConVerts;
+    readonly attribute float[] offMeshConRad;
+    readonly attribute unsigned short[] offMeshConFlags;
+    readonly attribute octet[] offMeshConAreas;
+    readonly attribute octet[] offMeshConDir;
+    readonly attribute unsigned long[] offMeshConUserID;
+    attribute long offMeshConCount;
+
+    attribute unsigned long userId;
+    attribute long tileX;
+    attribute long tileY;
+    attribute long tileLayer;
+    attribute float[] bmin;
+    attribute float[] bmax;
+
+    attribute float walkableHeight;
+    attribute float walkableRadius;
+    attribute float walkableClimb;
+    attribute float cs;
+    attribute float ch;
+
+    attribute boolean buildBvTree;
+};
+
+interface NavMeshCreateParams {
+    void NavMeshCreateParams();
+
+    [Value] dtNavMeshCreateParams getParams();
+
+    void setVerts(unsigned short[] verts);
+    void setVertCount(long vertCount);
+    void setPolys(unsigned short[] polys);
+    void setPolyFlags(unsigned short[] polyFlags);
+    void setPolyAreas(octet[] polyAreas);
+    void setPolyCount(long polyCount);
+    void setNvp(long nvp);
+
+    void setDetailMeshes(unsigned long[] detailMeshes);
+    void setDetailVerts(float[] detailVerts);
+    void setDetailVertsCount(long detailVertsCount);
+    void setDetailTris(octet[] detailTris);
+    void setDetailTriCount(long detailTriCount);
+
+    void setOffMeshConVerts(float[] offMeshConVerts);
+    void setOffMeshConRad(float[] offMeshConRad);
+    void setOffMeshConFlags(unsigned short[] offMeshConFlags);
+    void setOffMeshConAreas(octet[] offMeshConAreas);
+    void setOffMeshConDir(octet[] offMeshConDir);
+    void setOffMeshConUserID(unsigned long[] offMeshConUserID);
+    void setOffMeshConCount(long offMeshConCount);
+
+    void setUserId(unsigned long userId);
+    void setTileX(long tileX);
+    void setTileY(long tileY);
+    void setTileLayer(long tileLayer);
+    void setBmin(float[] bmin);
+    void setBmax(float[] bmax);
+
+    void setWalkableHeight(float walkableHeight);
+    void setWalkableRadius(float walkableRadius);
+    void setWalkableClimb(float walkableClimb);
+    void setCs(float cs);
+    void setCh(float ch);
+
+    void setBuildBvTree(boolean buildBvTree);
 };
 
 interface NavPath
@@ -107,6 +182,18 @@ interface NavPath
 
 interface dtObstacleRef {
 
+};
+
+interface dtCompressedTileRef {
+
+};
+
+interface dtNavMeshParams {
+    attribute float[] orig;
+    attribute float tileWidth;
+    attribute float tileHeight;
+    attribute long maxTiles;
+    attribute long maxPolys;
 };
 
 interface dtCrowdAgentParams {
@@ -147,30 +234,122 @@ interface dtCrowdAgentParams {
     attribute VoidPtr userData;
 };
 
+interface CreateNavMeshDataResult {
+    attribute boolean success;
+    attribute octet[] navMeshData;
+    attribute long navMeshDataSize;
+};
+
+interface NavMeshBuilder {
+    void NavMeshBuilder();
+
+    [Value] CreateNavMeshDataResult createNavMeshData([Ref] NavMeshCreateParams params);
+};
+
+interface NavMeshGeneratorResult {
+    [Const, Ref] NavMesh getNavMesh();
+    [Const, Ref] TileCache getTileCache();
+};
+
+interface NavMeshGenerator {
+    void NavMeshGenerator();
+
+    [Value] NavMeshGeneratorResult generate([Const] float[] positions, [Const] long positionCount, [Const] long[] indices, [Const] long indexCount, [Const, Ref] rcConfig config);
+};
+
+interface NavMeshImporterResult {
+    [Const, Ref] NavMesh getNavMesh();
+    [Const, Ref] TileCache getTileCache();
+};
+
+interface NavMeshImporter {
+    void NavMeshImporter();
+
+    [Value] NavMeshImporterResult importNavMesh(NavMeshExport data);
+};
+
+interface NavMeshExport {
+    attribute any dataPointer;
+    attribute long size;
+
+    void NavMeshExport();
+};
+
+interface NavMeshExporter {
+    void NavMeshExporter();
+
+    [Value] NavMeshExport exportNavMesh(NavMesh navMesh, TileCache tileCache);
+    void freeNavMeshExport(NavMeshExport navMeshExport);
+};
+
+interface NavMeshAddTileResult {
+    attribute unsigned long status;
+    attribute unsigned long tileRef; 
+};
+
 interface NavMesh {
     void NavMesh();
 
-    void build([Const] float[] positions, [Const] long positionCount, [Const] long[] indices, [Const] long indexCount, [Const, Ref] rcConfig config);
-    void buildFromNavMeshData(NavMeshData data);
-    void update();
+    boolean initSolo(octet[] data, [Const] long dataSize, [Const] long flags);
+    boolean initTiled([Const] dtNavMeshParams params);
+    [Value] NavMeshAddTileResult addTile(octet[] data, long dataSize, long flags, unsigned long lastRef);
     void destroy();
-    [Value] NavMeshData getNavMeshData();
-    void freeNavMeshData(NavMeshData data);
     [Value] DebugNavMesh getDebugNavMesh();
+    dtNavMesh getNavMesh();
+};
+
+interface NavMeshQuery {
+    void NavMeshQuery(NavMesh navMesh, [Const] long maxNodes);
+
+    void destroy();
     [Value] Vec3 getClosestPoint([Const, Ref] Vec3 position);
     [Value] Vec3 getRandomPointAround([Const, Ref] Vec3 position, float maxRadius);
     [Value] Vec3 moveAlong([Const, Ref] Vec3 position, [Const, Ref] Vec3 destination);
-    dtNavMesh getNavMesh();
     [Value] NavPath computePath([Const, Ref] Vec3 start, [Const, Ref] Vec3 end);
     void setDefaultQueryExtent([Const, Ref] Vec3 extent);
     [Value] Vec3 getDefaultQueryExtent();
+};
+
+interface dtTileCacheParams {
+    attribute float[] orig;
+    attribute float cs;
+    attribute float ch;
+    attribute long width;
+    attribute long height;
+    attribute float walkableHeight;
+    attribute float walkableRadius;
+    attribute float walkableClimb;
+    attribute float maxSimplificationError;
+    attribute long maxTiles;
+    attribute long maxObstacles;
+};
+
+interface TileCacheAddTileResult {
+    attribute unsigned long status;
+    attribute unsigned long tileRef;
+};
+
+interface TileCacheUpdateResult {
+    attribute unsigned long status;
+    attribute boolean upToDate;
+};
+
+interface TileCache {
+    void TileCache();
+
+    boolean init([Const, Ref] dtTileCacheParams params);
+    [Value] TileCacheAddTileResult addTile(octet[] data, [Const] long dataSize, octet flags);
+    unsigned long buildNavMeshTile([Const] dtCompressedTileRef ref, NavMesh navMesh);
+    unsigned long buildNavMeshTilesAt([Const] long tx, [Const] long ty, NavMesh navMesh);
+    [Value] TileCacheUpdateResult update(NavMesh navMesh);
     dtObstacleRef addCylinderObstacle([Const, Ref] Vec3 position, float radius, float height);
     dtObstacleRef addBoxObstacle([Const, Ref] Vec3 position, [Const, Ref] Vec3 extent, float angle);
     void removeObstacle(dtObstacleRef obstacle);
+    void destroy();
 };
 
 interface Crowd {
-    void Crowd([Const] long maxAgents, [Const] float maxAgentRadius, dtNavMesh nav);
+    void Crowd([Const] long maxAgents, [Const] float maxAgentRadius, NavMesh navMesh);
 
     void destroy();
     long addAgent([Const, Ref] Vec3 position, [Const] dtCrowdAgentParams params);

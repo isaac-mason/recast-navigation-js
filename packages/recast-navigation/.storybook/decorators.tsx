@@ -4,6 +4,7 @@ import { suspend } from 'suspend-react';
 
 import { Environment, Loader } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
+import { Leva } from 'leva';
 
 type SetupProps = {
   children: React.ReactNode;
@@ -39,5 +40,17 @@ export const decorators = [
     <Setup>
       <Story />
     </Setup>
+  ),
+  (Story: () => JSX.Element) => (
+    <>
+      <Story />
+      <Leva
+        theme={{
+          sizes: {
+            controlWidth: '60px',
+          },
+        }}
+      />
+    </>
   ),
 ];

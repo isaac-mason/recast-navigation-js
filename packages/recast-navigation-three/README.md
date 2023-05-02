@@ -37,7 +37,7 @@ import { threeToNavMesh } from 'recast-navigation/three';
 
 const scene = new THREE.Scene();
 
-/* add some objects to the scene */
+/* add meshes to the scene */
 // ...
 
 const meshes: Mesh[] = [];
@@ -48,75 +48,55 @@ scene.traverse((child) => {
   }
 });
 
-const navMesh: NavMesh = threeToNavMesh(meshes, { /* NavMesh config */ }});
+/* solo navmesh */
+const { navMesh }: NavMesh = threeToNavMesh(meshes, { /* NavMesh config */ }});
+
+/* tiled navmesh */
+const { navMesh, tileCache } = threeToNavMesh(meshes, { tileSize: 16 }});
 ```
 
-You can also use `threeToNavMeshArgs` to get the arguments for `NavMesh.build`:
+### `NavMeshHelper`, `TileCacheHelper`, `CrowdHelper`
 
 ```ts
-const [positions, indices] = threeToNavMeshArgs(meshes);
-```
-
-### `NavMeshHelper`
-
-```ts
-import * as THREE from 'three';
-import { NavMeshHelper } from 'recast-navigation/three';
-
-const navMesh = new NavMesh();
-
-/* initialize the NavMesh */
-// ...
+import {
+  CrowdHelper,
+  NavMeshHelper,
+  TileCacheHelper,
+} from 'recast-navigation/three';
 
 const navMeshHelper = new NavMeshHelper({ navMesh });
-
-const scene = new THREE.Scene();
-
-scene.add(navMeshHelper.navMesh);
-scene.add(navMeshHelper.obstacles);
-
-navMeshHelper.updateNavMesh();
-navMeshHelper.updateObstacles();
-```
-
-You can optionally pass custom materials to the NavMeshHelper constructor.
-
-```ts
-const navMeshMaterial = new THREE.MeshBasicMaterial({ color: 'red' });
-const obstacleMaterial = new THREE.MeshBasicMaterial({ color: 'blue' });
-
-const navMeshHelper = new NavMeshHelper({
-  navMesh,
-  navMeshMaterial,
-  obstacleMaterial,
-});
-```
-
-### `CrowdHelper`
-
-```ts
-import * as THREE from 'three';
-import { Crowd, NavMesh } from 'recast-navigation';
-import { CrowdHelper } from 'recast-navigation/three';
-
-const navMesh = new NavMesh();
-/* ... */
-
-const crowd = new Crowd({ navMesh, maxAgents: 1, maxAgentRadius: 1 });
-
+const tileCacheHelper = new TileCacheHelper({ tileCache });
 const crowdHelper = new CrowdHelper({ crowd });
 
 const scene = new THREE.Scene();
 
+scene.add(navMeshHelper.navMesh);
+scene.add(tileCacheHelper.obstacles);
 scene.add(crowdHelper.agents);
 
+navMeshHelper.updateNavMesh();
+tileCacheHelper.updateObstacles();
 crowdHelper.update();
 ```
 
-You can optionally provide a custom material for displaying agents.
+You can optionally provide custom materials to the helpers.
 
 ```ts
+const navMeshMaterial = new THREE.MeshBasicMaterial({ color: 'red' });
+const obstacleMaterial = new THREE.MeshBasicMaterial({ color: 'blue' });
 const agentMaterial = new THREE.MeshBasicMaterial({ color: 'red' });
 
-const crowdHelper = new CrowdHelper({ crowd, agentMaterial });
+const navMeshHelper = new NavMeshHelper({
+  navMesh,
+  navMeshMaterial,
+});
+
+const tileCacheHelper = new TileCacheHelper({
+  tileCache,
+  obstacleMaterial,
+});
+
+const crowdHelper = new CrowdHelper({
+  crowd,
+  agentMaterial,
 ```

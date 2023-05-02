@@ -1,8 +1,8 @@
 import { Environment, OrbitControls } from '@react-three/drei';
 import { Canvas, useThree } from '@react-three/fiber';
 import { useEffect, useRef } from 'react';
-import { init, NavMesh } from 'recast-navigation';
-import { NavMeshHelper, threeToNavMeshArgs } from 'recast-navigation/three';
+import { init, NavMeshQuery } from 'recast-navigation';
+import { NavMeshHelper, threeToNavMesh } from 'recast-navigation/three';
 import { suspend } from 'suspend-react';
 import { Color, Group, Mesh, MeshBasicMaterial, Vector2, Vector3 } from 'three';
 import { Line2, LineGeometry, LineMaterial } from 'three-stdlib';
@@ -21,11 +21,7 @@ const App = () => {
       }
     });
 
-    const navMeshArgs = threeToNavMeshArgs(meshes);
-
-    const navMesh = new NavMesh();
-
-    navMesh.build(...navMeshArgs, {
+    const { navMesh } = threeToNavMesh(meshes, {
       cs: 0.2,
       ch: 0.2,
       walkableSlopeAngle: 35,
@@ -41,6 +37,8 @@ const App = () => {
       detailSampleMaxError: 1,
     });
 
+    const navMeshQuery = new NavMeshQuery({ navMesh });
+
     const debug = new NavMeshHelper({
       navMesh,
       navMeshMaterial: new MeshBasicMaterial({
@@ -51,9 +49,9 @@ const App = () => {
 
     scene.add(debug.navMesh);
 
-    const path = navMesh.computePath(
-      navMesh.getClosestPoint(new Vector3(2, 1, 2)),
-      navMesh.getClosestPoint(new Vector3(-2, 1, -2))
+    const path = navMeshQuery.computePath(
+      navMeshQuery.getClosestPoint(new Vector3(2, 1, 2)),
+      navMeshQuery.getClosestPoint(new Vector3(-2, 1, -2))
     );
     console.log(path);
 

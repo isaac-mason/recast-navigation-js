@@ -16,6 +16,4 @@ cmake --build build
 yarn run webidl-dts-gen -e -d -i recast-navigation.idl -o ./dist/recast-navigation.d.ts -n Recast
 
 # copy files to dist
-cp ./build/recast-navigation.wasm.js ./dist/recast-navigation.wasm.js
-cp ./build/recast-navigation.wasm.wasm ./dist/recast-navigation.wasm.wasm
-cp ./build/recast-navigation.wasm-compat.js ./dist/recast-navigation.wasm-compat.js
+cp ./build/recast-navigation.* ./dist/

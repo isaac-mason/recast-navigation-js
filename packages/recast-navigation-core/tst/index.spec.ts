@@ -1,17 +1,19 @@
-import { init, NavMesh } from '../dist/index.es';
 import { BoxGeometry, BufferAttribute, Mesh } from 'three';
 import { beforeAll, beforeEach, describe, test } from 'vitest';
+import { init, NavMesh, NavMeshGenerator, NavMeshQuery } from '../src';
 
 describe('Smoke tests', () => {
   beforeAll(async () => {
     await init();
   });
 
-  describe('NavMesh', () => {
+  describe('NavMesh Generation', () => {
+    let navMeshGenerator: NavMeshGenerator;
     let navMesh: NavMesh;
+    let navMeshQuery: NavMeshQuery;
 
     beforeEach(() => {
-      navMesh = new NavMesh();
+      navMeshGenerator = new NavMeshGenerator();
 
       const mesh = new Mesh(new BoxGeometry(5, 0.1, 5));
 
@@ -20,11 +22,14 @@ describe('Smoke tests', () => {
       ).array;
       const indices = mesh.geometry.getIndex()!.array;
 
-      navMesh.build(positions, indices);
+      const result = navMeshGenerator.generate(positions, indices);
+      navMesh = result.navMesh;
+
+      navMeshQuery = new NavMeshQuery({ navMesh });
     });
 
     test('getClosestPoint', async ({ expect }) => {
-      const closestPoint = navMesh.getClosestPoint({ x: 2, y: 1, z: 2 });
+      const closestPoint = navMeshQuery.getClosestPoint({ x: 2, y: 1, z: 2 });
 
       expect(closestPoint.x).toBe(2);
       expect(closestPoint.y).toBeCloseTo(0.15, 0.01);

@@ -27,7 +27,10 @@
     }
   },
   "files": [
-    "dist/**",
+    "dist/recast-navigation.d.ts",
+    "dist/recast-navigation.wasm-compat.js",
+    "dist/recast-navigation.wasm.js",
+    "dist/recast-navigation.wasm.wasm",
     "README.md",
     "LICENSE"
   ],

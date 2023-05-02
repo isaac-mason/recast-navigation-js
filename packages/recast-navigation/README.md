@@ -42,7 +42,7 @@ await init();
 ```ts
 import { NavMesh } from 'recast-navigation';
 
-const navMesh = new NavMesh();
+const navMeshGenerator = new NavMeshGenerator();
 
 const positions = [
   /* flat array of positions */
@@ -57,52 +57,62 @@ const navMeshConfig = {
   /* ... */
 };
 
-navMesh.build(positions, indices, navMeshConfig);
+const { navMesh } = navMeshGenerator.generate(
+  positions,
+  indices,
+  navMeshConfig
+);
 ```
 
 ### Querying a NavMesh
 
 ```ts
-const navMesh = new NavMesh();
-
-/* initialize the NavMesh */
-// ...
+const navMeshQuery = new NavMeshQuery({ navMesh });
 
 /* get the closest point on the NavMesh to the given position */
 const position = { x: 0, y: 0, z: 0 };
-navMesh.getClosestPoint(position);
+navMeshQuery.getClosestPoint(position);
 
 /* get a random point around the given position */
 const radius = 0.5;
-navMesh.getRandomPointAround(position, radius);
+navMeshQuery.getRandomPointAround(position, radius);
 ```
 
 ### Adding Obstacles to a NavMesh
 
 Recast Navigation supports creating Box and Cylinder obstacles.
 
-Note that in order to use obstacles, you must specify a `tileSize` in the `NavMeshConfig`.
+Note that in order to use obstacles, you must create a tiled NavMesh. You can do this by specifying a `tileSize` in the `NavMeshConfig`.
 
 ```ts
+/* create a tiled NavMesh */
+const { navMesh, tileCache } = navMeshGenerator.generate(positions, indices, {
+  /* ... */
+  tileSize: 16,
+});
+
 /* add a Box obstacle to the NavMesh */
 const position = { x: 0, y: 0, z: 0 };
 const extent = { x: 1, y: 1, z: 1 };
 const angle = 0;
-const boxObstacle = navMesh.addBoxObstacle(position, extent, angle);
+const boxObstacle = tileCache.addBoxObstacle(position, extent, angle);
 
 /* add a Cylinder obstacle to the NavMesh */
 const radius = 1;
 const height = 1;
-const cylinderObstacle = navMesh.addCylinderObstacle(
+const cylinderObstacle = tileCache.addCylinderObstacle(
   position,
   radius,
   height,
   angle
 );
 
+/* update the NavMesh to reflect obstacle changes */
+tileCache.update(navMesh);
+
 /* remove the obstacles from the NavMesh */
-navMesh.removeObstacle(boxObstacle);
-navMesh.removeObstacle(cylinderObstacle);
+tileCache.removeObstacle(boxObstacle);
+tileCache.removeObstacle(cylinderObstacle);
 ```
 
 ### Crowds and Agents
@@ -131,7 +141,7 @@ crowd.update(dt);
 Next, you can create and interface with agents in the crowd.
 
 ```ts
-const initialAgentPosition = navMesh.getRandomPointAround(
+const initialAgentPosition = navMeshQuery.getRandomPointAround(
   { x: 0, y: 0, z: 0 }, // position
   2 // radius
 );
@@ -190,11 +200,22 @@ const { positions, indices } = debugNavMesh.positions;
 
 If you are using `@recast-navigation/three`, you can use `NavMeshHelper` and `CrowdHelper` to visualize NavMeshes and Crowds.
 
-### Exporting and Importing a NavMesh
+### Exporting and Importing
+
+A NavMesh and TileCache can be exported and imported as a Uint8Array.
 
 ```ts
-const navMeshData: Uint8Array = navMesh.getNavMeshData();
+/* exporting */
+const navMeshExporter = new NavMeshExporter();
 
-const newNavMesh = new NavMesh();
-newNavMesh.buildFromNavMeshData(navMeshData);
+const navMeshExport: Uint8Array = navMeshExporter.export(
+  navMesh,
+  tileCache // optional
+);
+
+/* importing */
+const navMeshImporter = new NavMeshImporter();
+
+const { navMesh, tileCache } =
+  navMeshImporter.import(navMeshExport);
 ```

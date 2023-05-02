@@ -1,11 +1,11 @@
 import type R from '@recast-navigation/wasm';
-import { Raw } from './raw';
+import { Wasm } from './wasm';
 
 export type Vector3 = { x: number; y: number; z: number };
 
 export const vec3 = {
   toRaw: ({ x, y, z }: Vector3) => {
-    return new Raw.Recast.Vec3(x, y, z);
+    return new Wasm.Recast.Vec3(x, y, z);
   },
   fromRaw: ({ x, y, z }: R.Vec3) => {
     return { x, y, z };

@@ -1,12 +1,17 @@
 import { useFrame } from '@react-three/fiber';
-import { Crowd, NavMesh } from '@recast-navigation/core';
-import { CrowdHelper, NavMeshHelper } from '@recast-navigation/three';
+import { Crowd, NavMesh, TileCache } from '@recast-navigation/core';
+import {
+  CrowdHelper,
+  NavMeshHelper,
+  TileCacheHelper,
+} from '@recast-navigation/three';
 import React, { useEffect, useState } from 'react';
 import { Material, MeshBasicMaterial, MeshStandardMaterial } from 'three';
 
 export type DebugProps = {
   navMesh?: NavMesh;
   navMeshMaterial?: Material;
+  tileCache?: TileCache;
   obstacleMaterial?: Material;
   crowd?: Crowd;
   agentMaterial?: Material;
@@ -15,6 +20,7 @@ export type DebugProps = {
 export const Debug = ({
   navMesh,
   navMeshMaterial,
+  tileCache,
   obstacleMaterial,
   crowd,
   agentMaterial,
@@ -23,6 +29,9 @@ export const Debug = ({
     null
   );
 
+  const [tileCacheHelper, setTileCacheHelper] =
+    useState<TileCacheHelper | null>();
+
   const [crowdHelper, setCrowdHelper] = useState<CrowdHelper | null>(null);
 
   useEffect(() => {
@@ -30,14 +39,7 @@ export const Debug = ({
 
     const navMeshHelper = new NavMeshHelper({
       navMesh,
-      navMeshMaterial:
-        navMeshMaterial ??
-        new MeshBasicMaterial({
-          color: 'orange',
-          transparent: true,
-          opacity: 0.7,
-        }),
-      obstacleMaterial,
+      navMeshMaterial,
     });
 
     setNavMeshHelper(navMeshHelper);
@@ -45,18 +47,29 @@ export const Debug = ({
     return () => {
       setNavMeshHelper(null);
     };
-  }, [navMesh, navMeshMaterial, obstacleMaterial]);
+  }, [navMesh, navMeshMaterial]);
+
+  useEffect(() => {
+    if (!tileCache) return;
+
+    const tileCacheHelper = new TileCacheHelper({
+      tileCache,
+      obstacleMaterial,
+    });
+
+    setTileCacheHelper(tileCacheHelper);
+
+    return () => {
+      setTileCacheHelper(null);
+    };
+  }, [tileCache, obstacleMaterial]);
 
   useEffect(() => {
     if (!crowd) return;
 
     const crowdHelper = new CrowdHelper({
       crowd,
-      agentMaterial:
-        agentMaterial ??
-        new MeshStandardMaterial({
-          color: 'red',
-        }),
+      agentMaterial,
     });
 
     setCrowdHelper(crowdHelper);
@@ -68,7 +81,7 @@ export const Debug = ({
 
   useFrame(() => {
     if (crowdHelper) {
-      crowdHelper.update();
+      crowdHelper.updateAgents();
     }
   });
 
@@ -76,7 +89,6 @@ export const Debug = ({
     if (!navMeshHelper) return;
 
     const interval = setInterval(() => {
-      navMeshHelper.updateObstacles();
       navMeshHelper.updateNavMesh();
     }, 1000);
 
@@ -85,14 +97,25 @@ export const Debug = ({
     };
   }, [navMeshHelper]);
 
+  useEffect(() => {
+    if (!tileCacheHelper) return;
+
+    const interval = setInterval(() => {
+      tileCacheHelper.updateObstacles();
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [tileCacheHelper]);
+
   return (
     <>
-      {navMeshHelper && (
-        <>
-          <primitive object={navMeshHelper.navMesh} />
-          <primitive object={navMeshHelper.obstacles} />
-        </>
-      )}
+      {navMeshHelper && <primitive object={navMeshHelper.navMesh} />}
+
+      <group position={[0, 0.01, 0]}>
+        {tileCacheHelper && <primitive object={tileCacheHelper.obstacles} />}
+      </group>
 
       {crowdHelper && <primitive object={crowdHelper.agents} />}
     </>

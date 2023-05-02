@@ -1,10 +1,10 @@
 import { Environment, OrbitControls, useGLTF } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { button, Leva, useControls } from 'leva';
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useState } from 'react';
 import { NavMeshHelper, threeToNavMesh } from 'recast-navigation/three';
 import styled from 'styled-components';
-import { DoubleSide, Group, Mesh, MeshBasicMaterial, MeshStandardMaterial } from 'three';
+import { Group, Mesh, MeshBasicMaterial } from 'three';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 import dungeonGltfUrl from './assets/dungeon.gltf?url';
 import { DropZone } from './components/drop-zone';
@@ -113,7 +113,7 @@ const App = () => {
         }
       });
 
-      const navMesh = threeToNavMesh(meshes, navMeshConfig);
+      const { navMesh } = threeToNavMesh(meshes, navMeshConfig);
 
       const navMeshHelper = new NavMeshHelper({
         navMesh,
