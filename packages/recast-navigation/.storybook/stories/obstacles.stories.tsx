@@ -48,8 +48,8 @@ export const Obstacles = () => {
 
     const { navMesh, tileCache } = threeToNavMesh(meshes, {
       ch: 0.05,
-      cs: 0.2,
-      tileSize: 16,
+      cs: 0.1,
+      tileSize: 32,
     });
 
     tileCache.addBoxObstacle({ x: -2, y: 1, z: 1 }, { x: 1, y: 1, z: 1 }, 0.2);

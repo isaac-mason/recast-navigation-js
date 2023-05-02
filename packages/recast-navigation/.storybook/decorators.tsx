@@ -47,7 +47,7 @@ export const decorators = [
       <Leva
         theme={{
           sizes: {
-            controlWidth: '60px',
+            controlWidth: '100px',
           },
         }}
       />

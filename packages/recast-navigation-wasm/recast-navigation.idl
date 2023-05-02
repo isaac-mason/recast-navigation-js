@@ -247,6 +247,7 @@ interface NavMeshBuilder {
 };
 
 interface NavMeshGeneratorResult {
+    attribute boolean success;
     [Const, Ref] NavMesh getNavMesh();
     [Const, Ref] TileCache getTileCache();
 };
