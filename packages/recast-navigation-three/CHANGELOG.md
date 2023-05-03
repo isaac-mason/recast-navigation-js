@@ -1,5 +1,57 @@
 # @recast-navigation/three
 
+## 0.0.7
+
+### Patch Changes
+
+- c1e1d38: fix: widen peer dependency version range for `three`
+- 87e768b: feat: split NavMesh into multiple classes, update helpers
+
+  ### New Core Classes
+
+  Functionality in the `NavMesh` class has been split into multiple classes that more closely mirror the recastnavigation api.
+
+  - `TileCache`
+    - Manages tiles and obstacles. Only used for tiled navmeshes.
+  - `NavMeshQuery`
+    - Provides methods for querying a navmesh.
+  - `NavMeshExporter`
+    - Methods for exporting a navmesh to a Uint8Array.
+  - `NavMeshImporter`
+    - Methods for importing a navmesh from a Uint8Array.
+  - `NavMeshGenerator`
+    - Methods for generating solo and tiled navmeshes.
+
+  ### Changes to three.js utils and helpers
+
+  The usage for `threeToNavMesh` has changed slightly to include the TileCache when generating a tiled navmesh.
+
+  ```ts
+  /* solo navmesh */
+  const { navMesh } = threeToNavMesh(meshes);
+
+  /* tiled navmesh */
+  const { navMesh, tileCache } = threeToNavMesh(meshes, { tileSize: 16 });
+  ```
+
+  The `threeToNavMeshArgs` function has been renamed to `getPositionsAndIndices`.
+
+  The helpers have also been updated to align with the new core classes:
+
+  - `TileCacheHelper`
+    - New helper for visualising obstacles in a `TileCache`
+  - `NavMeshHelper`
+    - `updateObstacles` has been moved to `TileCacheHelper`
+  - `CrowdHelper`
+    - `update` has been renamed to `updateAgents`, following the naming convention of the other helpers
+
+- dfe1bcb: feat(three): change getPositionsAndIndices to return typed arrays
+- c1e1d38: fix: @recast-navigation/three dependency on three should be a dev dependency
+- Updated dependencies [87e768b]
+- Updated dependencies [dfe1bcb]
+- Updated dependencies [dfe1bcb]
+  - @recast-navigation/core@0.0.7
+
 ## 0.0.6
 
 ### Patch Changes
