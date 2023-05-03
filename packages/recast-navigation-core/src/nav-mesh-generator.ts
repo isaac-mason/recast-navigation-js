@@ -134,6 +134,7 @@ const navMeshConfigDefaults: NavMeshConfig = {
 };
 
 export type NavMeshGeneratorResult = {
+  success: boolean;
   navMesh: NavMesh;
   tileCache: TileCache;
 };
@@ -182,13 +183,14 @@ export class NavMeshGenerator {
       indices.length,
       rcConfig
     );
-
+    
+    const success = result.success;
     const rawNavMesh = result.getNavMesh();
     const rawTileCache = result.getTileCache();
 
     const navMesh = new NavMesh(rawNavMesh);
     const tileCache = new TileCache(rawTileCache);
 
-    return { navMesh, tileCache };
+    return { success, navMesh, tileCache };
   }
 }

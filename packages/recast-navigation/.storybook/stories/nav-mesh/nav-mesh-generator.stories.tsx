@@ -91,7 +91,7 @@ const Common = ({ level, tileSize }: CommonProps) => {
 export const NavTest_SoloNavMesh = () => <Common level={Levels.NavTest} />;
 
 export const NavTest_TiledNavMesh = () => (
-  <Common level={Levels.NavTest} tileSize={32} />
+  <Common level={Levels.NavTest} tileSize={16} />
 );
 
 export const Dungeon_SoloNavMesh = () => <Common level={Levels.Dungeon} />;

@@ -556,22 +556,22 @@ public:
 
 protected:
     NavMeshGeneratorResult *computeTiledNavMesh(
-        const std::vector<float> &verts,
-        const std::vector<int> &tris,
         rcConfig &cfg,
         NavMeshIntermediates &intermediates,
-        std::vector<unsigned char> &triareas);
+        const float *verts,
+        int nverts,
+        const int *tris,
+        int ntris);
 
     NavMeshGeneratorResult *computeSoloNavMesh(
-        rcContext &ctx,
-        const std::vector<float> &verts,
-        const std::vector<int> &tris,
-        int nverts,
-        int ntris,
         rcConfig &cfg,
+        rcContext &ctx,
         NavMeshIntermediates &intermediates,
-        std::vector<unsigned char> &triareas,
-        bool keepInterResults);
+        bool keepInterResults,
+        const float *verts,
+        int nverts,
+        const int *tris,
+        int ntris);
 
     int rasterizeTileLayers(
         NavMesh *navMesh,
@@ -582,8 +582,8 @@ protected:
         TileCacheData *tiles,
         const int maxTiles,
         NavMeshIntermediates &intermediates,
-        std::vector<unsigned char> &triareas,
-        const std::vector<float> &verts);
+        const float *verts,
+        int nverts);
 };
 
 class Crowd

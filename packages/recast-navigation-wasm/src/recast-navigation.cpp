@@ -33,7 +33,7 @@ inline float r01()
 
 // This value specifies how many layers (or "floors") each navmesh tile is expected to have.
 // todo - pass in from params ...
-static const int EXPECTED_LAYERS_PER_TILE = 32;
+static const int EXPECTED_LAYERS_PER_TILE = 4;
 static const int MAX_LAYERS = 32;
 
 struct TileCacheData
@@ -531,8 +531,8 @@ int NavMeshGenerator::rasterizeTileLayers(
     TileCacheData *tiles,
     const int maxTiles,
     NavMeshIntermediates &intermediates,
-    std::vector<unsigned char> &triareas,
-    const std::vector<float> &verts)
+    const float *verts,
+    int nverts)
 {
     RecastFastLZCompressor comp;
 
@@ -554,6 +554,7 @@ int NavMeshGenerator::rasterizeTileLayers(
     tcfg.bmax[2] += tcfg.borderSize * tcfg.cs;
 
     NavMeshIntermediates tileIntermediates;
+
     // Allocate voxel heightfield where we rasterize our input data to.
     tileIntermediates.m_solid = rcAllocHeightfield();
     if (!tileIntermediates.m_solid)
@@ -576,6 +577,7 @@ int NavMeshGenerator::rasterizeTileLayers(
     tbmin[1] = tcfg.bmin[2];
     tbmax[0] = tcfg.bmax[0];
     tbmax[1] = tcfg.bmax[2];
+
     int cid[512]; // TODO: Make grow when returning too many items.
     const int ncid = rcGetChunksOverlappingRect(chunkyMesh, tbmin, tbmax, cid, 512);
     if (!ncid)
@@ -586,27 +588,34 @@ int NavMeshGenerator::rasterizeTileLayers(
     for (int i = 0; i < ncid; ++i)
     {
         const rcChunkyTriMeshNode &node = chunkyMesh->nodes[cid[i]];
-        const int *ctris = &chunkyMesh->tris[node.i * 3];
+        const int *tris = &chunkyMesh->tris[node.i * 3];
         const int ntris = node.n;
+
+        // Allocate array that can hold triangle area types.
+        unsigned char *triareas = new unsigned char[ntris];
 
         // Find triangles which are walkable based on their slope and rasterize them.
         // If your input data is multiple meshes, you can transform them here, calculate
         // the are type for each of the meshes and rasterize them.
-        rcMarkWalkableTriangles(&ctx, cfg.walkableSlopeAngle, verts.data(), verts.size(), ctris, ntris, triareas.data());
-        if (!rcRasterizeTriangles(&ctx, verts.data(), verts.size(), ctris, triareas.data(), ntris, *tileIntermediates.m_solid, tcfg.walkableClimb))
+        memset(triareas, 0, ntris * sizeof(unsigned char));
+        rcMarkWalkableTriangles(&ctx, cfg.walkableSlopeAngle, verts, nverts, tris, ntris, triareas);
+        bool success = rcRasterizeTriangles(&ctx, verts, nverts, tris, triareas, ntris, *tileIntermediates.m_solid, tcfg.walkableClimb);
+
+        delete[] triareas;
+        
+        if (!success)
         {
             return 0;
         }
     }
+
 
     // Once all geometry is rasterized, we do initial pass of filtering to
     // remove unwanted overhangs caused by the conservative rasterization
     // as well as filter spans where the character cannot possibly stand.
 
     rcFilterLowHangingWalkableObstacles(&ctx, tcfg.walkableClimb, *tileIntermediates.m_solid);
-
     rcFilterLedgeSpans(&ctx, tcfg.walkableHeight, tcfg.walkableClimb, *tileIntermediates.m_solid);
-
     rcFilterWalkableLowHeightSpans(&ctx, tcfg.walkableHeight, *tileIntermediates.m_solid);
 
     tileIntermediates.m_chf = rcAllocCompactHeightfield();
@@ -690,15 +699,14 @@ int NavMeshGenerator::rasterizeTileLayers(
 }
 
 NavMeshGeneratorResult *NavMeshGenerator::computeSoloNavMesh(
-    rcContext &ctx,
-    const std::vector<float> &verts,
-    const std::vector<int> &tris,
-    int nverts,
-    int ntris,
     rcConfig &cfg,
+    rcContext &ctx,
     NavMeshIntermediates &intermediates,
-    std::vector<unsigned char> &triareas,
-    bool keepInterResults)
+    bool keepInterResults,
+    const float *verts,
+    int nverts,
+    const int *tris,
+    int ntris)
 {
     NavMeshGeneratorResult *result = new NavMeshGeneratorResult;
     result->success = false;
@@ -723,8 +731,11 @@ NavMeshGeneratorResult *NavMeshGenerator::computeSoloNavMesh(
     // Find triangles which are walkable based on their slope and rasterize them.
     // If your input data is multiple meshes, you can transform them here, calculate
     // the are type for each of the meshes and rasterize them.
-    rcMarkWalkableTriangles(&ctx, cfg.walkableSlopeAngle, verts.data(), nverts, tris.data(), ntris, triareas.data());
-    rcRasterizeTriangles(&ctx, verts.data(), nverts, tris.data(), triareas.data(), ntris, *intermediates.m_solid, cfg.walkableClimb);
+    unsigned char *triareas = new unsigned char[ntris];
+    memset(triareas, 0, ntris * sizeof(unsigned char));
+    rcMarkWalkableTriangles(&ctx, cfg.walkableSlopeAngle, verts, nverts, tris, ntris, triareas);
+    rcRasterizeTriangles(&ctx, verts, nverts, tris, triareas, ntris, *intermediates.m_solid, cfg.walkableClimb);
+    delete[] triareas;
 
     //
     // Step 3. Filter walkables surfaces.
@@ -765,7 +776,6 @@ NavMeshGeneratorResult *NavMeshGenerator::computeSoloNavMesh(
         intermediates.m_solid = nullptr;
     }
 
-    // Erode the walkable area by agent radius.
     if (!rcErodeWalkableArea(&ctx, cfg.walkableRadius, *intermediates.m_chf))
     {
         Log("buildNavigation: Could not erode.");
@@ -922,11 +932,12 @@ NavMeshGeneratorResult *NavMeshGenerator::computeSoloNavMesh(
 }
 
 NavMeshGeneratorResult *NavMeshGenerator::computeTiledNavMesh(
-    const std::vector<float> &verts,
-    const std::vector<int> &tris,
     rcConfig &cfg,
     NavMeshIntermediates &intermediates,
-    std::vector<unsigned char> &triareas)
+    const float *verts,
+    int nverts,
+    const int *tris,
+    int ntris)
 {
     NavMeshGeneratorResult *result = new NavMeshGeneratorResult;
     result->success = false;
@@ -985,7 +996,7 @@ NavMeshGeneratorResult *NavMeshGenerator::computeTiledNavMesh(
     }
 
     intermediates.m_chunkyMesh = new rcChunkyTriMesh;
-    if (!rcCreateChunkyTriMesh(verts.data(), tris.data(), tris.size() / 3, 256, intermediates.m_chunkyMesh))
+    if (!rcCreateChunkyTriMesh(verts, tris, ntris, 256, intermediates.m_chunkyMesh))
     {
         Log("buildTiledNavMesh: Unable to create chunky trimesh.");
         return result;
@@ -998,7 +1009,7 @@ NavMeshGeneratorResult *NavMeshGenerator::computeTiledNavMesh(
         {
             TileCacheData tiles[MAX_LAYERS];
             memset(tiles, 0, sizeof(tiles));
-            int ntiles = rasterizeTileLayers(navMesh, tileCache, x, y, cfg, tiles, MAX_LAYERS, intermediates, triareas, verts);
+            int ntiles = rasterizeTileLayers(navMesh, tileCache, x, y, cfg, tiles, MAX_LAYERS, intermediates, verts, nverts);
             for (int i = 0; i < ntiles; ++i)
             {
                 TileCacheData *tile = &tiles[i];
@@ -1069,8 +1080,7 @@ NavMeshGeneratorResult NavMeshGenerator::generate(
         triangleIndices[i] = v;
     }
 
-    std::vector<float> verts;
-    verts.resize(triangleIndices.size() * 3);
+    float *verts = new float[triangleIndices.size() * 3];
     int nverts = triangleIndices.size();
     for (unsigned int i = 0; i < triangleIndices.size(); i++)
     {
@@ -1079,18 +1089,11 @@ NavMeshGeneratorResult NavMeshGenerator::generate(
         verts[i * 3 + 2] = triangleIndices[i].z;
     }
     int ntris = triangleIndices.size() / 3;
-    std::vector<int> tris;
-    tris.resize(triangleIndices.size());
+    int *tris = new int[triangleIndices.size()];
     for (unsigned int i = 0; i < triangleIndices.size(); i++)
     {
         tris[i] = triangleIndices.size() - i - 1;
     }
-
-    // Allocate array that can hold triangle area types.
-    // If you have multiple meshes you need to process, allocate
-    // and array which can hold the max number of triangles you need to process.
-    std::vector<unsigned char> triareas(ntris);
-    memset(triareas.data(), RC_WALKABLE_AREA, ntris * sizeof(unsigned char));
 
     bool keepInterResults = false;
 
@@ -1119,7 +1122,7 @@ NavMeshGeneratorResult NavMeshGenerator::generate(
 
     if (config.tileSize)
     {
-        NavMeshGeneratorResult *result = computeTiledNavMesh(verts, tris, cfg, intermediates, triareas);
+        NavMeshGeneratorResult *result = computeTiledNavMesh(cfg, intermediates, verts, nverts, tris, ntris);
         if (!result->success)
         {
             Log("Unable to compute tiled navmesh");
@@ -1129,7 +1132,7 @@ NavMeshGeneratorResult NavMeshGenerator::generate(
     }
     else
     {
-        NavMeshGeneratorResult *result = computeSoloNavMesh(ctx, verts, tris, nverts, ntris, cfg, intermediates, triareas, keepInterResults);
+        NavMeshGeneratorResult *result = computeSoloNavMesh(cfg, ctx, intermediates, keepInterResults, verts, nverts, tris, ntris);
         if (!result->success)
         {
             Log("Unable to compute solo navmesh");

@@ -43,7 +43,6 @@ export class NavMeshHelper {
   updateNavMesh() {
     const { positions, indices } = this.recastNavMesh.getDebugNavMesh();
 
-    // Set the winding order of the affected faces to clockwise
     for (let i = 0; i < indices.length; i += 3) {
       const tmp = indices[i];
       indices[i] = indices[i + 2];

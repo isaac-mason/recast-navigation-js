@@ -5,60 +5,81 @@ import {
 } from '@recast-navigation/core';
 import { BufferAttribute, Mesh, Vector3 } from 'three';
 
+const tmpVec3 = new Vector3();
+
 export const getPositionsAndIndices = (
   meshes: Mesh[]
-): [positions: number[], indices: number[]] => {
-  let index: number;
-  let tri: number;
-  let pt: number;
+): [positions: Float32Array, indices: Uint32Array] => {
+  const meshesToMerge: Mesh[] = [];
 
-  const indices: number[] = [];
-  const positions: number[] = [];
+  let mergedPositionsLength = 0;
+  let mergedIndicesLength = 0;
 
-  let offset = 0;
-  for (index = 0; index < meshes.length; index++) {
-    if (meshes[index]) {
-      const mesh = meshes[index];
+  for (const mesh of meshes) {
+    const positionAttribute = mesh.geometry.attributes
+      .position as BufferAttribute;
 
-      const meshPositions = (mesh.geometry.getAttribute(
-        'position'
-      ) as BufferAttribute)!.array;
-
-      if (!meshPositions) {
-        continue;
-      }
-
-      let meshIndices = mesh.geometry.getIndex()?.array;
-
-      if (!meshIndices) {
-        const indices = [];
-        for (let i = 0; i < meshPositions.length / 3; i++) {
-          indices.push(i);
-        }
-        meshIndices = indices;
-      }
-
-      for (tri = 0; tri < meshIndices.length; tri++) {
-        indices.push(meshIndices[tri] + offset);
-      }
-
-      const position = new Vector3();
-      for (pt = 0; pt < meshPositions.length; pt += 3) {
-        position.set(
-          meshPositions[pt],
-          meshPositions[pt + 1],
-          meshPositions[pt + 2]
-        );
-        mesh.localToWorld(position);
-
-        positions.push(position.x, position.y, position.z);
-      }
-
-      offset += meshPositions.length / 3;
+    if (!positionAttribute || positionAttribute.itemSize !== 3) {
+      continue;
     }
+
+    mergedPositionsLength += positionAttribute.array.length;
+
+    mergedIndicesLength +=
+      mesh.geometry.getIndex()?.array.length ??
+      positionAttribute.array.length / 3;
+
+    meshesToMerge.push(mesh);
   }
 
-  return [positions, indices];
+  const mergedPositions = new Float32Array(mergedPositionsLength);
+  const mergedIndices = new Uint32Array(mergedIndicesLength);
+
+  let indicesOffset = 0;
+  let positionsOffset = 0;
+
+  for (const mesh of meshesToMerge) {
+    const positionAttribute = mesh.geometry.attributes
+      .position as BufferAttribute;
+    const positionArray = positionAttribute.array;
+
+    const position = tmpVec3;
+    for (let pt = 0; pt < positionArray.length; pt += 3) {
+      position.set(
+        positionArray[pt],
+        positionArray[pt + 1],
+        positionArray[pt + 2]
+      );
+      mesh.localToWorld(position);
+
+      mergedPositions[pt + positionsOffset] = position.x;
+      mergedPositions[pt + positionsOffset + 1] = position.y;
+      mergedPositions[pt + positionsOffset + 2] = position.z;
+    }
+
+    const index = mesh.geometry.getIndex()?.array;
+
+    if (index) {
+      for (let tri = 0; tri < index.length; tri++) {
+        mergedIndices[tri + indicesOffset] = index[tri] + indicesOffset;
+      }
+    } else {
+      for (let i = 0; i < positionArray.length / 3; i++) {
+        mergedIndices[i + indicesOffset] = i + indicesOffset;
+      }
+    }
+
+    positionsOffset += positionArray.length;
+    indicesOffset += positionArray.length / 3;
+  }
+
+  for (let i = 0; i < mergedIndices.length; i += 3) {
+    const tmp = mergedIndices[i];
+    mergedIndices[i] = mergedIndices[i + 2];
+    mergedIndices[i + 2] = tmp;
+  }
+
+  return [mergedPositions, mergedIndices];
 };
 
 export const threeToNavMesh = (
