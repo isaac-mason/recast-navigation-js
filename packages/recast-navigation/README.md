@@ -40,7 +40,7 @@ await init();
 ### Creating a NavMesh
 
 ```ts
-import { NavMesh } from 'recast-navigation';
+import { NavMeshGenerator } from 'recast-navigation';
 
 const navMeshGenerator = new NavMeshGenerator();
 
@@ -67,6 +67,8 @@ const { navMesh } = navMeshGenerator.generate(
 ### Querying a NavMesh
 
 ```ts
+import { NavMeshQuery } from 'recast-navigation';
+
 const navMeshQuery = new NavMeshQuery({ navMesh });
 
 /* get the closest point on the NavMesh to the given position */
