@@ -197,7 +197,7 @@ You can use `getDebugNavMesh` to get a debug representation of the NavMesh.
 ```ts
 const debugNavMesh = navMesh.getDebugNavMesh();
 
-const { positions, indices } = debugNavMesh.positions;
+const { positions, indices } = debugNavMesh;
 ```
 
 If you are using `@recast-navigation/three`, you can use `NavMeshHelper` and `CrowdHelper` to visualize NavMeshes and Crowds.
