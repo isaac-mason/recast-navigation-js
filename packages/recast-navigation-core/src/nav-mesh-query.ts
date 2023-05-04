@@ -1,6 +1,6 @@
 import type R from '@recast-navigation/wasm';
 import { NavMesh } from './nav-mesh';
-import { navPath, NavPath, vec3, Vector3 } from './utils';
+import { array, vec3, Vector3 } from './utils';
 import { Wasm } from './wasm';
 
 export type NavMeshQueryParams = {
@@ -55,12 +55,12 @@ export class NavMeshQuery {
    *g
    * @returns an array of Vector3 positions that make up the path, or an empty array if no path was found.
    */
-  computePath(start: Vector3, end: Vector3): NavPath {
+  computePath(start: Vector3, end: Vector3): Vector3[] {
     const startRaw = vec3.toRaw(start);
     const endRaw = vec3.toRaw(end);
     const pathRaw = this.raw.computePath(startRaw, endRaw);
 
-    return navPath.fromRaw(pathRaw);
+    return array((i) => pathRaw.getPoint(i), pathRaw.getPointCount()).map(vec3.fromRaw);
   }
 
   /**

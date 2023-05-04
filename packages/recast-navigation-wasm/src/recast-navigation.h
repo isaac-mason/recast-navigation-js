@@ -1,5 +1,6 @@
 #pragma once
 #include "../recastnavigation/Recast/Include/Recast.h"
+#include "../recastnavigation/Detour/Include/DetourStatus.h"
 #include "../recastnavigation/Detour/Include/DetourNavMesh.h"
 #include "../recastnavigation/Detour/Include/DetourCommon.h"
 #include "../recastnavigation/Detour/Include/DetourNavMeshBuilder.h"
@@ -95,175 +96,6 @@ struct DebugNavMesh
             return mTriangles[n];
         }
         return mTriangles.back();
-    }
-};
-
-struct NavMeshCreateParams
-{
-    dtNavMeshCreateParams params;
-
-    dtNavMeshCreateParams getParams()
-    {
-        return params;
-    }
-
-    void setVerts(unsigned short *verts)
-    {
-        params.verts = verts;
-    }
-
-    void setVertCount(int vertCount)
-    {
-        params.vertCount = vertCount;
-    }
-
-    void setPolys(unsigned short *polys)
-    {
-        params.polys = polys;
-    }
-
-    void setPolyFlags(unsigned short *polyFlags)
-    {
-        params.polyFlags = polyFlags;
-    }
-
-    void setPolyAreas(unsigned char *polyAreas)
-    {
-        params.polyAreas = polyAreas;
-    }
-
-    void setPolyCount(int polyCount)
-    {
-        params.polyCount = polyCount;
-    }
-
-    void setNvp(int nvp)
-    {
-        params.nvp = nvp;
-    }
-
-    void setDetailMeshes(unsigned int *detailMeshes)
-    {
-        params.detailMeshes = detailMeshes;
-    }
-
-    void setDetailVerts(float *detailVerts)
-    {
-        params.detailVerts = detailVerts;
-    }
-
-    void setDetailVertsCount(int detailVertsCount)
-    {
-        params.detailVertsCount = detailVertsCount;
-    }
-
-    void setDetailTris(unsigned char *detailTris)
-    {
-        params.detailTris = detailTris;
-    }
-
-    void setDetailTriCount(int detailTriCount)
-    {
-        params.detailTriCount = detailTriCount;
-    }
-
-    void setOffMeshConVerts(float *offMeshConVerts)
-    {
-        params.offMeshConVerts = offMeshConVerts;
-    }
-
-    void setOffMeshConRad(float *offMeshConRad)
-    {
-        params.offMeshConRad = offMeshConRad;
-    }
-
-    void setOffMeshConFlags(unsigned short *offMeshConFlags)
-    {
-        params.offMeshConFlags = offMeshConFlags;
-    }
-
-    void setOffMeshConAreas(unsigned char *offMeshConAreas)
-    {
-        params.offMeshConAreas = offMeshConAreas;
-    }
-
-    void setOffMeshConDir(unsigned char *offMeshConDir)
-    {
-        params.offMeshConDir = offMeshConDir;
-    }
-
-    void setOffMeshConUserID(unsigned int *offMeshConUserID)
-    {
-        params.offMeshConUserID = offMeshConUserID;
-    }
-
-    void setOffMeshConCount(int offMeshConCount)
-    {
-        params.offMeshConCount = offMeshConCount;
-    }
-
-    void setUserId(unsigned int userId)
-    {
-        params.userId = userId;
-    }
-
-    void setTileX(int tileX)
-    {
-        params.tileX = tileX;
-    }
-
-    void setTileY(int tileY)
-    {
-        params.tileY = tileY;
-    }
-
-    void setTileLayer(int tileLayer)
-    {
-        params.tileLayer = tileLayer;
-    }
-
-    void setBmin(float *bmin)
-    {
-        params.bmin[0] = bmin[0];
-        params.bmin[1] = bmin[1];
-        params.bmin[2] = bmin[2];
-    }
-
-    void setBmax(float *bmax)
-    {
-        params.bmax[0] = bmax[0];
-        params.bmax[1] = bmax[1];
-        params.bmax[2] = bmax[2];
-    }
-
-    void setWalkableHeight(float walkableHeight)
-    {
-        params.walkableHeight = walkableHeight;
-    }
-
-    void setWalkableRadius(float walkableRadius)
-    {
-        params.walkableRadius = walkableRadius;
-    }
-
-    void setWalkableClimb(float walkableClimb)
-    {
-        params.walkableClimb = walkableClimb;
-    }
-
-    void setCs(float cs)
-    {
-        params.cs = cs;
-    }
-
-    void setCh(float ch)
-    {
-        params.ch = ch;
-    }
-
-    void setBuildBvTree(bool buildBvTree)
-    {
-        params.buildBvTree = buildBvTree;
     }
 };
 
@@ -370,16 +202,10 @@ struct CreateNavMeshDataResult
     int navMeshDataSize;
 };
 
-struct NavMeshAddTileResult
-{
-    unsigned int status;
-    unsigned int tileRef;
-};
-
 class NavMeshBuilder
 {
 public:
-    CreateNavMeshDataResult createNavMeshData(NavMeshCreateParams &params);
+    CreateNavMeshDataResult createNavMeshData(dtNavMeshCreateParams &params);
 };
 
 struct TileCacheAddTileResult
@@ -402,13 +228,21 @@ public:
     TileCache() : m_tileCache(0), m_talloc(32000) {}
 
     bool init(const dtTileCacheParams &params);
+
     TileCacheAddTileResult addTile(unsigned char *data, const int dataSize, unsigned char flags);
+
     dtStatus buildNavMeshTile(const dtCompressedTileRef *ref, NavMesh *navMesh);
+
     dtStatus buildNavMeshTilesAt(const int tx, const int ty, NavMesh *navMesh);
+
     TileCacheUpdateResult update(NavMesh *navMesh);
+
     dtObstacleRef *addCylinderObstacle(const Vec3 &position, float radius, float height);
+
     dtObstacleRef *addBoxObstacle(const Vec3 &position, const Vec3 &extent, float angle);
+
     void removeObstacle(dtObstacleRef *obstacle);
+
     void destroy();
 
 protected:
@@ -417,6 +251,64 @@ protected:
     RecastLinearAllocator m_talloc;
     RecastFastLZCompressor m_tcomp;
     RecastMeshProcess m_tmproc;
+};
+
+struct NavMeshAddTileResult
+{
+    unsigned int status;
+    unsigned int tileRef;
+};
+
+struct NavMeshRemoveTileResult
+{
+    unsigned int status;
+    unsigned char *data;
+    int dataSize;
+};
+
+struct NavMeshCalcTileLocResult
+{
+    int tileX;
+    int tileY;
+};
+
+struct NavMeshGetTilesAtResult
+{
+    const dtMeshTile *tiles;
+    int tileCount;
+};
+
+struct NavMeshGetTileAndPolyByRefResult
+{
+    dtStatus status;
+    const dtMeshTile *tile;
+    const dtPoly *poly;
+};
+
+struct NavMeshGetOffMeshConnectionPolyEndPointsResult
+{
+    dtStatus status;
+    float startPos[3];
+    float endPos[3];
+};
+
+struct NavMeshGetPolyFlagsResult
+{
+    dtStatus status;
+    unsigned short flags;
+};
+
+struct NavMeshGetPolyAreaResult
+{
+    dtStatus status;
+    unsigned char area;
+};
+
+struct NavMeshStoreTileStateResult
+{
+    dtStatus status;
+    unsigned char *data;
+    int dataSize;
 };
 
 class NavMesh
@@ -430,9 +322,9 @@ public:
 
     bool initTiled(const dtNavMeshParams *params);
 
-    void destroy();
-
     NavMeshAddTileResult addTile(unsigned char *data, int dataSize, int flags, dtTileRef lastRef);
+
+    NavMeshRemoveTileResult removeTile(dtTileRef ref);
 
     DebugNavMesh getDebugNavMesh();
 
@@ -440,6 +332,50 @@ public:
     {
         return m_navMesh;
     }
+
+    NavMeshCalcTileLocResult calcTileLoc(const float *pos) const;
+
+    const dtMeshTile *getTileAt(const int tx, const int ty, const int tlayer) const;
+
+    NavMeshGetTilesAtResult getTilesAt(const int x, const int y, const int maxTiles) const;
+
+    dtTileRef getTileRefAt(int x, int y, int layer) const;
+
+    dtTileRef getTileRef(const dtMeshTile *tile) const;
+
+    const dtMeshTile *getTileByRef(dtTileRef ref) const;
+
+    int getMaxTiles() const;
+
+    const dtMeshTile *getTile(int i) const;
+
+    NavMeshGetTileAndPolyByRefResult getTileAndPolyByRef(const dtPolyRef ref) const;
+
+    NavMeshGetTileAndPolyByRefResult getTileAndPolyByRefUnsafe(const dtPolyRef ref) const;
+
+    bool isValidPolyRef(dtPolyRef ref) const;
+
+    dtPolyRef getPolyRefBase(const dtMeshTile *tile) const;
+
+    NavMeshGetOffMeshConnectionPolyEndPointsResult getOffMeshConnectionPolyEndPoints(dtPolyRef prevRef, dtPolyRef polyRef) const;
+
+    const dtOffMeshConnection *getOffMeshConnectionByRef(dtPolyRef ref) const;
+
+    dtStatus setPolyFlags(dtPolyRef ref, unsigned short flags);
+
+    NavMeshGetPolyFlagsResult getPolyFlags(dtPolyRef ref) const;
+
+    dtStatus setPolyArea(dtPolyRef ref, unsigned char area);
+
+    NavMeshGetPolyAreaResult getPolyArea(dtPolyRef ref) const;
+
+    int getTileStateSize(const dtMeshTile *tile) const;
+
+    NavMeshStoreTileStateResult storeTileState(const dtMeshTile *tile, const int maxDataSize) const;
+
+    dtStatus restoreTileState(dtMeshTile *tile, const unsigned char *data, const int maxDataSize);
+
+    void destroy();
 
 protected:
     void navMeshPoly(
@@ -463,9 +399,13 @@ public:
     NavMeshQuery(NavMesh *navMesh, const int maxNodes);
 
     Vec3 getClosestPoint(const Vec3 &position);
+
     Vec3 getRandomPointAround(const Vec3 &position, float maxRadius);
+
     Vec3 moveAlong(const Vec3 &position, const Vec3 &destination);
+
     NavPath computePath(const Vec3 &start, const Vec3 &end) const;
+
     void destroy();
 
     void setDefaultQueryExtent(const Vec3 &extent)
@@ -638,4 +578,58 @@ public:
 protected:
     dtCrowd *m_crowd;
     Vec3 m_defaultQueryExtent;
+};
+
+class DtStatus
+{
+
+public:
+    int FAILURE;
+    int SUCCESS;
+    int IN_PROGRESS;
+    int STATUS_DETAIL_MASK;
+    int WRONG_MAGIC;
+    int WRONG_VERSION;
+    int OUT_OF_MEMORY;
+    int INVALID_PARAM;
+    int BUFFER_TOO_SMALL;
+    int OUT_OF_NODES;
+    int PARTIAL_RESULT;
+    int ALREADY_OCCUPIED;
+
+    DtStatus()
+    {
+        FAILURE = DT_FAILURE;
+        SUCCESS = DT_SUCCESS;
+        IN_PROGRESS = DT_IN_PROGRESS;
+        STATUS_DETAIL_MASK = DT_STATUS_DETAIL_MASK;
+        WRONG_MAGIC = DT_WRONG_MAGIC;
+        WRONG_VERSION = DT_WRONG_VERSION;
+        OUT_OF_MEMORY = DT_OUT_OF_MEMORY;
+        INVALID_PARAM = DT_INVALID_PARAM;
+        BUFFER_TOO_SMALL = DT_BUFFER_TOO_SMALL;
+        OUT_OF_NODES = DT_OUT_OF_NODES;
+        PARTIAL_RESULT = DT_PARTIAL_RESULT;
+        ALREADY_OCCUPIED = DT_ALREADY_OCCUPIED;
+    }
+
+    bool statusSucceed(dtStatus status)
+    {
+        return dtStatusSucceed(status);
+    }
+
+    bool statusFailed(dtStatus status)
+    {
+        return dtStatusFailed(status);
+    }
+
+    bool statusInProgress(dtStatus status)
+    {
+        return dtStatusInProgress(status);
+    }
+
+    bool statusDetail(dtStatus status, unsigned int detail)
+    {
+        return dtStatusDetail(status, detail);
+    }
 };

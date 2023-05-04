@@ -43,12 +43,6 @@ export class NavMeshHelper {
   updateNavMesh() {
     const { positions, indices } = this.recastNavMesh.getDebugNavMesh();
 
-    for (let i = 0; i < indices.length; i += 3) {
-      const tmp = indices[i];
-      indices[i] = indices[i + 2];
-      indices[i + 2] = tmp;
-    }
-
     const geometry = this.navMesh.geometry;
 
     geometry.setAttribute(

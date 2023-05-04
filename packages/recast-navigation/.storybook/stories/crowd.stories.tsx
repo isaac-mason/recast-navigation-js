@@ -1,16 +1,11 @@
 import { OrbitControls } from '@react-three/drei';
 import { ThreeEvent, useFrame } from '@react-three/fiber';
-import {
-  Crowd,
-  NavMesh,
-  NavMeshQuery,
-  TileCache,
-} from '@recast-navigation/core';
+import { Crowd, NavMesh, NavMeshQuery } from '@recast-navigation/core';
 import React, { useEffect, useState } from 'react';
 import { threeToNavMesh } from 'recast-navigation/three';
 import { Group, Mesh, MeshStandardMaterial, Vector3 } from 'three';
-import { NavTestEnvirionment } from '../common/nav-test-environment';
 import { Debug } from '../common/debug';
+import { NavTestEnvirionment } from '../common/nav-test-environment';
 import { decorators } from '../decorators';
 import { createLineMesh } from '../utils/create-line-mesh';
 

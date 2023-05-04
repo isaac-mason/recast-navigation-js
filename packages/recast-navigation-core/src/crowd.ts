@@ -1,7 +1,7 @@
 import type R from '@recast-navigation/wasm';
 import type { NavMesh } from './nav-mesh';
-import type { NavPath, Vector3 } from './utils';
-import { navPath, vec3 } from './utils';
+import { Vector3, array } from './utils';
+import { vec3 } from './utils';
 import { Wasm } from './wasm';
 
 export type CrowdParams = {
@@ -304,10 +304,10 @@ export class Crowd {
   /**
    * Returns the local path corridor corners for the specified agent.
    */
-  getAgentCorners(agentIndex: number): NavPath {
+  getAgentCorners(agentIndex: number): Vector3[] {
     const corners = this.raw.getCorners(agentIndex);
 
-    return navPath.fromRaw(corners);
+    return array((i) => corners.getPoint(i), corners.getPointCount()).map(vec3.fromRaw);
   }
 
   /**

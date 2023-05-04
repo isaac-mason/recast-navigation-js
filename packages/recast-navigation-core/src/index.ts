@@ -1,5 +1,5 @@
 export * from './crowd';
-export * from './debug-nav-mesh';
+export * from './dt-status';
 export * from './nav-mesh';
 export * from './nav-mesh-builder';
 export * from './nav-mesh-exporter';

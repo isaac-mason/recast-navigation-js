@@ -1,7 +1,7 @@
 import type R from '@recast-navigation/wasm';
 import { Wasm } from './wasm';
 
-export type NavMeshCreateParams = {
+export type CreateNavMeshDataParams = {
   verts: number[];
   vertCount: number;
   polys: number[];
@@ -35,11 +35,7 @@ export type NavMeshCreateParams = {
   buildBvTree: boolean;
 };
 
-export type CreateNavMeshDataResult = {
-  success: boolean;
-  navMeshData: readonly number[];
-  navMeshDataSize: number;
-};
+export type CreateNavMeshDataResult = R.CreateNavMeshDataResult;
 
 export class NavMeshBuilder {
   raw: R.NavMeshBuilder;
@@ -48,48 +44,41 @@ export class NavMeshBuilder {
     this.raw = new Wasm.Recast.NavMeshBuilder();
   }
 
-  createNavMeshData(params: NavMeshCreateParams): CreateNavMeshDataResult {
-    const navMeshCreateParams = new Wasm.Recast.NavMeshCreateParams();
+  createNavMeshData(params: CreateNavMeshDataParams): CreateNavMeshDataResult {
+    const navMeshCreateParams = new Wasm.Recast.dtNavMeshCreateParams();
 
-    navMeshCreateParams.setVerts(params.verts);
-    navMeshCreateParams.setVertCount(params.vertCount);
-    navMeshCreateParams.setPolys(params.polys);
-    navMeshCreateParams.setPolyFlags(params.polyFlags);
-    navMeshCreateParams.setPolyAreas(params.polyAreas);
-    navMeshCreateParams.setPolyCount(params.polyCount);
-    navMeshCreateParams.setNvp(params.nvp);
-    navMeshCreateParams.setDetailMeshes(params.detailMeshes);
-    navMeshCreateParams.setDetailVerts(params.detailVerts);
-    navMeshCreateParams.setDetailVertsCount(params.detailVertsCount);
-    navMeshCreateParams.setDetailTris(params.detailTris);
-    navMeshCreateParams.setDetailTriCount(params.detailTriCount);
-    navMeshCreateParams.setOffMeshConVerts(params.offMeshConVerts);
-    navMeshCreateParams.setOffMeshConRad(params.offMeshConRad);
-    navMeshCreateParams.setOffMeshConFlags(params.offMeshConFlags);
-    navMeshCreateParams.setOffMeshConAreas(params.offMeshConAreas);
-    navMeshCreateParams.setOffMeshConDir(params.offMeshConDir);
-    navMeshCreateParams.setOffMeshConUserID(params.offMeshConUserID);
-    navMeshCreateParams.setOffMeshConCount(params.offMeshConCount);
-    navMeshCreateParams.setUserId(params.userId);
-    navMeshCreateParams.setTileX(params.tileX);
-    navMeshCreateParams.setTileY(params.tileY);
-    navMeshCreateParams.setTileLayer(params.tileLayer);
-    navMeshCreateParams.setBmin(params.bmin);
-    navMeshCreateParams.setBmax(params.bmax);
-    navMeshCreateParams.setWalkableHeight(params.walkableHeight);
-    navMeshCreateParams.setWalkableRadius(params.walkableRadius);
-    navMeshCreateParams.setWalkableClimb(params.walkableClimb);
-    navMeshCreateParams.setCs(params.cs);
-    navMeshCreateParams.setCh(params.ch);
-    navMeshCreateParams.setBuildBvTree(params.buildBvTree);
+    navMeshCreateParams.set_verts(params.verts);
+    navMeshCreateParams.set_vertCount(params.vertCount);
+    navMeshCreateParams.set_polys(params.polys);
+    navMeshCreateParams.set_polyFlags(params.polyFlags);
+    navMeshCreateParams.set_polyAreas(params.polyAreas);
+    navMeshCreateParams.set_polyCount(params.polyCount);
+    navMeshCreateParams.set_nvp(params.nvp);
+    navMeshCreateParams.set_detailMeshes(params.detailMeshes);
+    navMeshCreateParams.set_detailVerts(params.detailVerts);
+    navMeshCreateParams.set_detailVertsCount(params.detailVertsCount);
+    navMeshCreateParams.set_detailTris(params.detailTris);
+    navMeshCreateParams.set_detailTriCount(params.detailTriCount);
+    navMeshCreateParams.set_offMeshConVerts(params.offMeshConVerts);
+    navMeshCreateParams.set_offMeshConRad(params.offMeshConRad);
+    navMeshCreateParams.set_offMeshConFlags(params.offMeshConFlags);
+    navMeshCreateParams.set_offMeshConAreas(params.offMeshConAreas);
+    navMeshCreateParams.set_offMeshConDir(params.offMeshConDir);
+    navMeshCreateParams.set_offMeshConUserID(params.offMeshConUserID);
+    navMeshCreateParams.set_offMeshConCount(params.offMeshConCount);
+    navMeshCreateParams.set_userId(params.userId);
+    navMeshCreateParams.set_tileX(params.tileX);
+    navMeshCreateParams.set_tileY(params.tileY);
+    navMeshCreateParams.set_tileLayer(params.tileLayer);
+    navMeshCreateParams.set_bmin(params.bmin);
+    navMeshCreateParams.set_bmax(params.bmax);
+    navMeshCreateParams.set_walkableHeight(params.walkableHeight);
+    navMeshCreateParams.set_walkableRadius(params.walkableRadius);
+    navMeshCreateParams.set_walkableClimb(params.walkableClimb);
+    navMeshCreateParams.set_cs(params.cs);
+    navMeshCreateParams.set_ch(params.ch);
+    navMeshCreateParams.set_buildBvTree(params.buildBvTree);
 
-    const { success, navMeshData, navMeshDataSize } =
-      this.raw.createNavMeshData(navMeshCreateParams);
-
-    return {
-      success,
-      navMeshData,
-      navMeshDataSize,
-    };
+    return this.raw.createNavMeshData(navMeshCreateParams);
   }
 }
