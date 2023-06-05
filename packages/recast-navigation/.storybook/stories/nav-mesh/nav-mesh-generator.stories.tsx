@@ -9,7 +9,7 @@ import { NavTestEnvirionment } from '../../common/nav-test-environment';
 import { decorators } from '../../decorators';
 
 export default {
-  title: 'NavMesh / NavMeshGenerator',
+  title: 'NavMesh',
   decorators,
 };
 
