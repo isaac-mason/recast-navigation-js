@@ -1567,7 +1567,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.13.8, @babel/runtime@npm:^7.16.7, @babel/runtime@npm:^7.20.1, @babel/runtime@npm:^7.3.1, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.8.4":
+"@babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.13.8, @babel/runtime@npm:^7.20.1, @babel/runtime@npm:^7.3.1, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.8.4":
   version: 7.21.0
   resolution: "@babel/runtime@npm:7.21.0"
   dependencies:
@@ -3089,9 +3089,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-three/drei@npm:^9.57.3":
-  version: 9.57.3
-  resolution: "@react-three/drei@npm:9.57.3"
+"@react-three/drei@npm:^9.72.1":
+  version: 9.72.1
+  resolution: "@react-three/drei@npm:9.72.1"
   dependencies:
     "@babel/runtime": ^7.11.2
     "@react-spring/three": ~9.6.1
@@ -3109,7 +3109,7 @@ __metadata:
     stats.js: ^0.17.0
     suspend-react: ^0.0.8
     three-mesh-bvh: ^0.5.23
-    three-stdlib: ^2.21.8
+    three-stdlib: ^2.23.5
     troika-three-text: ^0.47.1
     utility-types: ^3.10.0
     zustand: ^3.5.13
@@ -3121,43 +3121,7 @@ __metadata:
   peerDependenciesMeta:
     react-dom:
       optional: true
-  checksum: 56af949849838ef4eb03fff9b7f5eb4e24f471a2b57d335b2c83a953a7482a1e7c24a29050f0afd82694d06e91d4d6259ebc514431d8e295233167a0edda4ca2
-  languageName: node
-  linkType: hard
-
-"@react-three/drei@npm:^9.58.5":
-  version: 9.58.5
-  resolution: "@react-three/drei@npm:9.58.5"
-  dependencies:
-    "@babel/runtime": ^7.11.2
-    "@react-spring/three": ~9.6.1
-    "@use-gesture/react": ^10.2.24
-    camera-controls: ^2.3.1
-    detect-gpu: ^5.0.14
-    glsl-noise: ^0.0.0
-    lodash.clamp: ^4.0.3
-    lodash.omit: ^4.5.0
-    lodash.pick: ^4.4.0
-    maath: ^0.5.2
-    meshline: ^3.1.6
-    react-composer: ^5.0.3
-    react-merge-refs: ^1.1.0
-    stats.js: ^0.17.0
-    suspend-react: ^0.0.8
-    three-mesh-bvh: ^0.5.23
-    three-stdlib: ^2.21.8
-    troika-three-text: ^0.47.1
-    utility-types: ^3.10.0
-    zustand: ^3.5.13
-  peerDependencies:
-    "@react-three/fiber": ">=8.0"
-    react: ">=18.0"
-    react-dom: ">=18.0"
-    three: ">=0.137"
-  peerDependenciesMeta:
-    react-dom:
-      optional: true
-  checksum: fe1f42fc95a2bc1cae05a14fb61a9272a72f4de434625b8e4c74e83a98731c2a746c3e31d9dce5a775b0d23a47c52c30dcc8fda9d0968d8a970c316d4758f29e
+  checksum: c183da66501bd3760834cae064d3f46738351ff3fc6ccf65ecc7642ce27caae917e3990ea229289c8b9fba43f0d3aff070237588ae3a2322bdfb9738ce0a3de1
   languageName: node
   linkType: hard
 
@@ -4519,6 +4483,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/draco3d@npm:^1.4.0":
+  version: 1.4.2
+  resolution: "@types/draco3d@npm:1.4.2"
+  checksum: d8e60db5e7e51081b32700d8f0defa537b41249eac6fe39e4af4e3e002f131acfd2a5e993bcfde9b597b30413726fbe6189a7b3bd970a3d7e9da93ef2e098283
+  languageName: node
+  linkType: hard
+
 "@types/ejs@npm:^3.1.1":
   version: 3.1.2
   resolution: "@types/ejs@npm:3.1.2"
@@ -4951,6 +4922,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/webxr@npm:^0.5.2":
+  version: 0.5.2
+  resolution: "@types/webxr@npm:0.5.2"
+  checksum: e3387c3d64c140557796a4bcececd82d912a88f73ff8e34bf51c04d44078390fbe4756b256b2844b1ae4664a883d46f96bb40913d21f12e9ab484d9d8dbc68c3
+  languageName: node
+  linkType: hard
+
 "@types/yargs-parser@npm:*":
   version: 21.0.0
   resolution: "@types/yargs-parser@npm:21.0.0"
@@ -5180,13 +5158,6 @@ __metadata:
     loupe: ^2.3.6
     pretty-format: ^27.5.1
   checksum: b2ebfbc25672ccdb5e7cc297487e01204f4679f91936639ec9c02ca180fc0595dabd36a1aa50336e97b7db7f38dbd7dc3a705ef6198fbc82b4521847190b2a33
-  languageName: node
-  linkType: hard
-
-"@webgpu/glslang@npm:^0.0.15":
-  version: 0.0.15
-  resolution: "@webgpu/glslang@npm:0.0.15"
-  checksum: 0bb8c2e8e4533f95deeff09a24fa2551cdf984159f25cd8c3fc21e0e8ecfea54b88363bdcd04412f43669e199dcc8f6ea80a6a7ddd098005527567ec009d6881
   languageName: node
   linkType: hard
 
@@ -11198,7 +11169,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "navmesh-website@workspace:apps/navmesh-website"
   dependencies:
-    "@react-three/drei": ^9.57.3
+    "@react-three/drei": ^9.72.1
     "@react-three/fiber": ^8.12.0
     "@types/react": ^18.0.28
     "@types/react-dom": ^18.0.11
@@ -12687,7 +12658,7 @@ __metadata:
     "@babel/core": ^7.21.3
     "@mdx-js/react": ^1.6.22
     "@react-three/csg": ^2.2.0
-    "@react-three/drei": ^9.58.5
+    "@react-three/drei": ^9.72.1
     "@react-three/fiber": ^8.12.0
     "@recast-navigation/core": 0.0.7
     "@recast-navigation/three": 0.0.7
@@ -14087,13 +14058,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"three-stdlib@npm:^2.21.8":
-  version: 2.21.8
-  resolution: "three-stdlib@npm:2.21.8"
+"three-stdlib@npm:^2.23.5":
+  version: 2.23.7
+  resolution: "three-stdlib@npm:2.23.7"
   dependencies:
-    "@babel/runtime": ^7.16.7
+    "@types/draco3d": ^1.4.0
     "@types/offscreencanvas": ^2019.6.4
-    "@webgpu/glslang": ^0.0.15
+    "@types/webxr": ^0.5.2
     chevrotain: ^10.1.2
     draco3d: ^1.4.1
     fflate: ^0.6.9
@@ -14103,8 +14074,8 @@ __metadata:
     potpack: ^1.0.1
     zstddec: ^0.0.2
   peerDependencies:
-    three: ">=0.122.0"
-  checksum: b83d1d72ce0249a69bdd11f005f06cd09a07e497867f5c539ea73cf941450cdccc11186f23f44278d2ac516244b3943d1f0e89e8406965d0bfb8427961c8133a
+    three: ">=0.128.0"
+  checksum: 43fe585c7ddf70029f82703179bc979ca0c12a34ff868436817c58a3d3d7634145c0e79d362917c2b6d09c33fab037a5f8dfdddd8ca71efb7b559c833e83b504
   languageName: node
   linkType: hard
 
@@ -14939,7 +14910,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "vite-recast-navigation-three-example@workspace:examples/vite-recast-navigation-three-example"
   dependencies:
-    "@react-three/drei": ^9.57.3
+    "@react-three/drei": ^9.72.1
     "@react-three/fiber": ^8.12.0
     "@types/react": ^18.0.28
     "@types/react-dom": ^18.0.11
