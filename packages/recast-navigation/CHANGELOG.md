@@ -1,5 +1,14 @@
 # recast-navigation
 
+## 0.1.1
+
+### Patch Changes
+
+- b67eb8b: feat: make EXPECTED_LAYERS_PER_TILE and MAX_LAYERS constants configurable
+- Updated dependencies [b67eb8b]
+  - @recast-navigation/core@0.1.1
+  - @recast-navigation/three@0.1.1
+
 ## 0.1.0
 
 ### Minor Changes
