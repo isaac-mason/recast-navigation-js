@@ -1,5 +1,16 @@
 # @recast-navigation/wasm
 
+## 0.1.0
+
+### Minor Changes
+
+- 44c71f0: feat: fix DebugNavMesh winding
+- 44c71f0: feat: expose dtNavMesh methods and related classes
+
+### Patch Changes
+
+- 44c71f0: feat: add DtStatus constants and utils
+
 ## 0.0.7
 
 ### Patch Changes

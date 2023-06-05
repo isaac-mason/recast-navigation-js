@@ -1,5 +1,19 @@
 # recast-navigation
 
+## 0.1.0
+
+### Minor Changes
+
+- 44c71f0: feat: expose dtNavMesh methods and related classes
+
+### Patch Changes
+
+- Updated dependencies [44c71f0]
+- Updated dependencies [44c71f0]
+- Updated dependencies [44c71f0]
+  - @recast-navigation/three@0.1.0
+  - @recast-navigation/core@0.1.0
+
 ## 0.0.7
 
 ### Patch Changes
