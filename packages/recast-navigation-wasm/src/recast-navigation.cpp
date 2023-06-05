@@ -42,14 +42,14 @@ struct TileCacheData
     int dataSize;
 };
 
-CreateNavMeshDataResult NavMeshBuilder::createNavMeshData(NavMeshCreateParams &navMeshCreateParams)
+CreateNavMeshDataResult NavMeshBuilder::createNavMeshData(dtNavMeshCreateParams &navMeshCreateParams)
 {
     CreateNavMeshDataResult *createNavMeshDataResult = new CreateNavMeshDataResult;
 
     unsigned char *navMeshData;
     int navMeshDataSize = 0;
 
-    if (!dtCreateNavMeshData(&navMeshCreateParams.params, &createNavMeshDataResult->navMeshData, &createNavMeshDataResult->navMeshDataSize))
+    if (!dtCreateNavMeshData(&navMeshCreateParams, &createNavMeshDataResult->navMeshData, &createNavMeshDataResult->navMeshDataSize))
     {
         Log("Could not build NavMeshData");
 
@@ -334,39 +334,6 @@ struct NavMeshIntermediates
     rcContourSet *m_cset = nullptr;
     rcHeightfieldLayerSet *m_lset = nullptr;
     rcChunkyTriMesh *m_chunkyMesh = nullptr;
-};
-
-void NavMesh::destroy()
-{
-    dtFreeNavMesh(m_navMesh);
-}
-
-bool NavMesh::initSolo(unsigned char *data, const int dataSize, const int flags)
-{
-    m_navMesh = dtAllocNavMesh();
-    if (!m_navMesh)
-    {
-        Log("Could not allocate solo Detour navmesh");
-        return false;
-    }
-
-    dtStatus status = m_navMesh->init(data, dataSize, flags);
-
-    return dtStatusSucceed(status);
-};
-
-bool NavMesh::initTiled(const dtNavMeshParams *params)
-{
-    m_navMesh = dtAllocNavMesh();
-    if (!m_navMesh)
-    {
-        Log("Could not allocate tiled Detour navmesh");
-        return false;
-    }
-
-    dtStatus status = m_navMesh->init(params);
-
-    return dtStatusSucceed(status);
 };
 
 static const int NAVMESHSET_MAGIC = 'M' << 24 | 'S' << 16 | 'E' << 8 | 'T'; //'MSET';
@@ -1286,6 +1253,34 @@ void NavMeshGenerator::destroy()
     }
 };
 
+bool NavMesh::initSolo(unsigned char *data, const int dataSize, const int flags)
+{
+    m_navMesh = dtAllocNavMesh();
+    if (!m_navMesh)
+    {
+        Log("Could not allocate solo Detour navmesh");
+        return false;
+    }
+
+    dtStatus status = m_navMesh->init(data, dataSize, flags);
+
+    return dtStatusSucceed(status);
+};
+
+bool NavMesh::initTiled(const dtNavMeshParams *params)
+{
+    m_navMesh = dtAllocNavMesh();
+    if (!m_navMesh)
+    {
+        Log("Could not allocate tiled Detour navmesh");
+        return false;
+    }
+
+    dtStatus status = m_navMesh->init(params);
+
+    return dtStatusSucceed(status);
+};
+
 NavMeshAddTileResult NavMesh::addTile(unsigned char *data, int dataSize, int flags, dtTileRef lastRef)
 {
     dtTileRef ref;
@@ -1296,6 +1291,15 @@ NavMeshAddTileResult NavMesh::addTile(unsigned char *data, int dataSize, int fla
     result.tileRef = ref;
 
     return result;
+}
+
+NavMeshRemoveTileResult NavMesh::removeTile(dtTileRef ref)
+{
+    NavMeshRemoveTileResult *result = new NavMeshRemoveTileResult;
+
+    result->status = m_navMesh->removeTile(ref, &result->data, &result->dataSize);
+
+    return *result;
 }
 
 void NavMesh::navMeshPoly(DebugNavMesh &debugNavMesh, const dtNavMesh &mesh, dtPolyRef ref)
@@ -1345,7 +1349,7 @@ void NavMesh::navMeshPoly(DebugNavMesh &debugNavMesh, const dtNavMesh &mesh, dtP
                     pf = &tile->detailVerts[(pd->vertBase + t[j] - poly->vertCount) * 3];
                 }
 
-                triangle.mPoint[2 - j] = Vec3(pf[0], pf[1], pf[2]);
+                triangle.mPoint[j] = Vec3(pf[0], pf[1], pf[2]);
             }
             debugNavMesh.mTriangles.push_back(triangle);
         }
@@ -1380,6 +1384,165 @@ DebugNavMesh NavMesh::getDebugNavMesh()
     DebugNavMesh debugNavMesh;
     navMeshPolysWithFlags(debugNavMesh, *m_navMesh, 0xFFFF);
     return debugNavMesh;
+}
+
+NavMeshCalcTileLocResult NavMesh::calcTileLoc(const float* pos) const
+{
+    NavMeshCalcTileLocResult *result = new NavMeshCalcTileLocResult;
+    
+    m_navMesh->calcTileLoc(pos, &result->tileX, &result->tileY);
+
+    return *result;
+}
+
+const dtMeshTile *NavMesh::getTileAt(const int x, const int y, const int tlayer) const
+{
+    return m_navMesh->getTileAt(x, y, tlayer);
+}
+
+NavMeshGetTilesAtResult NavMesh::getTilesAt(const int x, const int y, const int maxTiles) const
+{
+    NavMeshGetTilesAtResult *result = new NavMeshGetTilesAtResult;
+
+    const dtMeshTile* tiles[maxTiles];
+
+    result->tileCount = m_navMesh->getTilesAt(x, y, tiles, maxTiles);
+    result->tiles = *tiles;
+
+    return *result;
+}
+
+dtTileRef NavMesh::getTileRefAt(int x, int y, int layer) const
+{
+    return m_navMesh->getTileRefAt(x, y, layer);
+}
+
+dtTileRef NavMesh::getTileRef(const dtMeshTile* tile) const
+{
+    return m_navMesh->getTileRef(tile);
+}
+
+const dtMeshTile* NavMesh::getTileByRef(dtTileRef ref) const
+{
+    return m_navMesh->getTileByRef(ref);
+}
+
+int NavMesh::getMaxTiles() const
+{
+    return m_navMesh->getMaxTiles();
+}
+
+NavMeshGetTileAndPolyByRefResult NavMesh::getTileAndPolyByRef(dtPolyRef ref) const
+{
+    NavMeshGetTileAndPolyByRefResult *result = new NavMeshGetTileAndPolyByRefResult;
+
+    const dtMeshTile* tile;
+    const dtPoly* poly;
+
+    m_navMesh->getTileAndPolyByRef(ref, &tile, &poly);
+
+    result->tile = tile;
+    result->poly = poly;
+
+    return *result;
+}
+
+NavMeshGetTileAndPolyByRefResult NavMesh::getTileAndPolyByRefUnsafe(dtPolyRef ref) const
+{
+    NavMeshGetTileAndPolyByRefResult *result = new NavMeshGetTileAndPolyByRefResult;
+
+    const dtMeshTile* tile;
+    const dtPoly* poly;
+
+    m_navMesh->getTileAndPolyByRefUnsafe(ref, &tile, &poly);
+
+    result->tile = tile;
+    result->poly = poly;
+
+    return *result;
+}
+
+bool NavMesh::isValidPolyRef(dtPolyRef ref) const
+{
+    return m_navMesh->isValidPolyRef(ref);
+}
+
+dtPolyRef NavMesh::getPolyRefBase(const dtMeshTile* tile) const
+{
+    return m_navMesh->getPolyRefBase(tile);
+}
+
+NavMeshGetOffMeshConnectionPolyEndPointsResult NavMesh::getOffMeshConnectionPolyEndPoints(dtPolyRef prevRef, dtPolyRef polyRef) const
+{
+    NavMeshGetOffMeshConnectionPolyEndPointsResult *result = new NavMeshGetOffMeshConnectionPolyEndPointsResult;
+
+    result->status = m_navMesh->getOffMeshConnectionPolyEndPoints(prevRef, polyRef, &result->startPos[0], &result->endPos[0]);
+
+    return *result;
+}
+
+const dtOffMeshConnection* NavMesh::getOffMeshConnectionByRef(dtPolyRef ref) const
+{
+    return m_navMesh->getOffMeshConnectionByRef(ref);
+}
+
+dtStatus NavMesh::setPolyFlags(dtPolyRef ref, unsigned short flags)
+{
+    return m_navMesh->setPolyFlags(ref, flags);
+}
+
+NavMeshGetPolyFlagsResult NavMesh::getPolyFlags(dtPolyRef ref) const
+{
+    NavMeshGetPolyFlagsResult *result = new NavMeshGetPolyFlagsResult;
+
+    result->status = m_navMesh->getPolyFlags(ref, &result->flags);
+
+    return *result;
+}
+
+dtStatus NavMesh::setPolyArea(dtPolyRef ref, unsigned char area)
+{
+    return m_navMesh->setPolyArea(ref, area);
+}
+
+NavMeshGetPolyAreaResult NavMesh::getPolyArea(dtPolyRef ref) const
+{
+    NavMeshGetPolyAreaResult *result = new NavMeshGetPolyAreaResult;
+
+    result->status = m_navMesh->getPolyArea(ref, &result->area);
+
+    return *result;
+}
+
+int NavMesh::getTileStateSize(const dtMeshTile* tile) const
+{
+    return m_navMesh->getTileStateSize(tile);
+}
+
+NavMeshStoreTileStateResult NavMesh::storeTileState(const dtMeshTile* tile, const int maxDataSize) const
+{
+    NavMeshStoreTileStateResult *result = new NavMeshStoreTileStateResult;
+
+    result->status = m_navMesh->storeTileState(tile, result->data, maxDataSize);
+    result->dataSize = maxDataSize;
+
+    return *result;
+}
+
+dtStatus NavMesh::restoreTileState(dtMeshTile* tile, const unsigned char* data, const int maxDataSize)
+{
+    return m_navMesh->restoreTileState(tile, data, maxDataSize);
+}
+
+void NavMesh::destroy()
+{
+    dtFreeNavMesh(m_navMesh);
+}
+
+const dtMeshTile* NavMesh::getTile(int i) const
+{
+    const dtNavMesh *navmesh = m_navMesh;
+    return navmesh->getTile(i);
 }
 
 Crowd::Crowd(const int maxAgents, const float maxAgentRadius, NavMesh *navMesh) : m_defaultQueryExtent(1.f)

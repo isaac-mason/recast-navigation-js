@@ -76,6 +76,11 @@ const App = () => {
     );
 
     scene.add(line);
+
+    return () => {
+      scene.remove(debug.navMesh);
+      scene.remove(line);
+    };
   }, []);
 
   return (

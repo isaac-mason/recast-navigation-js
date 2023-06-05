@@ -10,16 +10,29 @@ export const vec3 = {
   fromRaw: ({ x, y, z }: R.Vec3) => {
     return { x, y, z };
   },
+  fromArray: ([x, y, z]: number[]) => {
+    return { x, y, z };
+  },
+  toArray: ({ x, y, z }: Vector3) => {
+    return [x, y, z];
+  },
 };
 
-export type NavPath = Vector3[];
+export const array = <T>(getter: (index: number) => T, count: number) => {
+  const array: T[] = [];
 
-export const navPath = {
-  fromRaw: (v: R.NavPath) => {
-    const path = [];
-    for (let i = 0; i < v.getPointCount(); i++) {
-      path.push(vec3.fromRaw(v.getPoint(i)));
-    }
-    return path;
+  for (let i = 0; i < count; i++) {
+    array.push(getter(i));
+  }
+
+  return array;
+};
+
+export const emscripten = {
+  isNull: (obj: unknown) => {
+    return Wasm.Recast.getPointer(obj) === 0;
+  },
+  getPointer: (obj: unknown) => {
+    return Wasm.Recast.getPointer(obj);
   },
 };

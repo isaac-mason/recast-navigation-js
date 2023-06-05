@@ -9,7 +9,7 @@ Promise.all([
 
     const navMeshGenerator = new Recast.NavMeshGenerator();
 
-    const groundMesh = new THREE.Mesh(new THREE.BoxGeometry(5, 0.5, 5));
+    const groundMesh = new THREE.Mesh(new THREE.BoxGeometry(5, 0.2, 5));
 
     /**
      * @type {import('recast-navigation').NavMeshConfig}

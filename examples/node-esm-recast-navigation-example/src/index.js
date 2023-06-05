@@ -8,7 +8,7 @@ console.log(RecastThree);
 
 const navMeshGenerator = new NavMeshGenerator();
 
-const groundMesh = new Mesh(new BoxGeometry(5, 0.5, 5));
+const groundMesh = new Mesh(new BoxGeometry(5, 0.2, 5));
 
 /**
  * @type {import('recast-navigation').NavMeshConfig}
