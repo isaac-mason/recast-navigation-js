@@ -113,6 +113,16 @@ export type NavMeshConfig = {
    * @default 1
    */
   detailSampleMaxError: number;
+
+  /**
+   * How many layers (or "floors") each navmesh tile is expected to have.
+   */
+  expectedLayersPerTile: number;
+
+  /**
+   * The max number of layers a navmesh can have.
+   */
+  maxLayers: number;
 };
 
 const navMeshConfigDefaults: NavMeshConfig = {
@@ -131,6 +141,8 @@ const navMeshConfigDefaults: NavMeshConfig = {
   maxVertsPerPoly: 6,
   detailSampleDist: 6,
   detailSampleMaxError: 1,
+  expectedLayersPerTile: 4,
+  maxLayers: 32,
 };
 
 export type NavMeshGeneratorResult = {
@@ -181,9 +193,11 @@ export class NavMeshGenerator {
       positions.length / 3,
       indices as number[],
       indices.length,
-      rcConfig
+      rcConfig,
+      config.expectedLayersPerTile,
+      config.maxLayers
     );
-    
+
     const success = result.success;
     const rawNavMesh = result.getNavMesh();
     const rawTileCache = result.getTileCache();

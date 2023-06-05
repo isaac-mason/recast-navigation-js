@@ -490,7 +490,9 @@ public:
         const int positionCount,
         const int *indices,
         const int indexCount,
-        const rcConfig &config);
+        const rcConfig &config,
+        const int expectedLayersPerTile,
+        const int maxLayers);
 
     void destroy();
 
@@ -501,7 +503,9 @@ protected:
         const float *verts,
         int nverts,
         const int *tris,
-        int ntris);
+        int ntris,
+        const int expectedLayersPerTile,
+        const int maxLayers);
 
     NavMeshGeneratorResult *computeSoloNavMesh(
         rcConfig &cfg,
@@ -523,7 +527,8 @@ protected:
         const int maxTiles,
         NavMeshIntermediates &intermediates,
         const float *verts,
-        int nverts);
+        int nverts,
+        const int maxLayers);
 };
 
 class Crowd

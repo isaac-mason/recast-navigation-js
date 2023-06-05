@@ -231,7 +231,14 @@ interface NavMeshGeneratorResult {
 interface NavMeshGenerator {
     void NavMeshGenerator();
 
-    [Value] NavMeshGeneratorResult generate([Const] float[] positions, [Const] long positionCount, [Const] long[] indices, [Const] long indexCount, [Const, Ref] rcConfig config);
+    [Value] NavMeshGeneratorResult generate(
+        [Const] float[] positions,
+        [Const] long positionCount,
+        [Const] long[] indices,
+        [Const] long indexCount,
+        [Const, Ref] rcConfig config,
+        [Const] long expectedLayersPerTile,
+        [Const] long maxLayers);
 };
 
 interface NavMeshImporterResult {

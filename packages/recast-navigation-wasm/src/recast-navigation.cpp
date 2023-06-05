@@ -31,11 +31,6 @@ inline float r01()
     return ((float)fastrand()) * (1.f / 32767.f);
 }
 
-// This value specifies how many layers (or "floors") each navmesh tile is expected to have.
-// todo - pass in from params ...
-static const int EXPECTED_LAYERS_PER_TILE = 4;
-static const int MAX_LAYERS = 32;
-
 struct TileCacheData
 {
     unsigned char *data;
@@ -499,7 +494,8 @@ int NavMeshGenerator::rasterizeTileLayers(
     const int maxTiles,
     NavMeshIntermediates &intermediates,
     const float *verts,
-    int nverts)
+    int nverts,
+    const int maxLayers)
 {
     RecastFastLZCompressor comp;
 
@@ -569,13 +565,12 @@ int NavMeshGenerator::rasterizeTileLayers(
         bool success = rcRasterizeTriangles(&ctx, verts, nverts, tris, triareas, ntris, *tileIntermediates.m_solid, tcfg.walkableClimb);
 
         delete[] triareas;
-        
+
         if (!success)
         {
             return 0;
         }
     }
-
 
     // Once all geometry is rasterized, we do initial pass of filtering to
     // remove unwanted overhangs caused by the conservative rasterization
@@ -617,8 +612,8 @@ int NavMeshGenerator::rasterizeTileLayers(
     }
 
     int ntiles = 0;
-    TileCacheData ctiles[MAX_LAYERS];
-    for (int i = 0; i < rcMin(tileIntermediates.m_lset->nlayers, MAX_LAYERS); ++i)
+    TileCacheData ctiles[maxLayers];
+    for (int i = 0; i < rcMin(tileIntermediates.m_lset->nlayers, maxLayers); ++i)
     {
         TileCacheData *tile = &ctiles[ntiles++];
         const rcHeightfieldLayer *layer = &tileIntermediates.m_lset->layers[i];
@@ -904,7 +899,9 @@ NavMeshGeneratorResult *NavMeshGenerator::computeTiledNavMesh(
     const float *verts,
     int nverts,
     const int *tris,
-    int ntris)
+    int ntris,
+    const int expectedLayersPerTile,
+    const int maxLayers)
 {
     NavMeshGeneratorResult *result = new NavMeshGeneratorResult;
     result->success = false;
@@ -933,7 +930,7 @@ NavMeshGeneratorResult *NavMeshGenerator::computeTiledNavMesh(
     tcparams.walkableRadius = cfg.walkableRadius;
     tcparams.walkableClimb = cfg.walkableClimb;
     tcparams.maxSimplificationError = cfg.maxSimplificationError;
-    tcparams.maxTiles = tw * th * EXPECTED_LAYERS_PER_TILE;
+    tcparams.maxTiles = tw * th * expectedLayersPerTile;
     tcparams.maxObstacles = 128;
 
     if (!tileCache->init(tcparams))
@@ -949,7 +946,7 @@ NavMeshGeneratorResult *NavMeshGenerator::computeTiledNavMesh(
     params.tileHeight = cfg.tileSize * cfg.cs;
     // Max tiles and max polys affect how the tile IDs are caculated.
     // There are 22 bits available for identifying a tile and a polygon.
-    int tileBits = rcMin((int)dtIlog2(dtNextPow2(tw * th * EXPECTED_LAYERS_PER_TILE)), 14);
+    int tileBits = rcMin((int)dtIlog2(dtNextPow2(tw * th * expectedLayersPerTile)), 14);
     if (tileBits > 14)
         tileBits = 14;
     int polyBits = 22 - tileBits;
@@ -974,9 +971,9 @@ NavMeshGeneratorResult *NavMeshGenerator::computeTiledNavMesh(
     {
         for (int x = 0; x < tw; ++x)
         {
-            TileCacheData tiles[MAX_LAYERS];
+            TileCacheData tiles[maxLayers];
             memset(tiles, 0, sizeof(tiles));
-            int ntiles = rasterizeTileLayers(navMesh, tileCache, x, y, cfg, tiles, MAX_LAYERS, intermediates, verts, nverts);
+            int ntiles = rasterizeTileLayers(navMesh, tileCache, x, y, cfg, tiles, maxLayers, intermediates, verts, nverts, maxLayers);
             for (int i = 0; i < ntiles; ++i)
             {
                 TileCacheData *tile = &tiles[i];
@@ -1014,7 +1011,9 @@ NavMeshGeneratorResult NavMeshGenerator::generate(
     const int positionCount,
     const int *indices,
     const int indexCount,
-    const rcConfig &config)
+    const rcConfig &config,
+    const int expectedLayersPerTile,
+    const int maxLayers)
 {
     if (m_pmesh)
     {
@@ -1089,7 +1088,7 @@ NavMeshGeneratorResult NavMeshGenerator::generate(
 
     if (config.tileSize)
     {
-        NavMeshGeneratorResult *result = computeTiledNavMesh(cfg, intermediates, verts, nverts, tris, ntris);
+        NavMeshGeneratorResult *result = computeTiledNavMesh(cfg, intermediates, verts, nverts, tris, ntris, expectedLayersPerTile, maxLayers);
         if (!result->success)
         {
             Log("Unable to compute tiled navmesh");
@@ -1386,10 +1385,10 @@ DebugNavMesh NavMesh::getDebugNavMesh()
     return debugNavMesh;
 }
 
-NavMeshCalcTileLocResult NavMesh::calcTileLoc(const float* pos) const
+NavMeshCalcTileLocResult NavMesh::calcTileLoc(const float *pos) const
 {
     NavMeshCalcTileLocResult *result = new NavMeshCalcTileLocResult;
-    
+
     m_navMesh->calcTileLoc(pos, &result->tileX, &result->tileY);
 
     return *result;
@@ -1404,7 +1403,7 @@ NavMeshGetTilesAtResult NavMesh::getTilesAt(const int x, const int y, const int 
 {
     NavMeshGetTilesAtResult *result = new NavMeshGetTilesAtResult;
 
-    const dtMeshTile* tiles[maxTiles];
+    const dtMeshTile *tiles[maxTiles];
 
     result->tileCount = m_navMesh->getTilesAt(x, y, tiles, maxTiles);
     result->tiles = *tiles;
@@ -1417,12 +1416,12 @@ dtTileRef NavMesh::getTileRefAt(int x, int y, int layer) const
     return m_navMesh->getTileRefAt(x, y, layer);
 }
 
-dtTileRef NavMesh::getTileRef(const dtMeshTile* tile) const
+dtTileRef NavMesh::getTileRef(const dtMeshTile *tile) const
 {
     return m_navMesh->getTileRef(tile);
 }
 
-const dtMeshTile* NavMesh::getTileByRef(dtTileRef ref) const
+const dtMeshTile *NavMesh::getTileByRef(dtTileRef ref) const
 {
     return m_navMesh->getTileByRef(ref);
 }
@@ -1436,8 +1435,8 @@ NavMeshGetTileAndPolyByRefResult NavMesh::getTileAndPolyByRef(dtPolyRef ref) con
 {
     NavMeshGetTileAndPolyByRefResult *result = new NavMeshGetTileAndPolyByRefResult;
 
-    const dtMeshTile* tile;
-    const dtPoly* poly;
+    const dtMeshTile *tile;
+    const dtPoly *poly;
 
     m_navMesh->getTileAndPolyByRef(ref, &tile, &poly);
 
@@ -1451,8 +1450,8 @@ NavMeshGetTileAndPolyByRefResult NavMesh::getTileAndPolyByRefUnsafe(dtPolyRef re
 {
     NavMeshGetTileAndPolyByRefResult *result = new NavMeshGetTileAndPolyByRefResult;
 
-    const dtMeshTile* tile;
-    const dtPoly* poly;
+    const dtMeshTile *tile;
+    const dtPoly *poly;
 
     m_navMesh->getTileAndPolyByRefUnsafe(ref, &tile, &poly);
 
@@ -1467,7 +1466,7 @@ bool NavMesh::isValidPolyRef(dtPolyRef ref) const
     return m_navMesh->isValidPolyRef(ref);
 }
 
-dtPolyRef NavMesh::getPolyRefBase(const dtMeshTile* tile) const
+dtPolyRef NavMesh::getPolyRefBase(const dtMeshTile *tile) const
 {
     return m_navMesh->getPolyRefBase(tile);
 }
@@ -1481,7 +1480,7 @@ NavMeshGetOffMeshConnectionPolyEndPointsResult NavMesh::getOffMeshConnectionPoly
     return *result;
 }
 
-const dtOffMeshConnection* NavMesh::getOffMeshConnectionByRef(dtPolyRef ref) const
+const dtOffMeshConnection *NavMesh::getOffMeshConnectionByRef(dtPolyRef ref) const
 {
     return m_navMesh->getOffMeshConnectionByRef(ref);
 }
@@ -1514,12 +1513,12 @@ NavMeshGetPolyAreaResult NavMesh::getPolyArea(dtPolyRef ref) const
     return *result;
 }
 
-int NavMesh::getTileStateSize(const dtMeshTile* tile) const
+int NavMesh::getTileStateSize(const dtMeshTile *tile) const
 {
     return m_navMesh->getTileStateSize(tile);
 }
 
-NavMeshStoreTileStateResult NavMesh::storeTileState(const dtMeshTile* tile, const int maxDataSize) const
+NavMeshStoreTileStateResult NavMesh::storeTileState(const dtMeshTile *tile, const int maxDataSize) const
 {
     NavMeshStoreTileStateResult *result = new NavMeshStoreTileStateResult;
 
@@ -1529,7 +1528,7 @@ NavMeshStoreTileStateResult NavMesh::storeTileState(const dtMeshTile* tile, cons
     return *result;
 }
 
-dtStatus NavMesh::restoreTileState(dtMeshTile* tile, const unsigned char* data, const int maxDataSize)
+dtStatus NavMesh::restoreTileState(dtMeshTile *tile, const unsigned char *data, const int maxDataSize)
 {
     return m_navMesh->restoreTileState(tile, data, maxDataSize);
 }
@@ -1539,7 +1538,7 @@ void NavMesh::destroy()
     dtFreeNavMesh(m_navMesh);
 }
 
-const dtMeshTile* NavMesh::getTile(int i) const
+const dtMeshTile *NavMesh::getTile(int i) const
 {
     const dtNavMesh *navmesh = m_navMesh;
     return navmesh->getTile(i);
