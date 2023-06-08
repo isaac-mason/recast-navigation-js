@@ -1,4 +1,4 @@
-import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
+import { Line, OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import React, { useEffect, useState } from 'react';
 import { NavMesh } from 'recast-navigation';
 import { threeToNavMesh } from 'recast-navigation/three';
@@ -100,7 +100,7 @@ export const ThreePathfinding = () => {
     BufferGeometry | undefined
   >();
 
-  const [pathLine, setPathLine] = useState<Line2 | undefined>();
+  const [path, setPath] = useState<Vector3[]>();
 
   useEffect(() => {
     if (!group) return;
@@ -156,33 +156,12 @@ export const ThreePathfinding = () => {
       startGroupId
     );
 
-    const lineGeometry = new LineGeometry();
-    lineGeometry.setPositions(path.flatMap((p) => [p.x, p.y, p.z]));
-
-    const color = new Color();
-    lineGeometry.setColors(
-      path.flatMap((_, idx) => {
-        color.setHSL(idx / path.length, 1, 0.5);
-        return [color.r, color.g, color.b];
-      })
-    );
-
-    const line = new Line2(
-      lineGeometry,
-      new LineMaterial({
-        linewidth: 10, // px
-        vertexColors: true,
-        resolution: new Vector2(window.innerWidth, window.innerHeight),
-        dashed: true,
-      })
-    );
-
     setNavMeshGeometry(geometry);
-    setPathLine(line);
+    setPath(path);
 
     return () => {
       setNavMeshGeometry(undefined);
-      setPathLine(undefined);
+      setPath(undefined);
     };
   }, [group]);
 
@@ -207,7 +186,7 @@ export const ThreePathfinding = () => {
         </mesh>
       )}
 
-      {pathLine && <primitive object={pathLine} />}
+      {path && <Line points={path} color={'orange'} lineWidth={10} />}
 
       <OrbitControls />
 
