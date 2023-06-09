@@ -2,7 +2,7 @@ import { useControls } from 'leva';
 import { NavMeshConfig } from 'recast-navigation';
 
 export const useNavMeshConfig = (): Partial<NavMeshConfig> =>
-  useControls('Config', {
+  useControls('NavMesh Generation Config', {
     borderSize: {
       value: 0,
       label: 'Border Size',
@@ -62,5 +62,13 @@ export const useNavMeshConfig = (): Partial<NavMeshConfig> =>
     detailSampleMaxError: {
       value: 1,
       label: 'Detail Sample Max Error',
+    },
+    expectedLayersPerTile: {
+      value: 4,
+      label: 'Expected Layers Per Tile',
+    },
+    maxLayers: {
+      value: 32,
+      label: 'Max Layers',
     },
   });

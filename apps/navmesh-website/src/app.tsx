@@ -1,83 +1,41 @@
 import { Environment, OrbitControls, useGLTF } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
-import { button, Leva, useControls } from 'leva';
-import { Suspense, useState } from 'react';
+import { Leva, button, useControls } from 'leva';
+import { Suspense, useEffect, useState } from 'react';
+import { NavMesh } from 'recast-navigation';
 import { NavMeshHelper, threeToNavMesh } from 'recast-navigation/three';
-import styled from 'styled-components';
 import { Group, Mesh, MeshBasicMaterial } from 'three';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 import dungeonGltfUrl from './assets/dungeon.gltf?url';
+import { CenterLayout } from './components/center-layout';
 import { DropZone } from './components/drop-zone';
-import { Loader } from './components/loader';
+import { ErrorMessage } from './components/error-message';
+import { LoadingSpinner } from './components/loading-spinner';
 import { RecastInit } from './components/recast-init';
 import { Viewer } from './components/viewer';
 import { useNavMeshConfig } from './hooks/use-nav-mesh-config';
+import { downloadText } from './utils/download-text';
 import { gltfLoader } from './utils/gltf-loader';
+import { navMeshToGLTF } from './utils/nav-mesh-to-gltf';
 import { readFile } from './utils/read-file';
-
-const Fullscreen = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-
-  width: calc(100% - 4em);
-  height: calc(100vh - 4em);
-  padding: 2em;
-
-  font-weight: 600;
-  line-height: 1.3;
-  text-align: center;
-
-  color: #fff;
-`;
-
-const Error = styled.div`
-  position: absolute;
-  bottom: 0px;
-  left: 50% - 140px;
-  width: 280px;
-  z-index: 1;
-
-  margin: 0.5em;
-  padding: 0.5em;
-
-  background-color: #222;
-  color: #fae864;
-
-  border: 1px solid #fae864;
-  border-radius: 0.2em;
-
-  font-size: 1em;
-  font-weight: 400;
-`;
-
-const FullscreenLoader = () => (
-  <Fullscreen>
-    <Loader />
-  </Fullscreen>
-);
 
 const App = () => {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [gltf, setGtlf] = useState<Group | null>(null);
-  const [debugNavMesh, setDebugNavMesh] = useState<Mesh | null>(null);
+  const [error, setError] = useState<string>();
+  const [gltf, setGtlf] = useState<Group>();
+  const [navMesh, setNavMesh] = useState<NavMesh>();
+  const [debugNavMesh, setDebugNavMesh] = useState<Mesh>();
 
   const exampleGltf = useGLTF(dungeonGltfUrl);
 
   const navMeshConfig = useNavMeshConfig();
 
-  const onDrop = async (acceptedFiles: File[]) => {
+  const onDropFile = async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) {
       return;
     }
 
-    setError(null);
+    setError(undefined);
     setLoading(true);
 
     try {
@@ -92,17 +50,18 @@ const App = () => {
       setError(
         'Something went wrong! Please ensure the file is a valid GLTF / GLB.'
       );
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   const generateNavMesh = async () => {
     if (!gltf) return;
 
-    setError(null);
+    setError(undefined);
     setLoading(true);
-    setDebugNavMesh(null);
+    setNavMesh(undefined);
+    setDebugNavMesh(undefined);
 
     try {
       const meshes: Mesh[] = [];
@@ -115,24 +74,61 @@ const App = () => {
 
       const { navMesh } = threeToNavMesh(meshes, navMeshConfig);
 
-      const navMeshHelper = new NavMeshHelper({
-        navMesh,
-        navMeshMaterial: new MeshBasicMaterial({
-          color: 'orange',
-          transparent: true,
-          opacity: 0.65,
-        }),
-      });
-
-      setDebugNavMesh(navMeshHelper.navMesh);
+      setNavMesh(navMesh);
     } catch (e) {
       setError(
         'Something went wrong generating the nav mesh - ' +
           (e as { message: string }).message
       );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const [navMeshDebugColor, setNavMeshDebugColor] = useState('#ffa500');
+
+  const { wireframe: navMeshDebugWireframe, opacity: navMeshDebugOpacity } =
+    useControls('NavMesh Debug Display', {
+      color: {
+        label: 'Color',
+        value: navMeshDebugColor,
+        onEditEnd: setNavMeshDebugColor,
+      },
+      opacity: {
+        label: 'Opacity',
+        value: 0.65,
+      },
+      wireframe: {
+        label: 'Wireframe',
+        value: false,
+      },
+    });
+
+  useEffect(() => {
+    if (!navMesh) {
+      setDebugNavMesh(undefined);
+      return;
     }
 
-    setLoading(false);
+    const navMeshHelper = new NavMeshHelper({
+      navMesh,
+      navMeshMaterial: new MeshBasicMaterial({
+        transparent: true,
+        color: Number(navMeshDebugColor.replace('#', '0x')),
+        wireframe: navMeshDebugWireframe,
+        opacity: navMeshDebugOpacity,
+      }),
+    });
+
+    setDebugNavMesh(navMeshHelper.navMesh);
+  }, [navMesh, navMeshDebugColor, navMeshDebugWireframe, navMeshDebugOpacity]);
+
+  const exportAsGLTF = async () => {
+    if (!navMesh) return;
+
+    const gltfJson = await navMeshToGLTF(navMesh);
+
+    downloadText(JSON.stringify(gltfJson), 'application/json', 'navmesh.gltf');
   };
 
   useControls(
@@ -141,14 +137,11 @@ const App = () => {
       'Generate NavMesh': button(() => generateNavMesh(), {
         disabled: loading,
       }),
-      'Export as GLTF': button(() => {}, {
-        disabled: true,
-      }),
-      'Export as Recast NavMeshData': button(() => {}, {
-        disabled: true,
+      'Export as GLTF': button(exportAsGLTF, {
+        disabled: !navMesh,
       }),
     },
-    [navMeshConfig, gltf, loading]
+    [navMesh, generateNavMesh, loading]
   );
 
   return (
@@ -166,26 +159,31 @@ const App = () => {
         <OrbitControls />
       </Canvas>
 
-      {loading && <FullscreenLoader />}
+      {loading && (
+        <CenterLayout>
+          <LoadingSpinner />
+        </CenterLayout>
+      )}
 
       {!gltf && !loading && (
-        <Fullscreen>
+        <CenterLayout>
           <DropZone
-            onDrop={onDrop}
+            onDrop={onDropFile}
             selectExample={() => {
               setGtlf(exampleGltf.scene);
             }}
           />
-        </Fullscreen>
+        </CenterLayout>
       )}
 
-      {error && <Error>{error}</Error>}
+      {error && <ErrorMessage>{error}</ErrorMessage>}
 
       <Leva
         hidden={!gltf}
         theme={{
           sizes: {
-            controlWidth: '60px',
+            rootWidth: '350px',
+            controlWidth: '100px',
           },
         }}
       />
@@ -195,7 +193,13 @@ const App = () => {
 
 export default () => (
   <RecastInit>
-    <Suspense fallback={<FullscreenLoader />}>
+    <Suspense
+      fallback={
+        <CenterLayout>
+          <LoadingSpinner />
+        </CenterLayout>
+      }
+    >
       <App />
     </Suspense>
   </RecastInit>
