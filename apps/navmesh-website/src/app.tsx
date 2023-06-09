@@ -97,6 +97,8 @@ const App = () => {
       opacity: {
         label: 'Opacity',
         value: 0.65,
+        min: 0,
+        max: 1,
       },
       wireframe: {
         label: 'Wireframe',
