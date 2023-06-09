@@ -1,13 +1,18 @@
-import { OrbitControls } from '@react-three/drei';
+import { Line, OrbitControls } from '@react-three/drei';
 import { ThreeEvent, useFrame } from '@react-three/fiber';
 import { Crowd, NavMesh, NavMeshQuery } from '@recast-navigation/core';
 import React, { useEffect, useState } from 'react';
 import { threeToNavMesh } from 'recast-navigation/three';
-import { Group, Mesh, MeshStandardMaterial, Vector3 } from 'three';
+import {
+  Group,
+  Mesh,
+  MeshStandardMaterial,
+  Vector3,
+  Vector3Tuple,
+} from 'three';
 import { Debug } from '../common/debug';
 import { NavTestEnvirionment } from '../common/nav-test-environment';
 import { decorators } from '../decorators';
-import { createLineMesh } from '../utils/create-line-mesh';
 
 export default {
   title: 'Crowd / Agents',
@@ -26,7 +31,7 @@ export const SingleAgent = () => {
   const [crowd, setCrowd] = useState<Crowd | undefined>();
 
   const [agentTarget, setAgentTarget] = useState<Vector3 | undefined>();
-  const [agentPathMesh, setAgentPathMesh] = useState<Mesh | undefined>();
+  const [agentPath, setAgentPath] = useState<Vector3Tuple[] | undefined>();
 
   useEffect(() => {
     if (!group) return;
@@ -87,16 +92,16 @@ export const SingleAgent = () => {
       if (!crowd) return;
 
       if (!agentTarget) {
-        setAgentPathMesh(undefined);
+        setAgentPath(undefined);
         return;
       }
 
       const path = [crowd.getAgentPosition(0), ...crowd.getAgentCorners(0)];
 
       if (path.length) {
-        setAgentPathMesh(createLineMesh(path));
+        setAgentPath(path.map((p) => [p.x, p.y, p.z]));
       } else {
-        setAgentPathMesh(undefined);
+        setAgentPath(undefined);
       }
     }, 200);
 
@@ -125,9 +130,9 @@ export const SingleAgent = () => {
 
   return (
     <>
-      {agentPathMesh && (
+      {agentPath && (
         <group position={[0, 0.2, 0]}>
-          <primitive object={agentPathMesh} />
+          <primitive object={agentPath} />
         </group>
       )}
 
@@ -146,6 +151,8 @@ export const SingleAgent = () => {
         </group>
         <Debug navMesh={navMesh} crowd={crowd} agentMaterial={agentMaterial} />
       </group>
+
+      {agentPath && <Line points={agentPath} color={'blue'} lineWidth={10} />}
 
       <OrbitControls makeDefault />
     </>

@@ -91,7 +91,7 @@ export const ThreePathfinding = () => {
     BufferGeometry | undefined
   >();
 
-  const [path, setPath] = useState<Vector3[]>();
+  const [path, setPath] = useState<Vector3[] | null>(null);
 
   useEffect(() => {
     if (!group) return;
@@ -140,19 +140,14 @@ export const ThreePathfinding = () => {
       z: -1.5,
     };
 
-    const path: Vector3[] = pathfinding.findPath(
-      start,
-      end,
-      ZONE,
-      startGroupId
-    );
+    const path = pathfinding.findPath(start, end, ZONE, startGroupId);
 
     setNavMeshGeometry(geometry);
     setPath(path);
 
     return () => {
       setNavMeshGeometry(undefined);
-      setPath(undefined);
+      setPath(null);
     };
   }, [group]);
 
