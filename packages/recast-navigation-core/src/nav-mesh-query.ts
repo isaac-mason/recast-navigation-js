@@ -52,7 +52,7 @@ export class NavMeshQuery {
 
   /**
    * Finds a path from the start position to the end position.
-   *g
+   *
    * @returns an array of Vector3 positions that make up the path, or an empty array if no path was found.
    */
   computePath(start: Vector3, end: Vector3): Vector3[] {
