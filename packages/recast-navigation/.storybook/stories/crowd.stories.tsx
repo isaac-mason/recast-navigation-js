@@ -99,7 +99,7 @@ export const SingleAgent = () => {
       const path = [crowd.getAgentPosition(0), ...crowd.getAgentCorners(0)];
 
       if (path.length) {
-        setAgentPath(path.map((p) => [p.x, p.y, p.z]));
+        setAgentPath(path.map((p) => [p.x, p.y + 0.1, p.z]));
       } else {
         setAgentPath(undefined);
       }
