@@ -4,11 +4,9 @@ import { createHtmlPlugin } from 'vite-plugin-html';
 
 // https://vitejs.dev/config/
 export default defineConfig(() => {
-  let analyticsScript: string;
-
   const gtagId = process.env.VITE_GTAG_ID;
 
-  analyticsScript = gtagId
+  const analyticsScript = gtagId
     ? `
     <script async src="https://www.googletagmanager.com/gtag/js?id=${gtagId}"></script>
     <script>
@@ -21,7 +19,12 @@ export default defineConfig(() => {
       gtag('config', '${gtagId}');
     </script>
     `
-    : '<script>window.dataLayer = [];</script>';
+    : `
+    <script>
+      window.dataLayer = [];
+      function gtag() { dataLayer.push(arguments); }
+    </script>
+    `;
 
   return {
     plugins: [
