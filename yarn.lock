@@ -3240,7 +3240,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@recast-navigation/wasm@workspace:packages/recast-navigation-wasm"
   dependencies:
-    webidl-dts-gen: ^1.3.0
+    webidl-dts-gen: ^1.3.1
   languageName: unknown
   linkType: soft
 
@@ -15414,24 +15414,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webidl-dts-gen@npm:^1.3.0":
-  version: 1.3.0
-  resolution: "webidl-dts-gen@npm:1.3.0"
+"webidl-dts-gen@npm:^1.3.1":
+  version: 1.3.1
+  resolution: "webidl-dts-gen@npm:1.3.1"
   dependencies:
     jsdom: ^22.0.0
     typescript: ^5.0.4
-    webidl2: ^24.2.2
-    yargs: ^17.7.1
+    webidl2: ^24.3.0
+    yargs: ^17.7.2
   bin:
     webidl-dts-gen: dist/cli.js
-  checksum: f12c76c88ac3f3ee82842b027edd14372f0722b894acd2729ded3308ce43c9b02f85b59f8515209a950f129ae3a9381533d813959edfe854bdd36798fb7ca4dd
+  checksum: ca9d6ec98941de50a96a42009ce36864767a987a8365f37decc5dc8c7193033c6800c2c7a4bac0083ad01289532c58bb550b17abca05d32bc68c040003ca3e36
   languageName: node
   linkType: hard
 
-"webidl2@npm:^24.2.2":
-  version: 24.2.2
-  resolution: "webidl2@npm:24.2.2"
-  checksum: 0ad23956b8e977f91f7497f6e7942c76a41069e77f0ec2c89a89b70496b7e4e34c1af703666aef8f6041b716383c35005a76a2740be81030d87135ea164908aa
+"webidl2@npm:^24.3.0":
+  version: 24.3.0
+  resolution: "webidl2@npm:24.3.0"
+  checksum: 9161f73df0d063d51b0865240ed6fb1e2ba9e815a1ac691129d4c02401755ec4022541e42add7ff6f54b9bfa2b19ebf00d93dd466f1db3d5aa9123c64fcb7e63
   languageName: node
   linkType: hard
 
@@ -15806,6 +15806,21 @@ __metadata:
     y18n: ^5.0.5
     yargs-parser: ^21.1.1
   checksum: 3d8a43c336a4942bc68080768664aca85c7bd406f018bad362fd255c41c8f4e650277f42fd65d543fce99e084124ddafee7bbfc1a5c6a8fda4cec78609dcf8d4
+  languageName: node
+  linkType: hard
+
+"yargs@npm:^17.7.2":
+  version: 17.7.2
+  resolution: "yargs@npm:17.7.2"
+  dependencies:
+    cliui: ^8.0.1
+    escalade: ^3.1.1
+    get-caller-file: ^2.0.5
+    require-directory: ^2.1.1
+    string-width: ^4.2.3
+    y18n: ^5.0.5
+    yargs-parser: ^21.1.1
+  checksum: 73b572e863aa4a8cbef323dd911d79d193b772defd5a51aab0aca2d446655216f5002c42c5306033968193bdbf892a7a4c110b0d77954a7fdf563e653967b56a
   languageName: node
   linkType: hard
 
