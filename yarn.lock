@@ -4842,7 +4842,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:^18.0.28":
+"@types/react@npm:*":
   version: 18.0.28
   resolution: "@types/react@npm:18.0.28"
   dependencies:
@@ -4861,6 +4861,17 @@ __metadata:
     "@types/scheduler": "*"
     csstype: ^3.0.2
   checksum: 4fbd2b2b6a26378bdfde121081a6406ec2d39e4ba87ea5f6897ab7bb2198713165e6fd703ad4ed7ba1d4f23ef54a4c9f108f3105c7ed8e136411ee6bdebc5669
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:^18.2.11":
+  version: 18.2.11
+  resolution: "@types/react@npm:18.2.11"
+  dependencies:
+    "@types/prop-types": "*"
+    "@types/scheduler": "*"
+    csstype: ^3.0.2
+  checksum: 3dcc326ea87468a06079b6c3a9e0f9a98a8438526aba81d29820954e2cb343b6beb8ca3d6a212878797a909fbd3199d07a4d819cd3efbbdba8c22039c06f1ed8
   languageName: node
   linkType: hard
 
@@ -11525,7 +11536,7 @@ __metadata:
   dependencies:
     "@react-three/drei": ^9.72.1
     "@react-three/fiber": ^8.12.0
-    "@types/react": ^18.0.28
+    "@types/react": ^18.2.11
     "@types/react-dom": ^18.0.11
     "@types/three": ^0.150.0
     "@vitejs/plugin-react": ^3.1.0
@@ -13124,7 +13135,7 @@ __metadata:
     "@storybook/addon-storysource": ^7.0.2
     "@storybook/react": ^7.0.2
     "@storybook/react-vite": ^7.0.2
-    "@types/react": ^18.0.28
+    "@types/react": ^18.2.11
     "@types/react-dom": ^18.0.11
     "@types/three": ^0.150.0
     babel-loader: ^8.3.0
@@ -15464,7 +15475,7 @@ __metadata:
   dependencies:
     "@react-three/drei": ^9.72.1
     "@react-three/fiber": ^8.12.0
-    "@types/react": ^18.0.28
+    "@types/react": ^18.2.11
     "@types/react-dom": ^18.0.11
     "@types/three": ^0.150.0
     "@vitejs/plugin-react": ^3.1.0
