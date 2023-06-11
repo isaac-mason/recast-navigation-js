@@ -131,6 +131,8 @@ const App = () => {
     const gltfJson = await navMeshToGLTF(navMesh);
 
     downloadText(JSON.stringify(gltfJson), 'application/json', 'navmesh.gltf');
+
+    gtag({ event: 'export_as_gltf' });
   };
 
   useControls(
