@@ -74,7 +74,7 @@
     "@storybook/addon-mdx-gfm": "^7.0.2",
     "@storybook/addon-storysource": "^7.0.2",
     "@storybook/react": "^7.0.2",
-    "@storybook/react-vite": "^7.0.2",
+    "@storybook/react-vite": "^7.0.20",
     "@types/react": "^18.2.11",
     "@types/react-dom": "^18.0.11",
     "@types/three": "^0.150.0",
