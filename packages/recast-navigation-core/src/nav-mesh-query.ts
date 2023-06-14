@@ -1,4 +1,5 @@
 import type R from '@recast-navigation/wasm';
+import { finalizer } from './finalizer';
 import { NavMesh } from './nav-mesh';
 import { array, vec3, Vector3 } from './utils';
 import { Wasm } from './wasm';
@@ -15,39 +16,45 @@ export type NavMeshQueryParams = {
 export class NavMeshQuery {
   raw: R.NavMeshQuery;
 
+  private tmpVec1 = new Wasm.Recast.Vec3();
+  private tmpVec2 = new Wasm.Recast.Vec3();
+
   constructor({ navMesh, maxNodes = 2048 }: NavMeshQueryParams) {
     this.raw = new Wasm.Recast.NavMeshQuery(navMesh.raw, maxNodes);
+
+    finalizer.register(this);
   }
 
   /**
    * Returns the closest point on the NavMesh to the given position.
    */
   getClosestPoint(position: Vector3): Vector3 {
-    const positionRaw = vec3.toRaw(position);
-    const closestPoint = this.raw.getClosestPoint(positionRaw);
+    const positionRaw = vec3.toRaw(position, this.tmpVec1);
+    const closestPointRaw = this.raw.getClosestPoint(positionRaw)
 
-    return vec3.fromRaw(closestPoint);
+    return vec3.fromRaw(closestPointRaw, true);
   }
 
   /**
    * Returns a random point on the NavMesh within the given radius of the given position.
    */
   getRandomPointAround(position: Vector3, radius: number): Vector3 {
-    const positionRaw = vec3.toRaw(position);
-    const randomPoint = this.raw.getRandomPointAround(positionRaw, radius);
+    const positionRaw = vec3.toRaw(position, this.tmpVec1);
 
-    return vec3.fromRaw(randomPoint);
+    return vec3.fromRaw(
+      this.raw.getRandomPointAround(positionRaw, radius),
+      true
+    );
   }
 
   /**
    * Compute the final position from a segment made of destination-position
    */
   moveAlong(position: Vector3, destination: Vector3): Vector3 {
-    const positionRaw = vec3.toRaw(position);
-    const destinationRaw = vec3.toRaw(destination);
-    const movedPosition = this.raw.moveAlong(positionRaw, destinationRaw);
+    const positionRaw = vec3.toRaw(position, this.tmpVec1);
+    const destinationRaw = vec3.toRaw(destination, this.tmpVec2);
 
-    return { x: movedPosition.x, y: movedPosition.y, z: movedPosition.z };
+    return vec3.fromRaw(this.raw.moveAlong(positionRaw, destinationRaw), true);
   }
 
   /**
@@ -56,20 +63,20 @@ export class NavMeshQuery {
    * @returns an array of Vector3 positions that make up the path, or an empty array if no path was found.
    */
   computePath(start: Vector3, end: Vector3): Vector3[] {
-    const startRaw = vec3.toRaw(start);
-    const endRaw = vec3.toRaw(end);
+    const startRaw = vec3.toRaw(start, this.tmpVec1);
+    const endRaw = vec3.toRaw(end, this.tmpVec2);
     const pathRaw = this.raw.computePath(startRaw, endRaw);
 
-    return array((i) => pathRaw.getPoint(i), pathRaw.getPointCount()).map(vec3.fromRaw);
+    return array((i) => pathRaw.getPoint(i), pathRaw.getPointCount()).map(
+      (vec) => vec3.fromRaw(vec)
+    );
   }
 
   /**
    * Gets the Bounding box extent specified by setDefaultQueryExtent
    */
   getDefaultQueryExtent(): Vector3 {
-    const extentRaw = this.raw.getDefaultQueryExtent();
-
-    return { x: extentRaw.x, y: extentRaw.y, z: extentRaw.z };
+    return vec3.fromRaw(this.raw.getDefaultQueryExtent(), true);
   }
 
   /**
@@ -78,7 +85,7 @@ export class NavMeshQuery {
    * The default is (1,1,1)
    */
   setDefaultQueryExtent(extent: Vector3): void {
-    const extentRaw = vec3.toRaw(extent);
+    const extentRaw = vec3.toRaw(extent, this.tmpVec1);
     this.raw.setDefaultQueryExtent(extentRaw);
   }
 
@@ -86,6 +93,7 @@ export class NavMeshQuery {
    * Destroys the NavMeshQuery instance
    */
   destroy(): void {
+    finalizer.unregister(this);
     this.raw.destroy();
   }
 }

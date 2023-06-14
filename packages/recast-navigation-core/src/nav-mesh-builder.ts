@@ -1,5 +1,7 @@
 import type R from '@recast-navigation/wasm';
 import { Wasm } from './wasm';
+import { emscripten } from './utils';
+import { finalizer } from './finalizer';
 
 export type CreateNavMeshDataParams = {
   verts: number[];
@@ -42,6 +44,8 @@ export class NavMeshBuilder {
 
   constructor() {
     this.raw = new Wasm.Recast.NavMeshBuilder();
+
+    finalizer.register(this);
   }
 
   createNavMeshData(params: CreateNavMeshDataParams): CreateNavMeshDataResult {
@@ -79,6 +83,16 @@ export class NavMeshBuilder {
     navMeshCreateParams.set_ch(params.ch);
     navMeshCreateParams.set_buildBvTree(params.buildBvTree);
 
-    return this.raw.createNavMeshData(navMeshCreateParams);
+    const createNavMeshDataResult =
+      this.raw.createNavMeshData(navMeshCreateParams);
+
+    emscripten.destroy(navMeshCreateParams);
+
+    return createNavMeshDataResult;
+  }
+
+  destroy(): void {
+    finalizer.unregister(this);
+    emscripten.destroy(this.raw);
   }
 }

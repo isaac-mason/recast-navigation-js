@@ -2,6 +2,8 @@ import type R from '@recast-navigation/wasm';
 import { NavMesh } from './nav-mesh';
 import { TileCache } from './tile-cache';
 import { Wasm } from './wasm';
+import { emscripten } from './utils';
+import { finalizer } from './finalizer';
 
 export type NavMeshConfig = {
   /**
@@ -156,6 +158,8 @@ export class NavMeshGenerator {
 
   constructor() {
     this.raw = new Wasm.Recast.NavMeshGenerator();
+
+    finalizer.register(this);
   }
 
   /**
@@ -206,5 +210,10 @@ export class NavMeshGenerator {
     const tileCache = new TileCache(rawTileCache);
 
     return { success, navMesh, tileCache };
+  }
+
+  destroy(): void {
+    finalizer.unregister(this);
+    emscripten.destroy(this.raw);
   }
 }

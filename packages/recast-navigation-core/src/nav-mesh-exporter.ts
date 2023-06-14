@@ -2,12 +2,16 @@ import type R from '@recast-navigation/wasm';
 import { NavMesh } from './nav-mesh';
 import { TileCache } from './tile-cache';
 import { Wasm } from './wasm';
+import { emscripten } from './utils';
+import { finalizer } from './finalizer';
 
 export class NavMeshExporter {
   raw: R.NavMeshExporter;
 
   constructor() {
     this.raw = new Wasm.Recast.NavMeshExporter();
+
+    finalizer.register(this);
   }
 
   /**
@@ -28,5 +32,10 @@ export class NavMeshExporter {
     this.raw.freeNavMeshExport(navMeshExport);
 
     return data;
+  }
+
+  destroy(): void {
+    finalizer.unregister(this);
+    emscripten.destroy(this.raw);
   }
 }

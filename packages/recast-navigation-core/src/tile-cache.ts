@@ -8,6 +8,7 @@ import {
 } from './obstacle';
 import { vec3, Vector3 } from './utils';
 import { Wasm } from './wasm';
+import { finalizer } from './finalizer';
 
 export type TileCacheParams = {
   orig: ReadonlyArray<number>;
@@ -35,6 +36,8 @@ export class TileCache {
 
   constructor(raw?: R.TileCache) {
     this.raw = raw ?? new Wasm.Recast.TileCache();
+
+    finalizer.register(this);
   }
 
   /**
@@ -126,5 +129,10 @@ export class TileCache {
 
     this.obstacles.delete(ref);
     this.raw.removeObstacle(ref);
+  }
+
+  destroy(): void {
+    finalizer.unregister(this);
+    this.raw.destroy();
   }
 }

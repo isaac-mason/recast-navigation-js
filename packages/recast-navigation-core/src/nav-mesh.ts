@@ -1,4 +1,5 @@
 import type R from '@recast-navigation/wasm';
+import { finalizer } from './finalizer';
 import { array, emscripten, vec3, Vector3 } from './utils';
 import { Wasm } from './wasm';
 
@@ -313,6 +314,8 @@ export class NavMeshGetTilesAtResult {
 
   constructor(raw: R.NavMeshGetTilesAtResult) {
     this.raw = raw;
+
+    finalizer.register(this);
   }
 
   tiles(index: number): dtMeshTile {
@@ -322,6 +325,11 @@ export class NavMeshGetTilesAtResult {
   tileCount(): number {
     return this.raw.tileCount;
   }
+
+  destroy(): void {
+    finalizer.unregister(this);
+    emscripten.destroy(this.raw);
+  }
 }
 
 export class NavMeshAddTileResult {
@@ -329,6 +337,8 @@ export class NavMeshAddTileResult {
 
   constructor(raw: R.NavMeshAddTileResult) {
     this.raw = raw;
+
+    finalizer.register(this);
   }
 
   tileRef(): number {
@@ -338,6 +348,11 @@ export class NavMeshAddTileResult {
   status(): number {
     return this.raw.status;
   }
+
+  destroy(): void {
+    finalizer.unregister(this);
+    emscripten.destroy(this.raw);
+  }
 }
 
 export class NavMeshRemoveTileResult {
@@ -345,6 +360,8 @@ export class NavMeshRemoveTileResult {
 
   constructor(raw: R.NavMeshRemoveTileResult) {
     this.raw = raw;
+
+    finalizer.register(this);
   }
 
   data(): number[] {
@@ -354,6 +371,11 @@ export class NavMeshRemoveTileResult {
   dataSize(): number {
     return this.raw.dataSize;
   }
+
+  destroy(): void {
+    finalizer.unregister(this);
+    emscripten.destroy(this.raw);
+  }
 }
 
 export class NavMeshCalcTileLocResult {
@@ -361,6 +383,8 @@ export class NavMeshCalcTileLocResult {
 
   constructor(raw: R.NavMeshCalcTileLocResult) {
     this.raw = raw;
+
+    finalizer.register(this);
   }
 
   tileX(): number {
@@ -370,6 +394,11 @@ export class NavMeshCalcTileLocResult {
   tileY(): number {
     return this.raw.tileY;
   }
+
+  destroy(): void {
+    finalizer.unregister(this);
+    emscripten.destroy(this.raw);
+  }
 }
 
 export class NavMeshGetTileAndPolyByRefResult {
@@ -377,6 +406,8 @@ export class NavMeshGetTileAndPolyByRefResult {
 
   constructor(raw: R.NavMeshGetTileAndPolyByRefResult) {
     this.raw = raw;
+
+    finalizer.register(this);
   }
 
   tile(): dtMeshTile {
@@ -390,6 +421,11 @@ export class NavMeshGetTileAndPolyByRefResult {
   status(): number {
     return this.raw.status;
   }
+
+  destroy(): void {
+    finalizer.unregister(this);
+    emscripten.destroy(this.raw);
+  }
 }
 
 export class NavMeshGetOffMeshConnectionPolyEndPointsResult {
@@ -397,6 +433,8 @@ export class NavMeshGetOffMeshConnectionPolyEndPointsResult {
 
   constructor(raw: R.NavMeshGetOffMeshConnectionPolyEndPointsResult) {
     this.raw = raw;
+
+    finalizer.register(this);
   }
 
   status(): number {
@@ -410,6 +448,11 @@ export class NavMeshGetOffMeshConnectionPolyEndPointsResult {
   endPos(): Vector3 {
     return vec3.fromArray(array((i) => this.raw.get_endPos(i), 3));
   }
+
+  destroy(): void {
+    finalizer.unregister(this);
+    emscripten.destroy(this.raw);
+  }
 }
 
 export class NavMeshGetPolyFlagsResult {
@@ -417,6 +460,8 @@ export class NavMeshGetPolyFlagsResult {
 
   constructor(raw: R.NavMeshGetPolyFlagsResult) {
     this.raw = raw;
+
+    finalizer.register(this);
   }
 
   flags(): number {
@@ -426,6 +471,11 @@ export class NavMeshGetPolyFlagsResult {
   status(): number {
     return this.raw.status;
   }
+
+  destroy(): void {
+    finalizer.unregister(this);
+    emscripten.destroy(this.raw);
+  }
 }
 
 export class NavMeshGetPolyAreaResult {
@@ -433,6 +483,8 @@ export class NavMeshGetPolyAreaResult {
 
   constructor(raw: R.NavMeshGetPolyAreaResult) {
     this.raw = raw;
+
+    finalizer.register(this);
   }
 
   area(): number {
@@ -442,6 +494,11 @@ export class NavMeshGetPolyAreaResult {
   status(): number {
     return this.raw.status;
   }
+
+  destroy(): void {
+    finalizer.unregister(this);
+    emscripten.destroy(this.raw);
+  }
 }
 
 export class NavMeshStoreTileStateResult {
@@ -449,6 +506,8 @@ export class NavMeshStoreTileStateResult {
 
   constructor(raw: R.NavMeshStoreTileStateResult) {
     this.raw = raw;
+
+    finalizer.register(this);
   }
 
   data(): number[] {
@@ -458,17 +517,20 @@ export class NavMeshStoreTileStateResult {
   dataSize(): number {
     return this.raw.dataSize;
   }
+
+  destroy(): void {
+    finalizer.unregister(this);
+    emscripten.destroy(this.raw);
+  }
 }
 
 export class DebugNavMesh {
-  raw: R.DebugNavMesh;
-
   positions: number[];
 
   indices: number[];
 
-  constructor(debugNavMesh: R.DebugNavMesh) {
-    this.raw = debugNavMesh;
+  constructor(navMesh: NavMesh) {
+    const debugNavMesh = navMesh.raw.getDebugNavMesh();
 
     let tri: number;
     let pt: number;
@@ -506,6 +568,7 @@ export class NavMesh {
 
   constructor(raw?: R.NavMesh) {
     this.raw = raw ?? new Wasm.Recast.NavMesh();
+    finalizer.register(this);
   }
 
   /**
@@ -797,13 +860,15 @@ export class NavMesh {
    * Returns a DebugNavMesh that can be used to visualize the NavMesh.
    */
   getDebugNavMesh(): DebugNavMesh {
-    return new DebugNavMesh(this.raw.getDebugNavMesh());
+    return new DebugNavMesh(this);
   }
 
   /**
    * Destroys the NavMesh.
    */
   destroy(): void {
-    this.raw?.destroy();
+    this.raw.destroy();
+    finalizer.unregister(this);
+    emscripten.destroy(this.raw);
   }
 }
