@@ -11432,7 +11432,7 @@ __metadata:
     styled-components: ^5.3.9
     suspend-react: ^0.0.9
     three: ^0.150.1
-    tunnel-rat: ^0.1.1
+    tunnel-rat: ^0.1.2
     typescript: ^5.1.3
     vite: ^4.2.0
     vite-plugin-html: ^3.2.0
@@ -14697,12 +14697,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tunnel-rat@npm:^0.1.1":
-  version: 0.1.1
-  resolution: "tunnel-rat@npm:0.1.1"
+"tunnel-rat@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "tunnel-rat@npm:0.1.2"
   dependencies:
-    zustand: ^4.1.0
-  checksum: dbfe6316d1fc06e2d18668d248587502dd0ca692020c79fdb5d73baeb64391f9d656d28b11d0045869bb218ed2bbc53188dfcddb79650944d5a07449517a3236
+    zustand: ^4.3.2
+  checksum: 9d5975d589db705e7707dcfd2bdb9f1773b014179a7e56a9cd5aaa1824ee28143efcfea30e826f3fccc0a9cb7a8631b4fd490a5849a20893e37e93e122bd9430
   languageName: node
   linkType: hard
 
@@ -15967,24 +15967,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zustand@npm:^4.1.0":
-  version: 4.3.6
-  resolution: "zustand@npm:4.3.6"
-  dependencies:
-    use-sync-external-store: 1.2.0
-  peerDependencies:
-    immer: ">=9.0"
-    react: ">=16.8"
-  peerDependenciesMeta:
-    immer:
-      optional: true
-    react:
-      optional: true
-  checksum: 4d3cec03526f04ff3de6dc45b6f038c47f091836af9660fbf5f682cae1628221102882df20e4048dfe699a43f67424e5d6afc1116f3838a80eea5dd4f95ddaed
-  languageName: node
-  linkType: hard
-
-"zustand@npm:^4.3.8":
+"zustand@npm:^4.3.2, zustand@npm:^4.3.8":
   version: 4.3.8
   resolution: "zustand@npm:4.3.8"
   dependencies:
