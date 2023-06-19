@@ -752,7 +752,7 @@ NavMeshGeneratorResult *NavMeshGenerator::computeSoloNavMesh(
     }
 
     // Partition the walkable surface into simple regions without holes.
-    if (!rcBuildRegions(&ctx, *intermediates.m_chf, 0, cfg.minRegionArea, cfg.mergeRegionArea))
+    if (!rcBuildRegions(&ctx, *intermediates.m_chf, cfg.borderSize, cfg.minRegionArea, cfg.mergeRegionArea))
     {
         Log("buildNavigation: Could not build regions.");
         return result;
