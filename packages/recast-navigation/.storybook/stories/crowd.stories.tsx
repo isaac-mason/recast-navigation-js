@@ -88,14 +88,12 @@ export const SingleAgent = () => {
   useEffect(() => {
     if (!crowd) return;
 
+    if (!agentTarget) {
+      setAgentPath(undefined);
+      return;
+    }
+
     const interval = setInterval(() => {
-      if (!crowd) return;
-
-      if (!agentTarget) {
-        setAgentPath(undefined);
-        return;
-      }
-
       const path = [crowd.getAgentPosition(0), ...crowd.getAgentCorners(0)];
 
       if (path.length) {
@@ -152,7 +150,7 @@ export const SingleAgent = () => {
         <Debug navMesh={navMesh} crowd={crowd} agentMaterial={agentMaterial} />
       </group>
 
-      {agentPath && <Line points={agentPath} color={'blue'} lineWidth={10} />}
+      {agentPath && <Line points={agentPath} color="blue" lineWidth={10} />}
 
       <OrbitControls makeDefault />
     </>

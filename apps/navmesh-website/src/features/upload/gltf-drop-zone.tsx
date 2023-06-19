@@ -1,7 +1,7 @@
 import { useDropzone } from 'react-dropzone';
 import styled from 'styled-components';
 
-const DropZoneWrapper = styled.div`
+const GltfDropZoneWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -26,12 +26,12 @@ const DropZoneWrapper = styled.div`
   }
 `;
 
-export type DropZoneProps = {
+export type GltfDropZoneProps = {
   onDrop: (acceptedFiles: File[]) => void;
   selectExample: () => void;
 };
 
-export const DropZone = ({ onDrop, selectExample }: DropZoneProps) => {
+export const GltfDropZone = ({ onDrop, selectExample }: GltfDropZoneProps) => {
   const { getRootProps, getInputProps, isDragActive, fileRejections } =
     useDropzone({
       onDrop,
@@ -39,7 +39,7 @@ export const DropZone = ({ onDrop, selectExample }: DropZoneProps) => {
     });
 
   return (
-    <DropZoneWrapper {...getRootProps()}>
+    <GltfDropZoneWrapper {...getRootProps()}>
       <input {...getInputProps()} />
 
       {isDragActive ? (
@@ -62,6 +62,6 @@ export const DropZone = ({ onDrop, selectExample }: DropZoneProps) => {
       {fileRejections.length ? (
         <p>Only .gltf or .glb files are accepted</p>
       ) : null}
-    </DropZoneWrapper>
+    </GltfDropZoneWrapper>
   );
 };

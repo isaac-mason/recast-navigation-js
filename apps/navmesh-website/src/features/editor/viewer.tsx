@@ -7,13 +7,12 @@ export type ViewerProps = {
 };
 
 export const Viewer = ({ group }: ViewerProps) => {
-  const scene = useThree((state) => state.scene);
   const camera = useThree((state) => state.camera as PerspectiveCamera);
 
   useEffect(() => {
     const box = new Box3();
 
-    scene.traverse((obj) => {
+    group.traverse((obj) => {
       if (obj instanceof Mesh) {
         box.expandByObject(obj);
       }
@@ -21,14 +20,10 @@ export const Viewer = ({ group }: ViewerProps) => {
 
     const center = box.getCenter(new Vector3());
 
-    const initial = [center.x * 3, box.max.y * 2, center.z * 3] as const;
+    const initial = [center.x, box.max.y * 1.5, center.z] as const;
 
     camera.position.set(...initial);
-  }, [group, scene]);
+  }, [group]);
 
-  return (
-    <>
-      <primitive object={group} />
-    </>
-  );
+  return <primitive object={group} />;
 };
