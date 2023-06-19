@@ -1,5 +1,11 @@
 # @recast-navigation/core
 
+## 0.1.2
+
+### Patch Changes
+
+- 273c456: feat: add destroy() methods to classes that need cleanup, address vec3 leaks
+
 ## 0.1.1
 
 ### Patch Changes
