@@ -1,5 +1,12 @@
 # @recast-navigation/wasm
 
+## 0.1.2
+
+### Patch Changes
+
+- 273c456: feat: add destroy() methods to classes that need cleanup, address vec3 leaks
+- 6635150: fix: was not passing 'cfg.borderSize' to 'rcBuildRegions'
+
 ## 0.1.1
 
 ### Patch Changes
