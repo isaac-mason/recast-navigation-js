@@ -1,14 +1,16 @@
-import { OrbitControls } from '@react-three/drei';
+import { OrbitControls, PivotControls } from '@react-three/drei';
 import { ThreeEvent, useFrame } from '@react-three/fiber';
 import {
+  BoxObstacle,
   Crowd,
+  CylinderObstacle,
   NavMesh,
   NavMeshQuery,
   TileCache,
 } from '@recast-navigation/core';
-import React, { useEffect, useState } from 'react';
-import { threeToNavMesh } from 'recast-navigation/three';
-import { Group, Mesh, MeshBasicMaterial } from 'three';
+import React, { useEffect, useRef, useState } from 'react';
+import { threeToTiledNavMesh } from 'recast-navigation/three';
+import { Group, Mesh, MeshBasicMaterial, Object3D, Vector3 } from 'three';
 import { Debug } from '../common/debug';
 import { decorators } from '../decorators';
 
@@ -35,6 +37,12 @@ export const Obstacles = () => {
   const [tileCache, setTileCache] = useState<TileCache | undefined>();
   const [crowd, setCrowd] = useState<Crowd | undefined>();
 
+  const boxObstacle = useRef<BoxObstacle | undefined>();
+  const cylinderObstacle = useRef<CylinderObstacle | undefined>();
+
+  const boxObstacleTarget = useRef<Object3D | null>(null!);
+  const cylinderObstacleTarget = useRef<Object3D | null>(null!);
+
   useEffect(() => {
     if (!group) return;
 
@@ -46,15 +54,11 @@ export const Obstacles = () => {
       }
     });
 
-    const { navMesh, tileCache } = threeToNavMesh(meshes, {
+    const { navMesh, tileCache } = threeToTiledNavMesh(meshes, {
       ch: 0.05,
       cs: 0.1,
       tileSize: 32,
     });
-
-    tileCache.addBoxObstacle({ x: -2, y: 1, z: 1 }, { x: 1, y: 1, z: 1 }, 0.2);
-
-    tileCache.addCylinderObstacle({ x: 1.5, y: 0, z: -1.5 }, 1, 0.5);
 
     let upToDate = false;
     while (!upToDate) {
@@ -97,7 +101,33 @@ export const Obstacles = () => {
   }, [group]);
 
   useFrame((_, delta) => {
-    if (!crowd) return;
+    if (!crowd || !navMesh || !tileCache) return;
+
+    if (boxObstacle.current) {
+      tileCache.removeObstacle(boxObstacle.current);
+    }
+
+    if (cylinderObstacle.current) {
+      tileCache.removeObstacle(cylinderObstacle.current);
+    }
+
+    boxObstacle.current = tileCache.addBoxObstacle(
+      boxObstacleTarget.current!.getWorldPosition(new Vector3()),
+      { x: 1, y: 1, z: 1 },
+      0.2
+    );
+
+    cylinderObstacle.current = tileCache.addCylinderObstacle(
+      cylinderObstacleTarget.current!.getWorldPosition(new Vector3()),
+      1,
+      0.5
+    );
+
+    let upToDate = false;
+    while (!upToDate) {
+      const result = tileCache.update(navMesh);
+      upToDate = result.upToDate;
+    }
 
     crowd.update(delta);
   });
@@ -115,11 +145,27 @@ export const Obstacles = () => {
       <group onClick={onClick}>
         <group ref={setGroup}>
           <mesh rotation-x={-Math.PI / 2}>
-            <planeGeometry args={[10, 10]} />
+            <planeGeometry args={[20, 20]} />
             <meshStandardMaterial color="#ccc" />
           </mesh>
         </group>
       </group>
+
+      <PivotControls
+        offset={[-2, 1, 1]}
+        disableRotations
+        activeAxes={[true, false, true]}
+      >
+        <object3D ref={boxObstacleTarget} position={[-2, 1, 1]} />
+      </PivotControls>
+
+      <PivotControls
+        offset={[1.5, 0, -1.5]}
+        disableRotations
+        activeAxes={[true, false, true]}
+      >
+        <object3D ref={cylinderObstacleTarget} position={[1.5, 0, -1.5]} />
+      </PivotControls>
 
       <Debug
         navMesh={navMesh}
@@ -129,7 +175,7 @@ export const Obstacles = () => {
         crowd={crowd}
       />
 
-      <OrbitControls />
+      <OrbitControls makeDefault />
     </>
   );
 };

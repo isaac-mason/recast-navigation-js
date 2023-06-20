@@ -102,7 +102,7 @@ export const Debug = ({
 
     const interval = setInterval(() => {
       tileCacheHelper.updateObstacles();
-    }, 1000);
+    }, 100);
 
     return () => {
       clearInterval(interval);

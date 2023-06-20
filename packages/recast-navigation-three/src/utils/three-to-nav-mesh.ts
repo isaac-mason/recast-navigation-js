@@ -1,7 +1,9 @@
 import {
-  NavMeshConfig,
   NavMeshGenerator,
-  NavMeshGeneratorResult,
+  SoloNavMeshConfig,
+  SoloNavMeshGeneratorResult,
+  TiledNavMeshConfig,
+  TiledNavMeshGeneratorResult,
 } from '@recast-navigation/core';
 import { BufferAttribute, Mesh, Vector3 } from 'three';
 
@@ -82,13 +84,36 @@ export const getPositionsAndIndices = (
   return [mergedPositions, mergedIndices];
 };
 
-export const threeToNavMesh = (
+export const threeToSoloNavMesh = (
   meshes: Mesh[],
-  navMeshConfig: Partial<NavMeshConfig> = {}
-): NavMeshGeneratorResult => {
+  navMeshConfig: Partial<SoloNavMeshConfig> = {},
+  keepIntermediates = false
+): SoloNavMeshGeneratorResult => {
   const [positions, indices] = getPositionsAndIndices(meshes);
 
   const navMeshGenerator = new NavMeshGenerator();
 
-  return navMeshGenerator.generate(positions, indices, navMeshConfig);
+  return navMeshGenerator.generateSoloNavMesh(
+    positions,
+    indices,
+    navMeshConfig,
+    keepIntermediates
+  );
+};
+
+export const threeToTiledNavMesh = (
+  meshes: Mesh[],
+  navMeshConfig: Partial<TiledNavMeshConfig> = {},
+  keepIntermediates = false
+): TiledNavMeshGeneratorResult => {
+  const [positions, indices] = getPositionsAndIndices(meshes);
+
+  const navMeshGenerator = new NavMeshGenerator();
+
+  return navMeshGenerator.generateTiledNavMesh(
+    positions,
+    indices,
+    navMeshConfig,
+    keepIntermediates
+  );
 };

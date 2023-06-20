@@ -1,7 +1,7 @@
 import { Line, OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import React, { useEffect, useState } from 'react';
 import { NavMesh } from 'recast-navigation';
-import { threeToNavMesh } from 'recast-navigation/three';
+import { threeToTiledNavMesh } from 'recast-navigation/three';
 import { BufferAttribute, BufferGeometry, Group, Mesh, Vector3 } from 'three';
 import { Pathfinding } from 'three-pathfinding';
 import { decorators } from '../../decorators';
@@ -104,7 +104,7 @@ export const ThreePathfinding = () => {
       }
     });
 
-    const { navMesh } = threeToNavMesh(meshes, {
+    const { navMesh } = threeToTiledNavMesh(meshes, {
       cs: 0.02,
       ch: 0.2,
       walkableHeight: 1,

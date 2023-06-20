@@ -24,16 +24,14 @@ Or you can use this package directly:
 import * as RecastNavigationThree from '@recast-navigation/three';
 ```
 
-### `threeToNavMesh`
+### `threeToSoloNavMesh` and `threeToTiledNavMesh`
 
-As a convenience, this package exports a function for converting an array of `Mesh` objects to a `NavMesh`.
-
-Currently only indexed geometries are supported.
+This package exports functions that convert arrays of `Mesh` objects to a solo or tiled navmesh.
 
 ```ts
 import * as THREE from 'three';
 import { NavMesh } from 'recast-navigation';
-import { threeToNavMesh } from 'recast-navigation/three';
+import { threeToSoloNavMesh, threeToTiledNavMesh } from 'recast-navigation/three';
 
 const scene = new THREE.Scene();
 
@@ -49,10 +47,10 @@ scene.traverse((child) => {
 });
 
 /* solo navmesh */
-const { navMesh }: NavMesh = threeToNavMesh(meshes, { /* NavMesh config */ }});
+const { navMesh }: NavMesh = threeToSoloNavMesh(meshes, { /* navmesh config */ }});
 
 /* tiled navmesh */
-const { navMesh, tileCache } = threeToNavMesh(meshes, { tileSize: 16 }});
+const { navMesh, tileCache } = threeToTiledNavMesh(meshes, { tileSize: 16 }});
 ```
 
 ### `NavMeshHelper`, `TileCacheHelper`, `CrowdHelper`

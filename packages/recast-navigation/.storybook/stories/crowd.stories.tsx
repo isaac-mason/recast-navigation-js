@@ -2,7 +2,7 @@ import { Line, OrbitControls } from '@react-three/drei';
 import { ThreeEvent, useFrame } from '@react-three/fiber';
 import { Crowd, NavMesh, NavMeshQuery } from '@recast-navigation/core';
 import React, { useEffect, useState } from 'react';
-import { threeToNavMesh } from 'recast-navigation/three';
+import { threeToSoloNavMesh } from 'recast-navigation/three';
 import {
   Group,
   Mesh,
@@ -44,7 +44,7 @@ export const SingleAgent = () => {
       }
     });
 
-    const { navMesh } = threeToNavMesh(meshes, {
+    const { navMesh } = threeToSoloNavMesh(meshes, {
       cs: 0.15,
       ch: 0.2,
       walkableRadius: 0.6,
@@ -175,7 +175,7 @@ export const MultipleAgents = () => {
       }
     });
 
-    const { navMesh } = threeToNavMesh(meshes, {
+    const { navMesh } = threeToSoloNavMesh(meshes, {
       cs: 0.15,
       ch: 0.2,
       walkableRadius: 0.6,

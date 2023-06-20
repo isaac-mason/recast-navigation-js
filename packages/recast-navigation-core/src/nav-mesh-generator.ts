@@ -1,9 +1,16 @@
 import type R from '@recast-navigation/wasm';
+import { finalizer } from './finalizer';
 import { NavMesh } from './nav-mesh';
 import { TileCache } from './tile-cache';
-import { Wasm } from './wasm';
 import { emscripten } from './utils';
-import { finalizer } from './finalizer';
+import { Wasm } from './wasm';
+import {
+  rcChunkyTriMesh,
+  rcCompactHeightfield,
+  rcContourSet,
+  rcHeightfield,
+  rcHeightfieldLayerSet,
+} from './wrappers';
 
 export type NavMeshConfig = {
   /**
@@ -127,6 +134,10 @@ export type NavMeshConfig = {
   maxLayers: number;
 };
 
+export type SoloNavMeshConfig = Omit<NavMeshConfig, 'tileSize'>;
+
+export type TiledNavMeshConfig = NavMeshConfig;
+
 const navMeshConfigDefaults: NavMeshConfig = {
   borderSize: 0,
   tileSize: 0,
@@ -147,10 +158,82 @@ const navMeshConfigDefaults: NavMeshConfig = {
   maxLayers: 32,
 };
 
-export type NavMeshGeneratorResult = {
+const tiledNavMeshConfigDefaults: Partial<NavMeshConfig> = {
+  tileSize: 32,
+};
+
+export class NavMeshIntermediates {
+  raw: R.NavMeshIntermediates;
+
+  constructor(raw: R.NavMeshIntermediates) {
+    this.raw = raw;
+    finalizer.register(this);
+  }
+
+  heightfield(): rcHeightfield {
+    return new rcHeightfield(this.raw.heightfield);
+  }
+
+  compactHeightfield(): rcCompactHeightfield {
+    return new rcCompactHeightfield(this.raw.compactHeightfield);
+  }
+
+  contourSet(): rcContourSet {
+    return new rcContourSet(this.raw.contourSet);
+  }
+
+  heightfieldLayerSet(): rcHeightfieldLayerSet {
+    return new rcHeightfieldLayerSet(this.raw.heightfieldLayerSet);
+  }
+
+  destroy(): void {
+    finalizer.unregister(this);
+    emscripten.destroy(this.raw);
+  }
+}
+
+export class TiledNavMeshIntermediates {
+  raw: R.TiledNavMeshIntermediates;
+
+  constructor(raw: R.TiledNavMeshIntermediates) {
+    this.raw = raw;
+    finalizer.register(this);
+  }
+
+  chunkyTriMesh(): rcChunkyTriMesh {
+    return new rcChunkyTriMesh(this.raw.chunkyTriMesh);
+  }
+
+  intermediates(index: number): NavMeshIntermediates {
+    return new NavMeshIntermediates(this.raw.get_intermediates(index));
+  }
+
+  intermediatesCount(): number {
+    return this.raw.intermediatesCount;
+  }
+
+  destroy(): void {
+    finalizer.unregister(this);
+
+    for (let i = 0; i < this.intermediatesCount(); i++) {
+      this.intermediates(i).destroy();
+    }
+
+    emscripten.destroy(this.raw);
+  }
+}
+
+export type SoloNavMeshGeneratorResult = {
+  success: boolean;
+  navMesh: NavMesh;
+  intermediates?: NavMeshIntermediates;
+};
+
+export type TiledNavMeshGeneratorResult = {
   success: boolean;
   navMesh: NavMesh;
   tileCache: TileCache;
+  intermediates?: TiledNavMeshIntermediates;
 };
 
 export class NavMeshGenerator {
@@ -163,18 +246,68 @@ export class NavMeshGenerator {
   }
 
   /**
-   * Builds a NavMesh from the given positions and indices.
+   * Builds a Solo NavMesh from the given positions and indices.
    * @param positions a flat array of positions
    * @param indices a flat array of indices
    * @param navMeshConfig optional configuration for the NavMesh
+   * @param keepIntermediates if true, the NavMeshIntermediates will be returned
    */
-  generate(
+  generateSoloNavMesh(
     positions: ArrayLike<number>,
     indices: ArrayLike<number>,
-    navMeshConfig: Partial<NavMeshConfig> = {}
-  ): NavMeshGeneratorResult {
-    const config = { ...navMeshConfigDefaults, ...navMeshConfig };
+    navMeshConfig: Partial<Omit<NavMeshConfig, 'tileSize'>> = {},
+    keepIntermediates = false
+  ): SoloNavMeshGeneratorResult {
+    const config = { ...navMeshConfigDefaults, ...navMeshConfig, tileSize: 0 };
 
+    const result = this.generate(positions, indices, config, keepIntermediates);
+
+    const success = result.success;
+    const navMesh = new NavMesh(result.navMesh);
+    const intermediates = keepIntermediates
+      ? new NavMeshIntermediates(result.soloNavMeshIntermediates)
+      : undefined;
+
+    return { success, navMesh, intermediates };
+  }
+
+  /**
+   * Builds a Tiled NavMesh from the given positions and indices.
+   * @param positions a flat array of positions
+   * @param indices a flat array of indices
+   * @param navMeshConfig optional configuration for the NavMesh
+   * @param keepIntermediates if true, the TiledNavMeshIntermediates will be returned
+   */
+  generateTiledNavMesh(
+    positions: ArrayLike<number>,
+    indices: ArrayLike<number>,
+    navMeshConfig: Partial<NavMeshConfig> = {},
+    keepIntermediates = false
+  ): TiledNavMeshGeneratorResult {
+    const config = {
+      ...navMeshConfigDefaults,
+      ...tiledNavMeshConfigDefaults,
+      ...navMeshConfig,
+    };
+
+    const result = this.generate(positions, indices, config, keepIntermediates);
+
+    const success = result.success;
+    const navMesh = new NavMesh(result.navMesh);
+    const tileCache = new TileCache(result.tileCache);
+    const intermediates = keepIntermediates
+      ? new TiledNavMeshIntermediates(result.tiledNavMeshIntermediates)
+      : undefined;
+
+    return { success, navMesh, tileCache, intermediates };
+  }
+
+  private generate(
+    positions: ArrayLike<number>,
+    indices: ArrayLike<number>,
+    config: NavMeshConfig,
+    keepIntermediates: boolean
+  ) {
     const rcConfig = new Wasm.Recast.rcConfig();
     rcConfig.borderSize = config.borderSize;
     rcConfig.tileSize = config.tileSize;
@@ -192,24 +325,16 @@ export class NavMeshGenerator {
     rcConfig.detailSampleDist = config.detailSampleDist;
     rcConfig.detailSampleMaxError = config.detailSampleMaxError;
 
-    const result = this.raw.generate(
+    return this.raw.generate(
       positions as number[],
       positions.length / 3,
       indices as number[],
       indices.length,
       rcConfig,
       config.expectedLayersPerTile,
-      config.maxLayers
+      config.maxLayers,
+      keepIntermediates
     );
-
-    const success = result.success;
-    const rawNavMesh = result.getNavMesh();
-    const rawTileCache = result.getTileCache();
-
-    const navMesh = new NavMesh(rawNavMesh);
-    const tileCache = new TileCache(rawTileCache);
-
-    return { success, navMesh, tileCache };
   }
 
   destroy(): void {
