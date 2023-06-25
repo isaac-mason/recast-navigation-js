@@ -1,5 +1,5 @@
 import { OrbitControls } from '@react-three/drei';
-import { NavMesh, array } from '@recast-navigation/core';
+import { array } from '@recast-navigation/core';
 import {
   HeightfieldHelper,
   threeToTiledNavMesh,
@@ -42,18 +42,12 @@ export const HeightfieldHelperExample = () => {
       tileSize: 16,
     };
 
-    const { navMesh, intermediates } = threeToTiledNavMesh(
-      meshes,
-      config,
-      true
-    );
+    const { intermediates } = threeToTiledNavMesh(meshes, config, true);
 
     const heightfields = array(
       (i) => intermediates!.intermediates(i).heightfield(),
       intermediates!.intermediatesCount()
     );
-
-    console.log((heightfields[0].raw as any).ptr);
 
     const heightfieldHelper = new HeightfieldHelper({
       heightfields,
