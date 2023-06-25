@@ -19,6 +19,12 @@ A WebAssembly port of [Recast Navigation](https://github.com/recastnavigation/re
 
 Documentation can be found at [https://recast-navigation-js-docs.isaacmason.com](https://recast-navigation-js-docs.isaacmason.com).
 
+## Examples
+
+Some demonstrations of how to use the library in different environments can be found in the [examples](./examples) directory.
+
+There are also storybooks that demonstrate the library in action: [https://recast-navigation-js.isaacmason.com](https://recast-navigation-js.isaacmason.com). The source code for the storybooks can be found in [./packages/recast-navigation/.storybook/stories](./packages/recast-navigation/.storybook/stories).
+
 ## Packages
 
 Functionality is spread across packages in the `@recast-navigation/*` organization, with the `recast-navigation` acting as an umbrella package.
