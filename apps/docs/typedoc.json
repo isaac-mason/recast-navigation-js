@@ -1,0 +1,17 @@
+{
+  "name": "recast-navigation-js",
+  "entryPoints": [
+    "../../packages/recast-navigation/src/index.ts",
+    "../../packages/recast-navigation/src/three.ts"
+  ],
+  "entryPointStrategy": "expand",
+  "out": "dist/",
+  "readme": "./tmp/README.md",
+  "customCss": "./docs-style.css",
+  "cleanOutputDir": true,
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeExternals": true,
+  "excludeInternal": true,
+  "hideGenerator": true
+}
