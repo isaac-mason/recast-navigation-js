@@ -3,7 +3,7 @@ import { Canvas, ThreeEvent } from '@react-three/fiber';
 import { Leva, button, useControls } from 'leva';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { NavMesh } from 'recast-navigation';
-import { NavMeshHelper, threeToNavMesh } from 'recast-navigation/three';
+import { NavMeshHelper, threeToSoloNavMesh, threeToTiledNavMesh } from 'recast-navigation/three';
 import { Group, Mesh, MeshBasicMaterial } from 'three';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 import dungeonGltfUrl from './assets/dungeon.gltf?url';
@@ -78,7 +78,20 @@ const App = () => {
         }
       });
 
-      const { success, navMesh } = threeToNavMesh(meshes, navMeshConfig);
+      let navMesh: NavMesh;
+      let success: boolean;
+
+      if (navMeshConfig.tileSize) {
+        const result = threeToTiledNavMesh(meshes, navMeshConfig);
+
+        navMesh = result.navMesh;
+        success = result.success;
+      } else {
+        const result = threeToSoloNavMesh(meshes, navMeshConfig);
+
+        navMesh = result.navMesh;
+        success = result.success;
+      }
 
       if (success) {
         setNavMesh(navMesh);

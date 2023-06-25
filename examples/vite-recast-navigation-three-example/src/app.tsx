@@ -2,7 +2,7 @@ import { Environment, OrbitControls } from '@react-three/drei';
 import { Canvas, useThree } from '@react-three/fiber';
 import { useEffect, useRef } from 'react';
 import { init, NavMeshQuery } from 'recast-navigation';
-import { NavMeshHelper, threeToNavMesh } from 'recast-navigation/three';
+import { NavMeshHelper, threeToSoloNavMesh } from 'recast-navigation/three';
 import { suspend } from 'suspend-react';
 import { Color, Group, Mesh, MeshBasicMaterial, Vector2, Vector3 } from 'three';
 import { Line2, LineGeometry, LineMaterial } from 'three-stdlib';
@@ -21,7 +21,7 @@ const App = () => {
       }
     });
 
-    const { navMesh } = threeToNavMesh(meshes, {
+    const { navMesh } = threeToSoloNavMesh(meshes, {
       cs: 0.2,
       ch: 0.2,
       walkableSlopeAngle: 35,

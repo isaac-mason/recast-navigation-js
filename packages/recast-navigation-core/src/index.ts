@@ -7,6 +7,7 @@ export * from './nav-mesh-generator';
 export * from './nav-mesh-importer';
 export * from './nav-mesh-query';
 export * from './obstacle';
+export * from './wrappers';
 export * from './tile-cache';
 export * from './utils';
 export * from './wasm';

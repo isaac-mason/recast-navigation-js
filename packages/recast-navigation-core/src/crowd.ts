@@ -273,21 +273,24 @@ export class Crowd {
    * Returns the position of the specified agent.
    */
   getAgentPosition(agentIndex: number): Vector3 {
-    return vec3.fromRaw(this.raw.getAgentPosition(agentIndex), true);
+    this.raw.getAgentPosition(agentIndex, this.tmpVec1);
+    return vec3.fromRaw(this.tmpVec1);
   }
 
   /**
    * Returns the velocity of the specified agent.
    */
   getAgentVelocity(agentIndex: number): Vector3 {
-    return vec3.fromRaw(this.raw.getAgentVelocity(agentIndex), true);
+    this.raw.getAgentVelocity(agentIndex, this.tmpVec1);
+    return vec3.fromRaw(this.tmpVec1);
   }
 
   /**
    * Returns the next target position on the path to the specified agents target.
    */
   getAgentNextTargetPath(agentIndex: number): Vector3 {
-    return vec3.fromRaw(this.raw.getAgentNextTargetPath(agentIndex), true);
+    this.raw.getAgentNextTargetPath(agentIndex, this.tmpVec1);
+    return vec3.fromRaw(this.tmpVec1);
   }
 
   /**

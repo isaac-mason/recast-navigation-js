@@ -1,6 +1,6 @@
 import { Bounds, OrbitControls } from '@react-three/drei';
 import { NavMesh } from '@recast-navigation/core';
-import { threeToNavMesh } from '@recast-navigation/three';
+import { threeToSoloNavMesh } from '@recast-navigation/three';
 import React, { useEffect, useState } from 'react';
 import { Group, Mesh } from 'three';
 import { Debug } from '../../common/debug';
@@ -30,7 +30,7 @@ export const NonIndexedGeometry = () => {
       }
     });
 
-    const { navMesh } = threeToNavMesh(meshes, {
+    const { navMesh } = threeToSoloNavMesh(meshes, {
       cs: 0.15,
       ch: 0.2,
       walkableRadius: 0.6,

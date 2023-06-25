@@ -22,7 +22,7 @@ describe('Smoke tests', () => {
       ).array;
       const indices = mesh.geometry.getIndex()!.array;
 
-      const result = navMeshGenerator.generate(positions, indices);
+      const result = navMeshGenerator.generateSoloNavMesh(positions, indices);
       navMesh = result.navMesh;
 
       navMeshQuery = new NavMeshQuery({ navMesh });

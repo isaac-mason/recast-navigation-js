@@ -1,4 +1,4 @@
-import { ObstacleRef, TileCache } from '@recast-navigation/core';
+import { Obstacle, TileCache } from '@recast-navigation/core';
 import {
   BoxGeometry,
   CylinderGeometry,
@@ -19,7 +19,7 @@ export class TileCacheHelper {
 
   obstacles: Group;
 
-  obstacleMeshes: Map<ObstacleRef, Mesh> = new Map();
+  obstacleMeshes: Map<Obstacle, Mesh> = new Map();
 
   obstacleMaterial: Material;
 
@@ -43,10 +43,10 @@ export class TileCacheHelper {
   updateObstacles() {
     const unseen = new Set(this.obstacleMeshes.keys());
 
-    for (const [ref, obstacle] of this.tileCache.obstacles) {
-      let obstacleMesh = this.obstacleMeshes.get(ref);
+    for (const [, obstacle] of this.tileCache.obstacles) {
+      let obstacleMesh = this.obstacleMeshes.get(obstacle);
 
-      unseen.delete(ref);
+      unseen.delete(obstacle);
 
       if (!obstacleMesh) {
         const { position } = obstacle;
@@ -76,16 +76,16 @@ export class TileCacheHelper {
         }
 
         this.obstacles.add(mesh);
-        this.obstacleMeshes.set(ref, mesh);
+        this.obstacleMeshes.set(obstacle, mesh);
       }
     }
 
-    for (const ref of unseen) {
-      const obstacleMesh = this.obstacleMeshes.get(ref);
+    for (const obstacle of unseen) {
+      const obstacleMesh = this.obstacleMeshes.get(obstacle);
 
       if (obstacleMesh) {
         this.obstacles.remove(obstacleMesh);
-        this.obstacleMeshes.delete(ref);
+        this.obstacleMeshes.delete(obstacle);
       }
     }
   }

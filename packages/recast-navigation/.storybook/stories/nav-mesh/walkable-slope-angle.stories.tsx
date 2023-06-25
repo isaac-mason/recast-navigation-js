@@ -1,6 +1,6 @@
 import { Bounds, OrbitControls, Text } from '@react-three/drei';
 import { NavMesh } from '@recast-navigation/core';
-import { threeToNavMesh } from '@recast-navigation/three';
+import { threeToSoloNavMesh } from '@recast-navigation/three';
 import { useControls } from 'leva';
 import React, { useEffect, useState } from 'react';
 import { Group, Mesh } from 'three';
@@ -46,7 +46,7 @@ export const WalkableSlope = () => {
       }
     });
 
-    const { navMesh } = threeToNavMesh(meshes, {
+    const { navMesh } = threeToSoloNavMesh(meshes, {
       cs: 0.1,
       ch: 0.1,
       walkableSlopeAngle,

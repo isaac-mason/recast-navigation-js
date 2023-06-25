@@ -4,7 +4,7 @@ import {
   NavMeshExporter,
   NavMeshImporter,
 } from '@recast-navigation/core';
-import { threeToNavMesh } from '@recast-navigation/three';
+import { threeToSoloNavMesh } from '@recast-navigation/three';
 import { button, useControls } from 'leva';
 import React, { useState } from 'react';
 import { Group, Mesh, MeshBasicMaterial } from 'three';
@@ -47,7 +47,7 @@ export const ImportingAndExporting = () => {
           }
         });
 
-        const { navMesh } = threeToNavMesh(meshes, navMeshConfig);
+        const { navMesh } = threeToSoloNavMesh(meshes, navMeshConfig);
 
         setNavMesh(navMesh);
       }),

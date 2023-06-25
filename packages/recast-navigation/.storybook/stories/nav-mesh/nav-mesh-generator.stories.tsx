@@ -1,6 +1,9 @@
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { NavMesh } from '@recast-navigation/core';
-import { threeToNavMesh } from '@recast-navigation/three';
+import {
+  threeToSoloNavMesh,
+  threeToTiledNavMesh,
+} from '@recast-navigation/three';
 import React, { useEffect, useState } from 'react';
 import { Group, Mesh, MeshBasicMaterial } from 'three';
 import { Debug } from '../../common/debug';
@@ -56,7 +59,7 @@ const Common = ({ level, tileSize }: CommonProps) => {
       }
     });
 
-    const { navMesh } = threeToNavMesh(meshes, {
+    const config = {
       cs: 0.05,
       ch: 0.2,
       walkableHeight: 1,
@@ -64,9 +67,15 @@ const Common = ({ level, tileSize }: CommonProps) => {
       walkableRadius: 1,
       borderSize: 0.2,
       tileSize,
-    });
+    };
 
-    setNavMesh(navMesh);
+    if (tileSize) {
+      const { navMesh } = threeToTiledNavMesh(meshes, config);
+      setNavMesh(navMesh);
+    } else {
+      const { navMesh } = threeToSoloNavMesh(meshes, config);
+      setNavMesh(navMesh);
+    }
 
     return () => {
       setNavMesh(undefined);

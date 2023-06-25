@@ -222,10 +222,167 @@ interface NavMeshBuilder {
     [Value] CreateNavMeshDataResult createNavMeshData([Ref] dtNavMeshCreateParams params);
 };
 
+interface rcSpan {
+    attribute long smin;
+    attribute long smax;
+    attribute long area;
+    attribute rcSpan next;
+};
+
+interface rcSpanPool {
+    attribute rcSpanPool next;
+    [Value] attribute rcSpan[] items;
+};
+
+interface rcHeightfield {
+    attribute long width;
+    attribute long height;
+    attribute float[] bmin;
+    attribute float[] bmax;
+    attribute float cs;
+    attribute float ch;
+    attribute rcSpan[] spans;
+    [Value] attribute rcSpanPool[] pools;
+    [Value] attribute rcSpan[] freelist;
+};
+
+interface rcCompactCell {
+    attribute unsigned long index;
+    attribute unsigned long count;
+};
+
+interface rcCompactSpan {
+    attribute unsigned short y;
+    attribute unsigned short reg;
+    attribute unsigned long con;
+    attribute unsigned long h;
+};
+
+interface rcCompactHeightfield {
+    attribute long width;
+    attribute long height;
+    attribute long spanCount;
+    attribute long walkableHeight;
+    attribute long walkableClimb;
+    attribute long borderSize;
+    attribute unsigned short maxDistance;
+    attribute unsigned short maxRegions;
+    attribute float[] bmin;
+    attribute float[] bmax;
+    attribute float cs;
+    attribute float ch;
+    [Value] attribute rcCompactCell[] cells;
+    [Value] attribute rcCompactSpan[] spans;
+    attribute unsigned short[] dist;
+    attribute octet[] areas;
+};
+
+interface rcContour {
+    attribute long[] verts;
+    attribute long nverts;
+    attribute long[] rverts;
+    attribute long nrverts;
+    attribute unsigned short reg;
+    attribute octet area;
+};
+
+interface rcContourSet {
+    [Value] attribute rcContour[] conts;
+    attribute long nconts;
+    attribute float[] bmin;
+    attribute float[] bmax;
+    attribute float cs;
+    attribute float ch;
+    attribute long width;
+    attribute long height;
+    attribute long borderSize;
+    attribute float maxError;
+};
+
+interface rcHeightfieldLayer {
+    attribute float[] bmin;
+    attribute float[] bmax;
+    attribute float cs;
+    attribute float ch;
+    attribute long width;
+    attribute long height;
+    attribute long minx;
+    attribute long maxx;
+    attribute long miny;
+    attribute long maxy;
+    attribute long hmin;
+    attribute long hmax;
+    attribute octet[] heights;
+    attribute octet[] areas;
+    attribute octet[] cons;
+};
+
+interface rcHeightfieldLayerSet {
+    [Value] attribute rcHeightfieldLayer[] layers;
+    attribute long nlayers;
+};
+
+interface rcChunkyTriMeshNode {
+    attribute float[] bmin;
+    attribute float[] bmax;
+    attribute long i;
+    attribute long n;
+};
+
+interface rcChunkyTriMesh {
+    [Value] attribute rcChunkyTriMeshNode[] nodes;
+    attribute long nnodes;
+    attribute long[] tris;
+    attribute long ntris;
+    attribute long maxTrisPerChunk;
+};
+
+interface rcPolyMesh {
+    attribute unsigned short[] verts;
+    attribute unsigned short[] polys;
+    attribute unsigned short[] regs;
+    attribute unsigned short[] flags;
+    attribute octet[] areas;
+    attribute long nverts;
+    attribute long npolys;
+    attribute long maxpolys;
+    attribute long nvp;
+    attribute float[] bmin;
+    attribute float[] bmax;
+    attribute float cs;
+    attribute float ch;
+    attribute long borderSize;
+    attribute float maxEdgeError;
+};
+
+interface rcPolyMeshDetail {
+    attribute long[] meshes;
+    attribute float[] verts;
+    attribute octet[] tris;
+    attribute long nmeshes;
+    attribute long nverts;
+    attribute long ntris;
+};
+
+interface NavMeshIntermediates {
+    attribute rcHeightfield heightfield;
+    attribute rcCompactHeightfield compactHeightfield;
+    attribute rcContourSet contourSet;
+    attribute rcHeightfieldLayerSet heightfieldLayerSet;
+};
+
+interface TiledNavMeshIntermediates {
+    attribute rcChunkyTriMesh chunkyTriMesh;
+    [Value] attribute NavMeshIntermediates[] intermediates;
+    attribute long intermediatesCount;
+};
+
 interface NavMeshGeneratorResult {
     attribute boolean success;
-    [Const, Ref] NavMesh getNavMesh();
-    [Const, Ref] TileCache getTileCache();
+    attribute NavMesh navMesh;
+    attribute TileCache tileCache;
+    attribute NavMeshIntermediates soloNavMeshIntermediates;
+    attribute TiledNavMeshIntermediates tiledNavMeshIntermediates;
 };
 
 interface NavMeshGenerator {
@@ -238,7 +395,8 @@ interface NavMeshGenerator {
         [Const] long indexCount,
         [Const, Ref] rcConfig config,
         [Const] long expectedLayersPerTile,
-        [Const] long maxLayers);
+        [Const] long maxLayers,
+        [Const] boolean keepIntermediates);
 };
 
 interface NavMeshImporterResult {
@@ -435,9 +593,9 @@ interface Crowd {
     void update([Const] float dt);
     long getAgentCount();
     long getActiveAgentCount();
-    [Value] Vec3 getAgentPosition([Const] long idx);
-    [Value] Vec3 getAgentVelocity([Const] long idx);
-    [Value] Vec3 getAgentNextTargetPath([Const] long idx);
+    void getAgentPosition([Const] long idx, Vec3 target);
+    void getAgentVelocity([Const] long idx, Vec3 target);
+    void getAgentNextTargetPath([Const] long idx, Vec3 target);
     long getAgentState([Const] long idx);
     boolean overOffMeshConnection([Const] long idx);
     void agentGoto([Const] long idx, [Const, Ref] Vec3 destination);
@@ -470,4 +628,74 @@ interface DtStatus {
     boolean statusFailed(unsigned long status);
     boolean statusInProgress(unsigned long status);
     boolean statusDetail(unsigned long status, unsigned long detail);
+};
+
+enum rcLogCategory {
+	"rcLogCategory::RC_LOG_PROGRESS",
+	"rcLogCategory::RC_LOG_WARNING",
+    "rcLogCategory::RC_LOG_ERROR"
+};
+
+
+enum rcTimerLabel
+{
+	"rcTimerLabel::RC_TIMER_TOTAL",
+	"rcTimerLabel::RC_TIMER_TEMP",
+	"rcTimerLabel::RC_TIMER_RASTERIZE_TRIANGLES",
+	"rcTimerLabel::RC_TIMER_BUILD_COMPACTHEIGHTFIELD",
+	"rcTimerLabel::RC_TIMER_BUILD_CONTOURS",
+	"rcTimerLabel::RC_TIMER_BUILD_CONTOURS_TRACE",
+	"rcTimerLabel::RC_TIMER_BUILD_CONTOURS_SIMPLIFY",
+	"rcTimerLabel::RC_TIMER_FILTER_BORDER",
+	"rcTimerLabel::RC_TIMER_FILTER_WALKABLE",
+	"rcTimerLabel::RC_TIMER_MEDIAN_AREA",
+	"rcTimerLabel::RC_TIMER_FILTER_LOW_OBSTACLES",
+	"rcTimerLabel::RC_TIMER_BUILD_POLYMESH",
+	"rcTimerLabel::RC_TIMER_MERGE_POLYMESH",
+	"rcTimerLabel::RC_TIMER_ERODE_AREA",
+	"rcTimerLabel::RC_TIMER_MARK_BOX_AREA",
+	"rcTimerLabel::RC_TIMER_MARK_CYLINDER_AREA",
+	"rcTimerLabel::RC_TIMER_MARK_CONVEXPOLY_AREA",
+	"rcTimerLabel::RC_TIMER_BUILD_DISTANCEFIELD",
+	"rcTimerLabel::RC_TIMER_BUILD_DISTANCEFIELD_DIST",
+	"rcTimerLabel::RC_TIMER_BUILD_DISTANCEFIELD_BLUR",
+	"rcTimerLabel::RC_TIMER_BUILD_REGIONS",
+	"rcTimerLabel::RC_TIMER_BUILD_REGIONS_WATERSHED",
+	"rcTimerLabel::RC_TIMER_BUILD_REGIONS_EXPAND",
+	"rcTimerLabel::RC_TIMER_BUILD_REGIONS_FLOOD",
+	"rcTimerLabel::RC_TIMER_BUILD_REGIONS_FILTER",
+	"rcTimerLabel::RC_TIMER_BUILD_LAYERS", 
+	"rcTimerLabel::RC_TIMER_BUILD_POLYMESHDETAIL",
+	"rcTimerLabel::RC_TIMER_MERGE_POLYMESHDETAIL",
+	"rcTimerLabel::RC_MAX_TIMERS"
+};
+
+interface rcContext {
+    void rcContext();
+
+    void enableLog(boolean state);
+    void resetLog();
+    void log([Const] rcLogCategory category, [Const] DOMString message);
+    void enableTimer(boolean state);
+    void resetTimers();
+    void startTimer([Const] rcTimerLabel label);
+    void stopTimer([Const] rcTimerLabel label);
+    float getAccumulatedTime([Const] rcTimerLabel label);
+};
+
+interface RecastAllocator {
+    void RecastAllocator();
+
+    rcHeightfield allocHeightfield();
+    void freeHeightField(rcHeightfield hf);
+    rcCompactHeightfield allocCompactHeightfield();
+    void freeCompactHeightfield(rcCompactHeightfield chf);
+    rcHeightfieldLayerSet allocHeightfieldLayerSet();
+    void freeHeightfieldLayerSet(rcHeightfieldLayerSet lset);
+    rcContourSet allocContourSet();
+    void freeContourSet(rcContourSet cset);
+    rcPolyMesh allocPolyMesh();
+    void freePolyMesh(rcPolyMesh mesh);
+    rcPolyMeshDetail allocPolyMeshDetail();
+    void freePolyMeshDetail(rcPolyMeshDetail dmesh);
 };

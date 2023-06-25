@@ -298,39 +298,6 @@ void NavMeshQuery::destroy()
     dtFreeNavMeshQuery(m_navQuery);
 }
 
-struct NavMeshIntermediates
-{
-    ~NavMeshIntermediates()
-    {
-        if (m_solid)
-        {
-            rcFreeHeightField(m_solid);
-        }
-        if (m_chf)
-        {
-            rcFreeCompactHeightfield(m_chf);
-        }
-        if (m_cset)
-        {
-            rcFreeContourSet(m_cset);
-        }
-        if (m_lset)
-        {
-            rcFreeHeightfieldLayerSet(m_lset);
-        }
-        if (m_chunkyMesh)
-        {
-            delete m_chunkyMesh;
-        }
-    }
-
-    rcHeightfield *m_solid = nullptr;
-    rcCompactHeightfield *m_chf = nullptr;
-    rcContourSet *m_cset = nullptr;
-    rcHeightfieldLayerSet *m_lset = nullptr;
-    rcChunkyTriMesh *m_chunkyMesh = nullptr;
-};
-
 static const int NAVMESHSET_MAGIC = 'M' << 24 | 'S' << 16 | 'E' << 8 | 'T'; //'MSET';
 static const int NAVMESHSET_VERSION = 1;
 static const int TILECACHESET_MAGIC = 'T' << 24 | 'S' << 16 | 'E' << 8 | 'T'; //'TSET';
@@ -492,7 +459,8 @@ int NavMeshGenerator::rasterizeTileLayers(
     const rcConfig &cfg,
     TileCacheData *tiles,
     const int maxTiles,
-    NavMeshIntermediates &intermediates,
+    TiledNavMeshIntermediates *tiledNavMeshIntermediates,
+    NavMeshIntermediates *intermediates,
     const float *verts,
     int nverts,
     const int maxLayers)
@@ -516,24 +484,22 @@ int NavMeshGenerator::rasterizeTileLayers(
     tcfg.bmax[0] += tcfg.borderSize * tcfg.cs;
     tcfg.bmax[2] += tcfg.borderSize * tcfg.cs;
 
-    NavMeshIntermediates tileIntermediates;
-
     // Allocate voxel heightfield where we rasterize our input data to.
-    tileIntermediates.m_solid = rcAllocHeightfield();
-    if (!tileIntermediates.m_solid)
+    intermediates->heightfield = rcAllocHeightfield();
+    if (!intermediates->heightfield)
     {
         Log("buildNavigation: Out of memory 'solid'.");
         return 0;
     }
     rcContext ctx;
 
-    if (!rcCreateHeightfield(&ctx, *tileIntermediates.m_solid, tcfg.width, tcfg.height, tcfg.bmin, tcfg.bmax, tcfg.cs, tcfg.ch))
+    if (!rcCreateHeightfield(&ctx, *intermediates->heightfield, tcfg.width, tcfg.height, tcfg.bmin, tcfg.bmax, tcfg.cs, tcfg.ch))
     {
         Log("buildNavigation: Could not create solid heightfield.");
         return 0;
     }
 
-    rcChunkyTriMesh *chunkyMesh = intermediates.m_chunkyMesh;
+    rcChunkyTriMesh *chunkyMesh = tiledNavMeshIntermediates->chunkyTriMesh;
 
     float tbmin[2], tbmax[2];
     tbmin[0] = tcfg.bmin[0];
@@ -562,7 +528,7 @@ int NavMeshGenerator::rasterizeTileLayers(
         // the are type for each of the meshes and rasterize them.
         memset(triareas, 0, ntris * sizeof(unsigned char));
         rcMarkWalkableTriangles(&ctx, cfg.walkableSlopeAngle, verts, nverts, tris, ntris, triareas);
-        bool success = rcRasterizeTriangles(&ctx, verts, nverts, tris, triareas, ntris, *tileIntermediates.m_solid, tcfg.walkableClimb);
+        bool success = rcRasterizeTriangles(&ctx, verts, nverts, tris, triareas, ntris, *intermediates->heightfield, tcfg.walkableClimb);
 
         delete[] triareas;
 
@@ -576,36 +542,36 @@ int NavMeshGenerator::rasterizeTileLayers(
     // remove unwanted overhangs caused by the conservative rasterization
     // as well as filter spans where the character cannot possibly stand.
 
-    rcFilterLowHangingWalkableObstacles(&ctx, tcfg.walkableClimb, *tileIntermediates.m_solid);
-    rcFilterLedgeSpans(&ctx, tcfg.walkableHeight, tcfg.walkableClimb, *tileIntermediates.m_solid);
-    rcFilterWalkableLowHeightSpans(&ctx, tcfg.walkableHeight, *tileIntermediates.m_solid);
+    rcFilterLowHangingWalkableObstacles(&ctx, tcfg.walkableClimb, *intermediates->heightfield);
+    rcFilterLedgeSpans(&ctx, tcfg.walkableHeight, tcfg.walkableClimb, *intermediates->heightfield);
+    rcFilterWalkableLowHeightSpans(&ctx, tcfg.walkableHeight, *intermediates->heightfield);
 
-    tileIntermediates.m_chf = rcAllocCompactHeightfield();
-    if (!tileIntermediates.m_chf)
+    intermediates->compactHeightfield = rcAllocCompactHeightfield();
+    if (!intermediates->compactHeightfield)
     {
         Log("buildNavigation: Out of memory 'chf'.");
         return 0;
     }
-    if (!rcBuildCompactHeightfield(&ctx, tcfg.walkableHeight, tcfg.walkableClimb, *tileIntermediates.m_solid, *tileIntermediates.m_chf))
+    if (!rcBuildCompactHeightfield(&ctx, tcfg.walkableHeight, tcfg.walkableClimb, *intermediates->heightfield, *intermediates->compactHeightfield))
     {
         Log("buildNavigation: Could not build compact data.");
         return 0;
     }
 
     // Erode the walkable area by agent radius.
-    if (!rcErodeWalkableArea(&ctx, tcfg.walkableRadius, *tileIntermediates.m_chf))
+    if (!rcErodeWalkableArea(&ctx, tcfg.walkableRadius, *intermediates->compactHeightfield))
     {
         Log("buildNavigation: Could not erode.");
         return 0;
     }
 
-    tileIntermediates.m_lset = rcAllocHeightfieldLayerSet();
-    if (!tileIntermediates.m_lset)
+    intermediates->heightfieldLayerSet = rcAllocHeightfieldLayerSet();
+    if (!intermediates->heightfieldLayerSet)
     {
         Log("buildNavigation: Out of memory 'lset'.");
         return 0;
     }
-    if (!rcBuildHeightfieldLayers(&ctx, *tileIntermediates.m_chf, tcfg.borderSize, tcfg.walkableHeight, *tileIntermediates.m_lset))
+    if (!rcBuildHeightfieldLayers(&ctx, *intermediates->compactHeightfield, tcfg.borderSize, tcfg.walkableHeight, *intermediates->heightfieldLayerSet))
     {
         Log("buildNavigation: Could not build heighfield layers.");
         return 0;
@@ -613,10 +579,10 @@ int NavMeshGenerator::rasterizeTileLayers(
 
     int ntiles = 0;
     TileCacheData ctiles[maxLayers];
-    for (int i = 0; i < rcMin(tileIntermediates.m_lset->nlayers, maxLayers); ++i)
+    for (int i = 0; i < rcMin(intermediates->heightfieldLayerSet->nlayers, maxLayers); ++i)
     {
         TileCacheData *tile = &ctiles[ntiles++];
-        const rcHeightfieldLayer *layer = &tileIntermediates.m_lset->layers[i];
+        const rcHeightfieldLayer *layer = &intermediates->heightfieldLayerSet->layers[i];
 
         // Store header
         dtTileCacheLayerHeader header;
@@ -663,28 +629,31 @@ int NavMeshGenerator::rasterizeTileLayers(
 NavMeshGeneratorResult *NavMeshGenerator::computeSoloNavMesh(
     rcConfig &cfg,
     rcContext &ctx,
-    NavMeshIntermediates &intermediates,
-    bool keepInterResults,
     const float *verts,
     int nverts,
     const int *tris,
-    int ntris)
+    int ntris,
+    bool keepIntermediates)
 {
     NavMeshGeneratorResult *result = new NavMeshGeneratorResult;
     result->success = false;
+
+    NavMeshIntermediates *intermediates = new NavMeshIntermediates;
+    result->soloNavMeshIntermediates = intermediates;
+    result->tiledNavMeshIntermediates = nullptr;
 
     //
     // Step 2. Rasterize input polygon soup.
     //
 
     // Allocate voxel heightfield where we rasterize our input data to.
-    intermediates.m_solid = rcAllocHeightfield();
-    if (!intermediates.m_solid)
+    intermediates->heightfield = rcAllocHeightfield();
+    if (!intermediates->heightfield)
     {
         Log("buildNavigation: Out of memory 'solid'.");
         return result;
     }
-    if (!rcCreateHeightfield(&ctx, *intermediates.m_solid, cfg.width, cfg.height, cfg.bmin, cfg.bmax, cfg.cs, cfg.ch))
+    if (!rcCreateHeightfield(&ctx, *intermediates->heightfield, cfg.width, cfg.height, cfg.bmin, cfg.bmax, cfg.cs, cfg.ch))
     {
         Log("buildNavigation: Could not create solid heightfield.");
         return result;
@@ -696,7 +665,7 @@ NavMeshGeneratorResult *NavMeshGenerator::computeSoloNavMesh(
     unsigned char *triareas = new unsigned char[ntris];
     memset(triareas, 0, ntris * sizeof(unsigned char));
     rcMarkWalkableTriangles(&ctx, cfg.walkableSlopeAngle, verts, nverts, tris, ntris, triareas);
-    rcRasterizeTriangles(&ctx, verts, nverts, tris, triareas, ntris, *intermediates.m_solid, cfg.walkableClimb);
+    rcRasterizeTriangles(&ctx, verts, nverts, tris, triareas, ntris, *intermediates->heightfield, cfg.walkableClimb);
     delete[] triareas;
 
     //
@@ -707,9 +676,9 @@ NavMeshGeneratorResult *NavMeshGenerator::computeSoloNavMesh(
     // remove unwanted overhangs caused by the conservative rasterization
     // as well as filter spans where the character cannot possibly stand.
 
-    rcFilterLowHangingWalkableObstacles(&ctx, cfg.walkableClimb, *intermediates.m_solid);
-    rcFilterLedgeSpans(&ctx, cfg.walkableHeight, cfg.walkableClimb, *intermediates.m_solid);
-    rcFilterWalkableLowHeightSpans(&ctx, cfg.walkableHeight, *intermediates.m_solid);
+    rcFilterLowHangingWalkableObstacles(&ctx, cfg.walkableClimb, *intermediates->heightfield);
+    rcFilterLedgeSpans(&ctx, cfg.walkableHeight, cfg.walkableClimb, *intermediates->heightfield);
+    rcFilterWalkableLowHeightSpans(&ctx, cfg.walkableHeight, *intermediates->heightfield);
 
     //
     // Step 4. Partition walkable surface to simple regions.
@@ -719,40 +688,40 @@ NavMeshGeneratorResult *NavMeshGenerator::computeSoloNavMesh(
     // This will result more cache coherent data as well as the neighbours
     // between walkable cells will be calculated.
 
-    intermediates.m_chf = rcAllocCompactHeightfield();
-    if (!intermediates.m_chf)
+    intermediates->compactHeightfield = rcAllocCompactHeightfield();
+    if (!intermediates->compactHeightfield)
     {
         Log("buildNavigation: Out of memory 'chf'.");
         return result;
     }
 
-    if (!rcBuildCompactHeightfield(&ctx, cfg.walkableHeight, cfg.walkableClimb, *intermediates.m_solid, *intermediates.m_chf))
+    if (!rcBuildCompactHeightfield(&ctx, cfg.walkableHeight, cfg.walkableClimb, *intermediates->heightfield, *intermediates->compactHeightfield))
     {
         Log("buildNavigation: Could not build compact data.");
         return result;
     }
 
-    if (!keepInterResults)
+    if (!keepIntermediates)
     {
-        rcFreeHeightField(intermediates.m_solid);
-        intermediates.m_solid = nullptr;
+        rcFreeHeightField(intermediates->heightfield);
+        intermediates->heightfield = nullptr;
     }
 
-    if (!rcErodeWalkableArea(&ctx, cfg.walkableRadius, *intermediates.m_chf))
+    if (!rcErodeWalkableArea(&ctx, cfg.walkableRadius, *intermediates->compactHeightfield))
     {
         Log("buildNavigation: Could not erode.");
         return result;
     }
 
     // Prepare for region partitioning, by calculating Distance field along the walkable surface.
-    if (!rcBuildDistanceField(&ctx, *intermediates.m_chf))
+    if (!rcBuildDistanceField(&ctx, *intermediates->compactHeightfield))
     {
         Log("buildNavigation: Could not build Distance field.");
         return result;
     }
 
     // Partition the walkable surface into simple regions without holes.
-    if (!rcBuildRegions(&ctx, *intermediates.m_chf, cfg.borderSize, cfg.minRegionArea, cfg.mergeRegionArea))
+    if (!rcBuildRegions(&ctx, *intermediates->compactHeightfield, cfg.borderSize, cfg.minRegionArea, cfg.mergeRegionArea))
     {
         Log("buildNavigation: Could not build regions.");
         return result;
@@ -763,14 +732,13 @@ NavMeshGeneratorResult *NavMeshGenerator::computeSoloNavMesh(
     //
 
     // Create contours.
-
-    intermediates.m_cset = rcAllocContourSet();
-    if (!intermediates.m_cset)
+    intermediates->contourSet = rcAllocContourSet();
+    if (!intermediates->contourSet)
     {
         Log("buildNavigation: Out of memory 'cset'.");
         return result;
     }
-    if (!rcBuildContours(&ctx, *intermediates.m_chf, cfg.maxSimplificationError, cfg.maxEdgeLen, *intermediates.m_cset))
+    if (!rcBuildContours(&ctx, *intermediates->compactHeightfield, cfg.maxSimplificationError, cfg.maxEdgeLen, *intermediates->contourSet))
     {
         Log("buildNavigation: Could not create contours.");
         return result;
@@ -786,7 +754,7 @@ NavMeshGeneratorResult *NavMeshGenerator::computeSoloNavMesh(
         Log("buildNavigation: Out of memory 'pmesh'.");
         return result;
     }
-    if (!rcBuildPolyMesh(&ctx, *intermediates.m_cset, cfg.maxVertsPerPoly, *m_pmesh))
+    if (!rcBuildPolyMesh(&ctx, *intermediates->contourSet, cfg.maxVertsPerPoly, *m_pmesh))
     {
         Log("buildNavigation: Could not triangulate contours.");
         return result;
@@ -802,18 +770,18 @@ NavMeshGeneratorResult *NavMeshGenerator::computeSoloNavMesh(
         return result;
     }
 
-    if (!rcBuildPolyMeshDetail(&ctx, *m_pmesh, *intermediates.m_chf, cfg.detailSampleDist, cfg.detailSampleMaxError, *m_dmesh))
+    if (!rcBuildPolyMeshDetail(&ctx, *m_pmesh, *intermediates->compactHeightfield, cfg.detailSampleDist, cfg.detailSampleMaxError, *m_dmesh))
     {
         Log("buildNavigation: Could not build detail mesh.");
         return result;
     }
 
-    if (!keepInterResults)
+    if (!keepIntermediates)
     {
-        rcFreeCompactHeightfield(intermediates.m_chf);
-        intermediates.m_chf = nullptr;
-        rcFreeContourSet(intermediates.m_cset);
-        intermediates.m_cset = nullptr;
+        rcFreeCompactHeightfield(intermediates->compactHeightfield);
+        intermediates->compactHeightfield = nullptr;
+        rcFreeContourSet(intermediates->contourSet);
+        intermediates->contourSet = nullptr;
     }
 
     //
@@ -895,13 +863,13 @@ NavMeshGeneratorResult *NavMeshGenerator::computeSoloNavMesh(
 
 NavMeshGeneratorResult *NavMeshGenerator::computeTiledNavMesh(
     rcConfig &cfg,
-    NavMeshIntermediates &intermediates,
     const float *verts,
     int nverts,
     const int *tris,
     int ntris,
     const int expectedLayersPerTile,
-    const int maxLayers)
+    const int maxLayers,
+    const bool keepIntermediates)
 {
     NavMeshGeneratorResult *result = new NavMeshGeneratorResult;
     result->success = false;
@@ -912,6 +880,17 @@ NavMeshGeneratorResult *NavMeshGenerator::computeTiledNavMesh(
     const int ts = (int)cfg.tileSize;
     const int tw = (cfg.width + ts - 1) / ts;
     const int th = (cfg.height + ts - 1) / ts;
+
+    // Intermediates
+    TiledNavMeshIntermediates *tiledNavMeshIntermediates = new TiledNavMeshIntermediates;
+
+    const int intermediatesCount = tw * th;
+    NavMeshIntermediates *intermediates = new NavMeshIntermediates[intermediatesCount];
+    tiledNavMeshIntermediates->intermediates = intermediates;
+    tiledNavMeshIntermediates->intermediatesCount = intermediatesCount;
+    
+    result->tiledNavMeshIntermediates = tiledNavMeshIntermediates;
+    result->soloNavMeshIntermediates = nullptr;
 
     // Generation params.
     cfg.borderSize = cfg.walkableRadius + 3; // Reserve enough padding.
@@ -959,8 +938,8 @@ NavMeshGeneratorResult *NavMeshGenerator::computeTiledNavMesh(
         return result;
     }
 
-    intermediates.m_chunkyMesh = new rcChunkyTriMesh;
-    if (!rcCreateChunkyTriMesh(verts, tris, ntris, 256, intermediates.m_chunkyMesh))
+    tiledNavMeshIntermediates->chunkyTriMesh = new rcChunkyTriMesh;
+    if (!rcCreateChunkyTriMesh(verts, tris, ntris, 256, tiledNavMeshIntermediates->chunkyTriMesh))
     {
         Log("buildTiledNavMesh: Unable to create chunky trimesh.");
         return result;
@@ -973,8 +952,10 @@ NavMeshGeneratorResult *NavMeshGenerator::computeTiledNavMesh(
         {
             TileCacheData tiles[maxLayers];
             memset(tiles, 0, sizeof(tiles));
-            int ntiles = rasterizeTileLayers(navMesh, tileCache, x, y, cfg, tiles, maxLayers, intermediates, verts, nverts, maxLayers);
-            for (int i = 0; i < ntiles; ++i)
+
+            int nTiles = rasterizeTileLayers(navMesh, tileCache, x, y, cfg, tiles, maxLayers, tiledNavMeshIntermediates, &intermediates[y * tw + x], verts, nverts, maxLayers);
+
+            for (int i = 0; i < nTiles; ++i)
             {
                 TileCacheData *tile = &tiles[i];
                 TileCacheAddTileResult result = tileCache->addTile(tile->data, tile->dataSize, DT_COMPRESSEDTILE_FREE_DATA);
@@ -988,6 +969,21 @@ NavMeshGeneratorResult *NavMeshGenerator::computeTiledNavMesh(
                 }
             }
         }
+    }
+
+    // Free intermediates
+    if (!keepIntermediates)
+    {
+        delete tiledNavMeshIntermediates->chunkyTriMesh;
+        tiledNavMeshIntermediates->chunkyTriMesh = nullptr;
+
+        for (int i = 0; i < th * tw; ++i)
+        {
+            rcFreeHeightField(intermediates[i].heightfield);
+            rcFreeCompactHeightfield(intermediates[i].compactHeightfield);
+            rcFreeContourSet(intermediates[i].contourSet);
+            rcFreeHeightfieldLayerSet(intermediates[i].heightfieldLayerSet);
+        }   
     }
 
     // Build initial meshes
@@ -1013,7 +1009,8 @@ NavMeshGeneratorResult NavMeshGenerator::generate(
     const int indexCount,
     const rcConfig &config,
     const int expectedLayersPerTile,
-    const int maxLayers)
+    const int maxLayers,
+    const bool keepIntermediates)
 {
     if (m_pmesh)
     {
@@ -1028,7 +1025,6 @@ NavMeshGeneratorResult NavMeshGenerator::generate(
         dtFree(m_navData);
     }
 
-    NavMeshIntermediates intermediates;
     std::vector<Vec3> triangleIndices;
     const float *pv = &positions[0];
     const int *t = &indices[0];
@@ -1061,8 +1057,6 @@ NavMeshGeneratorResult NavMeshGenerator::generate(
         tris[i] = triangleIndices.size() - i - 1;
     }
 
-    bool keepInterResults = false;
-
     rcConfig cfg = config;
     cfg.walkableHeight = config.walkableHeight;
     cfg.walkableClimb = config.walkableClimb;
@@ -1088,7 +1082,7 @@ NavMeshGeneratorResult NavMeshGenerator::generate(
 
     if (config.tileSize)
     {
-        NavMeshGeneratorResult *result = computeTiledNavMesh(cfg, intermediates, verts, nverts, tris, ntris, expectedLayersPerTile, maxLayers);
+        NavMeshGeneratorResult *result = computeTiledNavMesh(cfg, verts, nverts, tris, ntris, expectedLayersPerTile, maxLayers, keepIntermediates);
         if (!result->success)
         {
             Log("Unable to compute tiled navmesh");
@@ -1098,7 +1092,7 @@ NavMeshGeneratorResult NavMeshGenerator::generate(
     }
     else
     {
-        NavMeshGeneratorResult *result = computeSoloNavMesh(cfg, ctx, intermediates, keepInterResults, verts, nverts, tris, ntris);
+        NavMeshGeneratorResult *result = computeSoloNavMesh(cfg, ctx, verts, nverts, tris, ntris, keepIntermediates);
         if (!result->success)
         {
             Log("Unable to compute solo navmesh");
@@ -1584,22 +1578,28 @@ int Crowd::getActiveAgentCount()
     return m_crowd->getActiveAgents(NULL, m_crowd->getAgentCount());
 }
 
-Vec3 Crowd::getAgentPosition(int idx)
+void Crowd::getAgentPosition(int idx, Vec3 *target)
 {
     const dtCrowdAgent *agent = m_crowd->getAgent(idx);
-    return Vec3(agent->npos[0], agent->npos[1], agent->npos[2]);
+    target->x = agent->npos[0];
+    target->y = agent->npos[1];
+    target->z = agent->npos[2];
 }
 
-Vec3 Crowd::getAgentVelocity(int idx)
+void Crowd::getAgentVelocity(int idx, Vec3 *target)
 {
     const dtCrowdAgent *agent = m_crowd->getAgent(idx);
-    return Vec3(agent->vel[0], agent->vel[1], agent->vel[2]);
+    target->x = agent->vel[0];
+    target->y = agent->vel[1];
+    target->z = agent->vel[2];
 }
 
-Vec3 Crowd::getAgentNextTargetPath(int idx)
+void Crowd::getAgentNextTargetPath(int idx, Vec3 *target)
 {
     const dtCrowdAgent *agent = m_crowd->getAgent(idx);
-    return Vec3(agent->cornerVerts[0], agent->cornerVerts[1], agent->cornerVerts[2]);
+    target->x = agent->targetPos[0];
+    target->y = agent->targetPos[1];
+    target->z = agent->targetPos[2];
 }
 
 int Crowd::getAgentState(int idx)

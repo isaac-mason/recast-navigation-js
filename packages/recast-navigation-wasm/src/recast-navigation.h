@@ -8,6 +8,7 @@
 #include "../recastnavigation/DetourTileCache/Include/DetourTileCache.h"
 #include "../recastnavigation/DetourTileCache/Include/DetourTileCacheBuilder.h"
 #include "../recastnavigation/RecastDemo/Contrib/fastlz/fastlz.h"
+#include "../recastnavigation/RecastDemo/Include/ChunkyTriMesh.h"
 
 #include <vector>
 #include <iostream>
@@ -459,21 +460,56 @@ public:
     NavMeshImporterResult importNavMesh(NavMeshExport *navMeshExport);
 };
 
+struct NavMeshIntermediates
+{
+    ~NavMeshIntermediates()
+    {
+        if (heightfield)
+        {
+            rcFreeHeightField(heightfield);
+        }
+        if (compactHeightfield)
+        {
+            rcFreeCompactHeightfield(compactHeightfield);
+        }
+        if (contourSet)
+        {
+            rcFreeContourSet(contourSet);
+        }
+        if (heightfieldLayerSet)
+        {
+            rcFreeHeightfieldLayerSet(heightfieldLayerSet);
+        }
+    }
+
+    rcHeightfield *heightfield = nullptr;
+    rcCompactHeightfield *compactHeightfield = nullptr;
+    rcContourSet *contourSet = nullptr;
+    rcHeightfieldLayerSet *heightfieldLayerSet = nullptr;
+};
+
+struct TiledNavMeshIntermediates
+{
+    ~TiledNavMeshIntermediates()
+    {
+        if (chunkyTriMesh)
+        {
+            delete chunkyTriMesh;
+        }
+    }
+
+    rcChunkyTriMesh *chunkyTriMesh = nullptr;
+    NavMeshIntermediates *intermediates;
+    int intermediatesCount;
+};
+
 struct NavMeshGeneratorResult
 {
     bool success;
     NavMesh *navMesh;
     TileCache *tileCache;
-
-    const NavMesh &getNavMesh()
-    {
-        return *navMesh;
-    }
-
-    const TileCache &getTileCache()
-    {
-        return *tileCache;
-    }
+    NavMeshIntermediates *soloNavMeshIntermediates;
+    TiledNavMeshIntermediates *tiledNavMeshIntermediates;
 };
 
 class NavMeshGenerator
@@ -492,30 +528,30 @@ public:
         const int indexCount,
         const rcConfig &config,
         const int expectedLayersPerTile,
-        const int maxLayers);
+        const int maxLayers,
+        const bool keepIntermediates);
 
     void destroy();
 
 protected:
     NavMeshGeneratorResult *computeTiledNavMesh(
         rcConfig &cfg,
-        NavMeshIntermediates &intermediates,
         const float *verts,
         int nverts,
         const int *tris,
         int ntris,
         const int expectedLayersPerTile,
-        const int maxLayers);
+        const int maxLayers,
+        const bool keepIntermediates);
 
     NavMeshGeneratorResult *computeSoloNavMesh(
         rcConfig &cfg,
         rcContext &ctx,
-        NavMeshIntermediates &intermediates,
-        bool keepInterResults,
         const float *verts,
         int nverts,
         const int *tris,
-        int ntris);
+        int ntris,
+        const bool keepIntermediates);
 
     int rasterizeTileLayers(
         NavMesh *navMesh,
@@ -525,7 +561,8 @@ protected:
         const rcConfig &cfg,
         TileCacheData *tiles,
         const int maxTiles,
-        NavMeshIntermediates &intermediates,
+        TiledNavMeshIntermediates *tiledNavMeshIntermediates,
+        NavMeshIntermediates *intermediates,
         const float *verts,
         int nverts,
         const int maxLayers);
@@ -548,11 +585,11 @@ public:
 
     int getActiveAgentCount();
 
-    Vec3 getAgentPosition(int idx);
+    void getAgentPosition(int idx, Vec3 *target);
 
-    Vec3 getAgentVelocity(int idx);
+    void getAgentVelocity(int idx, Vec3 *target);
 
-    Vec3 getAgentNextTargetPath(int idx);
+    void getAgentNextTargetPath(int idx, Vec3 *target);
 
     int getAgentState(int idx);
 
@@ -636,5 +673,69 @@ public:
     bool statusDetail(dtStatus status, unsigned int detail)
     {
         return dtStatusDetail(status, detail);
+    }
+};
+
+class RecastAllocator
+{
+public:
+    rcHeightfield *allocHeightfield()
+    {
+        return rcAllocHeightfield();
+    }
+
+    void freeHeightField(rcHeightfield *hf)
+    {
+        rcFreeHeightField(hf);
+    }
+
+    rcCompactHeightfield *allocCompactHeightfield()
+    {
+        return rcAllocCompactHeightfield();
+    }
+
+    void freeCompactHeightfield(rcCompactHeightfield *chf)
+    {
+        rcFreeCompactHeightfield(chf);
+    }
+
+    rcHeightfieldLayerSet *allocHeightfieldLayerSet()
+    {
+        return rcAllocHeightfieldLayerSet();
+    }
+
+    void freeHeightfieldLayerSet(rcHeightfieldLayerSet *lset)
+    {
+        rcFreeHeightfieldLayerSet(lset);
+    }
+
+    rcContourSet *allocContourSet()
+    {
+        return rcAllocContourSet();
+    }
+
+    void freeContourSet(rcContourSet *cset)
+    {
+        rcFreeContourSet(cset);
+    }
+
+    rcPolyMesh *allocPolyMesh()
+    {
+        return rcAllocPolyMesh();
+    }
+
+    void freePolyMesh(rcPolyMesh *pmesh)
+    {
+        rcFreePolyMesh(pmesh);
+    }
+
+    rcPolyMeshDetail *allocPolyMeshDetail()
+    {
+        return rcAllocPolyMeshDetail();
+    }
+
+    void freePolyMeshDetail(rcPolyMeshDetail *dmesh)
+    {
+        rcFreePolyMeshDetail(dmesh);
     }
 };

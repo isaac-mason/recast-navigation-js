@@ -57,7 +57,7 @@ const navMeshConfig = {
   /* ... */
 };
 
-const { navMesh } = navMeshGenerator.generate(
+const { navMesh } = navMeshGenerator.generateSoloNavMesh(
   positions,
   indices,
   navMeshConfig
@@ -84,11 +84,11 @@ navMeshQuery.getRandomPointAround(position, radius);
 
 Recast Navigation supports creating Box and Cylinder obstacles.
 
-Note that in order to use obstacles, you must create a tiled NavMesh. You can do this by specifying a `tileSize` in the `NavMeshConfig`.
+Note that in order to use obstacles, you must create a tiled NavMesh.
 
 ```ts
 /* create a tiled NavMesh */
-const { navMesh, tileCache } = navMeshGenerator.generate(positions, indices, {
+const { navMesh, tileCache } = navMeshGenerator.generateTiledNavMesh(positions, indices, {
   /* ... */
   tileSize: 16,
 });
