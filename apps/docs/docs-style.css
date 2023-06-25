@@ -1,0 +1,34 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Hide unnecessary member visibility filter */
+#tsd-filter-visibility {
+  display: none !important;
+}
+
+/* Easier to read line-height */
+.tsd-typography p {
+  line-height: 1.7;
+}
+
+/* GitHub styles for <pre> blocks */
+:root {
+  --light-hl-0: #d73a49; /* declarations */
+  --light-hl-1: #000000;
+  --light-hl-2: #0070c1;
+  --light-hl-3: #6442c1; /* names */
+  --light-hl-4: #24292e; /* variable names */
+  --light-hl-5: #098658;
+  --light-hl-6: #6a737d; /* comments */
+  --light-hl-7: #af00db;
+  --light-hl-8: #267f99;
+  --light-hl-9: #a31515;
+  --light-hl-10: #000000ff;
+
+  --light-code-background: #f6f8fa;
+
+  --light-color-link: #0366d6;
+}

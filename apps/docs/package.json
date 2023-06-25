@@ -1,0 +1,13 @@
+{
+    "name": "docs",
+    "packageManager": "yarn@3.5.0",
+    "version": "0.0.0",
+    "private": true,
+    "scripts": {
+        "build": "sh build.sh"
+    },
+    "devDependencies": {
+        "typedoc": "^0.24.8",
+        "typescript": "^5.1.3"
+    }
+}
