@@ -1,5 +1,11 @@
 # @recast-navigation/wasm
 
+## 0.2.0
+
+### Minor Changes
+
+- cd82927: feat(NavMeshGenerator): split `generate` into `generateSoloNavMesh` and `generateTiledNavMesh`
+
 ## 0.1.2
 
 ### Patch Changes
