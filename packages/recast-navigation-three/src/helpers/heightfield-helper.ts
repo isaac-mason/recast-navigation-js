@@ -39,17 +39,17 @@ export type HeightfieldHelperParams = {
 };
 
 export class HeightfieldHelper {
-  heightfield: Group;
+  heightfields: Group;
 
   recastHeightfields: rcHeightfield[];
 
   highlightWalkable: boolean;
 
-  material: Material;
-
   defaultColor: Color;
-
+  
   walkableColor: Color;
+
+  material: Material;
 
   constructor({
     heightfields,
@@ -58,7 +58,7 @@ export class HeightfieldHelper {
     defaultColor = 'blue',
     walkableColor = 'green',
   }: HeightfieldHelperParams) {
-    this.heightfield = new Group();
+    this.heightfields = new Group();
     this.recastHeightfields = heightfields;
     this.highlightWalkable = highlightWalkable;
     this.material = material;
@@ -67,7 +67,7 @@ export class HeightfieldHelper {
   }
 
   updateHeightfield(): void {
-    this.heightfield.clear();
+    this.heightfields.clear();
 
     for (const hf of this.recastHeightfields) {
       const orig = hf.bmin();
@@ -137,7 +137,7 @@ export class HeightfieldHelper {
         instancedMesh.instanceColor.needsUpdate = true;
       }
 
-      this.heightfield.add(instancedMesh);
+      this.heightfields.add(instancedMesh);
     }
   }
 }

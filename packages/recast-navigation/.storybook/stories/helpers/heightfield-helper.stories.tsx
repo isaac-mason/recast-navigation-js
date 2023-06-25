@@ -1,21 +1,13 @@
+import { OrbitControls } from '@react-three/drei';
 import { NavMesh, array } from '@recast-navigation/core';
 import {
   HeightfieldHelper,
-  threeToSoloNavMesh,
   threeToTiledNavMesh,
 } from '@recast-navigation/three';
 import React, { useEffect, useState } from 'react';
-import {
-  FrontSide,
-  Group,
-  Mesh,
-  MeshBasicMaterial,
-  MeshStandardMaterial,
-} from 'three';
-import { Debug } from '../../common/debug';
+import { Group, Mesh, MeshStandardMaterial } from 'three';
 import { NavTestEnvirionment } from '../../common/nav-test-environment';
 import { decorators } from '../../decorators';
-import { OrbitControls } from '@react-three/drei';
 
 export default {
   title: 'Helpers / Heightfield Helper',
@@ -25,7 +17,6 @@ export default {
 export const HeightfieldHelperExample = () => {
   const [group, setGroup] = useState<Group | null>(null);
 
-  const [navMesh, setNavMesh] = useState<NavMesh | undefined>();
   const [heightfieldHelper, setHeightfieldHelper] = useState<
     HeightfieldHelper | undefined
   >();
@@ -71,11 +62,10 @@ export const HeightfieldHelperExample = () => {
     });
     heightfieldHelper.updateHeightfield();
 
-    setNavMesh(navMesh);
     setHeightfieldHelper(heightfieldHelper);
 
     return () => {
-      setNavMesh(undefined);
+      setHeightfieldHelper(undefined);
     };
   }, [group]);
 
@@ -86,7 +76,7 @@ export const HeightfieldHelperExample = () => {
       </group>
 
       {heightfieldHelper && (
-        <primitive object={heightfieldHelper.heightfield} />
+        <primitive object={heightfieldHelper.heightfields} />
       )}
 
       <OrbitControls />
