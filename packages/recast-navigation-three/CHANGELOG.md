@@ -1,5 +1,15 @@
 # @recast-navigation/three
 
+## 0.3.0
+
+### Minor Changes
+
+- 45d09df: refactor(HeightfieldHelper): rename `heightfield` to `heightfields`
+
+### Patch Changes
+
+- @recast-navigation/core@0.3.0
+
 ## 0.2.0
 
 ### Minor Changes
