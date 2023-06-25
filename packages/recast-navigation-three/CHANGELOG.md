@@ -1,5 +1,16 @@
 # @recast-navigation/three
 
+## 0.2.0
+
+### Minor Changes
+
+- cd82927: feat: split threeToNavMesh into threeToSoloNavMesh and threeToTiledNavMesh
+
+### Patch Changes
+
+- Updated dependencies [cd82927]
+  - @recast-navigation/core@0.2.0
+
 ## 0.1.2
 
 ### Patch Changes

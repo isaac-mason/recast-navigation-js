@@ -1,5 +1,14 @@
 # recast-navigation
 
+## 0.2.0
+
+### Patch Changes
+
+- Updated dependencies [cd82927]
+- Updated dependencies [cd82927]
+  - @recast-navigation/three@0.2.0
+  - @recast-navigation/core@0.2.0
+
 ## 0.1.2
 
 ### Patch Changes
