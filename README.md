@@ -17,11 +17,7 @@ A WebAssembly port of [Recast Navigation](https://github.com/recastnavigation/re
 
 ## Documentation
 
-Please see the documentation in the package READMEs:
-- [recast-navigation](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation/README.md)
-- [recast-navigation/three](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-three/README.md)
-
-*API docs are coming soon :)*
+Documentation can be found at [https://recast-navigation-js-docs.isaacmason.com](https://recast-navigation-js-docs.isaacmason.com).
 
 ## Packages
 
