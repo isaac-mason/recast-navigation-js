@@ -3193,7 +3193,7 @@ __metadata:
     "@rollup/plugin-commonjs": ^24.0.1
     "@rollup/plugin-node-resolve": ^15.0.1
     "@rollup/plugin-terser": ^0.4.0
-    "@rollup/plugin-typescript": ^11.0.0
+    "@rollup/plugin-typescript": ^11.1.1
     "@types/three": ^0.150.0
     "@typescript-eslint/eslint-plugin": ^5.7.0
     "@typescript-eslint/parser": ^5.7.0
@@ -3225,7 +3225,7 @@ __metadata:
     "@rollup/plugin-commonjs": ^24.0.1
     "@rollup/plugin-node-resolve": ^15.0.1
     "@rollup/plugin-terser": ^0.4.0
-    "@rollup/plugin-typescript": ^11.0.0
+    "@rollup/plugin-typescript": ^11.1.1
     "@types/three": ^0.150.0
     "@typescript-eslint/eslint-plugin": ^5.7.0
     "@typescript-eslint/parser": ^5.7.0
@@ -3327,9 +3327,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/plugin-typescript@npm:^11.0.0":
-  version: 11.0.0
-  resolution: "@rollup/plugin-typescript@npm:11.0.0"
+"@rollup/plugin-typescript@npm:^11.1.1":
+  version: 11.1.1
+  resolution: "@rollup/plugin-typescript@npm:11.1.1"
   dependencies:
     "@rollup/pluginutils": ^5.0.1
     resolve: ^1.22.1
@@ -3342,7 +3342,7 @@ __metadata:
       optional: true
     tslib:
       optional: true
-  checksum: b0d34ff0ad6bfc681c437ef42df7b02f04c361465be5a2044cd30cac5b003045c54e4377d58ab91925e296076b792bbb5ddded72cacdd21092bc8694a95b046f
+  checksum: 0e82ef17ded026060bbc237ed2552e227d5b514cd58c1f624afeb65704a24048e38918e6242bcf29960612dc9925fbf1bb0625475ec691330cd144e4a84e3065
   languageName: node
   linkType: hard
 
@@ -13038,7 +13038,7 @@ __metadata:
     "@rollup/plugin-multi-entry": ^6.0.0
     "@rollup/plugin-node-resolve": ^15.0.1
     "@rollup/plugin-terser": ^0.4.0
-    "@rollup/plugin-typescript": ^11.0.0
+    "@rollup/plugin-typescript": ^11.1.1
     "@storybook/addon-actions": ^7.0.22
     "@storybook/addon-essentials": ^7.0.22
     "@storybook/addon-interactions": ^7.0.22
