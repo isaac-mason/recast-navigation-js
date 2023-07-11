@@ -10,33 +10,50 @@ concurrency: preview-${{ github.workflow }}-${{ github.ref }}
 jobs:
   preview:
     name: Preview
+    if: github.repository_owner == 'isaac-mason'
     runs-on: ubuntu-latest
     env:
       NODE_OPTIONS: '--max-old-space-size=4096'
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout Repo
+        uses: actions/checkout@v2
 
-      - name: Install Vercel CLI
-        run: npm install --global vercel@latest
+      - name: Setup Node.js 18.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18.x
+
+      - name: Install Dependencies
+        run: yarn
 
       - name: Build Packages
         run: ./ci/build-packages.sh
         shell: bash
 
+      - name: Test
+        run: yarn test
+
+      - name: Install Vercel CLI
+        if: github.event_name != 'pull_request'
+        run: npm install --global vercel@latest
+
       # navmesh website
       - name: NavMesh Website - Pull Vercel Environment Information
+        if: github.event_name != 'pull_request'
         run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_NAVMESH_WEBSITE_PROJECT_ID }}
 
       - name: NavMesh Website - Build Project Artifacts
+        if: github.event_name != 'pull_request'
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_NAVMESH_WEBSITE_PROJECT_ID }}
 
       - name: NavMesh Website - Deploy Project Artifacts to Vercel
+        if: github.event_name != 'pull_request'
         run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -44,18 +61,21 @@ jobs:
 
       # storybook
       - name: Storybook - Pull Vercel Environment Information
+        if: github.event_name != 'pull_request'
         run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_STORYBOOK_PROJECT_ID }}
 
       - name: Storybook - Build Project Artifacts
+        if: github.event_name != 'pull_request'
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_STORYBOOK_PROJECT_ID }}
 
       - name: Storybook - Deploy Project Artifacts to Vercel
+        if: github.event_name != 'pull_request'
         run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -63,18 +83,21 @@ jobs:
 
       # docs
       - name: Docs - Pull Vercel Environment Information
+        if: github.event_name != 'pull_request'
         run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_DOCS_PROJECT_ID }}
 
       - name: Docs - Build Project Artifacts
+        if: github.event_name != 'pull_request'
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_DOCS_PROJECT_ID }}
 
       - name: Docs - Deploy Project Artifacts to Vercel
+        if: github.event_name != 'pull_request'
         run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
