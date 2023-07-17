@@ -70,7 +70,7 @@
     "@storybook/addon-essentials": "^7.0.22",
     "@storybook/addon-interactions": "^7.0.22",
     "@storybook/addon-links": "^7.0.22",
-    "@storybook/addon-mdx-gfm": "^7.0.22",
+    "@storybook/addon-mdx-gfm": "^7.0.27",
     "@storybook/react": "^7.0.22",
     "@storybook/react-vite": "^7.0.22",
     "@types/react": "^18.2.11",
