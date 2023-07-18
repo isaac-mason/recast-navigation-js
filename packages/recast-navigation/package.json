@@ -59,7 +59,7 @@
     "@babel/core": "^7.22.5",
     "@mdx-js/react": "^2.3.0",
     "@react-three/csg": "^2.2.0",
-    "@react-three/drei": "^9.78.1",
+    "@react-three/drei": "^9.78.2",
     "@react-three/fiber": "^8.12.0",
     "@rollup/plugin-commonjs": "^24.0.1",
     "@rollup/plugin-multi-entry": "^6.0.0",
