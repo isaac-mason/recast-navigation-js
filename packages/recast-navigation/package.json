@@ -74,7 +74,7 @@
     "@storybook/react": "^7.0.22",
     "@storybook/react-vite": "^7.0.22",
     "@types/react": "^18.2.11",
-    "@types/react-dom": "^18.0.11",
+    "@types/react-dom": "^18.2.7",
     "@types/three": "^0.150.0",
     "babel-loader": "^8.3.0",
     "leva": "^0.9.34",
