@@ -17,7 +17,7 @@
     "recast-navigation": "workspace:^",
     "styled-components": "^5.3.9",
     "suspend-react": "^0.0.9",
-    "three": "^0.150.1",
+    "three": "^0.155.0",
     "zustand": "^4.3.8"
   },
   "devDependencies": {

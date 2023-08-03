@@ -53,7 +53,7 @@
     "@recast-navigation/three": "0.3.0"
   },
   "peerDependencies": {
-    "three": "^0.150.1"
+    "three": "^0.155.0"
   },
   "devDependencies": {
     "@babel/core": "^7.22.5",
@@ -85,7 +85,7 @@
     "rollup-plugin-filesize": "^10.0.0",
     "storybook": "^7.0.22",
     "suspend-react": "^0.0.9",
-    "three": "^0.150.1",
+    "three": "^0.155.0",
     "three-pathfinding": "^1.2.0"
   },
   "packageManager": "yarn@3.2.2"
