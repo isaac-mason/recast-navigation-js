@@ -4113,7 +4113,7 @@ __metadata:
     "@rollup/plugin-node-resolve": ^15.0.1
     "@rollup/plugin-terser": ^0.4.3
     "@rollup/plugin-typescript": ^11.1.2
-    "@types/three": ^0.150.0
+    "@types/three": ^0.155.0
     "@typescript-eslint/eslint-plugin": ^5.7.0
     "@typescript-eslint/parser": ^5.60.1
     babel-loader: ^8.2.5
@@ -4145,7 +4145,7 @@ __metadata:
     "@rollup/plugin-node-resolve": ^15.0.1
     "@rollup/plugin-terser": ^0.4.3
     "@rollup/plugin-typescript": ^11.1.2
-    "@types/three": ^0.150.0
+    "@types/three": ^0.155.0
     "@typescript-eslint/eslint-plugin": ^5.7.0
     "@typescript-eslint/parser": ^5.60.1
     eslint: ^8.5.0
@@ -5255,6 +5255,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tweenjs/tween.js@npm:~18.6.4":
+  version: 18.6.4
+  resolution: "@tweenjs/tween.js@npm:18.6.4"
+  checksum: 47208db3f6c32cde80284a852d0fca016284f90c4798eb4ebb2ebfc2e379504007bf0c031c2c33044df8a0878fd1942ebc4e0b7f5b8bcccf812b532ea1ee73eb
+  languageName: node
+  linkType: hard
+
 "@types/babel__core@npm:^7.0.0":
   version: 7.20.0
   resolution: "@types/babel__core@npm:7.20.0"
@@ -5775,15 +5782,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:^0.150.0":
-  version: 0.150.0
-  resolution: "@types/three@npm:0.150.0"
+"@types/three@npm:^0.155.0":
+  version: 0.155.0
+  resolution: "@types/three@npm:0.155.0"
   dependencies:
+    "@tweenjs/tween.js": ~18.6.4
     "@types/stats.js": "*"
     "@types/webxr": "*"
     fflate: ~0.6.9
     lil-gui: ~0.17.0
-  checksum: 5adee83f58c8ae5cc86b37edc8633456318eb4c83c3fe9c6420d2cacac05dd3b5b721132765ac79155069694cf927a366a210be318b9356885a2203d1feb87e8
+    meshoptimizer: ~0.18.1
+  checksum: decd966b198ad0f24febcbd16a2c3ff584e7b0f7f89e70c2ecb8c1a7842598a51f79cd0965220aa74d216ab4474ca2f6e4023904aa7ca0f38c93fc8b99e2a0d6
   languageName: node
   linkType: hard
 
@@ -11947,6 +11956,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"meshoptimizer@npm:~0.18.1":
+  version: 0.18.1
+  resolution: "meshoptimizer@npm:0.18.1"
+  checksum: 101dbed8abd4cf167cdb7a0bc13db90dd0743332c689e43b18cc5254d238f0766750752432401fa63dc7e9e32399ef68daacf48f0d89db1484042c1761c7362d
+  languageName: node
+  linkType: hard
+
 "methods@npm:~1.1.2":
   version: 1.1.2
   resolution: "methods@npm:1.1.2"
@@ -12670,7 +12686,7 @@ __metadata:
     "@react-three/fiber": ^8.12.0
     "@types/react": ^18.2.11
     "@types/react-dom": ^18.2.7
-    "@types/three": ^0.150.0
+    "@types/three": ^0.155.0
     "@vitejs/plugin-react": ^3.1.0
     leva: ^0.9.34
     react: ^18.2.0
@@ -12715,7 +12731,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "node-cjs-recast-navigation-example@workspace:examples/node-cjs-recast-navigation-example"
   dependencies:
-    "@types/three": ^0.150.0
+    "@types/three": ^0.155.0
     recast-navigation: 0.3.0
     three: ^0.155.0
   languageName: unknown
@@ -12734,7 +12750,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "node-esm-recast-navigation-example@workspace:examples/node-esm-recast-navigation-example"
   dependencies:
-    "@types/three": ^0.150.0
+    "@types/three": ^0.155.0
     recast-navigation: 0.3.0
     three: ^0.155.0
   languageName: unknown
@@ -14308,7 +14324,7 @@ __metadata:
     "@storybook/react-vite": ^7.2.0
     "@types/react": ^18.2.11
     "@types/react-dom": ^18.2.7
-    "@types/three": ^0.150.0
+    "@types/three": ^0.155.0
     babel-loader: ^8.3.0
     leva: ^0.9.34
     react: ^18.2.0
@@ -16823,7 +16839,7 @@ __metadata:
     "@react-three/fiber": ^8.12.0
     "@types/react": ^18.2.11
     "@types/react-dom": ^18.2.7
-    "@types/three": ^0.150.0
+    "@types/three": ^0.155.0
     "@vitejs/plugin-react": ^3.1.0
     react: ^18.2.0
     react-dom: ^18.2.0
