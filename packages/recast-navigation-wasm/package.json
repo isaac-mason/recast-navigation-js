@@ -38,7 +38,7 @@
     "build": "sh build.sh"
   },
   "devDependencies": {
-    "webidl-dts-gen": "file:../../../webidl2ts/packages/webidl-dts-gen"
+    "webidl-dts-gen": "^1.4.0"
   },
   "packageManager": "yarn@3.2.2"
 }
