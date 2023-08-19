@@ -4,11 +4,11 @@ import {
   Color,
   ColorRepresentation,
   DynamicDrawUsage,
-  Group,
   InstancedMesh,
   Material,
   Matrix4,
   MeshBasicMaterial,
+  Object3D,
   Vector3Tuple,
 } from 'three';
 
@@ -38,15 +38,13 @@ export type HeightfieldHelperParams = {
   material?: Material;
 };
 
-export class HeightfieldHelper {
-  heightfields: Group;
-
-  recastHeightfields: rcHeightfield[];
+export class HeightfieldHelper extends Object3D {
+  heightfields: rcHeightfield[];
 
   highlightWalkable: boolean;
 
   defaultColor: Color;
-  
+
   walkableColor: Color;
 
   material: Material;
@@ -58,18 +56,19 @@ export class HeightfieldHelper {
     defaultColor = 'blue',
     walkableColor = 'green',
   }: HeightfieldHelperParams) {
-    this.heightfields = new Group();
-    this.recastHeightfields = heightfields;
+    super();
+
+    this.heightfields = heightfields;
     this.highlightWalkable = highlightWalkable;
     this.material = material;
     this.defaultColor = new Color(defaultColor);
     this.walkableColor = new Color(walkableColor);
   }
 
-  updateHeightfield(): void {
-    this.heightfields.clear();
+  update(): void {
+    this.clear();
 
-    for (const hf of this.recastHeightfields) {
+    for (const hf of this.heightfields) {
       const orig = hf.bmin();
       const cs = hf.cs();
       const ch = hf.ch();
@@ -137,7 +136,7 @@ export class HeightfieldHelper {
         instancedMesh.instanceColor.needsUpdate = true;
       }
 
-      this.heightfields.add(instancedMesh);
+      this.add(instancedMesh);
     }
   }
 }

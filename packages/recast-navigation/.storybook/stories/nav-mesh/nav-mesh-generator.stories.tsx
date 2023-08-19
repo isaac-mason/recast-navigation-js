@@ -70,10 +70,10 @@ const Common = ({ level, tileSize }: CommonProps) => {
     };
 
     if (tileSize) {
-      const { navMesh } = threeToTiledNavMesh(meshes, config);
+      const { navMesh } = threeToTiledNavMesh(meshes, config, true);
       setNavMesh(navMesh);
     } else {
-      const { navMesh } = threeToSoloNavMesh(meshes, config);
+      const { navMesh } = threeToSoloNavMesh(meshes, config, true);
       setNavMesh(navMesh);
     }
 

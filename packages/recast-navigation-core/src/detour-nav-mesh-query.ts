@@ -1,8 +1,8 @@
 import type R from '@recast-navigation/wasm';
 import { finalizer } from './finalizer';
-import { NavMesh } from './nav-mesh';
+import { NavMesh } from './detour-nav-mesh';
 import { array, vec3, Vector3 } from './utils';
-import { Wasm } from './wasm';
+import { Raw } from './raw';
 
 export type NavMeshQueryParams = {
   navMesh: NavMesh;
@@ -16,11 +16,11 @@ export type NavMeshQueryParams = {
 export class NavMeshQuery {
   raw: R.NavMeshQuery;
 
-  private tmpVec1 = new Wasm.Recast.Vec3();
-  private tmpVec2 = new Wasm.Recast.Vec3();
+  private tmpVec1 = new Raw.Module.Vec3();
+  private tmpVec2 = new Raw.Module.Vec3();
 
   constructor({ navMesh, maxNodes = 2048 }: NavMeshQueryParams) {
-    this.raw = new Wasm.Recast.NavMeshQuery(navMesh.raw, maxNodes);
+    this.raw = new Raw.Module.NavMeshQuery(navMesh.raw, maxNodes);
 
     finalizer.register(this);
   }

@@ -79,7 +79,7 @@ Before building, ensure you have the following installed:
 
 - Node 18
 - Python 3.10.5
-- Emsdk v3.1.34
+- Emsdk v3.1.44
 
 To build the project, run the following:
 

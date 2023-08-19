@@ -1,6 +1,6 @@
 import { BoxGeometry, BufferAttribute, Mesh } from 'three';
 import { beforeAll, beforeEach, describe, test } from 'vitest';
-import { init, NavMesh, NavMeshGenerator, NavMeshQuery } from '../src';
+import { init, NavMesh, generateSoloNavMesh, NavMeshQuery } from '../src';
 
 describe('Smoke tests', () => {
   beforeAll(async () => {
@@ -8,13 +8,10 @@ describe('Smoke tests', () => {
   });
 
   describe('NavMesh Generation', () => {
-    let navMeshGenerator: NavMeshGenerator;
     let navMesh: NavMesh;
     let navMeshQuery: NavMeshQuery;
 
     beforeEach(() => {
-      navMeshGenerator = new NavMeshGenerator();
-
       const mesh = new Mesh(new BoxGeometry(5, 0.1, 5));
 
       const positions = (
@@ -22,7 +19,10 @@ describe('Smoke tests', () => {
       ).array;
       const indices = mesh.geometry.getIndex()!.array;
 
-      const result = navMeshGenerator.generateSoloNavMesh(positions, indices);
+      const result = generateSoloNavMesh(positions, indices);
+      
+      if (!result.success) throw new Error('nav mesh generation failed')
+
       navMesh = result.navMesh;
 
       navMeshQuery = new NavMeshQuery({ navMesh });

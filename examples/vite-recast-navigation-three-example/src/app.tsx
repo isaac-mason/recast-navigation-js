@@ -1,7 +1,7 @@
 import { Environment, OrbitControls } from '@react-three/drei';
 import { Canvas, useThree } from '@react-three/fiber';
 import { useEffect, useRef } from 'react';
-import { init, NavMeshQuery } from 'recast-navigation';
+import { NavMeshQuery, init } from 'recast-navigation';
 import { NavMeshHelper, threeToSoloNavMesh } from 'recast-navigation/three';
 import { suspend } from 'suspend-react';
 import { Color, Group, Mesh, MeshBasicMaterial, Vector2, Vector3 } from 'three';
@@ -21,7 +21,7 @@ const App = () => {
       }
     });
 
-    const { navMesh } = threeToSoloNavMesh(meshes, {
+    const { success, navMesh } = threeToSoloNavMesh(meshes, {
       cs: 0.2,
       ch: 0.2,
       walkableSlopeAngle: 35,
@@ -37,9 +37,11 @@ const App = () => {
       detailSampleMaxError: 1,
     });
 
+    if (!success) return
+
     const navMeshQuery = new NavMeshQuery({ navMesh });
 
-    const debug = new NavMeshHelper({
+    const navMeshHelper = new NavMeshHelper({
       navMesh,
       navMeshMaterial: new MeshBasicMaterial({
         color: 'red',
@@ -47,7 +49,7 @@ const App = () => {
       }),
     });
 
-    scene.add(debug.navMesh);
+    scene.add(navMeshHelper);
 
     const path = navMeshQuery.computePath(
       navMeshQuery.getClosestPoint(new Vector3(2, 1, 2)),
@@ -78,7 +80,7 @@ const App = () => {
     scene.add(line);
 
     return () => {
-      scene.remove(debug.navMesh);
+      scene.remove(navMeshHelper);
       scene.remove(line);
     };
   }, []);

@@ -31,60 +31,33 @@ inline float r01()
     return ((float)fastrand()) * (1.f / 32767.f);
 }
 
-struct TileCacheData
+bool TileCache::init(const dtTileCacheParams *params, RecastLinearAllocator *allocator, RecastFastLZCompressor *compressor, TileCacheMeshProcessAbstract &meshProcess)
 {
-    unsigned char *data;
-    int dataSize;
-};
-
-CreateNavMeshDataResult NavMeshBuilder::createNavMeshData(dtNavMeshCreateParams &navMeshCreateParams)
-{
-    CreateNavMeshDataResult *createNavMeshDataResult = new CreateNavMeshDataResult;
-
-    unsigned char *navMeshData;
-    int navMeshDataSize = 0;
-
-    if (!dtCreateNavMeshData(&navMeshCreateParams, &createNavMeshDataResult->navMeshData, &createNavMeshDataResult->navMeshDataSize))
-    {
-        Log("Could not build NavMeshData");
-
-        createNavMeshDataResult->success = false;
-        createNavMeshDataResult->navMeshData = 0;
-        createNavMeshDataResult->navMeshDataSize = 0;
-    }
-    else
-    {
-        createNavMeshDataResult->success = true;
-        createNavMeshDataResult->navMeshData = navMeshData;
-        createNavMeshDataResult->navMeshDataSize = navMeshDataSize;
-    }
-
-    return *createNavMeshDataResult;
-}
-
-bool TileCache::init(const dtTileCacheParams &params)
-{
-    m_tileCache = dtAllocTileCache();
     if (!m_tileCache)
     {
         return false;
     }
 
-    dtStatus status = m_tileCache->init(&params, &m_talloc, &m_tcomp, &m_tmproc);
+    TileCacheMeshProcessWrapper *recastMeshProcess = new TileCacheMeshProcessWrapper(meshProcess);
+
+    dtStatus status = m_tileCache->init(params, allocator, compressor, recastMeshProcess);
     if (dtStatusFailed(status))
     {
         return false;
     }
 
+    m_talloc = allocator;
+    m_tcomp = compressor;
+    m_tmproc = recastMeshProcess;
+
     return true;
 };
 
-TileCacheAddTileResult TileCache::addTile(unsigned char *data, const int dataSize, unsigned char flags)
+TileCacheAddTileResult TileCache::addTile(TileCacheData *tileCacheData, unsigned char flags)
 {
     TileCacheAddTileResult *result = new TileCacheAddTileResult;
 
-    dtStatus status = m_tileCache->addTile(data, dataSize, flags, &result->tileRef);
-    result->status = status;
+    result->status = m_tileCache->addTile(tileCacheData->data, tileCacheData->size, flags, &result->tileRef);
 
     return *result;
 }
@@ -102,9 +75,8 @@ dtStatus TileCache::buildNavMeshTilesAt(const int tx, const int ty, NavMesh *nav
 TileCacheUpdateResult TileCache::update(NavMesh *navMesh)
 {
     TileCacheUpdateResult *result = new TileCacheUpdateResult;
-    dtStatus status = m_tileCache->update(0, navMesh->getNavMesh(), &result->upToDate);
 
-    result->status = status;
+    result->status = m_tileCache->update(0, navMesh->getNavMesh(), &result->upToDate);
 
     return *result;
 };
@@ -157,7 +129,10 @@ void TileCache::destroy()
         dtFreeTileCache(m_tileCache);
     }
 
-    m_talloc.reset();
+    m_talloc->reset();
+    m_talloc = 0;
+    m_tcomp = 0;
+    m_tmproc = 0;
 }
 
 NavMeshQuery::NavMeshQuery(NavMesh *navMesh, const int maxNodes)
@@ -333,920 +308,7 @@ struct NavMeshTileHeader
     int dataSize;
 };
 
-NavMeshExport NavMeshExporter::exportNavMesh(NavMesh *navMesh, TileCache *tileCache) const
-{
-    if (!navMesh->m_navMesh)
-    {
-        return {0, 0};
-    }
-
-    unsigned char *bits = nullptr;
-    size_t bitsSize = 0;
-
-    const dtNavMesh *m_navMesh = navMesh->m_navMesh;
-    const dtTileCache *m_tileCache = tileCache->m_tileCache;
-
-    if (m_tileCache)
-    {
-        // tilecache set
-        // Store header.
-        RecastHeader recastHeader;
-        TileCacheSetHeader header;
-        recastHeader.magic = TILECACHESET_MAGIC;
-        recastHeader.version = TILECACHESET_VERSION;
-        recastHeader.numTiles = 0;
-        for (int i = 0; i < m_tileCache->getTileCount(); ++i)
-        {
-            const dtCompressedTile *tile = m_tileCache->getTile(i);
-            if (!tile || !tile->header || !tile->dataSize)
-                continue;
-            recastHeader.numTiles++;
-        }
-        memcpy(&header.cacheParams, m_tileCache->getParams(), sizeof(dtTileCacheParams));
-        memcpy(&header.meshParams, m_navMesh->getParams(), sizeof(dtNavMeshParams));
-
-        bits = (unsigned char *)realloc(bits, bitsSize + sizeof(RecastHeader));
-        memcpy(&bits[bitsSize], &recastHeader, sizeof(RecastHeader));
-        bitsSize += sizeof(RecastHeader);
-
-        bits = (unsigned char *)realloc(bits, bitsSize + sizeof(TileCacheSetHeader));
-        memcpy(&bits[bitsSize], &header, sizeof(TileCacheSetHeader));
-        bitsSize += sizeof(TileCacheSetHeader);
-
-        // Store tiles.
-        for (int i = 0; i < m_tileCache->getTileCount(); ++i)
-        {
-            const dtCompressedTile *tile = m_tileCache->getTile(i);
-            if (!tile || !tile->header || !tile->dataSize)
-                continue;
-
-            TileCacheTileHeader tileHeader;
-            tileHeader.tileRef = m_tileCache->getTileRef(tile);
-            tileHeader.dataSize = tile->dataSize;
-
-            bits = (unsigned char *)realloc(bits, bitsSize + sizeof(tileHeader));
-            memcpy(&bits[bitsSize], &tileHeader, sizeof(tileHeader));
-            bitsSize += sizeof(tileHeader);
-
-            bits = (unsigned char *)realloc(bits, bitsSize + tile->dataSize);
-            memcpy(&bits[bitsSize], tile->data, tile->dataSize);
-            bitsSize += tile->dataSize;
-        }
-    }
-    else
-    {
-        // Mesh set
-        // Store header.
-        RecastHeader recastHeader;
-        NavMeshSetHeader header;
-        recastHeader.magic = NAVMESHSET_MAGIC;
-        recastHeader.version = NAVMESHSET_VERSION;
-        recastHeader.numTiles = 0;
-        for (int i = 0; i < m_navMesh->getMaxTiles(); ++i)
-        {
-            const dtMeshTile *tile = m_navMesh->getTile(i);
-            if (!tile || !tile->header || !tile->dataSize)
-                continue;
-            recastHeader.numTiles++;
-        }
-        memcpy(&header.params, m_navMesh->getParams(), sizeof(dtNavMeshParams));
-        bits = (unsigned char *)realloc(bits, bitsSize + sizeof(RecastHeader));
-        memcpy(&bits[bitsSize], &recastHeader, sizeof(RecastHeader));
-        bitsSize += sizeof(RecastHeader);
-
-        bits = (unsigned char *)realloc(bits, bitsSize + sizeof(NavMeshSetHeader));
-        memcpy(&bits[bitsSize], &header, sizeof(NavMeshSetHeader));
-        bitsSize += sizeof(NavMeshSetHeader);
-
-        // Store tiles.
-        for (int i = 0; i < m_navMesh->getMaxTiles(); ++i)
-        {
-            const dtMeshTile *tile = m_navMesh->getTile(i);
-            if (!tile || !tile->header || !tile->dataSize)
-                continue;
-
-            NavMeshTileHeader tileHeader;
-            tileHeader.tileRef = m_navMesh->getTileRef(tile);
-            tileHeader.dataSize = tile->dataSize;
-
-            bits = (unsigned char *)realloc(bits, bitsSize + sizeof(tileHeader));
-            memcpy(&bits[bitsSize], &tileHeader, sizeof(tileHeader));
-            bitsSize += sizeof(tileHeader);
-
-            bits = (unsigned char *)realloc(bits, bitsSize + tile->dataSize);
-            memcpy(&bits[bitsSize], tile->data, tile->dataSize);
-            bitsSize += tile->dataSize;
-        }
-    }
-
-    NavMeshExport navMeshExport;
-    navMeshExport.dataPointer = bits;
-    navMeshExport.size = int(bitsSize);
-
-    return navMeshExport;
-}
-
-void NavMeshExporter::freeNavMeshExport(NavMeshExport *navMeshExport)
-{
-    free(navMeshExport->dataPointer);
-}
-
-int NavMeshGenerator::rasterizeTileLayers(
-    NavMesh *navMesh,
-    TileCache *tileCache,
-    const int tx,
-    const int ty,
-    const rcConfig &cfg,
-    TileCacheData *tiles,
-    const int maxTiles,
-    TiledNavMeshIntermediates *tiledNavMeshIntermediates,
-    NavMeshIntermediates *intermediates,
-    const float *verts,
-    int nverts,
-    const int maxLayers)
-{
-    RecastFastLZCompressor comp;
-
-    // Tile bounds.
-    const float tcs = cfg.tileSize * cfg.cs;
-
-    rcConfig tcfg;
-    memcpy(&tcfg, &cfg, sizeof(tcfg));
-
-    tcfg.bmin[0] = cfg.bmin[0] + tx * tcs;
-    tcfg.bmin[1] = cfg.bmin[1];
-    tcfg.bmin[2] = cfg.bmin[2] + ty * tcs;
-    tcfg.bmax[0] = cfg.bmin[0] + (tx + 1) * tcs;
-    tcfg.bmax[1] = cfg.bmax[1];
-    tcfg.bmax[2] = cfg.bmin[2] + (ty + 1) * tcs;
-    tcfg.bmin[0] -= tcfg.borderSize * tcfg.cs;
-    tcfg.bmin[2] -= tcfg.borderSize * tcfg.cs;
-    tcfg.bmax[0] += tcfg.borderSize * tcfg.cs;
-    tcfg.bmax[2] += tcfg.borderSize * tcfg.cs;
-
-    // Allocate voxel heightfield where we rasterize our input data to.
-    intermediates->heightfield = rcAllocHeightfield();
-    if (!intermediates->heightfield)
-    {
-        Log("buildNavigation: Out of memory 'solid'.");
-        return 0;
-    }
-    rcContext ctx;
-
-    if (!rcCreateHeightfield(&ctx, *intermediates->heightfield, tcfg.width, tcfg.height, tcfg.bmin, tcfg.bmax, tcfg.cs, tcfg.ch))
-    {
-        Log("buildNavigation: Could not create solid heightfield.");
-        return 0;
-    }
-
-    rcChunkyTriMesh *chunkyMesh = tiledNavMeshIntermediates->chunkyTriMesh;
-
-    float tbmin[2], tbmax[2];
-    tbmin[0] = tcfg.bmin[0];
-    tbmin[1] = tcfg.bmin[2];
-    tbmax[0] = tcfg.bmax[0];
-    tbmax[1] = tcfg.bmax[2];
-
-    int cid[512]; // TODO: Make grow when returning too many items.
-    const int ncid = rcGetChunksOverlappingRect(chunkyMesh, tbmin, tbmax, cid, 512);
-    if (!ncid)
-    {
-        return 0; // empty
-    }
-
-    for (int i = 0; i < ncid; ++i)
-    {
-        const rcChunkyTriMeshNode &node = chunkyMesh->nodes[cid[i]];
-        const int *tris = &chunkyMesh->tris[node.i * 3];
-        const int ntris = node.n;
-
-        // Allocate array that can hold triangle area types.
-        unsigned char *triareas = new unsigned char[ntris];
-
-        // Find triangles which are walkable based on their slope and rasterize them.
-        // If your input data is multiple meshes, you can transform them here, calculate
-        // the are type for each of the meshes and rasterize them.
-        memset(triareas, 0, ntris * sizeof(unsigned char));
-        rcMarkWalkableTriangles(&ctx, cfg.walkableSlopeAngle, verts, nverts, tris, ntris, triareas);
-        bool success = rcRasterizeTriangles(&ctx, verts, nverts, tris, triareas, ntris, *intermediates->heightfield, tcfg.walkableClimb);
-
-        delete[] triareas;
-
-        if (!success)
-        {
-            return 0;
-        }
-    }
-
-    // Once all geometry is rasterized, we do initial pass of filtering to
-    // remove unwanted overhangs caused by the conservative rasterization
-    // as well as filter spans where the character cannot possibly stand.
-
-    rcFilterLowHangingWalkableObstacles(&ctx, tcfg.walkableClimb, *intermediates->heightfield);
-    rcFilterLedgeSpans(&ctx, tcfg.walkableHeight, tcfg.walkableClimb, *intermediates->heightfield);
-    rcFilterWalkableLowHeightSpans(&ctx, tcfg.walkableHeight, *intermediates->heightfield);
-
-    intermediates->compactHeightfield = rcAllocCompactHeightfield();
-    if (!intermediates->compactHeightfield)
-    {
-        Log("buildNavigation: Out of memory 'chf'.");
-        return 0;
-    }
-    if (!rcBuildCompactHeightfield(&ctx, tcfg.walkableHeight, tcfg.walkableClimb, *intermediates->heightfield, *intermediates->compactHeightfield))
-    {
-        Log("buildNavigation: Could not build compact data.");
-        return 0;
-    }
-
-    // Erode the walkable area by agent radius.
-    if (!rcErodeWalkableArea(&ctx, tcfg.walkableRadius, *intermediates->compactHeightfield))
-    {
-        Log("buildNavigation: Could not erode.");
-        return 0;
-    }
-
-    intermediates->heightfieldLayerSet = rcAllocHeightfieldLayerSet();
-    if (!intermediates->heightfieldLayerSet)
-    {
-        Log("buildNavigation: Out of memory 'lset'.");
-        return 0;
-    }
-    if (!rcBuildHeightfieldLayers(&ctx, *intermediates->compactHeightfield, tcfg.borderSize, tcfg.walkableHeight, *intermediates->heightfieldLayerSet))
-    {
-        Log("buildNavigation: Could not build heighfield layers.");
-        return 0;
-    }
-
-    int ntiles = 0;
-    TileCacheData ctiles[maxLayers];
-    for (int i = 0; i < rcMin(intermediates->heightfieldLayerSet->nlayers, maxLayers); ++i)
-    {
-        TileCacheData *tile = &ctiles[ntiles++];
-        const rcHeightfieldLayer *layer = &intermediates->heightfieldLayerSet->layers[i];
-
-        // Store header
-        dtTileCacheLayerHeader header;
-        header.magic = DT_TILECACHE_MAGIC;
-        header.version = DT_TILECACHE_VERSION;
-
-        // Tile layer location in the navmesh.
-        header.tx = tx;
-        header.ty = ty;
-        header.tlayer = i;
-        dtVcopy(header.bmin, layer->bmin);
-        dtVcopy(header.bmax, layer->bmax);
-
-        // Tile info.
-        header.width = (unsigned char)layer->width;
-        header.height = (unsigned char)layer->height;
-        header.minx = (unsigned char)layer->minx;
-        header.maxx = (unsigned char)layer->maxx;
-        header.miny = (unsigned char)layer->miny;
-        header.maxy = (unsigned char)layer->maxy;
-        header.hmin = (unsigned short)layer->hmin;
-        header.hmax = (unsigned short)layer->hmax;
-
-        dtStatus status = dtBuildTileCacheLayer(&comp, &header, layer->heights, layer->areas, layer->cons,
-                                                &tile->data, &tile->dataSize);
-        if (dtStatusFailed(status))
-        {
-            return 0;
-        }
-    }
-
-    // Transfer ownsership of tile data from build context to the caller.
-    int n = 0;
-    for (int i = 0; i < rcMin(ntiles, maxTiles); ++i)
-    {
-        tiles[n++] = ctiles[i];
-        ctiles[i].data = 0;
-        ctiles[i].dataSize = 0;
-    }
-
-    return n;
-}
-
-NavMeshGeneratorResult *NavMeshGenerator::computeSoloNavMesh(
-    rcConfig &cfg,
-    rcContext &ctx,
-    const float *verts,
-    int nverts,
-    const int *tris,
-    int ntris,
-    bool keepIntermediates)
-{
-    NavMeshGeneratorResult *result = new NavMeshGeneratorResult;
-    result->success = false;
-
-    NavMeshIntermediates *intermediates = new NavMeshIntermediates;
-    result->soloNavMeshIntermediates = intermediates;
-    result->tiledNavMeshIntermediates = nullptr;
-
-    //
-    // Step 2. Rasterize input polygon soup.
-    //
-
-    // Allocate voxel heightfield where we rasterize our input data to.
-    intermediates->heightfield = rcAllocHeightfield();
-    if (!intermediates->heightfield)
-    {
-        Log("buildNavigation: Out of memory 'solid'.");
-        return result;
-    }
-    if (!rcCreateHeightfield(&ctx, *intermediates->heightfield, cfg.width, cfg.height, cfg.bmin, cfg.bmax, cfg.cs, cfg.ch))
-    {
-        Log("buildNavigation: Could not create solid heightfield.");
-        return result;
-    }
-
-    // Find triangles which are walkable based on their slope and rasterize them.
-    // If your input data is multiple meshes, you can transform them here, calculate
-    // the are type for each of the meshes and rasterize them.
-    unsigned char *triareas = new unsigned char[ntris];
-    memset(triareas, 0, ntris * sizeof(unsigned char));
-    rcMarkWalkableTriangles(&ctx, cfg.walkableSlopeAngle, verts, nverts, tris, ntris, triareas);
-    rcRasterizeTriangles(&ctx, verts, nverts, tris, triareas, ntris, *intermediates->heightfield, cfg.walkableClimb);
-    delete[] triareas;
-
-    //
-    // Step 3. Filter walkables surfaces.
-    //
-
-    // Once all geoemtry is rasterized, we do initial pass of filtering to
-    // remove unwanted overhangs caused by the conservative rasterization
-    // as well as filter spans where the character cannot possibly stand.
-
-    rcFilterLowHangingWalkableObstacles(&ctx, cfg.walkableClimb, *intermediates->heightfield);
-    rcFilterLedgeSpans(&ctx, cfg.walkableHeight, cfg.walkableClimb, *intermediates->heightfield);
-    rcFilterWalkableLowHeightSpans(&ctx, cfg.walkableHeight, *intermediates->heightfield);
-
-    //
-    // Step 4. Partition walkable surface to simple regions.
-    //
-
-    // Compact the heightfield so that it is faster to handle from now on.
-    // This will result more cache coherent data as well as the neighbours
-    // between walkable cells will be calculated.
-
-    intermediates->compactHeightfield = rcAllocCompactHeightfield();
-    if (!intermediates->compactHeightfield)
-    {
-        Log("buildNavigation: Out of memory 'chf'.");
-        return result;
-    }
-
-    if (!rcBuildCompactHeightfield(&ctx, cfg.walkableHeight, cfg.walkableClimb, *intermediates->heightfield, *intermediates->compactHeightfield))
-    {
-        Log("buildNavigation: Could not build compact data.");
-        return result;
-    }
-
-    if (!keepIntermediates)
-    {
-        rcFreeHeightField(intermediates->heightfield);
-        intermediates->heightfield = nullptr;
-    }
-
-    if (!rcErodeWalkableArea(&ctx, cfg.walkableRadius, *intermediates->compactHeightfield))
-    {
-        Log("buildNavigation: Could not erode.");
-        return result;
-    }
-
-    // Prepare for region partitioning, by calculating Distance field along the walkable surface.
-    if (!rcBuildDistanceField(&ctx, *intermediates->compactHeightfield))
-    {
-        Log("buildNavigation: Could not build Distance field.");
-        return result;
-    }
-
-    // Partition the walkable surface into simple regions without holes.
-    if (!rcBuildRegions(&ctx, *intermediates->compactHeightfield, cfg.borderSize, cfg.minRegionArea, cfg.mergeRegionArea))
-    {
-        Log("buildNavigation: Could not build regions.");
-        return result;
-    }
-
-    //
-    // Step 5. Trace and simplify region contours.
-    //
-
-    // Create contours.
-    intermediates->contourSet = rcAllocContourSet();
-    if (!intermediates->contourSet)
-    {
-        Log("buildNavigation: Out of memory 'cset'.");
-        return result;
-    }
-    if (!rcBuildContours(&ctx, *intermediates->compactHeightfield, cfg.maxSimplificationError, cfg.maxEdgeLen, *intermediates->contourSet))
-    {
-        Log("buildNavigation: Could not create contours.");
-        return result;
-    }
-
-    //
-    // Step 6. Build polygons mesh from contours.
-    //
-
-    m_pmesh = rcAllocPolyMesh();
-    if (!m_pmesh)
-    {
-        Log("buildNavigation: Out of memory 'pmesh'.");
-        return result;
-    }
-    if (!rcBuildPolyMesh(&ctx, *intermediates->contourSet, cfg.maxVertsPerPoly, *m_pmesh))
-    {
-        Log("buildNavigation: Could not triangulate contours.");
-        return result;
-    }
-
-    //
-    // Step 7. Create detail mesh which allows to access approximate height on each polygon.
-    //
-    m_dmesh = rcAllocPolyMeshDetail();
-    if (!m_dmesh)
-    {
-        Log("buildNavigation: Out of memory 'pmdtl'.");
-        return result;
-    }
-
-    if (!rcBuildPolyMeshDetail(&ctx, *m_pmesh, *intermediates->compactHeightfield, cfg.detailSampleDist, cfg.detailSampleMaxError, *m_dmesh))
-    {
-        Log("buildNavigation: Could not build detail mesh.");
-        return result;
-    }
-
-    if (!keepIntermediates)
-    {
-        rcFreeCompactHeightfield(intermediates->compactHeightfield);
-        intermediates->compactHeightfield = nullptr;
-        rcFreeContourSet(intermediates->contourSet);
-        intermediates->contourSet = nullptr;
-    }
-
-    //
-    // (Optional) Step 8. Create Detour data from Recast poly mesh.
-    //
-
-    // Only build the detour navmesh if we do not exceed the limit.
-    if (cfg.maxVertsPerPoly <= DT_VERTS_PER_POLYGON)
-    {
-        rcPolyMesh *pmesh = m_pmesh;
-        rcPolyMeshDetail *dmesh = m_dmesh;
-
-        int navDataSize = 0;
-
-        // Update poly flags from areas.
-        for (int i = 0; i < pmesh->npolys; ++i)
-        {
-            if (pmesh->areas[i] == RC_WALKABLE_AREA)
-            {
-                pmesh->areas[i] = 0;
-            }
-            if (pmesh->areas[i] == 0)
-            {
-                pmesh->flags[i] = 1;
-            }
-        }
-
-        dtNavMeshCreateParams params;
-        memset(&params, 0, sizeof(params));
-        params.verts = pmesh->verts;
-        params.vertCount = pmesh->nverts;
-        params.polys = pmesh->polys;
-        params.polyAreas = pmesh->areas;
-        params.polyFlags = pmesh->flags;
-        params.polyCount = pmesh->npolys;
-        params.nvp = pmesh->nvp;
-        params.detailMeshes = dmesh->meshes;
-        params.detailVerts = dmesh->verts;
-        params.detailVertsCount = dmesh->nverts;
-        params.detailTris = dmesh->tris;
-        params.detailTriCount = dmesh->ntris;
-        // optional connection between areas
-        params.offMeshConVerts = 0;  // geom->getOffMeshConnectionVerts();
-        params.offMeshConRad = 0;    // geom->getOffMeshConnectionRads();
-        params.offMeshConDir = 0;    // geom->getOffMeshConnectionDirs();
-        params.offMeshConAreas = 0;  // geom->getOffMeshConnectionAreas();
-        params.offMeshConFlags = 0;  // geom->getOffMeshConnectionFlags();
-        params.offMeshConUserID = 0; // geom->getOffMeshConnectionId();
-        params.offMeshConCount = 0;  // geom->getOffMeshConnectionCount();
-        params.walkableHeight = cfg.walkableHeight;
-        params.walkableRadius = cfg.walkableRadius;
-        params.walkableClimb = cfg.walkableClimb;
-        rcVcopy(params.bmin, pmesh->bmin);
-        rcVcopy(params.bmax, pmesh->bmax);
-        params.cs = cfg.cs;
-        params.ch = cfg.ch;
-        params.buildBvTree = true;
-
-        if (!dtCreateNavMeshData(&params, &m_navData, &navDataSize))
-        {
-            Log("Could not build Detour navmesh.");
-            return result;
-        }
-
-        NavMesh *navMesh = new NavMesh;
-
-        if (!navMesh->initSolo(m_navData, navDataSize, DT_TILE_FREE_DATA))
-        {
-            Log("Could not init solo Detour navmesh");
-            return result;
-        }
-
-        result->navMesh = navMesh;
-    }
-
-    result->success = true;
-    return result;
-}
-
-NavMeshGeneratorResult *NavMeshGenerator::computeTiledNavMesh(
-    rcConfig &cfg,
-    const float *verts,
-    int nverts,
-    const int *tris,
-    int ntris,
-    const int expectedLayersPerTile,
-    const int maxLayers,
-    const bool keepIntermediates)
-{
-    NavMeshGeneratorResult *result = new NavMeshGeneratorResult;
-    result->success = false;
-
-    TileCache *tileCache = new TileCache;
-    NavMesh *navMesh = new NavMesh;
-
-    const int ts = (int)cfg.tileSize;
-    const int tw = (cfg.width + ts - 1) / ts;
-    const int th = (cfg.height + ts - 1) / ts;
-
-    // Intermediates
-    TiledNavMeshIntermediates *tiledNavMeshIntermediates = new TiledNavMeshIntermediates;
-
-    const int intermediatesCount = tw * th;
-    NavMeshIntermediates *intermediates = new NavMeshIntermediates[intermediatesCount];
-    tiledNavMeshIntermediates->intermediates = intermediates;
-    tiledNavMeshIntermediates->intermediatesCount = intermediatesCount;
-    
-    result->tiledNavMeshIntermediates = tiledNavMeshIntermediates;
-    result->soloNavMeshIntermediates = nullptr;
-
-    // Generation params.
-    cfg.borderSize = cfg.walkableRadius + 3; // Reserve enough padding.
-    cfg.width = cfg.tileSize + cfg.borderSize * 2;
-    cfg.height = cfg.tileSize + cfg.borderSize * 2;
-
-    // Tile cache params.
-    dtTileCacheParams tcparams;
-    memset(&tcparams, 0, sizeof(tcparams));
-    rcVcopy(tcparams.orig, cfg.bmin);
-    tcparams.cs = cfg.cs;
-    tcparams.ch = cfg.ch;
-    tcparams.width = cfg.tileSize;
-    tcparams.height = cfg.tileSize;
-    tcparams.walkableHeight = cfg.walkableHeight;
-    tcparams.walkableRadius = cfg.walkableRadius;
-    tcparams.walkableClimb = cfg.walkableClimb;
-    tcparams.maxSimplificationError = cfg.maxSimplificationError;
-    tcparams.maxTiles = tw * th * expectedLayersPerTile;
-    tcparams.maxObstacles = 128;
-
-    if (!tileCache->init(tcparams))
-    {
-        Log("buildTiledNavMesh: Could not init tile cache.");
-        return result;
-    }
-
-    dtNavMeshParams params;
-    memset(&params, 0, sizeof(params));
-    rcVcopy(params.orig, cfg.bmin);
-    params.tileWidth = cfg.tileSize * cfg.cs;
-    params.tileHeight = cfg.tileSize * cfg.cs;
-    // Max tiles and max polys affect how the tile IDs are caculated.
-    // There are 22 bits available for identifying a tile and a polygon.
-    int tileBits = rcMin((int)dtIlog2(dtNextPow2(tw * th * expectedLayersPerTile)), 14);
-    if (tileBits > 14)
-        tileBits = 14;
-    int polyBits = 22 - tileBits;
-    params.maxTiles = 1 << tileBits;
-    params.maxPolys = 1 << polyBits;
-
-    if (!navMesh->initTiled(&params))
-    {
-        Log("buildTiledNavMesh: Could not init tiled navmesh.");
-        return result;
-    }
-
-    tiledNavMeshIntermediates->chunkyTriMesh = new rcChunkyTriMesh;
-    if (!rcCreateChunkyTriMesh(verts, tris, ntris, 256, tiledNavMeshIntermediates->chunkyTriMesh))
-    {
-        Log("buildTiledNavMesh: Unable to create chunky trimesh.");
-        return result;
-    }
-
-    // Preprocess tiles.
-    for (int y = 0; y < th; ++y)
-    {
-        for (int x = 0; x < tw; ++x)
-        {
-            TileCacheData tiles[maxLayers];
-            memset(tiles, 0, sizeof(tiles));
-
-            int nTiles = rasterizeTileLayers(navMesh, tileCache, x, y, cfg, tiles, maxLayers, tiledNavMeshIntermediates, &intermediates[y * tw + x], verts, nverts, maxLayers);
-
-            for (int i = 0; i < nTiles; ++i)
-            {
-                TileCacheData *tile = &tiles[i];
-                TileCacheAddTileResult result = tileCache->addTile(tile->data, tile->dataSize, DT_COMPRESSEDTILE_FREE_DATA);
-
-                if (dtStatusFailed(result.status))
-                {
-                    Log("buildTiledNavMesh: Failed adding tile to tile cache.");
-                    dtFree(tile->data);
-                    tile->data = 0;
-                    continue;
-                }
-            }
-        }
-    }
-
-    // Free intermediates
-    if (!keepIntermediates)
-    {
-        delete tiledNavMeshIntermediates->chunkyTriMesh;
-        tiledNavMeshIntermediates->chunkyTriMesh = nullptr;
-
-        for (int i = 0; i < th * tw; ++i)
-        {
-            rcFreeHeightField(intermediates[i].heightfield);
-            rcFreeCompactHeightfield(intermediates[i].compactHeightfield);
-            rcFreeContourSet(intermediates[i].contourSet);
-            rcFreeHeightfieldLayerSet(intermediates[i].heightfieldLayerSet);
-        }   
-    }
-
-    // Build initial meshes
-    for (int y = 0; y < th; ++y)
-    {
-        for (int x = 0; x < tw; ++x)
-        {
-            tileCache->buildNavMeshTilesAt(x, y, navMesh);
-        }
-    }
-
-    result->success = true;
-    result->tileCache = tileCache;
-    result->navMesh = navMesh;
-
-    return result;
-}
-
-NavMeshGeneratorResult NavMeshGenerator::generate(
-    const float *positions,
-    const int positionCount,
-    const int *indices,
-    const int indexCount,
-    const rcConfig &config,
-    const int expectedLayersPerTile,
-    const int maxLayers,
-    const bool keepIntermediates)
-{
-    if (m_pmesh)
-    {
-        rcFreePolyMesh(m_pmesh);
-    }
-    if (m_dmesh)
-    {
-        rcFreePolyMeshDetail(m_dmesh);
-    }
-    if (m_navData)
-    {
-        dtFree(m_navData);
-    }
-
-    std::vector<Vec3> triangleIndices;
-    const float *pv = &positions[0];
-    const int *t = &indices[0];
-
-    // mesh conversion
-    Vec3 bbMin(FLT_MAX);
-    Vec3 bbMax(-FLT_MAX);
-    triangleIndices.resize(indexCount);
-    for (unsigned int i = 0; i < indexCount; i++)
-    {
-        int ind = (*t++) * 3;
-        Vec3 v(pv[ind], pv[ind + 1], pv[ind + 2]);
-        bbMin.isMinOf(v);
-        bbMax.isMaxOf(v);
-        triangleIndices[i] = v;
-    }
-
-    float *verts = new float[triangleIndices.size() * 3];
-    int nverts = triangleIndices.size();
-    for (unsigned int i = 0; i < triangleIndices.size(); i++)
-    {
-        verts[i * 3 + 0] = triangleIndices[i].x;
-        verts[i * 3 + 1] = triangleIndices[i].y;
-        verts[i * 3 + 2] = triangleIndices[i].z;
-    }
-    int ntris = triangleIndices.size() / 3;
-    int *tris = new int[triangleIndices.size()];
-    for (unsigned int i = 0; i < triangleIndices.size(); i++)
-    {
-        tris[i] = triangleIndices.size() - i - 1;
-    }
-
-    rcConfig cfg = config;
-    cfg.walkableHeight = config.walkableHeight;
-    cfg.walkableClimb = config.walkableClimb;
-    cfg.walkableRadius = config.walkableRadius;
-    cfg.maxEdgeLen = config.maxEdgeLen;
-    cfg.maxSimplificationError = config.maxSimplificationError;
-    cfg.minRegionArea = (int)rcSqr(config.minRegionArea);     // Note: area = size*size
-    cfg.mergeRegionArea = (int)rcSqr(config.mergeRegionArea); // Note: area = size*size
-    cfg.maxVertsPerPoly = (int)config.maxVertsPerPoly;
-    cfg.detailSampleDist = config.detailSampleDist < 0.9f ? 0 : config.cs * config.detailSampleDist;
-    cfg.detailSampleMaxError = config.ch * config.detailSampleMaxError;
-
-    // Set the area where the navigation will be build.
-    // Here the bounds of the input mesh are used, but the
-    // area could be specified by an user defined box, etc.
-    // float bmin[3] = {-20.f, 0.f, -20.f};
-    // float bmax[3] = { 20.f, 1.f,  20.f};
-    rcVcopy(cfg.bmin, &bbMin.x);
-    rcVcopy(cfg.bmax, &bbMax.x);
-    rcCalcGridSize(cfg.bmin, cfg.bmax, cfg.cs, &cfg.width, &cfg.height);
-
-    rcContext ctx;
-
-    if (config.tileSize)
-    {
-        NavMeshGeneratorResult *result = computeTiledNavMesh(cfg, verts, nverts, tris, ntris, expectedLayersPerTile, maxLayers, keepIntermediates);
-        if (!result->success)
-        {
-            Log("Unable to compute tiled navmesh");
-        }
-
-        return *result;
-    }
-    else
-    {
-        NavMeshGeneratorResult *result = computeSoloNavMesh(cfg, ctx, verts, nverts, tris, ntris, keepIntermediates);
-        if (!result->success)
-        {
-            Log("Unable to compute solo navmesh");
-        }
-
-        return *result;
-    }
-}
-
-NavMeshImporterResult NavMeshImporter::importNavMesh(NavMeshExport *navMeshExport)
-{
-    NavMeshImporterResult *result = new NavMeshImporterResult;
-    result->success = false;
-
-    unsigned char *bits = (unsigned char *)navMeshExport->dataPointer;
-
-    // Read header.
-    RecastHeader recastHeader;
-    size_t readLen = sizeof(RecastHeader);
-    memcpy(&recastHeader, bits, readLen);
-    bits += readLen;
-
-    if (recastHeader.magic == NAVMESHSET_MAGIC)
-    {
-        NavMeshSetHeader header;
-        size_t readLen = sizeof(NavMeshSetHeader);
-        memcpy(&header, bits, readLen);
-        bits += readLen;
-
-        if (recastHeader.version != NAVMESHSET_VERSION)
-        {
-            return *result;
-        }
-
-        NavMesh *navMesh = new NavMesh;
-        if (!navMesh->initTiled(&header.params))
-        {
-            return *result;
-        }
-
-        // Read tiles.
-        for (int i = 0; i < recastHeader.numTiles; ++i)
-        {
-            NavMeshTileHeader tileHeader;
-            readLen = sizeof(tileHeader);
-            memcpy(&tileHeader, bits, readLen);
-            bits += readLen;
-
-            if (!tileHeader.tileRef || !tileHeader.dataSize)
-            {
-                break;
-            }
-
-            unsigned char *data = (unsigned char *)dtAlloc(tileHeader.dataSize, DT_ALLOC_PERM);
-            if (!data)
-            {
-                break;
-            }
-
-            readLen = tileHeader.dataSize;
-            memcpy(data, bits, readLen);
-            bits += readLen;
-
-            navMesh->addTile(data, tileHeader.dataSize, DT_TILE_FREE_DATA, tileHeader.tileRef);
-        }
-
-        result->navMesh = navMesh;
-    }
-    else if (recastHeader.magic == TILECACHESET_MAGIC)
-    {
-        if (recastHeader.version != TILECACHESET_VERSION)
-        {
-            return *result;
-        }
-
-        TileCacheSetHeader header;
-        size_t readLen = sizeof(TileCacheSetHeader);
-        memcpy(&header, bits, readLen);
-        bits += readLen;
-
-        NavMesh *navMesh = new NavMesh;
-        if (!navMesh->initTiled(&header.meshParams))
-        {
-            return *result;
-        }
-
-        TileCache *tileCache = new TileCache;
-        if (!tileCache->init(header.cacheParams))
-        {
-            return *result;
-        }
-
-        // Read tiles.
-        for (int i = 0; i < recastHeader.numTiles; ++i)
-        {
-            TileCacheTileHeader tileHeader;
-            size_t readLen = sizeof(tileHeader);
-            memcpy(&tileHeader, bits, readLen);
-            bits += readLen;
-
-            if (!tileHeader.tileRef || !tileHeader.dataSize)
-            {
-                break;
-            }
-
-            unsigned char *data = (unsigned char *)dtAlloc(tileHeader.dataSize, DT_ALLOC_PERM);
-            if (!data)
-            {
-                break;
-            }
-
-            memset(data, 0, tileHeader.dataSize);
-
-            readLen = tileHeader.dataSize;
-            memcpy(data, bits, readLen);
-            bits += readLen;
-
-            TileCacheAddTileResult result = tileCache->addTile(data, tileHeader.dataSize, DT_COMPRESSEDTILE_FREE_DATA);
-            if (dtStatusFailed(result.status))
-            {
-                dtFree(data);
-            }
-
-            if (result.tileRef)
-            {
-                tileCache->buildNavMeshTile(&result.tileRef, navMesh);
-            }
-        }
-
-        result->navMesh = navMesh;
-        result->tileCache = tileCache;
-    }
-
-    result->success = true;
-    return *result;
-}
-
-void NavMeshGenerator::destroy()
-{
-    if (m_pmesh)
-    {
-        rcFreePolyMesh(m_pmesh);
-    }
-    if (m_dmesh)
-    {
-        rcFreePolyMeshDetail(m_dmesh);
-    }
-    if (m_navData)
-    {
-        dtFree(m_navData);
-    }
-};
-
-bool NavMesh::initSolo(unsigned char *data, const int dataSize, const int flags)
+bool NavMesh::initSolo(NavMeshData *navMeshData)
 {
     m_navMesh = dtAllocNavMesh();
     if (!m_navMesh)
@@ -1255,7 +317,7 @@ bool NavMesh::initSolo(unsigned char *data, const int dataSize, const int flags)
         return false;
     }
 
-    dtStatus status = m_navMesh->init(data, dataSize, flags);
+    dtStatus status = m_navMesh->init(navMeshData->data, navMeshData->size, DT_TILE_FREE_DATA);
 
     return dtStatusSucceed(status);
 };
@@ -1274,10 +336,10 @@ bool NavMesh::initTiled(const dtNavMeshParams *params)
     return dtStatusSucceed(status);
 };
 
-NavMeshAddTileResult NavMesh::addTile(unsigned char *data, int dataSize, int flags, dtTileRef lastRef)
+NavMeshAddTileResult NavMesh::addTile(NavMeshData *navMeshData, int flags, dtTileRef lastRef)
 {
     dtTileRef ref;
-    dtStatus status = m_navMesh->addTile(data, dataSize, flags, lastRef, &ref);
+    dtStatus status = m_navMesh->addTile(navMeshData->data, navMeshData->size, flags, lastRef, &ref);
 
     NavMeshAddTileResult result;
     result.status = status;
@@ -1718,4 +780,264 @@ NavPath Crowd::getCorners(const int idx)
         navpath.mPoints[i] = Vec3(pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2]);
     }
     return navpath;
+}
+
+
+NavMeshImporterResult NavMeshImporter::importNavMesh(NavMeshExport *navMeshExport, TileCacheMeshProcessAbstract &meshProcess)
+{
+    NavMeshImporterResult *result = new NavMeshImporterResult;
+    result->success = false;
+
+    unsigned char *bits = (unsigned char *)navMeshExport->dataPointer;
+
+    // Read header.
+    RecastHeader recastHeader;
+    size_t readLen = sizeof(RecastHeader);
+    memcpy(&recastHeader, bits, readLen);
+    bits += readLen;
+
+    if (recastHeader.magic == NAVMESHSET_MAGIC)
+    {
+        NavMeshSetHeader header;
+        size_t readLen = sizeof(NavMeshSetHeader);
+        memcpy(&header, bits, readLen);
+        bits += readLen;
+
+        if (recastHeader.version != NAVMESHSET_VERSION)
+        {
+            return *result;
+        }
+
+        NavMesh *navMesh = new NavMesh;
+        if (!navMesh->initTiled(&header.params))
+        {
+            return *result;
+        }
+
+        // Read tiles.
+        for (int i = 0; i < recastHeader.numTiles; ++i)
+        {
+            NavMeshTileHeader tileHeader;
+            readLen = sizeof(tileHeader);
+            memcpy(&tileHeader, bits, readLen);
+            bits += readLen;
+
+            if (!tileHeader.tileRef || !tileHeader.dataSize)
+            {
+                break;
+            }
+
+            unsigned char *data = (unsigned char *)dtAlloc(tileHeader.dataSize, DT_ALLOC_PERM);
+            if (!data)
+            {
+                break;
+            }
+
+            readLen = tileHeader.dataSize;
+            memcpy(data, bits, readLen);
+            bits += readLen;
+
+            NavMeshData *navMeshData = new NavMeshData;
+            navMeshData->data = data;
+            navMeshData->size = tileHeader.dataSize;
+
+            navMesh->addTile(navMeshData, DT_TILE_FREE_DATA, tileHeader.tileRef);
+        }
+
+        result->navMesh = navMesh;
+    }
+    else if (recastHeader.magic == TILECACHESET_MAGIC)
+    {
+        if (recastHeader.version != TILECACHESET_VERSION)
+        {
+            return *result;
+        }
+
+        TileCacheSetHeader header;
+        size_t readLen = sizeof(TileCacheSetHeader);
+        memcpy(&header, bits, readLen);
+        bits += readLen;
+
+        NavMesh *navMesh = new NavMesh;
+        if (!navMesh->initTiled(&header.meshParams))
+        {
+            return *result;
+        }
+
+        RecastLinearAllocator *allocator = new RecastLinearAllocator(32000);
+        RecastFastLZCompressor *compressor = new RecastFastLZCompressor;
+
+        TileCache *tileCache = new TileCache;
+        if (!tileCache->init(&header.cacheParams, allocator, compressor, meshProcess))
+        {
+            return *result;
+        }
+
+        // Read tiles.
+        for (int i = 0; i < recastHeader.numTiles; ++i)
+        {
+            TileCacheTileHeader tileHeader;
+            size_t readLen = sizeof(tileHeader);
+            memcpy(&tileHeader, bits, readLen);
+            bits += readLen;
+
+            if (!tileHeader.tileRef || !tileHeader.dataSize)
+            {
+                break;
+            }
+
+            unsigned char *data = (unsigned char *)dtAlloc(tileHeader.dataSize, DT_ALLOC_PERM);
+            if (!data)
+            {
+                break;
+            }
+
+            memset(data, 0, tileHeader.dataSize);
+
+            readLen = tileHeader.dataSize;
+            memcpy(data, bits, readLen);
+            bits += readLen;
+
+            TileCacheData *tileCacheData = new TileCacheData;
+            tileCacheData->data = data;
+            tileCacheData->size = tileHeader.dataSize;
+
+            TileCacheAddTileResult result = tileCache->addTile(tileCacheData, DT_COMPRESSEDTILE_FREE_DATA);
+            if (dtStatusFailed(result.status))
+            {
+                dtFree(data);
+            }
+
+            if (result.tileRef)
+            {
+                tileCache->buildNavMeshTile(&result.tileRef, navMesh);
+            }
+        }
+
+        result->navMesh = navMesh;
+        result->tileCache = tileCache;
+        result->allocator = allocator;
+        result->compressor = compressor;
+    }
+
+    result->success = true;
+    return *result;
+}
+
+NavMeshExport NavMeshExporter::exportNavMesh(NavMesh *navMesh, TileCache *tileCache) const
+{
+    if (!navMesh->m_navMesh)
+    {
+        return {0, 0};
+    }
+
+    unsigned char *bits = nullptr;
+    size_t bitsSize = 0;
+
+    const dtNavMesh *m_navMesh = navMesh->m_navMesh;
+    const dtTileCache *m_tileCache = tileCache->m_tileCache;
+
+    if (m_tileCache)
+    {
+        // tilecache set
+        // Store header.
+        RecastHeader recastHeader;
+        TileCacheSetHeader header;
+        recastHeader.magic = TILECACHESET_MAGIC;
+        recastHeader.version = TILECACHESET_VERSION;
+        recastHeader.numTiles = 0;
+        for (int i = 0; i < m_tileCache->getTileCount(); ++i)
+        {
+            const dtCompressedTile *tile = m_tileCache->getTile(i);
+            if (!tile || !tile->header || !tile->dataSize)
+                continue;
+            recastHeader.numTiles++;
+        }
+        memcpy(&header.cacheParams, m_tileCache->getParams(), sizeof(dtTileCacheParams));
+        memcpy(&header.meshParams, m_navMesh->getParams(), sizeof(dtNavMeshParams));
+
+        bits = (unsigned char *)realloc(bits, bitsSize + sizeof(RecastHeader));
+        memcpy(&bits[bitsSize], &recastHeader, sizeof(RecastHeader));
+        bitsSize += sizeof(RecastHeader);
+
+        bits = (unsigned char *)realloc(bits, bitsSize + sizeof(TileCacheSetHeader));
+        memcpy(&bits[bitsSize], &header, sizeof(TileCacheSetHeader));
+        bitsSize += sizeof(TileCacheSetHeader);
+
+        // Store tiles.
+        for (int i = 0; i < m_tileCache->getTileCount(); ++i)
+        {
+            const dtCompressedTile *tile = m_tileCache->getTile(i);
+            if (!tile || !tile->header || !tile->dataSize)
+                continue;
+
+            TileCacheTileHeader tileHeader;
+            tileHeader.tileRef = m_tileCache->getTileRef(tile);
+            tileHeader.dataSize = tile->dataSize;
+
+            bits = (unsigned char *)realloc(bits, bitsSize + sizeof(tileHeader));
+            memcpy(&bits[bitsSize], &tileHeader, sizeof(tileHeader));
+            bitsSize += sizeof(tileHeader);
+
+            bits = (unsigned char *)realloc(bits, bitsSize + tile->dataSize);
+            memcpy(&bits[bitsSize], tile->data, tile->dataSize);
+            bitsSize += tile->dataSize;
+        }
+    }
+    else
+    {
+        // Mesh set
+        // Store header.
+        RecastHeader recastHeader;
+        NavMeshSetHeader header;
+        recastHeader.magic = NAVMESHSET_MAGIC;
+        recastHeader.version = NAVMESHSET_VERSION;
+        recastHeader.numTiles = 0;
+        for (int i = 0; i < m_navMesh->getMaxTiles(); ++i)
+        {
+            const dtMeshTile *tile = m_navMesh->getTile(i);
+            if (!tile || !tile->header || !tile->dataSize)
+                continue;
+            recastHeader.numTiles++;
+        }
+        memcpy(&header.params, m_navMesh->getParams(), sizeof(dtNavMeshParams));
+        bits = (unsigned char *)realloc(bits, bitsSize + sizeof(RecastHeader));
+        memcpy(&bits[bitsSize], &recastHeader, sizeof(RecastHeader));
+        bitsSize += sizeof(RecastHeader);
+
+        bits = (unsigned char *)realloc(bits, bitsSize + sizeof(NavMeshSetHeader));
+        memcpy(&bits[bitsSize], &header, sizeof(NavMeshSetHeader));
+        bitsSize += sizeof(NavMeshSetHeader);
+
+        // Store tiles.
+        for (int i = 0; i < m_navMesh->getMaxTiles(); ++i)
+        {
+            const dtMeshTile *tile = m_navMesh->getTile(i);
+            if (!tile || !tile->header || !tile->dataSize)
+                continue;
+
+            NavMeshTileHeader tileHeader;
+            tileHeader.tileRef = m_navMesh->getTileRef(tile);
+            tileHeader.dataSize = tile->dataSize;
+
+            bits = (unsigned char *)realloc(bits, bitsSize + sizeof(tileHeader));
+            memcpy(&bits[bitsSize], &tileHeader, sizeof(tileHeader));
+            bitsSize += sizeof(tileHeader);
+
+            bits = (unsigned char *)realloc(bits, bitsSize + tile->dataSize);
+            memcpy(&bits[bitsSize], tile->data, tile->dataSize);
+            bitsSize += tile->dataSize;
+        }
+    }
+
+    NavMeshExport navMeshExport;
+    navMeshExport.dataPointer = bits;
+    navMeshExport.size = int(bitsSize);
+
+    return navMeshExport;
+}
+
+void NavMeshExporter::freeNavMeshExport(NavMeshExport *navMeshExport)
+{
+    free(navMeshExport->dataPointer);
 }

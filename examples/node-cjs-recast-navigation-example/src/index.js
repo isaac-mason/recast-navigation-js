@@ -7,8 +7,6 @@ Promise.all([
   Recast.init().then(() => {
     console.log(RecastThree);
 
-    const navMeshGenerator = new Recast.NavMeshGenerator();
-
     const groundMesh = new THREE.Mesh(new THREE.BoxGeometry(5, 0.2, 5));
 
     /**
@@ -34,7 +32,7 @@ Promise.all([
     const positions = groundMesh.geometry.attributes.position.array;
     const indices = groundMesh.geometry.index.array;
 
-    const { navMesh } = navMeshGenerator.generateSoloNavMesh(positions, indices, config);
+    const { navMesh } = Recast.generateSoloNavMesh(positions, indices, config);
 
     const navMeshQuery = new Recast.NavMeshQuery({ navMesh });
 

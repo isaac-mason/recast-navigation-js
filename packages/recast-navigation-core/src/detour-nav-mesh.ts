@@ -1,8 +1,8 @@
 import type R from '@recast-navigation/wasm';
 import { finalizer } from './finalizer';
 import { array, emscripten, vec3, Vector3 } from './utils';
-import { Wasm } from './wasm';
-import { dtMeshTile, dtPoly, dtOffMeshConnection } from './wrappers';
+import { Raw } from './raw';
+import { dtMeshTile, dtPoly, dtOffMeshConnection } from './detour';
 
 export class NavMeshGetTilesAtResult {
   raw: R.NavMeshGetTilesAtResult;
@@ -262,23 +262,17 @@ export class NavMesh {
   raw: R.NavMesh;
 
   constructor(raw?: R.NavMesh) {
-    this.raw = raw ?? new Wasm.Recast.NavMesh();
+    this.raw = raw ?? new Raw.Module.NavMesh();
     finalizer.register(this);
   }
 
   /**
    * Initializes the NavMesh for use with a single tile.
-   * @param data the nav mesh data
-   * @param dataSize the size of the nav mesh data
-   * @param flags the flags to use when building the nav mesh
+   * @param navMeshData the nav mesh data
    * @returns the status of the operation
    */
-  initSolo(
-    data: ReadonlyArray<number>,
-    dataSize: number,
-    flags: number
-  ): boolean {
-    return this.raw.initSolo(data, dataSize, flags);
+  initSolo(navMeshData: R.NavMeshData): boolean {
+    return this.raw.initSolo(navMeshData);
   }
 
   /**
@@ -286,39 +280,24 @@ export class NavMesh {
    * @param params parameters for the NavMesh
    * @returns the status of the operation
    */
-  initTiled({
-    orig,
-    tileWidth,
-    tileHeight,
-    maxTiles,
-    maxPolys,
-  }: NavMeshParams): boolean {
-    const params = new Wasm.Recast.dtNavMeshParams();
-    params.set_orig(vec3.toArray(orig));
-    params.set_tileWidth(tileWidth);
-    params.set_tileHeight(tileHeight);
-    params.set_maxTiles(maxTiles);
-    params.set_maxPolys(maxPolys);
-
+  initTiled(params: R.dtNavMeshParams): boolean {
     return this.raw.initTiled(params);
   }
 
   /**
    * Adds a tile to the NavMesh.
-   * @param data the nav mesh data
-   * @param dataSize the size of the nav mesh data
+   * @param navMeshData the nav mesh data
    * @param flags the flags to use when building the nav mesh
    * @param lastRef
    * @returns the status of the operation and the reference of the added tile
    */
   addTile(
-    data: number[],
-    dataSize: number,
+    navMeshData: R.NavMeshData,
     flags: number,
     lastRef: number
   ): NavMeshAddTileResult {
     return new NavMeshAddTileResult(
-      this.raw.addTile(data, dataSize, flags, lastRef)
+      this.raw.addTile(navMeshData, flags, lastRef)
     );
   }
 

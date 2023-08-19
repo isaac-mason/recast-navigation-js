@@ -45,11 +45,8 @@ export const SingleAgent = () => {
     });
 
     const { navMesh } = threeToSoloNavMesh(meshes, {
-      cs: 0.15,
+      cs: 0.05,
       ch: 0.2,
-      walkableRadius: 0.6,
-      walkableClimb: 2.1,
-      walkableSlopeAngle: 45,
     });
 
     const navMeshQuery = new NavMeshQuery({ navMesh });
@@ -73,17 +70,15 @@ export const SingleAgent = () => {
     setCrowd(crowd);
 
     return () => {
+      navMesh.destroy();
+      navMeshQuery.destroy();
+      crowd.destroy();
+
       setNavMesh(undefined);
       setNavMeshQuery(undefined);
       setCrowd(undefined);
     };
   }, [group]);
-
-  useFrame((_, delta) => {
-    if (!crowd) return;
-
-    crowd.update(delta);
-  });
 
   useEffect(() => {
     if (!crowd) return;
@@ -107,6 +102,12 @@ export const SingleAgent = () => {
       clearInterval(interval);
     };
   }, [crowd, agentTarget]);
+
+  useFrame((_, delta) => {
+    if (!crowd) return;
+
+    crowd.update(delta);
+  });
 
   const onClick = (e: ThreeEvent<MouseEvent>) => {
     if (!navMesh || !navMeshQuery || !crowd) return;
@@ -176,14 +177,13 @@ export const MultipleAgents = () => {
     });
 
     const { navMesh } = threeToSoloNavMesh(meshes, {
-      cs: 0.15,
+      cs: 0.05,
       ch: 0.2,
-      walkableRadius: 0.6,
-      walkableClimb: 2.1,
-      walkableSlopeAngle: 45,
     });
 
     const navMeshQuery = new NavMeshQuery({ navMesh });
+
+    (window as any).navMesh = navMesh;
 
     const crowd = new Crowd({
       navMesh,
@@ -236,10 +236,8 @@ export const MultipleAgents = () => {
 
   return (
     <>
-      <group onClick={onClick}>
-        <group ref={setGroup}>
-          <NavTestEnvirionment />
-        </group>
+      <group ref={setGroup} onClick={onClick}>
+        <NavTestEnvirionment />
       </group>
 
       <Debug navMesh={navMesh} crowd={crowd} agentMaterial={agentMaterial} />

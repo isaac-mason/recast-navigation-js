@@ -68,12 +68,12 @@ const crowdHelper = new CrowdHelper({ crowd });
 
 const scene = new THREE.Scene();
 
-scene.add(navMeshHelper.navMesh);
-scene.add(tileCacheHelper.obstacles);
-scene.add(crowdHelper.agents);
+scene.add(navMeshHelper);
+scene.add(tileCacheHelper);
+scene.add(crowdHelper);
 
-navMeshHelper.updateNavMesh();
-tileCacheHelper.updateObstacles();
+navMeshHelper.update();
+tileCacheHelper.update();
 crowdHelper.update();
 ```
 

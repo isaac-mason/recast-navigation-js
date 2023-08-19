@@ -204,22 +204,10 @@ interface dtCrowdAgentParams {
     attribute octet obstacleAvoidanceType;    
 
     /// The index of the query filter used by this agent.
-    attribute octet queryFilterType;
+    attribute  octet queryFilterType;
 
     /// User defined data attached to the agent.
     attribute VoidPtr userData;
-};
-
-interface CreateNavMeshDataResult {
-    attribute boolean success;
-    attribute octet[] navMeshData;
-    attribute long navMeshDataSize;
-};
-
-interface NavMeshBuilder {
-    void NavMeshBuilder();
-
-    [Value] CreateNavMeshDataResult createNavMeshData([Ref] dtNavMeshCreateParams params);
 };
 
 interface rcSpan {
@@ -322,21 +310,6 @@ interface rcHeightfieldLayerSet {
     attribute long nlayers;
 };
 
-interface rcChunkyTriMeshNode {
-    attribute float[] bmin;
-    attribute float[] bmax;
-    attribute long i;
-    attribute long n;
-};
-
-interface rcChunkyTriMesh {
-    [Value] attribute rcChunkyTriMeshNode[] nodes;
-    attribute long nnodes;
-    attribute long[] tris;
-    attribute long ntris;
-    attribute long maxTrisPerChunk;
-};
-
 interface rcPolyMesh {
     attribute unsigned short[] verts;
     attribute unsigned short[] polys;
@@ -364,66 +337,6 @@ interface rcPolyMeshDetail {
     attribute long ntris;
 };
 
-interface NavMeshIntermediates {
-    attribute rcHeightfield heightfield;
-    attribute rcCompactHeightfield compactHeightfield;
-    attribute rcContourSet contourSet;
-    attribute rcHeightfieldLayerSet heightfieldLayerSet;
-};
-
-interface TiledNavMeshIntermediates {
-    attribute rcChunkyTriMesh chunkyTriMesh;
-    [Value] attribute NavMeshIntermediates[] intermediates;
-    attribute long intermediatesCount;
-};
-
-interface NavMeshGeneratorResult {
-    attribute boolean success;
-    attribute NavMesh navMesh;
-    attribute TileCache tileCache;
-    attribute NavMeshIntermediates soloNavMeshIntermediates;
-    attribute TiledNavMeshIntermediates tiledNavMeshIntermediates;
-};
-
-interface NavMeshGenerator {
-    void NavMeshGenerator();
-
-    [Value] NavMeshGeneratorResult generate(
-        [Const] float[] positions,
-        [Const] long positionCount,
-        [Const] long[] indices,
-        [Const] long indexCount,
-        [Const, Ref] rcConfig config,
-        [Const] long expectedLayersPerTile,
-        [Const] long maxLayers,
-        [Const] boolean keepIntermediates);
-};
-
-interface NavMeshImporterResult {
-    [Const, Ref] NavMesh getNavMesh();
-    [Const, Ref] TileCache getTileCache();
-};
-
-interface NavMeshImporter {
-    void NavMeshImporter();
-
-    [Value] NavMeshImporterResult importNavMesh(NavMeshExport data);
-};
-
-interface NavMeshExport {
-    attribute any dataPointer;
-    attribute long size;
-
-    void NavMeshExport();
-};
-
-interface NavMeshExporter {
-    void NavMeshExporter();
-
-    [Value] NavMeshExport exportNavMesh(NavMesh navMesh, TileCache tileCache);
-    void freeNavMeshExport(NavMeshExport navMeshExport);
-};
-
 interface Vec3 {
     attribute float x;
     attribute float y;
@@ -431,6 +344,14 @@ interface Vec3 {
 
     void Vec3();
     void Vec3(float x, float y, float z);
+};
+
+interface Vec2 {
+    attribute float x;
+    attribute float y;
+
+    void Vec2();
+    void Vec2(float x, float y);
 };
 
 interface Triangle {
@@ -498,9 +419,9 @@ interface NavMeshStoreTileStateResult {
 interface NavMesh {
     void NavMesh();
 
-    boolean initSolo(octet[] data, [Const] long dataSize, [Const] long flags);    
+    boolean initSolo(NavMeshData navMeshData);    
     boolean initTiled([Const] dtNavMeshParams params);
-    [Value] NavMeshAddTileResult addTile(octet[] data, long dataSize, long flags, unsigned long lastRef);
+    [Value] NavMeshAddTileResult addTile(NavMeshData navMeshData, long flags, unsigned long lastRef);
     [Value] NavMeshRemoveTileResult removeTile(unsigned long ref);
     [Value] DebugNavMesh getDebugNavMesh();
     dtNavMesh getNavMesh();
@@ -547,6 +468,8 @@ interface NavMeshQuery {
 };
 
 interface dtTileCacheParams {
+    void dtTileCacheParams();
+
     attribute float[] orig;
     attribute float cs;
     attribute float ch;
@@ -570,11 +493,38 @@ interface TileCacheUpdateResult {
     attribute boolean upToDate;
 };
 
+interface dtTileCacheCompressor {
+};
+
+interface RecastFastLZCompressor {
+    void RecastFastLZCompressor();
+};
+RecastFastLZCompressor implements dtTileCacheCompressor;
+
+interface TileCacheMeshProcessAbstract {
+    void process(dtNavMeshCreateParams params, UnsignedCharArray polyAreas, UnsignedShortArray polyFlags);
+};
+
+[JSImplementation="TileCacheMeshProcessAbstract"]
+interface TileCacheMeshProcess {
+    void TileCacheMeshProcess();
+
+    void process(dtNavMeshCreateParams params, UnsignedCharArray polyAreas, UnsignedShortArray polyFlags);
+};
+
+interface dtTileCacheAlloc {
+};
+
+interface RecastLinearAllocator {
+    void RecastLinearAllocator(unsigned long long cap);
+};
+RecastLinearAllocator implements dtTileCacheAlloc;
+
 interface TileCache {
     void TileCache();
 
-    boolean init([Const, Ref] dtTileCacheParams params);
-    [Value] TileCacheAddTileResult addTile(octet[] data, [Const] long dataSize, octet flags);
+    boolean init([Const] dtTileCacheParams params, RecastLinearAllocator allocator, RecastFastLZCompressor compressor, [Ref] TileCacheMeshProcess meshProcess);
+    [Value] TileCacheAddTileResult addTile(TileCacheData data, octet flags);
     unsigned long buildNavMeshTile([Const] dtCompressedTileRef ref, NavMesh navMesh);
     unsigned long buildNavMeshTilesAt([Const] long tx, [Const] long ty, NavMesh navMesh);
     [Value] TileCacheUpdateResult update(NavMesh navMesh);
@@ -608,8 +558,8 @@ interface Crowd {
     [Value] NavPath getCorners([Const] long idx);
 };
 
-interface DtStatus {
-    void DtStatus();
+interface Detour {
+    void Detour();
 
     attribute long FAILURE;
     attribute long SUCCESS;
@@ -624,10 +574,33 @@ interface DtStatus {
     attribute long PARTIAL_RESULT;
     attribute long ALREADY_OCCUPIED;
 
+    attribute long VERTS_PER_POLYGON;
+    attribute long NAVMESH_MAGIC;
+    attribute long NAVMESH_VERSION;
+    attribute long NAVMESH_STATE_MAGIC;
+    attribute long NAVMESH_STATE_VERSION;
+
+    attribute long TILECACHE_MAGIC;
+    attribute long TILECACHE_VERSION;
+    attribute octet TILECACHE_NULL_AREA;
+    attribute octet TILECACHE_WALKABLE_AREA;
+    attribute unsigned short TILECACHE_NULL_IDX;
+
     boolean statusSucceed(unsigned long status);
     boolean statusFailed(unsigned long status);
     boolean statusInProgress(unsigned long status);
     boolean statusDetail(unsigned long status, unsigned long detail);
+};
+
+enum CrowdAgentState {
+    "CrowdAgentState::DT_CROWDAGENT_STATE_INVALID",
+    "CrowdAgentState::DT_CROWDAGENT_STATE_WALKING",
+    "CrowdAgentState::DT_CROWDAGENT_STATE_OFFMESH"
+};
+
+enum rcBuildContoursFlags {
+    "rcBuildContoursFlags::RC_CONTOUR_TESS_WALL_EDGES",
+    "rcBuildContoursFlags::RC_CONTOUR_TESS_AREA_EDGES"
 };
 
 enum rcLogCategory {
@@ -635,7 +608,6 @@ enum rcLogCategory {
 	"rcLogCategory::RC_LOG_WARNING",
     "rcLogCategory::RC_LOG_ERROR"
 };
-
 
 enum rcTimerLabel
 {
@@ -670,6 +642,10 @@ enum rcTimerLabel
 	"rcTimerLabel::RC_MAX_TIMERS"
 };
 
+enum dtCompressedTileFlags {
+    "dtCompressedTileFlags::DT_COMPRESSEDTILE_FREE_DATA"
+};
+
 interface rcContext {
     void rcContext();
 
@@ -683,19 +659,267 @@ interface rcContext {
     float getAccumulatedTime([Const] rcTimerLabel label);
 };
 
-interface RecastAllocator {
-    void RecastAllocator();
+interface RecastCalcBoundsResult {
+    attribute float[] bmin;
+    attribute float[] bmax;
+};
+
+interface RecastCalcGridSizeResult {
+    attribute long width;
+    attribute long height;
+};
+
+interface Recast {
+    void Recast();
+    
+    attribute unsigned short BORDER_REG;
+    attribute unsigned short MULTIPLE_REGS;
+    attribute long BORDER_VERTEX;
+    attribute long AREA_BORDER;
+    attribute long CONTOUR_REG_MASK;
+    attribute unsigned short MESH_NULL_IDX;
+    attribute octet NULL_AREA;
+    attribute octet WALKABLE_AREA;
+    attribute long NOT_CONNECTED;
+
+    RecastCalcBoundsResult calcBounds([Const] FloatArray verts, long nv);
+
+    RecastCalcGridSizeResult calcGridSize([Const] float[] bmin, [Const] float[] bmax, float cs);
+
+    boolean createHeightfield(rcContext ctx, [Ref] rcHeightfield hf, long width, long height, [Const] float[] bmin, [Const] float[] bmax, float cs, float ch);
+
+    void markWalkableTriangles(rcContext ctx, [Const] float walkableSlopeAngle, [Const] FloatArray verts, long nv, [Const] IntArray tris, long nt, UnsignedCharArray areas);
+
+    void clearUnwalkableTriangles(rcContext ctx, [Const] float walkableSlopeAngle, [Const] FloatArray verts, long nv, [Const] IntArray tris, long nt, UnsignedCharArray areas);
+
+    boolean rasterizeTriangles(rcContext ctx, [Const] FloatArray verts, long nv, [Const] IntArray tris, UnsignedCharArray areas, long nt, [Ref] rcHeightfield solid, long flagMergeThr);
+
+    void filterLowHangingWalkableObstacles(rcContext ctx, long walkableClimb, [Ref] rcHeightfield solid);
+
+    void filterLedgeSpans(rcContext ctx, long walkableHeight, long walkableClimb, [Ref] rcHeightfield solid);
+
+    void filterWalkableLowHeightSpans(rcContext ctx, long walkableHeight, [Ref] rcHeightfield solid);
+
+    long getHeightFieldSpanCount(rcContext ctx, [Ref] rcHeightfield solid);
+
+    boolean buildCompactHeightfield(rcContext ctx, long walkableHeight, long walkableClimb, [Ref] rcHeightfield solid, [Ref] rcCompactHeightfield chf);
+
+    boolean erodeWalkableArea(rcContext ctx, long radius, [Ref] rcCompactHeightfield chf);
+
+    void markBoxArea(rcContext ctx, [Const] float[] bmin, [Const] float[] bmax, octet areaId, [Ref] rcCompactHeightfield chf);
+
+    void markConvexPolyArea(rcContext ctx, [Const] FloatArray verts, long nverts, [Const] float hmin, [Const] float hmax, octet areaId, [Ref] rcCompactHeightfield chf);
+
+    void markCylinderArea(rcContext ctx, [Const] float[] pos, float r, float h, octet areaId, [Ref] rcCompactHeightfield chf);
+
+    boolean buildDistanceField(rcContext ctx, [Ref] rcCompactHeightfield chf);
+
+    boolean buildRegions(rcContext ctx, [Ref] rcCompactHeightfield chf, long borderSize, long minRegionArea, long mergeRegionArea);
+
+    boolean buildLayerRegions(rcContext ctx, [Ref] rcCompactHeightfield chf, [Const] long borderSize, [Const] long minRegionArea);
+
+    boolean buildRegionsMonotone(rcContext ctx, [Ref] rcCompactHeightfield chf, [Const] long borderSize, [Const] long minRegionArea, [Const] long mergeRegionArea);
+
+    void setCon([Ref] rcCompactSpan s, long dir, long i);
+
+    long getCon([Const, Ref] rcCompactSpan s, long dir);
+
+    long getDirOffsetX(long dir);
+
+    long getDirOffsetY(long dir);
+
+    long getDirForOffset(long x, long y);
+
+    boolean buildHeightfieldLayers(rcContext ctx, [Ref] rcCompactHeightfield chf, long borderSize, long walkableHeight, [Ref] rcHeightfieldLayerSet lset);
+
+    boolean buildContours(rcContext ctx, [Ref] rcCompactHeightfield chf, [Const] float maxError, long maxEdgeLen, [Ref] rcContourSet cset, long buildFlags);
+
+    boolean buildPolyMesh(rcContext ctx, [Ref] rcContourSet cset, long nvp, [Ref] rcPolyMesh mesh);
+
+    boolean mergePolyMeshes(rcContext ctx, rcPolyMesh[] meshes, long nmeshes, [Ref] rcPolyMesh mesh);
+
+    boolean buildPolyMeshDetail(rcContext ctx, [Ref] rcPolyMesh mesh, [Ref] rcCompactHeightfield chf, [Const] float sampleDist, [Const] float sampleMaxError, [Ref] rcPolyMeshDetail dmesh);
+
+    boolean copyPolyMesh(rcContext ctx, [Const, Ref] rcPolyMesh src, [Ref] rcPolyMesh dst);
+
+    boolean mergePolyMeshDetails(rcContext ctx, rcPolyMeshDetail[] meshes, [Const] long nmeshes, [Ref] rcPolyMeshDetail dmesh);
+
+    UnsignedCharArray getHeightfieldLayerHeights(rcHeightfieldLayer heightfieldLayer);
+
+    UnsignedCharArray getHeightfieldLayerAreas(rcHeightfieldLayer heightfieldLayer);
+
+    UnsignedCharArray getHeightfieldLayerCons(rcHeightfieldLayer heightfieldLayer);
 
     rcHeightfield allocHeightfield();
-    void freeHeightField(rcHeightfield hf);
+    void freeHeightfield(rcHeightfield hf);
+
     rcCompactHeightfield allocCompactHeightfield();
     void freeCompactHeightfield(rcCompactHeightfield chf);
+
     rcHeightfieldLayerSet allocHeightfieldLayerSet();
     void freeHeightfieldLayerSet(rcHeightfieldLayerSet lset);
+
     rcContourSet allocContourSet();
     void freeContourSet(rcContourSet cset);
+
     rcPolyMesh allocPolyMesh();
     void freePolyMesh(rcPolyMesh mesh);
+
     rcPolyMeshDetail allocPolyMeshDetail();
     void freePolyMeshDetail(rcPolyMeshDetail dmesh);
+};
+
+interface NavMeshData {
+    attribute octet[] data;
+    attribute long size;
+};
+
+interface CreateNavMeshDataResult {
+    attribute boolean success;
+    attribute NavMeshData navMeshData;
+};
+
+interface DetourNavMeshBuilder {
+    void DetourNavMeshBuilder();
+
+    void setSoloNavMeshCreateParams(dtNavMeshCreateParams navMeshCreateParams, rcPolyMesh polyMesh, rcPolyMeshDetail polyMeshDetail, rcConfig cfg);
+
+    void setOffMeshConCount(dtNavMeshCreateParams navMeshCreateParams, long n);
+
+    CreateNavMeshDataResult createNavMeshData([Ref] dtNavMeshCreateParams params);
+};
+
+interface dtTileCacheLayerHeader {
+    void dtTileCacheLayerHeader();
+
+    attribute long magic;
+    attribute long version;
+    attribute long tx;
+    attribute long ty;
+    attribute long tlayer;
+    attribute float[] bmin;
+    attribute float[] bmax;
+    attribute short hmin;
+    attribute short hmax;
+    attribute octet width;
+    attribute octet height;
+    attribute octet minx;
+    attribute octet maxx;
+    attribute octet miny;
+    attribute octet maxy;
+};
+
+interface TileCacheData {
+    void TileCacheData();
+
+    attribute octet[] data;
+    attribute long size;
+};
+
+interface DetourTileCacheBuilder {
+    void DetourTileCacheBuilder();
+
+    long buildTileCacheLayer(RecastFastLZCompressor comp, dtTileCacheLayerHeader header, [Const] UnsignedCharArray heights, [Const] UnsignedCharArray areas, [Const] UnsignedCharArray cons, TileCacheData tileCacheData);
+};
+
+interface rcChunkyTriMeshNode {
+    attribute float[] bmin;
+    attribute float[] bmax;
+    attribute long i;
+    attribute long n;
+};
+
+interface rcChunkyTriMesh {
+    void rcChunkyTriMesh();
+
+    [Value] attribute rcChunkyTriMeshNode[] nodes;
+    attribute long nnodes;
+    attribute long[] tris;
+    attribute long ntris;
+    attribute long maxTrisPerChunk;
+};
+
+interface ChunkyTriMesh {
+    void ChunkyTriMesh();
+
+    boolean createChunkyTriMesh([Const] FloatArray verts, [Const] IntArray tris, long ntris, long trisPerChunk, rcChunkyTriMesh chunkyTriMesh);
+
+    long getChunksOverlappingRect(rcChunkyTriMesh chunkyTriMesh, float[] bmin, float[] bmax, IntArray ids, [Const] long maxIds);
+
+    IntArray getChunkyTriMeshNodeTris(rcChunkyTriMesh chunkyTriMesh, long nodeIndex);
+};
+
+interface IntArray {
+    void IntArray();
+
+    attribute long[] data;
+    attribute unsigned long long size;
+    attribute boolean isView;
+
+    void resize(unsigned long long size);
+    void copy([Const] long[] data, unsigned long long size);
+    void free();
+};
+
+interface UnsignedCharArray {
+    void UnsignedCharArray();
+
+    attribute octet[] data;
+    attribute unsigned long long size;
+    attribute boolean isView;
+
+    void resize(unsigned long long size);
+    void copy([Const] octet[] data, unsigned long long size);
+    void free();
+};
+
+interface UnsignedShortArray {
+    void UnsignedShortArray();
+
+    attribute unsigned short[] data;
+    attribute unsigned long long size;
+    attribute boolean isView;
+
+    void resize(unsigned long long size);
+    void copy([Const] unsigned short[] data, unsigned long long size);
+    void free();
+};
+
+interface FloatArray {
+    void FloatArray();
+
+    attribute float[] data;
+    attribute unsigned long long size;
+    attribute boolean isView;
+
+    void resize(unsigned long long size);
+    void copy([Const] float[] data, unsigned long long size);
+    void free();
+};
+
+interface NavMeshImporterResult {
+    attribute NavMesh navMesh;
+    attribute TileCache tileCache;
+    attribute RecastLinearAllocator allocator;
+    attribute RecastFastLZCompressor compressor;
+};
+
+interface NavMeshImporter {
+    void NavMeshImporter();
+
+    [Value] NavMeshImporterResult importNavMesh(NavMeshExport data, [Ref] TileCacheMeshProcessAbstract meshProcess);
+};
+
+interface NavMeshExport {
+    attribute any dataPointer;
+    attribute long size;
+
+    void NavMeshExport();
+};
+
+interface NavMeshExporter {
+    void NavMeshExporter();
+
+    [Value] NavMeshExport exportNavMesh(NavMesh navMesh, TileCache tileCache);
+    void freeNavMeshExport(NavMeshExport navMeshExport);
 };

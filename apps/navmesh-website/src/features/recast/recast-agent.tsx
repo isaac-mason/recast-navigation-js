@@ -128,12 +128,12 @@ export const RecastAgent = forwardRef<RecastAgentRef, RecastAgentProps>(
     useFrame((_, delta) => {
       if (!crowd || !crowdHelper) return;
       crowd.update(delta);
-      crowdHelper.updateAgents();
+      crowdHelper.update();
     });
 
     return (
       <>
-        {crowdHelper && <primitive object={crowdHelper?.agents} />}
+        {crowdHelper && <primitive object={crowdHelper} />}
 
         {agentTarget && (
           <group position={[0, 0, 0]}>

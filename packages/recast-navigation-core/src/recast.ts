@@ -1,5 +1,197 @@
-import type R from '@recast-navigation/wasm';
+import R from '@recast-navigation/wasm';
+import { Raw } from './raw';
 import { Vector3, array, emscripten, vec3 } from './utils';
+
+export type RecastConfig = {
+  /**
+   * The size of the non-navigable border around the heightfield.
+   * [Limit: >=0] [Units: vx]
+   * @default 0
+   */
+  borderSize: number;
+
+  /**
+   * The width/height size of tile's on the xz-plane.
+   * [Limit: >= 0] [Units: vx]
+   *
+   * If tileSize is provided, a tiled navmesh will be created.
+   * If tileSize is not provided, or is set to zero, a solo navmesh will be created.
+   *
+   * To use obstacles, a tiled navmesh must be generated.
+   * @default 0
+   */
+  tileSize: number;
+
+  /**
+   * The xz-plane cell size to use for fields.
+   * [Limit: > 0] [Units: wu]
+   * @default 0.2
+   */
+  cs: number;
+
+  /**
+   * The y-axis cell size to use for fields.
+   * Limit: > 0] [Units: wu]
+   * @default 0.2
+   */
+  ch: number;
+
+  /**
+   * The maximum slope that is considered walkable.
+   * [Limits: 0 <= value < 90] [Units: Degrees]
+   * @default 60
+   */
+  walkableSlopeAngle: number;
+
+  /**
+   * Minimum floor to 'ceiling' height that will still allow the floor area to be considered walkable.
+   * [Limit: >= 3] [Units: vx]
+   * @default 2
+   */
+  walkableHeight: number;
+
+  /**
+   * Maximum ledge height that is considered to still be traversable.
+   * [Limit: >=0] [Units: vx]
+   * @default 2
+   */
+  walkableClimb: number;
+
+  /**
+   * The distance to erode/shrink the walkable area of the heightfield away from obstructions.
+   * [Limit: >=0] [Units: vx]
+   * @default 0.5
+   */
+  walkableRadius: number;
+
+  /**
+   * The maximum allowed length for contour edges along the border of the mesh.
+   * [Limit: >=0] [Units: vx]
+   * @default 12
+   */
+  maxEdgeLen: number;
+
+  /**
+   * The maximum distance a simplfied contour's border edges should deviate the original raw contour.
+   * [Limit: >=0] [Units: vx]
+   * @default 1.3
+   */
+  maxSimplificationError: number;
+
+  /**
+   * The minimum number of cells allowed to form isolated island areas.
+   * [Limit: >=0] [Units: vx]
+   * @default 8
+   */
+  minRegionArea: number;
+
+  /**
+   * Any regions with a span count smaller than this value will, if possible, be merged with larger regions.
+   * [Limit: >=0] [Units: vx]
+   * @default 20
+   */
+  mergeRegionArea: number;
+
+  /**
+   * The maximum number of vertices allowed for polygons generated during the be merged with larger regions.
+   * [Limit: >=0] [Units: vx]
+   * @default 6
+   */
+  maxVertsPerPoly: number;
+
+  /**
+   * Sets the sampling distance to use when generating the detail mesh. (For height detail only.)
+   * [Limits: 0 or >= 0.9] [Units: wu]
+   * @default 6
+   */
+  detailSampleDist: number;
+
+  /**
+   * The maximum distance the detail mesh surface should deviate from heightfield data. (For height detail only.)
+   * [Limit: >=0] [Units: wu]
+   * @default 1
+   */
+  detailSampleMaxError: number;
+};
+
+export const recastConfigDefaults: RecastConfig = {
+  borderSize: 0,
+  tileSize: 0,
+  cs: 0.2,
+  ch: 0.2,
+  walkableSlopeAngle: 60,
+  walkableHeight: 2,
+  walkableClimb: 2,
+  walkableRadius: 0.5,
+  maxEdgeLen: 12,
+  maxSimplificationError: 1.3,
+  minRegionArea: 8,
+  mergeRegionArea: 20,
+  maxVertsPerPoly: 6,
+  detailSampleDist: 6,
+  detailSampleMaxError: 1,
+};
+
+export class rcConfig {
+  constructor(public raw: R.rcConfig) {}
+
+  static create(partialConfig: Partial<RecastConfig>): rcConfig {
+    const config = {
+      ...recastConfigDefaults,
+      ...partialConfig,
+    };
+
+    const raw = new Raw.Module.rcConfig();
+    raw.borderSize = config.borderSize;
+    raw.tileSize = config.tileSize;
+    raw.cs = config.cs;
+    raw.ch = config.ch;
+    raw.walkableSlopeAngle = config.walkableSlopeAngle;
+    raw.walkableHeight = config.walkableHeight;
+    raw.walkableClimb = config.walkableClimb;
+    raw.walkableRadius = config.walkableRadius;
+    raw.maxEdgeLen = config.maxEdgeLen;
+    raw.maxSimplificationError = config.maxSimplificationError;
+    raw.minRegionArea = config.minRegionArea;
+    raw.mergeRegionArea = config.mergeRegionArea;
+    raw.maxVertsPerPoly = config.maxVertsPerPoly;
+    raw.detailSampleDist = config.detailSampleDist;
+    raw.detailSampleMaxError = config.detailSampleMaxError;
+
+    return new rcConfig(raw);
+  }
+
+  clone(): rcConfig {
+    const clone = new Raw.Module.rcConfig();
+
+    clone.set_bmin(0, this.raw.get_bmin(0));
+    clone.set_bmin(1, this.raw.get_bmin(1));
+    clone.set_bmin(2, this.raw.get_bmin(2));
+    clone.set_bmax(0, this.raw.get_bmax(0));
+    clone.set_bmax(1, this.raw.get_bmax(1));
+    clone.set_bmax(2, this.raw.get_bmax(2));
+
+    clone.width = this.raw.width;
+    clone.height = this.raw.height;
+    clone.borderSize = this.raw.borderSize;
+    clone.tileSize = this.raw.tileSize;
+    clone.cs = this.raw.cs;
+    clone.ch = this.raw.ch;
+    clone.walkableSlopeAngle = this.raw.walkableSlopeAngle;
+    clone.walkableHeight = this.raw.walkableHeight;
+    clone.walkableClimb = this.raw.walkableClimb;
+    clone.walkableRadius = this.raw.walkableRadius;
+    clone.maxEdgeLen = this.raw.maxEdgeLen;
+    clone.maxSimplificationError = this.raw.maxSimplificationError;
+    clone.minRegionArea = this.raw.minRegionArea;
+    clone.mergeRegionArea = this.raw.mergeRegionArea;
+    clone.maxVertsPerPoly = this.raw.maxVertsPerPoly;
+    clone.detailSampleDist = this.raw.detailSampleDist;
+    clone.detailSampleMaxError = this.raw.detailSampleMaxError;
+
+    return new rcConfig(clone)
+  }
+}
 
 export class rcSpan {
   raw: R.rcSpan;
@@ -363,58 +555,6 @@ export class rcHeightfieldLayerSet {
   }
 }
 
-export class rcChunkyTriMeshNode {
-  raw: R.rcChunkyTriMeshNode;
-
-  constructor(raw: R.rcChunkyTriMeshNode) {
-    this.raw = raw;
-  }
-
-  bmin(): Vector3 {
-    return vec3.fromArray(array((i) => this.raw.get_bmin(i), 3));
-  }
-
-  bmax(): Vector3 {
-    return vec3.fromArray(array((i) => this.raw.get_bmax(i), 3));
-  }
-
-  i(): number {
-    return this.raw.i;
-  }
-
-  n(): number {
-    return this.raw.n;
-  }
-}
-
-export class rcChunkyTriMesh {
-  raw: R.rcChunkyTriMesh;
-
-  constructor(raw: R.rcChunkyTriMesh) {
-    this.raw = raw;
-  }
-
-  nodes(index: number): rcChunkyTriMeshNode {
-    return new rcChunkyTriMeshNode(this.raw.get_nodes(index));
-  }
-
-  nnodes(): number {
-    return this.raw.nnodes;
-  }
-
-  tris(index: number): number {
-    return this.raw.get_tris(index);
-  }
-
-  ntris(): number {
-    return this.raw.ntris;
-  }
-
-  maxTrisPerChunk(): number {
-    return this.raw.maxTrisPerChunk;
-  }
-}
-
 export class rcPolyMesh {
   raw: R.rcPolyMesh;
 
@@ -512,311 +652,5 @@ export class rcPolyMeshDetail {
 
   ntris(): number {
     return this.raw.ntris;
-  }
-}
-
-export class dtPoly {
-  raw: R.dtPoly;
-
-  constructor(raw: R.dtPoly) {
-    this.raw = raw;
-  }
-
-  firstLink(): number {
-    return this.raw.firstLink;
-  }
-
-  verts(index: number): number {
-    return this.raw.get_verts(index);
-  }
-
-  neis(index: number): number {
-    return this.raw.get_neis(index);
-  }
-
-  flags(): number {
-    return this.raw.flags;
-  }
-
-  vertCount(): number {
-    return this.raw.vertCount;
-  }
-
-  areaAndType(): number {
-    return this.raw.get_areaAndtype();
-  }
-
-  getType(): number {
-    return this.raw.getType();
-  }
-}
-
-export class dtPolyDetail {
-  raw: R.dtPolyDetail;
-
-  constructor(raw: R.dtPolyDetail) {
-    this.raw = raw;
-  }
-
-  vertBase(): number {
-    return this.raw.vertBase;
-  }
-
-  triBase(): number {
-    return this.raw.triBase;
-  }
-
-  vertCount(): number {
-    return this.raw.vertCount;
-  }
-
-  triCount(): number {
-    return this.raw.triCount;
-  }
-}
-
-export class dtLink {
-  raw: R.dtLink;
-
-  constructor(raw: R.dtLink) {
-    this.raw = raw;
-  }
-
-  ref(): number {
-    return this.raw.ref;
-  }
-
-  next(): number {
-    return this.raw.next;
-  }
-
-  edge(): number {
-    return this.raw.edge;
-  }
-
-  side(): number {
-    return this.raw.side;
-  }
-
-  bmin(): number {
-    return this.raw.bmin;
-  }
-
-  bmax(): number {
-    return this.raw.bmax;
-  }
-}
-
-export class dtBVNode {
-  raw: R.dtBVNode;
-
-  constructor(raw: R.dtBVNode) {
-    this.raw = raw;
-  }
-
-  bmin(): Vector3 {
-    return vec3.fromArray(array((i) => this.raw.get_bmin(i), 3));
-  }
-
-  bmax(): Vector3 {
-    return vec3.fromArray(array((i) => this.raw.get_bmax(i), 3));
-  }
-
-  i(): number {
-    return this.raw.i;
-  }
-}
-
-export class dtOffMeshConnection {
-  raw: R.dtOffMeshConnection;
-
-  constructor(raw: R.dtOffMeshConnection) {
-    this.raw = raw;
-  }
-
-  pos(index: number): number {
-    return this.raw.get_pos(index);
-  }
-
-  rad(): number {
-    return this.raw.rad;
-  }
-
-  poly(): number {
-    return this.raw.poly;
-  }
-
-  flags(): number {
-    return this.raw.flags;
-  }
-
-  side(): number {
-    return this.raw.side;
-  }
-
-  userId(): number {
-    return this.raw.userId;
-  }
-}
-
-export class dtMeshHeader {
-  raw: R.dtMeshHeader;
-
-  constructor(raw: R.dtMeshHeader) {
-    this.raw = raw;
-  }
-
-  magic(): number {
-    return this.raw.magic;
-  }
-
-  version(): number {
-    return this.raw.version;
-  }
-
-  x(): number {
-    return this.raw.x;
-  }
-
-  y(): number {
-    return this.raw.y;
-  }
-
-  layer(): number {
-    return this.raw.layer;
-  }
-
-  userId(): number {
-    return this.raw.userId;
-  }
-
-  polyCount(): number {
-    return this.raw.polyCount;
-  }
-
-  vertCount(): number {
-    return this.raw.vertCount;
-  }
-
-  maxLinkCount(): number {
-    return this.raw.maxLinkCount;
-  }
-
-  detailMeshCount(): number {
-    return this.raw.detailMeshCount;
-  }
-
-  detailVertCount(): number {
-    return this.raw.detailVertCount;
-  }
-
-  detailTriCount(): number {
-    return this.raw.detailTriCount;
-  }
-
-  bvNodeCount(): number {
-    return this.raw.bvNodeCount;
-  }
-
-  offMeshConCount(): number {
-    return this.raw.offMeshConCount;
-  }
-
-  offMeshBase(): number {
-    return this.raw.offMeshBase;
-  }
-
-  walkableHeight(): number {
-    return this.raw.walkableHeight;
-  }
-
-  walkableRadius(): number {
-    return this.raw.walkableRadius;
-  }
-
-  walkableClimb(): number {
-    return this.raw.walkableClimb;
-  }
-
-  bmin(index: number): number {
-    return this.raw.get_bmin(index);
-  }
-
-  bmax(index: number): number {
-    return this.raw.get_bmax(index);
-  }
-
-  bvQuantFactor(): number {
-    return this.raw.bvQuantFactor;
-  }
-}
-
-export class dtMeshTile {
-  raw: R.dtMeshTile;
-
-  constructor(raw: R.dtMeshTile) {
-    this.raw = raw;
-  }
-
-  salt(): number {
-    return this.raw.salt;
-  }
-
-  linksFreeList(): number {
-    return this.raw.linksFreeList;
-  }
-
-  header(): dtMeshHeader | null {
-    return !emscripten.isNull(this.raw.header)
-      ? new dtMeshHeader(this.raw.header)
-      : null;
-  }
-
-  polys(index: number): dtPoly {
-    return new dtPoly(this.raw.get_polys(index));
-  }
-
-  verts(index: number): number {
-    return this.raw.get_verts(index);
-  }
-
-  links(index: number): dtLink {
-    return new dtLink(this.raw.get_links(index));
-  }
-
-  detailMeshes(index: number): dtPolyDetail {
-    return new dtPolyDetail(this.raw.get_detailMeshes(index));
-  }
-
-  detailVerts(index: number): number {
-    return this.raw.get_detailVerts(index);
-  }
-
-  detailTris(index: number): number {
-    return this.raw.get_detailTris(index);
-  }
-
-  bvTree(index: number): dtBVNode {
-    return new dtBVNode(this.raw.get_bvTree(index));
-  }
-
-  offMeshCons(index: number): dtOffMeshConnection {
-    return new dtOffMeshConnection(this.raw.get_offMeshCons(index));
-  }
-
-  data(index: number): number {
-    return this.raw.get_data(index);
-  }
-
-  dataSize(): number {
-    return this.raw.dataSize;
-  }
-
-  flags(): number {
-    return this.raw.flags;
-  }
-
-  next(): dtMeshTile {
-    return new dtMeshTile(this.raw.next);
   }
 }

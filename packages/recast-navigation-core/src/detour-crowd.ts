@@ -1,8 +1,8 @@
 import type R from '@recast-navigation/wasm';
 import { finalizer } from './finalizer';
-import type { NavMesh } from './nav-mesh';
+import type { NavMesh } from './detour-nav-mesh';
 import { Vector3, array, emscripten, vec3 } from './utils';
-import { Wasm } from './wasm';
+import { Raw } from './raw';
 
 export type CrowdParams = {
   /**
@@ -141,11 +141,11 @@ export class Crowd {
    */
   timeFactor = 1;
 
-  private tmpVec1 = new Wasm.Recast.Vec3();
+  private tmpVec1 = new Raw.Module.Vec3();
 
   constructor({ maxAgents, maxAgentRadius, navMesh }: CrowdParams) {
     this.navMesh = navMesh;
-    this.raw = new Wasm.Recast.Crowd(maxAgents, maxAgentRadius, navMesh.raw);
+    this.raw = new Raw.Module.Crowd(maxAgents, maxAgentRadius, navMesh.raw);
 
     finalizer.register(this);
   }
@@ -162,7 +162,7 @@ export class Crowd {
       ...crowdAgentParams,
     } as Required<CrowdAgentParams>;
 
-    const dtCrowdAgentParams = new Wasm.Recast.dtCrowdAgentParams();
+    const dtCrowdAgentParams = new Raw.Module.dtCrowdAgentParams();
     dtCrowdAgentParams.radius = params.radius;
     dtCrowdAgentParams.height = params.height;
     dtCrowdAgentParams.maxAcceleration = params.maxAcceleration;
@@ -351,7 +351,7 @@ export class Crowd {
       ...crowdAgentParams,
     } as CrowdAgentParams;
 
-    const dtCrowdAgentParams = new Wasm.Recast.dtCrowdAgentParams();
+    const dtCrowdAgentParams = new Raw.Module.dtCrowdAgentParams();
 
     dtCrowdAgentParams.radius = params.radius;
     dtCrowdAgentParams.height = params.height;

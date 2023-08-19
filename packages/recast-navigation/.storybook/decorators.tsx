@@ -1,10 +1,11 @@
-import { init } from '@recast-navigation/core';
+import { Environment, Loader } from '@react-three/drei';
+import { Canvas } from '@react-three/fiber';
+import * as RecastNavigation from '@recast-navigation/core';
+import { Leva } from 'leva';
 import React, { Suspense } from 'react';
 import { suspend } from 'suspend-react';
 
-import { Environment, Loader } from '@react-three/drei';
-import { Canvas } from '@react-three/fiber';
-import { Leva } from 'leva';
+const city = import('@pmndrs/assets/hdri/city.exr');
 
 type SetupProps = {
   children: React.ReactNode;
@@ -23,7 +24,7 @@ const Setup = ({ children }: SetupProps) => {
       >
         <Suspense fallback={null}>{children}</Suspense>
 
-        <Environment preset="city" />
+        <Environment files={(suspend(city) as any).default} />
       </Canvas>
       <Loader />
     </>
@@ -32,7 +33,11 @@ const Setup = ({ children }: SetupProps) => {
 
 export const decorators = [
   (Story: () => JSX.Element) => {
-    suspend(() => init(), []);
+    suspend(async () => {
+      await RecastNavigation.init()
+
+      ;(window as any).RecastNavigation = RecastNavigation
+    }, []);
 
     return <Story />;
   },

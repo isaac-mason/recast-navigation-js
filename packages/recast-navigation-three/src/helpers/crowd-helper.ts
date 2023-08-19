@@ -1,11 +1,11 @@
 import { Crowd, CrowdAgentParams } from '@recast-navigation/core';
 import {
   CapsuleGeometry,
-  Group,
   Material,
   Mesh,
   MeshBasicMaterial,
-  Vector3,
+  Object3D,
+  Vector3
 } from 'three';
 
 export type CrowdHelperParams = {
@@ -13,9 +13,7 @@ export type CrowdHelperParams = {
   agentMaterial?: Material;
 };
 
-export class CrowdHelper {
-  agents: Group;
-
+export class CrowdHelper extends Object3D {
   agentMeshes: Map<number, Mesh> = new Map();
 
   recastCrowd: Crowd;
@@ -23,13 +21,13 @@ export class CrowdHelper {
   agentMaterial: Material;
 
   constructor({ crowd, agentMaterial }: CrowdHelperParams) {
+    super()
+
     this.recastCrowd = crowd;
     
     this.agentMaterial = agentMaterial ?? new MeshBasicMaterial({ color: 'red' });
 
-    this.agents = new Group();
-
-    this.updateAgents();
+    this.update();
   }
 
   /**
@@ -37,7 +35,7 @@ export class CrowdHelper {
    * 
    * This should be called after updating the crowd.
    */
-  updateAgents() {
+  update() {
     const agentsIndices = this.recastCrowd.getAgents();
 
     const unseen = new Set(this.agentMeshes.keys());
@@ -54,7 +52,7 @@ export class CrowdHelper {
       if (agentMesh === undefined) {
         agentMesh = this.createAgentMesh(agentParams);
         
-        this.agents.add(agentMesh);
+        this.add(agentMesh);
         this.agentMeshes.set(i, agentMesh);
       }
 
@@ -72,7 +70,7 @@ export class CrowdHelper {
       const agentMesh = this.agentMeshes.get(agentId);
 
       if (agentMesh) {
-        this.agents.remove(agentMesh);
+        this.remove(agentMesh);
         this.agentMeshes.delete(agentId);
       }
     }
