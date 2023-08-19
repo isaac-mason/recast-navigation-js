@@ -1,25 +1,25 @@
 import { NavMesh } from '../detour-nav-mesh';
 import { Raw } from '../raw';
 import {
+  RecastConfigType,
+  RecastCompactHeightfield,
   RecastConfig,
-  rcCompactHeightfield,
-  rcConfig,
-  rcContourSet,
-  rcHeightfield,
+  RecastContourSet,
+  RecastHeightfield,
   recastConfigDefaults,
 } from '../recast';
 import { getVertsAndTris } from './common';
 
-export type SoloNavMeshGeneratorConfig = Omit<RecastConfig, 'tileSize'>;
+export type SoloNavMeshGeneratorConfig = Omit<RecastConfigType, 'tileSize'>;
 
 export const soloNavMeshGeneratorConfigDefaults: SoloNavMeshGeneratorConfig = {
   ...recastConfigDefaults,
 };
 
 export type SoloNavMeshGeneratorIntermediates = {
-  heightfield?: rcHeightfield;
-  compactHeightfield?: rcCompactHeightfield;
-  contourSet?: rcContourSet;
+  heightfield?: RecastHeightfield;
+  compactHeightfield?: RecastCompactHeightfield;
+  contourSet?: RecastContourSet;
 };
 
 type SoloNavMeshGeneratorSuccessResult = {
@@ -91,7 +91,7 @@ export const generateSoloNavMesh = (
   //
   // Step 1. Initialize build config.
   //
-  const { raw: config } = rcConfig.create({
+  const { raw: config } = RecastConfig.create({
     ...soloNavMeshGeneratorConfigDefaults,
     ...navMeshGeneratorConfig,
   });
@@ -113,7 +113,7 @@ export const generateSoloNavMesh = (
   //
   // Allocate voxel heightfield where we rasterize our input data to.
   const heightfield = Raw.Recast.allocHeightfield();
-  intermediates.heightfield = new rcHeightfield(heightfield);
+  intermediates.heightfield = new RecastHeightfield(heightfield);
 
   if (
     !Raw.Recast.createHeightfield(
@@ -193,7 +193,7 @@ export const generateSoloNavMesh = (
   // This will result more cache coherent data as well as the neighbours
   // between walkable cells will be calculated.
   const compactHeightfield = Raw.Recast.allocCompactHeightfield();
-  intermediates.compactHeightfield = new rcCompactHeightfield(
+  intermediates.compactHeightfield = new RecastCompactHeightfield(
     compactHeightfield
   );
 
@@ -242,7 +242,7 @@ export const generateSoloNavMesh = (
   // Step 5. Trace and simplify region contours.
   //
   const contourSet = Raw.Recast.allocContourSet();
-  intermediates.contourSet = new rcContourSet(contourSet);
+  intermediates.contourSet = new RecastContourSet(contourSet);
 
   if (
     !Raw.Recast.buildContours(

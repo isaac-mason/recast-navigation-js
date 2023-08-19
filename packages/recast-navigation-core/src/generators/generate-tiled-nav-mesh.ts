@@ -3,16 +3,16 @@ import { NavMesh } from '../detour-nav-mesh';
 import { TileCache, TileCacheMeshProcess } from '../detour-tile-cache';
 import { Raw } from '../raw';
 import {
+  RecastConfigType,
+  RecastCompactHeightfield,
   RecastConfig,
-  rcCompactHeightfield,
-  rcConfig,
-  rcHeightfield,
-  rcHeightfieldLayerSet,
+  RecastHeightfield,
+  RecastHeightfieldLayerSet,
   recastConfigDefaults,
 } from '../recast';
 import { getVertsAndTris } from './common';
 
-export type TiledNavMeshGeneratorConfig = RecastConfig & {
+export type TiledNavMeshGeneratorConfig = RecastConfigType & {
   /**
    * How many layers (or "floors") each navmesh tile is expected to have.
    */
@@ -37,9 +37,9 @@ export type TiledNavMeshGeneratorIntermediates = {
   tileIntermediates: {
     tx: number;
     ty: number;
-    heightfield: rcHeightfield;
-    heightfieldLayerSet: rcHeightfieldLayerSet;
-    compactHeightfield: rcCompactHeightfield;
+    heightfield: RecastHeightfield;
+    heightfieldLayerSet: RecastHeightfieldLayerSet;
+    compactHeightfield: RecastCompactHeightfield;
   }[];
 };
 
@@ -131,7 +131,7 @@ export const generateTiledNavMesh = (
   //
   // Step 1. Initialize build config.
   //
-  const { raw: config } = rcConfig.create(recastConfig);
+  const { raw: config } = RecastConfig.create(recastConfig);
 
   config.minRegionArea = config.minRegionArea * config.minRegionArea; // Note: area = size*size
   config.mergeRegionArea = config.mergeRegionArea * config.mergeRegionArea; // Note: area = size*size
@@ -239,7 +239,7 @@ export const generateTiledNavMesh = (
     // Tile bounds
     const tcs = config.tileSize * config.cs;
 
-    const { raw: tileConfig } = new rcConfig(config).clone();
+    const { raw: tileConfig } = new RecastConfig(config).clone();
 
     const tileBmin = [bbMin[0] + tx * tcs, bbMin[1], bbMin[2] + ty * tcs];
 
@@ -458,9 +458,9 @@ export const generateTiledNavMesh = (
     intermediates.tileIntermediates.push({
       tx,
       ty,
-      heightfield: new rcHeightfield(heightfield),
-      compactHeightfield: new rcCompactHeightfield(compactHeightfield),
-      heightfieldLayerSet: new rcHeightfieldLayerSet(heightfieldLayerSet),
+      heightfield: new RecastHeightfield(heightfield),
+      compactHeightfield: new RecastCompactHeightfield(compactHeightfield),
+      heightfieldLayerSet: new RecastHeightfieldLayerSet(heightfieldLayerSet),
     });
 
     return { n: tiles.length, tiles };

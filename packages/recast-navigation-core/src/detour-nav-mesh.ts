@@ -2,7 +2,7 @@ import type R from '@recast-navigation/wasm';
 import { finalizer } from './finalizer';
 import { array, vec3, Vector3 } from './utils';
 import { Raw } from './raw';
-import { dtMeshTile, dtPoly, dtOffMeshConnection } from './detour';
+import { DetourMeshTile, dtPoly, DetourOffMeshConnection } from './detour';
 
 export class NavMeshGetTilesAtResult {
   raw: R.NavMeshGetTilesAtResult;
@@ -13,8 +13,8 @@ export class NavMeshGetTilesAtResult {
     finalizer.register(this);
   }
 
-  tiles(index: number): dtMeshTile {
-    return new dtMeshTile(this.raw.get_tiles(index));
+  tiles(index: number): DetourMeshTile {
+    return new DetourMeshTile(this.raw.get_tiles(index));
   }
 
   tileCount(): number {
@@ -105,8 +105,8 @@ export class NavMeshGetTileAndPolyByRefResult {
     finalizer.register(this);
   }
 
-  tile(): dtMeshTile {
-    return new dtMeshTile(this.raw.tile);
+  tile(): DetourMeshTile {
+    return new DetourMeshTile(this.raw.tile);
   }
 
   poly(): dtPoly {
@@ -328,10 +328,10 @@ export class NavMesh {
    * @param layer The tile's layer. (x, y, layer)
    * @returns The tile, or null if the tile does not exist.
    */
-  getTileAt(x: number, y: number, layer: number): dtMeshTile | null {
+  getTileAt(x: number, y: number, layer: number): DetourMeshTile | null {
     const tile = this.raw.getTileAt(x, y, layer);
 
-    return !Raw.isNull(tile) ? new dtMeshTile(tile) : null;
+    return !Raw.isNull(tile) ? new DetourMeshTile(tile) : null;
   }
 
   /**
@@ -360,7 +360,7 @@ export class NavMesh {
    * @param tile
    * @returns
    */
-  getTileRef(tile: dtMeshTile): number {
+  getTileRef(tile: DetourMeshTile): number {
     return this.raw.getTileRef(tile.raw);
   }
 
@@ -369,10 +369,10 @@ export class NavMesh {
    * @param ref The tile reference of the tile to retrieve.
    * @returns The tile for the specified reference, or null if the reference is invalid.
    */
-  getTileByRef(ref: number): dtMeshTile | null {
+  getTileByRef(ref: number): DetourMeshTile | null {
     const tile = this.raw.getTileByRef(ref);
 
-    return !Raw.isNull(tile) ? new dtMeshTile(tile) : null;
+    return !Raw.isNull(tile) ? new DetourMeshTile(tile) : null;
   }
 
   /**
@@ -387,8 +387,8 @@ export class NavMesh {
    * @param i the tile index. [Limit: 0 >= index < #getMaxTiles()]
    * @returns
    */
-  getTile(i: number): dtMeshTile {
-    return new dtMeshTile(this.raw.getTile(i));
+  getTile(i: number): DetourMeshTile {
+    return new DetourMeshTile(this.raw.getTile(i));
   }
 
   /**
@@ -427,7 +427,7 @@ export class NavMesh {
    * @param tile
    * @returns
    */
-  getPolyRefBase(tile: dtMeshTile): number {
+  getPolyRefBase(tile: DetourMeshTile): number {
     return this.raw.getPolyRefBase(tile.raw);
   }
 
@@ -451,8 +451,8 @@ export class NavMesh {
    * @param ref The polygon reference of the off-mesh connection.
    * @returns
    */
-  getOffMeshConnectionByRef(ref: number): dtOffMeshConnection {
-    return new dtOffMeshConnection(this.raw.getOffMeshConnectionByRef(ref));
+  getOffMeshConnectionByRef(ref: number): DetourOffMeshConnection {
+    return new DetourOffMeshConnection(this.raw.getOffMeshConnectionByRef(ref));
   }
 
   /**
@@ -496,7 +496,7 @@ export class NavMesh {
    * @param tile
    * @returns The size of the buffer required to store the state.
    */
-  getTileStateSize(tile: dtMeshTile): number {
+  getTileStateSize(tile: DetourMeshTile): number {
     return this.raw.getTileStateSize(tile.raw);
   }
 
@@ -507,7 +507,7 @@ export class NavMesh {
    * @returns
    */
   storeTileState(
-    tile: dtMeshTile,
+    tile: DetourMeshTile,
     maxDataSize: number
   ): NavMeshStoreTileStateResult {
     return new NavMeshStoreTileStateResult(
@@ -523,7 +523,7 @@ export class NavMesh {
    * @returns
    */
   restoreTileState(
-    tile: dtMeshTile,
+    tile: DetourMeshTile,
     data: number[],
     maxDataSize: number
   ): number {

@@ -1,4 +1,4 @@
-import { rcHeightfield, rcSpan } from '@recast-navigation/core';
+import { RecastHeightfield, RecastSpan } from '@recast-navigation/core';
 import {
   BoxGeometry,
   Color,
@@ -15,7 +15,7 @@ import {
 const tmpMatrix4 = new Matrix4();
 
 export type HeightfieldHelperParams = {
-  heightfields: rcHeightfield[];
+  heightfields: RecastHeightfield[];
 
   /**
    * @default false
@@ -39,7 +39,7 @@ export type HeightfieldHelperParams = {
 };
 
 export class HeightfieldHelper extends Object3D {
-  heightfields: rcHeightfield[];
+  heightfields: RecastHeightfield[];
 
   highlightWalkable: boolean;
 
@@ -86,7 +86,7 @@ export class HeightfieldHelper extends Object3D {
           const fx = orig.x + x * cs;
           const fz = orig.z + y * cs;
 
-          let span: rcSpan | null = hf.spans(x + y * width);
+          let span: RecastSpan | null = hf.spans(x + y * width);
 
           while (span) {
             const minX = fx;

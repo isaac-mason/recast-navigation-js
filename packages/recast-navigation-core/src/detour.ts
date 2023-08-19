@@ -1,7 +1,8 @@
 import type R from '@recast-navigation/wasm';
-import { Vector3, array, emscripten, vec3 } from './utils';
+import { Raw } from './raw';
+import { Vector3, array, vec3 } from './utils';
 
-export class dtPolyDetail {
+export class DetourPolyDetail {
   raw: R.dtPolyDetail;
 
   constructor(raw: R.dtPolyDetail) {
@@ -25,7 +26,7 @@ export class dtPolyDetail {
   }
 }
 
-export class dtLink {
+export class DetourLink {
   raw: R.dtLink;
 
   constructor(raw: R.dtLink) {
@@ -57,7 +58,7 @@ export class dtLink {
   }
 }
 
-export class dtBVNode {
+export class DetourBVNode {
   raw: R.dtBVNode;
 
   constructor(raw: R.dtBVNode) {
@@ -77,7 +78,7 @@ export class dtBVNode {
   }
 }
 
-export class dtOffMeshConnection {
+export class DetourOffMeshConnection {
   raw: R.dtOffMeshConnection;
 
   constructor(raw: R.dtOffMeshConnection) {
@@ -109,7 +110,7 @@ export class dtOffMeshConnection {
   }
 }
 
-export class dtMeshHeader {
+export class DetourMeshHeader {
   raw: R.dtMeshHeader;
 
   constructor(raw: R.dtMeshHeader) {
@@ -237,7 +238,7 @@ export class dtPoly {
   }
 }
 
-export class dtMeshTile {
+export class DetourMeshTile {
   raw: R.dtMeshTile;
 
   constructor(raw: R.dtMeshTile) {
@@ -252,9 +253,9 @@ export class dtMeshTile {
     return this.raw.linksFreeList;
   }
 
-  header(): dtMeshHeader | null {
-    return !emscripten.isNull(this.raw.header)
-      ? new dtMeshHeader(this.raw.header)
+  header(): DetourMeshHeader | null {
+    return !Raw.isNull(this.raw.header)
+      ? new DetourMeshHeader(this.raw.header)
       : null;
   }
 
@@ -266,12 +267,12 @@ export class dtMeshTile {
     return this.raw.get_verts(index);
   }
 
-  links(index: number): dtLink {
-    return new dtLink(this.raw.get_links(index));
+  links(index: number): DetourLink {
+    return new DetourLink(this.raw.get_links(index));
   }
 
-  detailMeshes(index: number): dtPolyDetail {
-    return new dtPolyDetail(this.raw.get_detailMeshes(index));
+  detailMeshes(index: number): DetourPolyDetail {
+    return new DetourPolyDetail(this.raw.get_detailMeshes(index));
   }
 
   detailVerts(index: number): number {
@@ -282,12 +283,12 @@ export class dtMeshTile {
     return this.raw.get_detailTris(index);
   }
 
-  bvTree(index: number): dtBVNode {
-    return new dtBVNode(this.raw.get_bvTree(index));
+  bvTree(index: number): DetourBVNode {
+    return new DetourBVNode(this.raw.get_bvTree(index));
   }
 
-  offMeshCons(index: number): dtOffMeshConnection {
-    return new dtOffMeshConnection(this.raw.get_offMeshCons(index));
+  offMeshCons(index: number): DetourOffMeshConnection {
+    return new DetourOffMeshConnection(this.raw.get_offMeshCons(index));
   }
 
   data(index: number): number {
@@ -302,7 +303,7 @@ export class dtMeshTile {
     return this.raw.flags;
   }
 
-  next(): dtMeshTile {
-    return new dtMeshTile(this.raw.next);
+  next(): DetourMeshTile {
+    return new DetourMeshTile(this.raw.next);
   }
 }

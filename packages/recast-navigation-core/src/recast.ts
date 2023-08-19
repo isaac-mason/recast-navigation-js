@@ -2,7 +2,7 @@ import R from '@recast-navigation/wasm';
 import { Raw } from './raw';
 import { Vector3, array, vec3 } from './utils';
 
-export type RecastConfig = {
+export type RecastConfigType = {
   /**
    * The size of the non-navigable border around the heightfield.
    * [Limit: >=0] [Units: vx]
@@ -114,7 +114,7 @@ export type RecastConfig = {
   detailSampleMaxError: number;
 };
 
-export const recastConfigDefaults: RecastConfig = {
+export const recastConfigDefaults: RecastConfigType = {
   borderSize: 0,
   tileSize: 0,
   cs: 0.2,
@@ -132,10 +132,10 @@ export const recastConfigDefaults: RecastConfig = {
   detailSampleMaxError: 1,
 };
 
-export class rcConfig {
+export class RecastConfig {
   constructor(public raw: R.rcConfig) {}
 
-  static create(partialConfig: Partial<RecastConfig>): rcConfig {
+  static create(partialConfig: Partial<RecastConfigType>): RecastConfig {
     const config = {
       ...recastConfigDefaults,
       ...partialConfig,
@@ -158,10 +158,10 @@ export class rcConfig {
     raw.detailSampleDist = config.detailSampleDist;
     raw.detailSampleMaxError = config.detailSampleMaxError;
 
-    return new rcConfig(raw);
+    return new RecastConfig(raw);
   }
 
-  clone(): rcConfig {
+  clone(): RecastConfig {
     const clone = new Raw.Module.rcConfig();
 
     clone.set_bmin(0, this.raw.get_bmin(0));
@@ -189,11 +189,11 @@ export class rcConfig {
     clone.detailSampleDist = this.raw.detailSampleDist;
     clone.detailSampleMaxError = this.raw.detailSampleMaxError;
 
-    return new rcConfig(clone)
+    return new RecastConfig(clone)
   }
 }
 
-export class rcSpan {
+export class RecastSpan {
   raw: R.rcSpan;
 
   constructor(raw: R.rcSpan) {
@@ -212,30 +212,30 @@ export class rcSpan {
     return this.raw.area;
   }
 
-  next(): rcSpan | null {
-    return !Raw.isNull(this.raw.next) ? new rcSpan(this.raw.next) : null;
+  next(): RecastSpan | null {
+    return !Raw.isNull(this.raw.next) ? new RecastSpan(this.raw.next) : null;
   }
 }
 
-export class rcSpanPool {
+export class RecastSpanPool {
   raw: R.rcSpanPool;
 
   constructor(raw: R.rcSpanPool) {
     this.raw = raw;
   }
 
-  next(): rcSpanPool | null {
+  next(): RecastSpanPool | null {
     return !Raw.isNull(this.raw.next)
-      ? new rcSpanPool(this.raw.next)
+      ? new RecastSpanPool(this.raw.next)
       : null;
   }
 
-  items(index: number): rcSpan {
-    return new rcSpan(this.raw.get_items(index));
+  items(index: number): RecastSpan {
+    return new RecastSpan(this.raw.get_items(index));
   }
 }
 
-export class rcHeightfield {
+export class RecastHeightfield {
   raw: R.rcHeightfield;
 
   constructor(raw: R.rcHeightfield) {
@@ -266,20 +266,20 @@ export class rcHeightfield {
     return this.raw.ch;
   }
 
-  spans(index: number): rcSpan {
-    return new rcSpan(this.raw.get_spans(index));
+  spans(index: number): RecastSpan {
+    return new RecastSpan(this.raw.get_spans(index));
   }
 
-  pools(index: number): rcSpanPool {
-    return new rcSpanPool(this.raw.get_pools(index));
+  pools(index: number): RecastSpanPool {
+    return new RecastSpanPool(this.raw.get_pools(index));
   }
 
-  freelist(index: number): rcSpan {
-    return new rcSpan(this.raw.get_freelist(index));
+  freelist(index: number): RecastSpan {
+    return new RecastSpan(this.raw.get_freelist(index));
   }
 }
 
-export class rcCompactCell {
+export class RecastCompactCell {
   raw: R.rcCompactCell;
 
   constructor(raw: R.rcCompactCell) {
@@ -295,7 +295,7 @@ export class rcCompactCell {
   }
 }
 
-export class rcCompactSpan {
+export class RecastCompactSpan {
   raw: R.rcCompactSpan;
 
   constructor(raw: R.rcCompactSpan) {
@@ -319,7 +319,7 @@ export class rcCompactSpan {
   }
 }
 
-export class rcCompactHeightfield {
+export class RecastCompactHeightfield {
   raw: R.rcCompactHeightfield;
 
   constructor(raw: R.rcCompactHeightfield) {
@@ -374,12 +374,12 @@ export class rcCompactHeightfield {
     return this.raw.ch;
   }
 
-  cells(index: number): rcCompactCell {
-    return new rcCompactCell(this.raw.get_cells(index));
+  cells(index: number): RecastCompactCell {
+    return new RecastCompactCell(this.raw.get_cells(index));
   }
 
-  spans(index: number): rcCompactSpan {
-    return new rcCompactSpan(this.raw.get_spans(index));
+  spans(index: number): RecastCompactSpan {
+    return new RecastCompactSpan(this.raw.get_spans(index));
   }
 
   dist(index: number): number {
@@ -391,7 +391,7 @@ export class rcCompactHeightfield {
   }
 }
 
-export class rcContour {
+export class RecastContour {
   raw: R.rcContour;
 
   constructor(raw: R.rcContour) {
@@ -423,15 +423,15 @@ export class rcContour {
   }
 }
 
-export class rcContourSet {
+export class RecastContourSet {
   raw: R.rcContourSet;
 
   constructor(raw: R.rcContourSet) {
     this.raw = raw;
   }
 
-  conts(index: number): rcContour {
-    return new rcContour(this.raw.get_conts(index));
+  conts(index: number): RecastContour {
+    return new RecastContour(this.raw.get_conts(index));
   }
 
   nconts(): number {
@@ -471,7 +471,7 @@ export class rcContourSet {
   }
 }
 
-export class rcHeightfieldLayer {
+export class RecastHeightfieldLayer {
   raw: R.rcHeightfieldLayer;
 
   constructor(raw: R.rcHeightfieldLayer) {
@@ -539,15 +539,15 @@ export class rcHeightfieldLayer {
   }
 }
 
-export class rcHeightfieldLayerSet {
+export class RecastHeightfieldLayerSet {
   raw: R.rcHeightfieldLayerSet;
 
   constructor(raw: R.rcHeightfieldLayerSet) {
     this.raw = raw;
   }
 
-  layers(index: number): rcHeightfieldLayer {
-    return new rcHeightfieldLayer(this.raw.get_layers(index));
+  layers(index: number): RecastHeightfieldLayer {
+    return new RecastHeightfieldLayer(this.raw.get_layers(index));
   }
 
   nlayers(): number {
@@ -555,7 +555,7 @@ export class rcHeightfieldLayerSet {
   }
 }
 
-export class rcPolyMesh {
+export class RecastPolyMesh {
   raw: R.rcPolyMesh;
 
   constructor(raw: R.rcPolyMesh) {
@@ -623,7 +623,7 @@ export class rcPolyMesh {
   }
 }
 
-export class rcPolyMeshDetail {
+export class RecastPolyMeshDetail {
   raw: R.rcPolyMeshDetail;
 
   constructor(raw: R.rcPolyMeshDetail) {
