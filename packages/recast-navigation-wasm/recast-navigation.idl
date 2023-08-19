@@ -204,7 +204,7 @@ interface dtCrowdAgentParams {
     attribute octet obstacleAvoidanceType;    
 
     /// The index of the query filter used by this agent.
-    attribute  octet queryFilterType;
+    attribute octet queryFilterType;
 
     /// User defined data attached to the agent.
     attribute VoidPtr userData;

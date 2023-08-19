@@ -20,6 +20,9 @@ export const Raw = {
     UnsignedShortArray: typeof Module.UnsignedShortArray;
     FloatArray: typeof Module.FloatArray;
   },
+  isNull: (obj: unknown) => {
+    return Raw.Module.getPointer(obj) === 0;
+  },
 };
 
 export const init = async () => {

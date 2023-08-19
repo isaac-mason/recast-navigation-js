@@ -1,7 +1,7 @@
 import type R from '@recast-navigation/wasm';
 import { finalizer } from './finalizer';
 import type { NavMesh } from './detour-nav-mesh';
-import { Vector3, array, emscripten, vec3 } from './utils';
+import { Vector3, array, vec3 } from './utils';
 import { Raw } from './raw';
 
 export type CrowdParams = {
@@ -405,6 +405,6 @@ export class Crowd {
   destroy(): void {
     this.raw.destroy();
     finalizer.unregister(this);
-    emscripten.destroy(this.raw);
+    Raw.Module.destroy(this.raw);
   }
 }

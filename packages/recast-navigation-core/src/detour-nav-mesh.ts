@@ -1,6 +1,6 @@
 import type R from '@recast-navigation/wasm';
 import { finalizer } from './finalizer';
-import { array, emscripten, vec3, Vector3 } from './utils';
+import { array, vec3, Vector3 } from './utils';
 import { Raw } from './raw';
 import { dtMeshTile, dtPoly, dtOffMeshConnection } from './detour';
 
@@ -23,7 +23,7 @@ export class NavMeshGetTilesAtResult {
 
   destroy(): void {
     finalizer.unregister(this);
-    emscripten.destroy(this.raw);
+    Raw.Module.destroy(this.raw);
   }
 }
 
@@ -46,7 +46,7 @@ export class NavMeshAddTileResult {
 
   destroy(): void {
     finalizer.unregister(this);
-    emscripten.destroy(this.raw);
+    Raw.Module.destroy(this.raw);
   }
 }
 
@@ -69,7 +69,7 @@ export class NavMeshRemoveTileResult {
 
   destroy(): void {
     finalizer.unregister(this);
-    emscripten.destroy(this.raw);
+    Raw.Module.destroy(this.raw);
   }
 }
 
@@ -92,7 +92,7 @@ export class NavMeshCalcTileLocResult {
 
   destroy(): void {
     finalizer.unregister(this);
-    emscripten.destroy(this.raw);
+    Raw.Module.destroy(this.raw);
   }
 }
 
@@ -119,7 +119,7 @@ export class NavMeshGetTileAndPolyByRefResult {
 
   destroy(): void {
     finalizer.unregister(this);
-    emscripten.destroy(this.raw);
+    Raw.Module.destroy(this.raw);
   }
 }
 
@@ -146,7 +146,7 @@ export class NavMeshGetOffMeshConnectionPolyEndPointsResult {
 
   destroy(): void {
     finalizer.unregister(this);
-    emscripten.destroy(this.raw);
+    Raw.Module.destroy(this.raw);
   }
 }
 
@@ -169,7 +169,7 @@ export class NavMeshGetPolyFlagsResult {
 
   destroy(): void {
     finalizer.unregister(this);
-    emscripten.destroy(this.raw);
+    Raw.Module.destroy(this.raw);
   }
 }
 
@@ -192,7 +192,7 @@ export class NavMeshGetPolyAreaResult {
 
   destroy(): void {
     finalizer.unregister(this);
-    emscripten.destroy(this.raw);
+    Raw.Module.destroy(this.raw);
   }
 }
 
@@ -215,7 +215,7 @@ export class NavMeshStoreTileStateResult {
 
   destroy(): void {
     finalizer.unregister(this);
-    emscripten.destroy(this.raw);
+    Raw.Module.destroy(this.raw);
   }
 }
 
@@ -331,7 +331,7 @@ export class NavMesh {
   getTileAt(x: number, y: number, layer: number): dtMeshTile | null {
     const tile = this.raw.getTileAt(x, y, layer);
 
-    return !emscripten.isNull(tile) ? new dtMeshTile(tile) : null;
+    return !Raw.isNull(tile) ? new dtMeshTile(tile) : null;
   }
 
   /**
@@ -372,7 +372,7 @@ export class NavMesh {
   getTileByRef(ref: number): dtMeshTile | null {
     const tile = this.raw.getTileByRef(ref);
 
-    return !emscripten.isNull(tile) ? new dtMeshTile(tile) : null;
+    return !Raw.isNull(tile) ? new dtMeshTile(tile) : null;
   }
 
   /**
@@ -543,6 +543,6 @@ export class NavMesh {
   destroy(): void {
     this.raw.destroy();
     finalizer.unregister(this);
-    emscripten.destroy(this.raw);
+    Raw.Module.destroy(this.raw);
   }
 }

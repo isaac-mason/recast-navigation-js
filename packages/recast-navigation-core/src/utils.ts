@@ -1,18 +1,6 @@
 import type R from '@recast-navigation/wasm';
 import { Raw } from './raw';
 
-export const emscripten = {
-  isNull: (obj: unknown) => {
-    return Raw.Module.getPointer(obj) === 0;
-  },
-  getPointer: (obj: unknown) => {
-    return Raw.Module.getPointer(obj);
-  },
-  destroy: (obj: unknown) => {
-    return Raw.Module.destroy(obj);
-  },
-};
-
 export type Vector3 = { x: number; y: number; z: number };
 
 export const vec3 = {
@@ -30,7 +18,7 @@ export const vec3 = {
     const { x, y, z } = vec3;
 
     if (freeRaw) {
-      emscripten.destroy(vec3);
+      Raw.Module.destroy(vec3);
     }
 
     return { x, y, z };

@@ -1,6 +1,6 @@
 import R from '@recast-navigation/wasm';
 import { Raw } from './raw';
-import { Vector3, array, emscripten, vec3 } from './utils';
+import { Vector3, array, vec3 } from './utils';
 
 export type RecastConfig = {
   /**
@@ -213,7 +213,7 @@ export class rcSpan {
   }
 
   next(): rcSpan | null {
-    return !emscripten.isNull(this.raw.next) ? new rcSpan(this.raw.next) : null;
+    return !Raw.isNull(this.raw.next) ? new rcSpan(this.raw.next) : null;
   }
 }
 
@@ -225,7 +225,7 @@ export class rcSpanPool {
   }
 
   next(): rcSpanPool | null {
-    return !emscripten.isNull(this.raw.next)
+    return !Raw.isNull(this.raw.next)
       ? new rcSpanPool(this.raw.next)
       : null;
   }
