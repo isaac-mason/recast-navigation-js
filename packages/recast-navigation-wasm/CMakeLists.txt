@@ -89,7 +89,7 @@ set(EMCC_ARGS
   -s BINARYEN_IGNORE_IMPLICIT_TRAPS=1
   # Start: Uncomment for debugging
   # -O0
-  -g
+  # -g
   # -s ASSERTIONS=2
   # End: Uncomment for debugging
 )
