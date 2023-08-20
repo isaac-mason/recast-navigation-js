@@ -12689,6 +12689,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "navmesh-website@workspace:apps/navmesh-website"
   dependencies:
+    "@pmndrs/assets": ^1.6.0
     "@react-three/drei": ^9.78.2
     "@react-three/fiber": ^8.12.0
     "@types/react": ^18.2.11

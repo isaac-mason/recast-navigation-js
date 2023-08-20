@@ -1,4 +1,5 @@
-import { Environment, OrbitControls, useGLTF } from '@react-three/drei';
+import { Environment, OrbitControls } from '@react-three/drei';
+import cityEnvironment from '@pmndrs/assets/hdri/city.exr'
 import { Canvas, ThreeEvent } from '@react-three/fiber';
 import { Leva, button, useControls } from 'leva';
 import { Suspense, useEffect, useRef, useState } from 'react';
@@ -39,8 +40,6 @@ const App = () => {
   const [navMeshDebugColor, setNavMeshDebugColor] = useState('#ffa500');
 
   const recastAgent = useRef<RecastAgentRef>(null!);
-
-  const exampleGltf = useGLTF(dungeonGltfUrl);
 
   const onDropFile = async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) {
@@ -133,6 +132,23 @@ const App = () => {
     } else {
       recastAgent.current.goto(e.point);
     }
+  };
+
+  const selectExample = async () => {
+    setLoading(true);
+
+    gltfLoader.load(
+      dungeonGltfUrl,
+      ({ scene }) => {
+        setGtlf(scene);
+        setLoading(false);
+      },
+      undefined,
+      () => {
+        setLoading(false);
+        setError('Failed to load example model');
+      }
+    );
   };
 
   const navMeshConfig = useControls('NavMesh Generation Config', {
@@ -317,7 +333,7 @@ const App = () => {
           />
         )}
 
-        <Environment preset="city" />
+        <Environment files={cityEnvironment} />
 
         <OrbitControls />
       </Canvas>
@@ -330,12 +346,7 @@ const App = () => {
 
       {!gltf && !loading && (
         <CenterLayout>
-          <GltfDropZone
-            onDrop={onDropFile}
-            selectExample={() => {
-              setGtlf(exampleGltf.scene);
-            }}
-          />
+          <GltfDropZone onDrop={onDropFile} selectExample={selectExample} />
         </CenterLayout>
       )}
 
