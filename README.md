@@ -17,7 +17,7 @@ A WebAssembly port of [Recast Navigation](https://github.com/recastnavigation/re
 
 ## Documentation
 
-Documentation can be found at [https://recast-navigation-js-docs.isaacmason.com](https://recast-navigation-js-docs.isaacmason.com).
+Documentation can be found at [https://docs.recast-navigation-js.isaacmason.com](https://docs.recast-navigation-js.isaacmason.com).
 
 ## Examples
 
