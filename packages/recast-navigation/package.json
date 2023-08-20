@@ -44,7 +44,8 @@
     "README.md"
   ],
   "scripts": {
-    "build": "rollup --config rollup.config.js --bundleConfigAsCjs",
+    "clean": "(rm index.js index.d.ts three.js three.d.ts || true)",
+    "build": "yarn clean && rollup --config rollup.config.js --bundleConfigAsCjs",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
