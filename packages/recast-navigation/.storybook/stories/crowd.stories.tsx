@@ -44,10 +44,12 @@ export const SingleAgent = () => {
       }
     });
 
-    const { navMesh } = threeToSoloNavMesh(meshes, {
+    const { success, navMesh } = threeToSoloNavMesh(meshes, {
       cs: 0.05,
       ch: 0.2,
     });
+
+    if (!success) return
 
     const navMeshQuery = new NavMeshQuery({ navMesh });
 
@@ -176,10 +178,12 @@ export const MultipleAgents = () => {
       }
     });
 
-    const { navMesh } = threeToSoloNavMesh(meshes, {
+    const { success, navMesh } = threeToSoloNavMesh(meshes, {
       cs: 0.05,
       ch: 0.2,
     });
+
+    if (!success) return
 
     const navMeshQuery = new NavMeshQuery({ navMesh });
 

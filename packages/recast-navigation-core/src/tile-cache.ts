@@ -1,5 +1,5 @@
 import type R from '@recast-navigation/wasm';
-import { NavMesh } from './detour-nav-mesh';
+import { NavMesh } from './nav-mesh';
 import { finalizer } from './finalizer';
 import { vec3, Vector3 } from './utils';
 import { Raw } from './raw';

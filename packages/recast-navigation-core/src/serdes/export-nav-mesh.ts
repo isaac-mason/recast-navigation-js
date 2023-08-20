@@ -1,5 +1,5 @@
-import { NavMesh } from '../detour-nav-mesh';
-import { TileCache } from '../detour-tile-cache';
+import { NavMesh } from '../nav-mesh';
+import { TileCache } from '../tile-cache';
 import { Raw } from '../raw';
 
 export const exportNavMesh = (

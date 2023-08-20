@@ -1,4 +1,4 @@
-import { NavMesh } from '../detour-nav-mesh';
+import { NavMesh } from '../nav-mesh';
 import { Raw } from '../raw';
 import {
   RecastConfigType,

@@ -1,6 +1,6 @@
 import type R from '@recast-navigation/wasm';
-import { NavMesh } from '../detour-nav-mesh';
-import { TileCache, TileCacheMeshProcess } from '../detour-tile-cache';
+import { NavMesh } from '../nav-mesh';
+import { TileCache, TileCacheMeshProcess } from '../tile-cache';
 import { Raw } from '../raw';
 
 export type NavMeshImporterResult =

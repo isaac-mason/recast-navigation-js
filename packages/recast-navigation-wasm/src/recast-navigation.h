@@ -467,88 +467,76 @@ protected:
         const unsigned short polyFlags);
 };
 
-class NavMeshQuery
+struct NavMeshQueryFindPathResult
 {
-    Vec3 m_defaultQueryExtent;
-
-public:
-    dtNavMeshQuery *m_navQuery;
-
-    NavMeshQuery(NavMesh *navMesh, const int maxNodes);
-
-    Vec3 getClosestPoint(const Vec3 &position);
-
-    Vec3 getRandomPointAround(const Vec3 &position, float maxRadius);
-
-    Vec3 moveAlong(const Vec3 &position, const Vec3 &destination);
-
-    NavPath computePath(const Vec3 &start, const Vec3 &end) const;
-
-    void destroy();
-
-    void setDefaultQueryExtent(const Vec3 &extent)
-    {
-        m_defaultQueryExtent = extent;
-    }
-
-    Vec3 getDefaultQueryExtent() const
-    {
-        return m_defaultQueryExtent;
-    }
+    dtStatus status;
+    dtPolyRef *path;
+    int pathCount;
 };
 
-class Crowd
+struct NavMeshQueryFindStraightPathResult
+{
+    dtStatus status;
+    float *straightPath;
+    unsigned char *straightPathFlags;
+    dtPolyRef *straightPathRefs;
+    int straightPathCount;
+};
+
+struct NavMeshQueryFindNearestPolyResult
+{
+    dtStatus status;
+    dtPolyRef nearestRef;
+    float *nearestPt;
+    bool isOverPoly;
+};
+
+struct NavMeshQueryRaycastResult
+{
+    dtStatus status;
+    dtRaycastHit *raycastHit;
+};
+
+class NavMeshQuery
 {
 public:
-    Crowd(const int maxAgents, const float maxAgentRadius, NavMesh *navMesh);
+    dtNavMeshQuery *m_navQuery;
+    
+    NavMeshQuery();
+    NavMeshQuery(dtNavMeshQuery *navMeshQuery);
+    
+    void init(NavMesh *navMesh, const int maxNodes);
+
+    NavMeshQueryFindPathResult findPath(dtPolyRef startRef, dtPolyRef endRef, const float *startPos, const float *endPos, const dtQueryFilter *filter, int maxPath);
+
+    NavMeshQueryFindStraightPathResult findStraightPath(
+        const float *startPos, const float *endPos,
+        const dtPolyRef *path, const int pathSize,
+        const int maxStraightPath, const int options);
+
+    NavMeshQueryFindNearestPolyResult findNearestPoly(const float *center, const float *halfExtents, const dtQueryFilter *filter);
+
+    NavMeshQueryRaycastResult raycast(dtPolyRef startRef, const float *startPos, const float *endPos, const dtQueryFilter *filter, const unsigned int options, dtPolyRef prevRef = 0);
+
+    Vec3 getClosestPoint(const float *position, const float *halfExtents, const dtQueryFilter *filter);
+
+    Vec3 getRandomPointAround(const float *position, float maxRadius, const float *halfExtents, const dtQueryFilter *filter);
+
+    Vec3 moveAlong(const float *position, const float *destination, const float *halfExtents, const dtQueryFilter *filter);
+
+    NavPath computePath(float *start, float *end, const float *halfExtents, const dtQueryFilter *filter) const;
 
     void destroy();
+};
 
-    int addAgent(const Vec3 &pos, const dtCrowdAgentParams *params);
+class CrowdUtils
+{
+public:
+    int getActiveAgentCount(dtCrowd *crowd);
 
-    void removeAgent(const int idx);
+    bool overOffMeshConnection(dtCrowd *crowd, int idx);
 
-    void update(const float dt);
-
-    int getAgentCount();
-
-    int getActiveAgentCount();
-
-    void getAgentPosition(int idx, Vec3 *target);
-
-    void getAgentVelocity(int idx, Vec3 *target);
-
-    void getAgentNextTargetPath(int idx, Vec3 *target);
-
-    int getAgentState(int idx);
-
-    bool overOffMeshConnection(int idx);
-
-    void agentGoto(int idx, const Vec3 &destination);
-
-    void agentResetMoveTarget(int idx);
-
-    void agentTeleport(int idx, const Vec3 &destination);
-
-    dtCrowdAgentParams getAgentParameters(const int idx);
-
-    void setAgentParameters(const int idx, const dtCrowdAgentParams *params);
-
-    void setDefaultQueryExtent(const Vec3 &extent)
-    {
-        m_defaultQueryExtent = extent;
-    }
-
-    Vec3 getDefaultQueryExtent() const
-    {
-        return m_defaultQueryExtent;
-    }
-
-    NavPath getCorners(const int idx);
-
-protected:
-    dtCrowd *m_crowd;
-    Vec3 m_defaultQueryExtent;
+    void agentTeleport(dtCrowd *crowd, int idx, const float *destination, const float *halfExtents, dtQueryFilter *filter);
 };
 
 class Detour

@@ -455,16 +455,64 @@ interface NavPath
     [Const, Ref] Vec3 getPoint(long n);
 };
 
+interface NavMeshQueryFindPathResult {
+    attribute unsigned long status;
+    attribute unsigned long[] path;
+    attribute long pathCount;
+};
+
+interface NavMeshQueryFindStraightPathResult {
+    attribute unsigned long status;
+    attribute float[] straightPath;
+    attribute octet[] straightPathFlags;
+    attribute unsigned long[] straightPathRefs;
+    attribute long straightPathCount;
+};
+
+interface NavMeshQueryFindNearestPolyResult {
+    attribute unsigned long status;
+    attribute unsigned long nearestRef;
+    attribute float[] nearestPt;
+    attribute boolean isOverPoly;
+};
+
+interface dtRaycastHit {
+    attribute float t;
+    attribute float[] hitNormal;
+    attribute long hitEdgeIndex;
+    attribute unsigned long[] path;
+    attribute long pathCount;
+    attribute long maxPath;
+    attribute float pathCost;
+};
+
+interface NavMeshQueryRaycastResult {
+    attribute unsigned long status;
+    attribute dtRaycastHit raycastHit;
+};
+
 interface NavMeshQuery {
-    void NavMeshQuery(NavMesh navMesh, [Const] long maxNodes);
+    void NavMeshQuery();
+    
+    void NavMeshQuery(dtNavMeshQuery navMeshQuery);
+
+    void init(NavMesh navMesh, [Const] long maxNodes);
+
+    [Value] NavMeshQueryFindPathResult findPath(unsigned long startRef, unsigned long endRef, [Const] float[] startPos, [Const] float[] endPos, [Const] dtQueryFilter filter, long maxPath);
+
+    [Value] NavMeshQueryFindStraightPathResult findStraightPath([Const] float[] startPos, [Const] float[] endPos, [Const] unsigned long[] path, [Const] long pathSize, [Const] long maxStraightPath, [Const] long options);
+
+    [Value] NavMeshQueryFindNearestPolyResult findNearestPoly([Const] float[] center, [Const] float[] halfExtents, [Const] dtQueryFilter filter);
+
+    [Value] Vec3 getClosestPoint(float[] position, float[] halfExtents, [Const] dtQueryFilter filter);
+
+    [Value] Vec3 getRandomPointAround(float[] position, float maxRadius, float[] halfExtents, [Const] dtQueryFilter filter);
+
+    [Value] Vec3 moveAlong(float[] position, float[] destination, float[] halfExtents, [Const] dtQueryFilter filter);
+
+    [Value] NavPath computePath(float[] start, float[] end, float[] halfExtents, [Const] dtQueryFilter filter);
 
     void destroy();
-    [Value] Vec3 getClosestPoint([Const, Ref] Vec3 position);
-    [Value] Vec3 getRandomPointAround([Const, Ref] Vec3 position, float maxRadius);
-    [Value] Vec3 moveAlong([Const, Ref] Vec3 position, [Const, Ref] Vec3 destination);
-    [Value] NavPath computePath([Const, Ref] Vec3 start, [Const, Ref] Vec3 end);
-    void setDefaultQueryExtent([Const, Ref] Vec3 extent);
-    [Value] Vec3 getDefaultQueryExtent();
 };
 
 interface dtTileCacheParams {
@@ -534,28 +582,12 @@ interface TileCache {
     void destroy();
 };
 
-interface Crowd {
-    void Crowd([Const] long maxAgents, [Const] float maxAgentRadius, NavMesh navMesh);
+interface CrowdUtils {
+    void CrowdUtils();
 
-    void destroy();
-    long addAgent([Const, Ref] Vec3 position, [Const] dtCrowdAgentParams params);
-    void removeAgent([Const] long idx);
-    void update([Const] float dt);
-    long getAgentCount();
-    long getActiveAgentCount();
-    void getAgentPosition([Const] long idx, Vec3 target);
-    void getAgentVelocity([Const] long idx, Vec3 target);
-    void getAgentNextTargetPath([Const] long idx, Vec3 target);
-    long getAgentState([Const] long idx);
-    boolean overOffMeshConnection([Const] long idx);
-    void agentGoto([Const] long idx, [Const, Ref] Vec3 destination);
-    void agentResetMoveTarget([Const] long idx);
-    void agentTeleport([Const] long idx, [Const, Ref] Vec3 destination);
-    [Value] dtCrowdAgentParams getAgentParameters([Const] long idx);
-    void setAgentParameters([Const] long idx, [Const] dtCrowdAgentParams params);
-    void setDefaultQueryExtent([Const, Ref] Vec3 extent);
-    [Value] Vec3 getDefaultQueryExtent();
-    [Value] NavPath getCorners([Const] long idx);
+    long getActiveAgentCount(dtCrowd crowd);
+    boolean overOffMeshConnection(dtCrowd crowd, [Const] long idx);
+    void agentTeleport(dtCrowd crowd, [Const] long idx, [Const] float[] destination, [Const] float[] halfExtents, dtQueryFilter filter);
 };
 
 interface Detour {
@@ -596,6 +628,147 @@ enum CrowdAgentState {
     "CrowdAgentState::DT_CROWDAGENT_STATE_INVALID",
     "CrowdAgentState::DT_CROWDAGENT_STATE_WALKING",
     "CrowdAgentState::DT_CROWDAGENT_STATE_OFFMESH"
+};
+
+enum MoveRequestState {
+    "MoveRequestState::DT_CROWDAGENT_TARGET_NONE",
+    "MoveRequestState::DT_CROWDAGENT_TARGET_FAILED",
+    "MoveRequestState::DT_CROWDAGENT_TARGET_VALID",
+    "MoveRequestState::DT_CROWDAGENT_TARGET_REQUESTING",
+    "MoveRequestState::DT_CROWDAGENT_TARGET_WAITING_FOR_QUEUE",
+    "MoveRequestState::DT_CROWDAGENT_TARGET_WAITING_FOR_PATH",
+    "MoveRequestState::DT_CROWDAGENT_TARGET_VELOCITY" 
+};
+
+interface dtPathCorridor {
+    boolean init([Const] long maxPath);
+    void reset(unsigned long ref, [Const] float[] pos);
+};
+
+interface dtLocalBoundary {
+    void reset();
+};
+
+interface dtCrowdNeighbour {
+    void dtCrowdNeighbour();
+
+    attribute long idx;
+    attribute float dist;
+};
+
+interface dtCrowdAgent {
+    void dtCrowdAgent();
+
+    attribute boolean active;
+    attribute octet state;
+    [Value] readonly attribute dtPathCorridor corridor;
+    [Value] readonly attribute dtLocalBoundary boundary;
+    attribute float topologyOptTime;
+    [Value] attribute dtCrowdNeighbour[] neis;
+    attribute long nneis;
+    attribute float desiredSpeed;
+    attribute float[] npos;
+    attribute float[] disp;
+    attribute float[] dvel;
+    attribute float[] nvel;
+    attribute float[] vel;
+    [Value] attribute dtCrowdAgentParams params;
+    attribute float[] cornerVerts;
+    attribute octet[] cornerFlags;
+    attribute long ncorners;
+    attribute octet targetState;
+    attribute unsigned long targetRef;
+    attribute float[] targetPos;
+    attribute unsigned long targetPathqRef;
+    attribute boolean targetReplan;
+    attribute float targetReplanTime;
+};
+
+interface dtObstacleAvoidanceParams {
+    void dtObstacleAvoidanceParams();
+
+    attribute float velBias;
+	attribute float weightDesVel;
+	attribute float weightCurVel;
+	attribute float weightSide;
+	attribute float weightToi;
+	attribute float horizTime;
+	attribute octet gridSize;
+	attribute octet adaptiveDivs;
+	attribute octet adaptiveRings;
+	attribute octet adaptiveDepth;
+};
+
+interface dtObstacleAvoidanceDebugData {
+};
+
+interface dtCrowdAgentDebugInfo {
+    void dtCrowdAgentDebugInfo();
+
+    attribute long idx;
+    attribute float[] optStart;
+    attribute float[] optEnd;
+    attribute dtObstacleAvoidanceDebugData vod;
+};
+
+interface dtQueryFilter {
+    void dtQueryFilter();
+
+    // float getCost([Const] float[] pa, [Const] float[] pb,
+	// 			  [Const] unsigned long prevRef, [Const] dtMeshTile prevTile, [Const] dtPoly prevPoly,
+	// 			  [Const] unsigned long curRef, [Const] dtMeshTile curTile, [Const] dtPoly curPoly,
+	// 			  [Const] unsigned long nextRef, [Const] dtMeshTile nextTile, [Const] dtPoly nextPoly);
+
+    float getAreaCost([Const] long i);
+
+    void setAreaCost([Const] long i, [Const] float cost);
+
+    unsigned short getIncludeFlags();
+
+    void setIncludeFlags([Const] unsigned short flags);
+
+    unsigned short getExcludeFlags();
+
+    void setExcludeFlags([Const] unsigned short flags);
+};
+
+interface dtNavMeshQuery {
+};
+
+interface dtCrowd {
+    void dtCrowd();
+
+    boolean init([Const] long maxAgents, [Const] float maxAgentRadius, dtNavMesh nav);
+    
+    void setObstacleAvoidanceParams([Const] long idx, [Const] dtObstacleAvoidanceParams params);
+
+    [Const] dtObstacleAvoidanceParams getObstacleAvoidanceParams([Const] long idx);
+
+    [Const] dtCrowdAgent getAgent([Const] long idx);
+
+    dtCrowdAgent getEditableAgent([Const] long idx);
+
+    long getAgentCount();
+
+    long addAgent([Const] float[] pos, [Const] dtCrowdAgentParams params);
+
+    void updateAgentParameters([Const] long idx, [Const] dtCrowdAgentParams params);
+
+    void removeAgent([Const] long idx);
+
+    boolean requestMoveTarget([Const] long idx, unsigned long ref, [Const] float[] pos);
+
+    boolean requestMoveVelocity([Const] long idx, [Const] float[] vel);
+
+    boolean resetMoveTarget([Const] long idx);
+
+    void update([Const] float dt, dtCrowdAgentDebugInfo debug); 
+
+    [Const] dtQueryFilter getFilter([Const] long i);
+
+    dtQueryFilter getEditableFilter([Const] long i);
+
+    [Const] dtNavMeshQuery getNavMeshQuery();
 };
 
 enum rcBuildContoursFlags {

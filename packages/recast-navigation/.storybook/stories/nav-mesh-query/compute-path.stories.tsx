@@ -34,10 +34,12 @@ export const ComputePath = () => {
       }
     });
 
-    const { navMesh } = threeToSoloNavMesh(meshes, {
+    const { success, navMesh } = threeToSoloNavMesh(meshes, {
       cs: 0.05,
       ch: 0.2,
     });
+
+    if (!success) return
 
     const navMeshQuery = new NavMeshQuery({ navMesh });
 

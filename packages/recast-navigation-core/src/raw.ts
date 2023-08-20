@@ -14,6 +14,7 @@ export const Raw = {
   ChunkyTriMesh: null! as Module.ChunkyTriMesh,
   NavMeshImporter: null! as Module.NavMeshImporter,
   NavMeshExporter: null! as Module.NavMeshExporter,
+  CrowdUtils: null! as Module.CrowdUtils,
   Arrays: null! as {
     IntArray: typeof Module.IntArray;
     UnsignedCharArray: typeof Module.UnsignedCharArray;
@@ -38,6 +39,7 @@ export const init = async () => {
   Raw.ChunkyTriMesh = new Raw.Module.ChunkyTriMesh();
   Raw.NavMeshImporter = new Raw.Module.NavMeshImporter();
   Raw.NavMeshExporter = new Raw.Module.NavMeshExporter();
+  Raw.CrowdUtils = new Raw.Module.CrowdUtils();
   Raw.Arrays = {
     IntArray: Raw.Module.IntArray,
     UnsignedCharArray: Raw.Module.UnsignedCharArray,

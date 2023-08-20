@@ -57,8 +57,11 @@ export const RecastAgent = forwardRef<RecastAgentRef, RecastAgentProps>(
     );
 
     useEffect(() => {
+      setNavMeshQuery(undefined);
+      setCrowd(undefined);
+      setCrowdHelper(undefined);
+
       if (!navMesh) {
-        setCrowdHelper(undefined);
         return;
       }
 
