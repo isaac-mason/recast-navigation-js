@@ -1,13 +1,9 @@
 import { Environment, OrbitControls } from '@react-three/drei';
-import cityEnvironment from '@pmndrs/assets/hdri/city.exr'
+import cityEnvironment from '@pmndrs/assets/hdri/city.exr';
 import { Canvas, ThreeEvent } from '@react-three/fiber';
 import { Leva, button, useControls } from 'leva';
 import { Suspense, useEffect, useRef, useState } from 'react';
-import {
-  NavMesh,
-  SoloNavMeshGeneratorResult,
-  TiledNavMeshGeneratorResult,
-} from 'recast-navigation';
+import { NavMesh } from 'recast-navigation';
 import {
   NavMeshHelper,
   threeToSoloNavMesh,
@@ -86,13 +82,9 @@ const App = () => {
       });
 
       try {
-        let result: SoloNavMeshGeneratorResult | TiledNavMeshGeneratorResult;
-
-        if (navMeshConfig.tileSize) {
-          result = threeToTiledNavMesh(meshes, navMeshConfig);
-        } else {
-          result = threeToSoloNavMesh(meshes, navMeshConfig);
-        }
+        const result = navMeshConfig.tileSize
+          ? threeToTiledNavMesh(meshes, navMeshConfig)
+          : threeToSoloNavMesh(meshes, navMeshConfig);
 
         if (!result.success) {
           setError(result.error);
