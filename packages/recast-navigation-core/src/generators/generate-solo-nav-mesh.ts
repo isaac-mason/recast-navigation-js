@@ -106,7 +106,7 @@ export const generateSoloNavMesh = (
   config.width = gridSize.width;
   config.height = gridSize.height;
 
-  const rcContext = new Raw.Module.rcContext();
+  const rcContext = new Raw.rcContext();
 
   //
   // Step 2. Rasterize input polygon soup.
@@ -307,7 +307,7 @@ export const generateSoloNavMesh = (
     }
   }
 
-  const detourNavMeshCreateParams = new Raw.Module.dtNavMeshCreateParams();
+  const detourNavMeshCreateParams = new Raw.dtNavMeshCreateParams();
 
   Raw.DetourNavMeshBuilder.setSoloNavMeshCreateParams(
     detourNavMeshCreateParams,

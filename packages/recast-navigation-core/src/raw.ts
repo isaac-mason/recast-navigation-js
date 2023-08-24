@@ -1,49 +1,77 @@
 import Module from '@recast-navigation/wasm';
 
+type ModuleKey = (keyof typeof Module)[][number]
+
+const instances = [
+  'Recast',
+  'Detour',
+  'DetourNavMeshBuilder',
+  'DetourTileCacheBuilder',
+  'ChunkyTriMesh',
+  'NavMeshImporter',
+  'NavMeshExporter',
+  'CrowdUtils',
+] as const satisfies readonly ModuleKey[]
+
+const classes = [
+  'rcContext',
+  'dtNavMeshParams',
+  'dtNavMeshCreateParams',
+  'RecastLinearAllocator',
+  'RecastFastLZCompressor',
+  'rcChunkyTriMesh',
+  'TileCacheData',
+  'dtTileCacheParams',
+  'dtTileCacheLayerHeader',
+] as const satisfies readonly ModuleKey[]
+
+const arrays = [
+  'IntArray',
+  'UnsignedCharArray',
+  'UnsignedShortArray',
+  'FloatArray',
+] as const satisfies readonly ModuleKey[]
+
+type RawType = {
+  Module: typeof Module;
+  Arrays: {
+    [K in typeof arrays[number]]: typeof Module[K];
+  },
+  isNull: (obj: unknown) => boolean
+} & {
+  [K in typeof instances[number]]: InstanceType<typeof Module[K]>;
+} & {
+  [K in typeof classes[number]]: typeof Module[K];
+}
+
 /**
  * Lower level bindings for the Recast and Detour libraries.
  * 
  * The `init` function must be called before using the `Raw` api.
  */
-export const Raw = {
-  Module: null! as typeof Module,
-  Recast: null! as Module.Recast,
-  Detour: null! as Module.Detour,
-  DetourNavMeshBuilder: null! as Module.DetourNavMeshBuilder,
-  DetourTileCacheBuilder: null! as Module.DetourTileCacheBuilder,
-  ChunkyTriMesh: null! as Module.ChunkyTriMesh,
-  NavMeshImporter: null! as Module.NavMeshImporter,
-  NavMeshExporter: null! as Module.NavMeshExporter,
-  CrowdUtils: null! as Module.CrowdUtils,
-  Arrays: null! as {
-    IntArray: typeof Module.IntArray;
-    UnsignedCharArray: typeof Module.UnsignedCharArray;
-    UnsignedShortArray: typeof Module.UnsignedShortArray;
-    FloatArray: typeof Module.FloatArray;
-  },
+export const Raw = ({
   isNull: (obj: unknown) => {
     return Raw.Module.getPointer(obj) === 0;
   },
-};
+} satisfies Partial<RawType>) as RawType;
 
 export const init = async () => {
-  if (Raw.Module !== null) {
+  if (Raw.Module !== undefined) {
     return;
   }
 
   Raw.Module = await Module();
-  Raw.Recast = new Raw.Module.Recast();
-  Raw.Detour = new Raw.Module.Detour();
-  Raw.DetourNavMeshBuilder = new Raw.Module.DetourNavMeshBuilder();
-  Raw.DetourTileCacheBuilder = new Raw.Module.DetourTileCacheBuilder();
-  Raw.ChunkyTriMesh = new Raw.Module.ChunkyTriMesh();
-  Raw.NavMeshImporter = new Raw.Module.NavMeshImporter();
-  Raw.NavMeshExporter = new Raw.Module.NavMeshExporter();
-  Raw.CrowdUtils = new Raw.Module.CrowdUtils();
-  Raw.Arrays = {
-    IntArray: Raw.Module.IntArray,
-    UnsignedCharArray: Raw.Module.UnsignedCharArray,
-    UnsignedShortArray: Raw.Module.UnsignedShortArray,
-    FloatArray: Raw.Module.FloatArray,
-  };
+
+  for (const instance of instances) {
+    (Raw as any)[instance] = new Raw.Module[instance]();
+  }
+
+  for (const clazz of classes) {
+    (Raw as any)[clazz] = Raw.Module[clazz];
+  }
+
+  Raw.Arrays = {} as RawType['Arrays'];
+  for (const array of arrays) {
+    (Raw.Arrays as any)[array] = Raw.Module[array];
+  }
 };

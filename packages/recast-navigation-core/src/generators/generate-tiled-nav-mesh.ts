@@ -156,7 +156,7 @@ export const generateTiledNavMesh = (
   config.height = config.tileSize + config.borderSize * 2;
 
   // Tile cache params
-  const tileCacheParams = new Raw.Module.dtTileCacheParams();
+  const tileCacheParams = new Raw.dtTileCacheParams();
   tileCacheParams.set_orig(0, bbMin[0]);
   tileCacheParams.set_orig(1, bbMin[1]);
   tileCacheParams.set_orig(2, bbMin[2]);
@@ -171,8 +171,8 @@ export const generateTiledNavMesh = (
   tileCacheParams.maxTiles = tileWidth * tileHeight * expectedLayersPerTile;
   tileCacheParams.maxObstacles = maxObstacles;
 
-  const allocator = new Raw.Module.RecastLinearAllocator(32000);
-  const compressor = new Raw.Module.RecastFastLZCompressor();
+  const allocator = new Raw.RecastLinearAllocator(32000);
+  const compressor = new Raw.RecastFastLZCompressor();
 
   const meshProcess = new TileCacheMeshProcess(
     (navMeshCreateParams, polyAreas, polyFlags) => {
@@ -189,7 +189,7 @@ export const generateTiledNavMesh = (
     return fail('Failed to initialize tile cache');
   }
 
-  const navMeshParams = new Raw.Module.dtNavMeshParams();
+  const navMeshParams = new Raw.dtNavMeshParams();
 
   navMeshParams.set_orig(0, bbMin[0]);
   navMeshParams.set_orig(1, bbMin[1]);
@@ -218,7 +218,7 @@ export const generateTiledNavMesh = (
     return fail('Failed to initialize tiled navmesh');
   }
 
-  const chunkyTriMesh = new Raw.Module.rcChunkyTriMesh();
+  const chunkyTriMesh = new Raw.rcChunkyTriMesh();
   intermediates.chunkyTriMesh = chunkyTriMesh;
 
   if (
@@ -234,7 +234,7 @@ export const generateTiledNavMesh = (
   }
 
   const rasterizeTileLayers = (tx: number, ty: number) => {
-    const rcContext = new Raw.Module.rcContext();
+    const rcContext = new Raw.rcContext();
 
     // Tile bounds
     const tcs = config.tileSize * config.cs;
@@ -404,11 +404,11 @@ export const generateTiledNavMesh = (
     const tiles: R.TileCacheData[] = [];
 
     for (let i = 0; i < heightfieldLayerSet.nlayers; i++) {
-      const tile = new Raw.Module.TileCacheData();
+      const tile = new Raw.TileCacheData();
       const heightfieldLayer = heightfieldLayerSet.get_layers(i);
 
       // Store header
-      const header = new Raw.Module.dtTileCacheLayerHeader();
+      const header = new Raw.dtTileCacheLayerHeader();
       header.magic = Raw.Detour.TILECACHE_MAGIC;
       header.version = Raw.Detour.TILECACHE_VERSION;
 
