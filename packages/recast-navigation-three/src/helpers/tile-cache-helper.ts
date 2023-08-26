@@ -2,10 +2,10 @@ import { Obstacle, TileCache } from '@recast-navigation/core';
 import {
   BoxGeometry,
   CylinderGeometry,
-  Group,
   Material,
   Mesh,
   MeshBasicMaterial,
+  Object3D,
   Vector3,
 } from 'three';
 
@@ -14,25 +14,27 @@ export type TileCacheHelperParams = {
   obstacleMaterial?: Material;
 };
 
-export class TileCacheHelper {
+export class TileCacheHelper extends Object3D {
   tileCache: TileCache;
-
-  obstacles: Group;
 
   obstacleMeshes: Map<Obstacle, Mesh> = new Map();
 
   obstacleMaterial: Material;
 
   constructor({ tileCache, obstacleMaterial }: TileCacheHelperParams) {
+    super();
+
     this.tileCache = tileCache;
 
     this.obstacleMaterial = obstacleMaterial
       ? obstacleMaterial
-      : new MeshBasicMaterial({ color: 'red', wireframe: true, wireframeLinewidth: 2 });
+      : new MeshBasicMaterial({
+          color: 'red',
+          wireframe: true,
+          wireframeLinewidth: 2,
+        });
 
-    this.obstacles = new Group();
-
-    this.updateObstacles();
+    this.update();
   }
 
   /**
@@ -40,7 +42,7 @@ export class TileCacheHelper {
    *
    * This should be called after adding or removing obstacles.
    */
-  updateObstacles() {
+  update() {
     const unseen = new Set(this.obstacleMeshes.keys());
 
     for (const [, obstacle] of this.tileCache.obstacles) {
@@ -75,7 +77,7 @@ export class TileCacheHelper {
           throw new Error(`Unknown obstacle type: ${obstacle}`);
         }
 
-        this.obstacles.add(mesh);
+        this.add(mesh);
         this.obstacleMeshes.set(obstacle, mesh);
       }
     }
@@ -84,7 +86,7 @@ export class TileCacheHelper {
       const obstacleMesh = this.obstacleMeshes.get(obstacle);
 
       if (obstacleMesh) {
-        this.obstacles.remove(obstacleMesh);
+        this.remove(obstacleMesh);
         this.obstacleMeshes.delete(obstacle);
       }
     }

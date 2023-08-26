@@ -104,7 +104,7 @@ export const ThreePathfinding = () => {
       }
     });
 
-    const { navMesh } = threeToTiledNavMesh(meshes, {
+    const { success, navMesh } = threeToTiledNavMesh(meshes, {
       cs: 0.02,
       ch: 0.2,
       walkableHeight: 1,
@@ -113,6 +113,8 @@ export const ThreePathfinding = () => {
       borderSize: 0.2,
       tileSize: 32,
     });
+
+    if (!success) return
 
     const [positions, indices] = navMeshToPositionsAndIndices(navMesh);
 

@@ -54,11 +54,14 @@ export const Obstacles = () => {
       }
     });
 
-    const { navMesh, tileCache } = threeToTiledNavMesh(meshes, {
+    const { success, navMesh, tileCache } = threeToTiledNavMesh(meshes, {
       ch: 0.05,
       cs: 0.1,
       tileSize: 32,
     });
+
+
+    if (!success) return
 
     let upToDate = false;
     while (!upToDate) {
@@ -135,14 +138,18 @@ export const Obstacles = () => {
   const onClick = (e: ThreeEvent<MouseEvent>) => {
     if (!navMesh || !navMeshQuery || !crowd) return;
 
-    const target = navMeshQuery.getClosestPoint(e.point);
+    e.stopPropagation();
 
-    crowd.goto(0, target);
+    if (e.button === 2) {
+      crowd.teleport(0, e.point);
+    } else {
+      crowd.goto(0, e.point);
+    }
   };
 
   return (
     <>
-      <group onClick={onClick}>
+      <group onPointerDown={onClick}>
         <group ref={setGroup}>
           <mesh rotation-x={-Math.PI / 2}>
             <planeGeometry args={[20, 20]} />

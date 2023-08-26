@@ -5,6 +5,7 @@ import {
   Material,
   Mesh,
   MeshBasicMaterial,
+  Object3D,
 } from 'three';
 
 export type NavMeshHelperParams = {
@@ -12,15 +13,17 @@ export type NavMeshHelperParams = {
   navMeshMaterial?: Material;
 };
 
-export class NavMeshHelper {
-  navMesh: Mesh;
-
+export class NavMeshHelper extends Object3D {
+  navMesh: NavMesh;
+ 
   navMeshMaterial: Material;
 
-  recastNavMesh: NavMesh;
+  mesh: Mesh;
 
   constructor({ navMesh, navMeshMaterial }: NavMeshHelperParams) {
-    this.recastNavMesh = navMesh;
+    super();
+
+    this.navMesh = navMesh;
 
     this.navMeshMaterial = navMeshMaterial
       ? navMeshMaterial
@@ -30,9 +33,10 @@ export class NavMeshHelper {
         opacity: 0.7,
       });
 
-    this.navMesh = new Mesh(new BufferGeometry(), this.navMeshMaterial);
+    this.mesh = new Mesh(new BufferGeometry(), this.navMeshMaterial);
+    this.add(this.mesh)
 
-    this.updateNavMesh();
+    this.update();
   }
 
   /**
@@ -40,10 +44,10 @@ export class NavMeshHelper {
    *
    * This should be called after updating the nav mesh.
    */
-  updateNavMesh() {
-    const { positions, indices } = this.recastNavMesh.getDebugNavMesh();
+  update() {
+    const { positions, indices } = this.navMesh.getDebugNavMesh();
 
-    const geometry = this.navMesh.geometry;
+    const geometry = this.mesh.geometry;
 
     geometry.setAttribute(
       'position',

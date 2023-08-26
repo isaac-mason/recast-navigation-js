@@ -1,5 +1,5 @@
 import { Line, OrbitControls } from '@react-three/drei';
-import { NavMesh, NavMeshQuery } from '@recast-navigation/core';
+import { Crowd, NavMesh, NavMeshQuery } from '@recast-navigation/core';
 import { threeToSoloNavMesh } from '@recast-navigation/three';
 import React, { useEffect, useState } from 'react';
 import { Group, Mesh, MeshBasicMaterial, Vector3Tuple } from 'three';
@@ -34,10 +34,12 @@ export const ComputePath = () => {
       }
     });
 
-    const { navMesh } = threeToSoloNavMesh(meshes, {
+    const { success, navMesh } = threeToSoloNavMesh(meshes, {
       cs: 0.05,
       ch: 0.2,
     });
+
+    if (!success) return
 
     const navMeshQuery = new NavMeshQuery({ navMesh });
 
@@ -58,6 +60,9 @@ export const ComputePath = () => {
     setPath(path ? path.map((v) => [v.x, v.y, v.z]) : undefined);
 
     return () => {
+      navMesh.destroy();
+      navMeshQuery.destroy();
+
       setNavMesh(undefined);
       setPath(undefined);
     };

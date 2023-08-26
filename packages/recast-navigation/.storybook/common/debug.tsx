@@ -6,7 +6,7 @@ import {
   TileCacheHelper,
 } from '@recast-navigation/three';
 import React, { useEffect, useState } from 'react';
-import { Material, MeshBasicMaterial, MeshStandardMaterial } from 'three';
+import { Material } from 'three';
 
 export type DebugProps = {
   navMesh?: NavMesh;
@@ -81,7 +81,7 @@ export const Debug = ({
 
   useFrame(() => {
     if (crowdHelper) {
-      crowdHelper.updateAgents();
+      crowdHelper.update();
     }
   });
 
@@ -89,7 +89,7 @@ export const Debug = ({
     if (!navMeshHelper) return;
 
     const interval = setInterval(() => {
-      navMeshHelper.updateNavMesh();
+      navMeshHelper.update();
     }, 1000);
 
     return () => {
@@ -101,7 +101,7 @@ export const Debug = ({
     if (!tileCacheHelper) return;
 
     const interval = setInterval(() => {
-      tileCacheHelper.updateObstacles();
+      tileCacheHelper.update();
     }, 100);
 
     return () => {
@@ -111,13 +111,13 @@ export const Debug = ({
 
   return (
     <>
-      {navMeshHelper && <primitive object={navMeshHelper.navMesh} />}
+      {navMeshHelper && <primitive object={navMeshHelper} />}
 
       <group position={[0, 0.01, 0]}>
-        {tileCacheHelper && <primitive object={tileCacheHelper.obstacles} />}
+        {tileCacheHelper && <primitive object={tileCacheHelper} />}
       </group>
 
-      {crowdHelper && <primitive object={crowdHelper.agents} />}
+      {crowdHelper && <primitive object={crowdHelper} />}
     </>
   );
 };

@@ -1,8 +1,9 @@
 import { OrbitControls } from '@react-three/drei';
 import {
   NavMesh,
-  NavMeshExporter,
-  NavMeshImporter,
+  TileCacheMeshProcess,
+  exportNavMesh,
+  importNavMesh,
 } from '@recast-navigation/core';
 import { threeToSoloNavMesh } from '@recast-navigation/three';
 import { button, useControls } from 'leva';
@@ -58,8 +59,7 @@ export const ImportingAndExporting = () => {
         () => {
           if (!navMesh) return;
 
-          const navMeshExporter = new NavMeshExporter();
-          const buffer = navMeshExporter.export(navMesh);
+          const buffer = exportNavMesh(navMesh);
 
           setNavMeshExport(buffer);
         },
@@ -69,8 +69,16 @@ export const ImportingAndExporting = () => {
         () => {
           if (!navMeshExport) return;
 
-          const navMeshImporter = new NavMeshImporter();
-          const { navMesh } = navMeshImporter.import(navMeshExport);
+          const meshProcess = new TileCacheMeshProcess(
+            (navMeshCreateParams, polyAreas, polyFlags) => {
+              for (let i = 0; i < navMeshCreateParams.polyCount; ++i) {
+                polyAreas.set_data(i, 0);
+                polyFlags.set_data(i, 1);
+              }
+            }
+          );
+
+          const { navMesh } = importNavMesh(navMeshExport, meshProcess);
 
           setNavMesh(navMesh);
         },

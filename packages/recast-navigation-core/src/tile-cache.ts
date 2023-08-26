@@ -1,14 +1,28 @@
 import type R from '@recast-navigation/wasm';
 import { NavMesh } from './nav-mesh';
-import {
-  BoxObstacle,
-  CylinderObstacle,
-  Obstacle,
-  ObstacleRef,
-} from './obstacle';
-import { vec3, Vector3 } from './utils';
-import { Wasm } from './wasm';
 import { finalizer } from './finalizer';
+import { vec3, Vector3 } from './utils';
+import { Raw } from './raw';
+
+export type ObstacleRef = R.dtObstacleRef;
+
+export type BoxObstacle = {
+  type: 'box';
+  ref: ObstacleRef;
+  position: Vector3;
+  extent: Vector3;
+  angle: number;
+};
+
+export type CylinderObstacle = {
+  type: 'cylinder';
+  ref: ObstacleRef;
+  position: Vector3;
+  radius: number;
+  height: number;
+};
+
+export type Obstacle = BoxObstacle | CylinderObstacle;
 
 export type TileCacheParams = {
   orig: ReadonlyArray<number>;
@@ -24,6 +38,31 @@ export type TileCacheParams = {
   maxObstacles: number;
 };
 
+export class dtTileCacheParams {
+  constructor(public raw: R.dtTileCacheParams) {}
+
+  static create(config: TileCacheParams): dtTileCacheParams {
+    const tileCacheParams = new Raw.Module.dtTileCacheParams();
+
+    tileCacheParams.set_orig(0, config.orig[0]);
+    tileCacheParams.set_orig(1, config.orig[1]);
+    tileCacheParams.set_orig(2, config.orig[2]);
+
+    tileCacheParams.set_cs(config.cs);
+    tileCacheParams.set_ch(config.ch);
+    tileCacheParams.set_width(config.width);
+    tileCacheParams.set_height(config.height);
+    tileCacheParams.set_walkableHeight(config.walkableHeight);
+    tileCacheParams.set_walkableRadius(config.walkableRadius);
+    tileCacheParams.set_walkableClimb(config.walkableClimb);
+    tileCacheParams.set_maxSimplificationError(config.maxSimplificationError);
+    tileCacheParams.set_maxTiles(config.maxTiles);
+    tileCacheParams.set_maxObstacles(config.maxObstacles);
+
+    return new dtTileCacheParams(tileCacheParams);
+  }
+}
+
 export type TileCacheUpdateResult = {
   status: number;
   upToDate: boolean;
@@ -35,7 +74,7 @@ export class TileCache {
   obstacles: Map<ObstacleRef, Obstacle> = new Map();
 
   constructor(raw?: R.TileCache) {
-    this.raw = raw ?? new Wasm.Recast.TileCache();
+    this.raw = raw ?? new Raw.Module.TileCache();
 
     finalizer.register(this);
   }
@@ -44,8 +83,13 @@ export class TileCache {
    * Initialises the TileCache
    * @param params
    */
-  init(params: TileCacheParams) {
-    this.raw.init(params as never);
+  init(
+    params: R.dtTileCacheParams,
+    alloc: R.RecastLinearAllocator,
+    compressor: R.RecastFastLZCompressor,
+    meshProcess: TileCacheMeshProcess
+  ) {
+    return this.raw.init(params, alloc, compressor, meshProcess.raw);
   }
 
   /**
@@ -131,8 +175,62 @@ export class TileCache {
     this.raw.removeObstacle(ref);
   }
 
+  addTile(
+    data: R.TileCacheData,
+    flags: number = Raw.Module.DT_COMPRESSEDTILE_FREE_DATA
+  ): R.TileCacheAddTileResult {
+    return this.raw.addTile(data, flags);
+  }
+
+  buildNavMeshTile(ref: R.dtCompressedTileRef, navMesh: NavMesh) {
+    return this.raw.buildNavMeshTile(ref, navMesh.raw);
+  }
+
+  buildNavMeshTilesAt(tx: number, ty: number, navMesh: NavMesh) {
+    return this.raw.buildNavMeshTilesAt(tx, ty, navMesh.raw);
+  }
+
   destroy(): void {
     finalizer.unregister(this);
     this.raw.destroy();
+  }
+}
+
+export class TileCacheMeshProcess {
+  raw: R.TileCacheMeshProcess;
+
+  constructor(
+    process: (
+      navMeshCreateParams: R.dtNavMeshCreateParams,
+      polyAreasArray: R.UnsignedCharArray,
+      polyFlagsArray: R.UnsignedShortArray
+    ) => void
+  ) {
+    this.raw = new Raw.Module.TileCacheMeshProcess();
+
+    this.raw.process = ((
+      paramsPtr: number,
+      polyAreasArrayPtr: number,
+      polyFlagsArrayPtr: number
+    ) => {
+      const params = Raw.Module.wrapPointer(
+        paramsPtr,
+        Raw.Module.dtNavMeshCreateParams
+      );
+
+      const polyAreasArray = Raw.Module.wrapPointer(
+        polyAreasArrayPtr,
+        Raw.Module.UnsignedCharArray
+      );
+
+      const polyFlagsArray = Raw.Module.wrapPointer(
+        polyFlagsArrayPtr,
+        Raw.Module.UnsignedShortArray
+      );
+
+      if (!process) return;
+
+      process(params, polyAreasArray, polyFlagsArray);
+    }) as never;
   }
 }

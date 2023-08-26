@@ -1,9 +1,14 @@
-import { Environment, OrbitControls, useGLTF } from '@react-three/drei';
+import { Environment, OrbitControls } from '@react-three/drei';
+import cityEnvironment from '@pmndrs/assets/hdri/city.exr';
 import { Canvas, ThreeEvent } from '@react-three/fiber';
 import { Leva, button, useControls } from 'leva';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { NavMesh } from 'recast-navigation';
-import { NavMeshHelper, threeToSoloNavMesh, threeToTiledNavMesh } from 'recast-navigation/three';
+import {
+  NavMeshHelper,
+  threeToSoloNavMesh,
+  threeToTiledNavMesh,
+} from 'recast-navigation/three';
 import { Group, Mesh, MeshBasicMaterial } from 'three';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 import dungeonGltfUrl from './assets/dungeon.gltf?url';
@@ -27,12 +32,10 @@ const App = () => {
   const [gltf, setGtlf] = useState<Group>();
 
   const [navMesh, setNavMesh] = useState<NavMesh>();
-  const [debugNavMesh, setDebugNavMesh] = useState<Mesh>();
+  const [navMeshHelper, setNavMeshHelper] = useState<NavMeshHelper>();
   const [navMeshDebugColor, setNavMeshDebugColor] = useState('#ffa500');
 
   const recastAgent = useRef<RecastAgentRef>(null!);
-
-  const exampleGltf = useGLTF(dungeonGltfUrl);
 
   const onDropFile = async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) {
@@ -67,7 +70,7 @@ const App = () => {
     setError(undefined);
     setLoading(true);
     setNavMesh(undefined);
-    setDebugNavMesh(undefined);
+    setNavMeshHelper(undefined);
 
     try {
       const meshes: Mesh[] = [];
@@ -78,24 +81,17 @@ const App = () => {
         }
       });
 
-      let navMesh: NavMesh;
-      let success: boolean;
+      try {
+        const result = navMeshConfig.tileSize
+          ? threeToTiledNavMesh(meshes, navMeshConfig)
+          : threeToSoloNavMesh(meshes, navMeshConfig);
 
-      if (navMeshConfig.tileSize) {
-        const result = threeToTiledNavMesh(meshes, navMeshConfig);
-
-        navMesh = result.navMesh;
-        success = result.success;
-      } else {
-        const result = threeToSoloNavMesh(meshes, navMeshConfig);
-
-        navMesh = result.navMesh;
-        success = result.success;
-      }
-
-      if (success) {
-        setNavMesh(navMesh);
-      } else {
+        if (!result.success) {
+          setError(result.error);
+        } else {
+          setNavMesh(result.navMesh);
+        }
+      } catch (e) {
         setError('Something went wrong generating the navmesh');
       }
     } catch (e) {
@@ -128,6 +124,23 @@ const App = () => {
     } else {
       recastAgent.current.goto(e.point);
     }
+  };
+
+  const selectExample = async () => {
+    setLoading(true);
+
+    gltfLoader.load(
+      dungeonGltfUrl,
+      ({ scene }) => {
+        setGtlf(scene);
+        setLoading(false);
+      },
+      undefined,
+      () => {
+        setLoading(false);
+        setError('Failed to load example model');
+      }
+    );
   };
 
   const navMeshConfig = useControls('NavMesh Generation Config', {
@@ -275,7 +288,7 @@ const App = () => {
 
   useEffect(() => {
     if (!navMesh) {
-      setDebugNavMesh(undefined);
+      setNavMeshHelper(undefined);
       return;
     }
 
@@ -289,7 +302,7 @@ const App = () => {
       }),
     });
 
-    setDebugNavMesh(navMeshHelper.navMesh);
+    setNavMeshHelper(navMeshHelper);
   }, [navMesh, navMeshDebugColor, navMeshDebugWireframe, navMeshDebugOpacity]);
 
   return (
@@ -298,7 +311,7 @@ const App = () => {
         {gltf && <Viewer group={gltf} />}
 
         <group onPointerDown={onNavMeshPointerDown}>
-          {debugNavMesh && <primitive object={debugNavMesh} />}
+          {navMeshHelper && <primitive object={navMeshHelper} />}
         </group>
 
         {navMesh && agentEnabled && (
@@ -312,7 +325,7 @@ const App = () => {
           />
         )}
 
-        <Environment preset="city" />
+        <Environment files={cityEnvironment} />
 
         <OrbitControls />
       </Canvas>
@@ -325,12 +338,7 @@ const App = () => {
 
       {!gltf && !loading && (
         <CenterLayout>
-          <GltfDropZone
-            onDrop={onDropFile}
-            selectExample={() => {
-              setGtlf(exampleGltf.scene);
-            }}
-          />
+          <GltfDropZone onDrop={onDropFile} selectExample={selectExample} />
         </CenterLayout>
       )}
 

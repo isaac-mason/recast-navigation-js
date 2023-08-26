@@ -1,8 +1,8 @@
 import type R from '@recast-navigation/wasm';
 import { finalizer } from './finalizer';
-import { array, emscripten, vec3, Vector3 } from './utils';
-import { Wasm } from './wasm';
-import { dtMeshTile, dtPoly, dtOffMeshConnection } from './wrappers';
+import { array, vec3, Vector3 } from './utils';
+import { Raw } from './raw';
+import { DetourMeshTile, dtPoly, DetourOffMeshConnection } from './detour';
 
 export class NavMeshGetTilesAtResult {
   raw: R.NavMeshGetTilesAtResult;
@@ -13,8 +13,8 @@ export class NavMeshGetTilesAtResult {
     finalizer.register(this);
   }
 
-  tiles(index: number): dtMeshTile {
-    return new dtMeshTile(this.raw.get_tiles(index));
+  tiles(index: number): DetourMeshTile {
+    return new DetourMeshTile(this.raw.get_tiles(index));
   }
 
   tileCount(): number {
@@ -23,7 +23,7 @@ export class NavMeshGetTilesAtResult {
 
   destroy(): void {
     finalizer.unregister(this);
-    emscripten.destroy(this.raw);
+    Raw.Module.destroy(this.raw);
   }
 }
 
@@ -46,7 +46,7 @@ export class NavMeshAddTileResult {
 
   destroy(): void {
     finalizer.unregister(this);
-    emscripten.destroy(this.raw);
+    Raw.Module.destroy(this.raw);
   }
 }
 
@@ -69,7 +69,7 @@ export class NavMeshRemoveTileResult {
 
   destroy(): void {
     finalizer.unregister(this);
-    emscripten.destroy(this.raw);
+    Raw.Module.destroy(this.raw);
   }
 }
 
@@ -92,7 +92,7 @@ export class NavMeshCalcTileLocResult {
 
   destroy(): void {
     finalizer.unregister(this);
-    emscripten.destroy(this.raw);
+    Raw.Module.destroy(this.raw);
   }
 }
 
@@ -105,8 +105,8 @@ export class NavMeshGetTileAndPolyByRefResult {
     finalizer.register(this);
   }
 
-  tile(): dtMeshTile {
-    return new dtMeshTile(this.raw.tile);
+  tile(): DetourMeshTile {
+    return new DetourMeshTile(this.raw.tile);
   }
 
   poly(): dtPoly {
@@ -119,7 +119,7 @@ export class NavMeshGetTileAndPolyByRefResult {
 
   destroy(): void {
     finalizer.unregister(this);
-    emscripten.destroy(this.raw);
+    Raw.Module.destroy(this.raw);
   }
 }
 
@@ -146,7 +146,7 @@ export class NavMeshGetOffMeshConnectionPolyEndPointsResult {
 
   destroy(): void {
     finalizer.unregister(this);
-    emscripten.destroy(this.raw);
+    Raw.Module.destroy(this.raw);
   }
 }
 
@@ -169,7 +169,7 @@ export class NavMeshGetPolyFlagsResult {
 
   destroy(): void {
     finalizer.unregister(this);
-    emscripten.destroy(this.raw);
+    Raw.Module.destroy(this.raw);
   }
 }
 
@@ -192,7 +192,7 @@ export class NavMeshGetPolyAreaResult {
 
   destroy(): void {
     finalizer.unregister(this);
-    emscripten.destroy(this.raw);
+    Raw.Module.destroy(this.raw);
   }
 }
 
@@ -215,7 +215,7 @@ export class NavMeshStoreTileStateResult {
 
   destroy(): void {
     finalizer.unregister(this);
-    emscripten.destroy(this.raw);
+    Raw.Module.destroy(this.raw);
   }
 }
 
@@ -262,23 +262,17 @@ export class NavMesh {
   raw: R.NavMesh;
 
   constructor(raw?: R.NavMesh) {
-    this.raw = raw ?? new Wasm.Recast.NavMesh();
+    this.raw = raw ?? new Raw.Module.NavMesh();
     finalizer.register(this);
   }
 
   /**
    * Initializes the NavMesh for use with a single tile.
-   * @param data the nav mesh data
-   * @param dataSize the size of the nav mesh data
-   * @param flags the flags to use when building the nav mesh
+   * @param navMeshData the nav mesh data
    * @returns the status of the operation
    */
-  initSolo(
-    data: ReadonlyArray<number>,
-    dataSize: number,
-    flags: number
-  ): boolean {
-    return this.raw.initSolo(data, dataSize, flags);
+  initSolo(navMeshData: R.NavMeshData): boolean {
+    return this.raw.initSolo(navMeshData);
   }
 
   /**
@@ -286,39 +280,24 @@ export class NavMesh {
    * @param params parameters for the NavMesh
    * @returns the status of the operation
    */
-  initTiled({
-    orig,
-    tileWidth,
-    tileHeight,
-    maxTiles,
-    maxPolys,
-  }: NavMeshParams): boolean {
-    const params = new Wasm.Recast.dtNavMeshParams();
-    params.set_orig(vec3.toArray(orig));
-    params.set_tileWidth(tileWidth);
-    params.set_tileHeight(tileHeight);
-    params.set_maxTiles(maxTiles);
-    params.set_maxPolys(maxPolys);
-
+  initTiled(params: R.dtNavMeshParams): boolean {
     return this.raw.initTiled(params);
   }
 
   /**
    * Adds a tile to the NavMesh.
-   * @param data the nav mesh data
-   * @param dataSize the size of the nav mesh data
+   * @param navMeshData the nav mesh data
    * @param flags the flags to use when building the nav mesh
    * @param lastRef
    * @returns the status of the operation and the reference of the added tile
    */
   addTile(
-    data: number[],
-    dataSize: number,
+    navMeshData: R.NavMeshData,
     flags: number,
     lastRef: number
   ): NavMeshAddTileResult {
     return new NavMeshAddTileResult(
-      this.raw.addTile(data, dataSize, flags, lastRef)
+      this.raw.addTile(navMeshData, flags, lastRef)
     );
   }
 
@@ -349,10 +328,10 @@ export class NavMesh {
    * @param layer The tile's layer. (x, y, layer)
    * @returns The tile, or null if the tile does not exist.
    */
-  getTileAt(x: number, y: number, layer: number): dtMeshTile | null {
+  getTileAt(x: number, y: number, layer: number): DetourMeshTile | null {
     const tile = this.raw.getTileAt(x, y, layer);
 
-    return !emscripten.isNull(tile) ? new dtMeshTile(tile) : null;
+    return !Raw.isNull(tile) ? new DetourMeshTile(tile) : null;
   }
 
   /**
@@ -381,7 +360,7 @@ export class NavMesh {
    * @param tile
    * @returns
    */
-  getTileRef(tile: dtMeshTile): number {
+  getTileRef(tile: DetourMeshTile): number {
     return this.raw.getTileRef(tile.raw);
   }
 
@@ -390,10 +369,10 @@ export class NavMesh {
    * @param ref The tile reference of the tile to retrieve.
    * @returns The tile for the specified reference, or null if the reference is invalid.
    */
-  getTileByRef(ref: number): dtMeshTile | null {
+  getTileByRef(ref: number): DetourMeshTile | null {
     const tile = this.raw.getTileByRef(ref);
 
-    return !emscripten.isNull(tile) ? new dtMeshTile(tile) : null;
+    return !Raw.isNull(tile) ? new DetourMeshTile(tile) : null;
   }
 
   /**
@@ -408,8 +387,8 @@ export class NavMesh {
    * @param i the tile index. [Limit: 0 >= index < #getMaxTiles()]
    * @returns
    */
-  getTile(i: number): dtMeshTile {
-    return new dtMeshTile(this.raw.getTile(i));
+  getTile(i: number): DetourMeshTile {
+    return new DetourMeshTile(this.raw.getTile(i));
   }
 
   /**
@@ -448,7 +427,7 @@ export class NavMesh {
    * @param tile
    * @returns
    */
-  getPolyRefBase(tile: dtMeshTile): number {
+  getPolyRefBase(tile: DetourMeshTile): number {
     return this.raw.getPolyRefBase(tile.raw);
   }
 
@@ -472,8 +451,8 @@ export class NavMesh {
    * @param ref The polygon reference of the off-mesh connection.
    * @returns
    */
-  getOffMeshConnectionByRef(ref: number): dtOffMeshConnection {
-    return new dtOffMeshConnection(this.raw.getOffMeshConnectionByRef(ref));
+  getOffMeshConnectionByRef(ref: number): DetourOffMeshConnection {
+    return new DetourOffMeshConnection(this.raw.getOffMeshConnectionByRef(ref));
   }
 
   /**
@@ -517,7 +496,7 @@ export class NavMesh {
    * @param tile
    * @returns The size of the buffer required to store the state.
    */
-  getTileStateSize(tile: dtMeshTile): number {
+  getTileStateSize(tile: DetourMeshTile): number {
     return this.raw.getTileStateSize(tile.raw);
   }
 
@@ -528,7 +507,7 @@ export class NavMesh {
    * @returns
    */
   storeTileState(
-    tile: dtMeshTile,
+    tile: DetourMeshTile,
     maxDataSize: number
   ): NavMeshStoreTileStateResult {
     return new NavMeshStoreTileStateResult(
@@ -544,7 +523,7 @@ export class NavMesh {
    * @returns
    */
   restoreTileState(
-    tile: dtMeshTile,
+    tile: DetourMeshTile,
     data: number[],
     maxDataSize: number
   ): number {
@@ -564,6 +543,6 @@ export class NavMesh {
   destroy(): void {
     this.raw.destroy();
     finalizer.unregister(this);
-    emscripten.destroy(this.raw);
+    Raw.Module.destroy(this.raw);
   }
 }

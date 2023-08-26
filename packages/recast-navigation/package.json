@@ -44,7 +44,8 @@
     "README.md"
   ],
   "scripts": {
-    "build": "rollup --config rollup.config.js --bundleConfigAsCjs",
+    "clean": "(rm index.js index.d.ts three.js three.d.ts || true)",
+    "build": "yarn clean && rollup --config rollup.config.js --bundleConfigAsCjs",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
@@ -58,6 +59,7 @@
   "devDependencies": {
     "@babel/core": "^7.22.5",
     "@mdx-js/react": "^2.3.0",
+    "@pmndrs/assets": "^1.6.0",
     "@react-three/csg": "^2.2.0",
     "@react-three/drei": "^9.78.2",
     "@react-three/fiber": "^8.12.0",

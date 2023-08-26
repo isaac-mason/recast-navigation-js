@@ -2,7 +2,7 @@ import type R from '@recast-navigation/wasm';
 import { finalizer } from './finalizer';
 import { NavMesh } from './nav-mesh';
 import { array, vec3, Vector3 } from './utils';
-import { Wasm } from './wasm';
+import { Raw } from './raw';
 
 export type NavMeshQueryParams = {
   navMesh: NavMesh;
@@ -16,45 +16,93 @@ export type NavMeshQueryParams = {
 export class NavMeshQuery {
   raw: R.NavMeshQuery;
 
-  private tmpVec1 = new Wasm.Recast.Vec3();
-  private tmpVec2 = new Wasm.Recast.Vec3();
+  defaultFilter: R.dtQueryFilter;
 
-  constructor({ navMesh, maxNodes = 2048 }: NavMeshQueryParams) {
-    this.raw = new Wasm.Recast.NavMeshQuery(navMesh.raw, maxNodes);
+  defaultQueryHalfExtents = { x: 1, y: 1, z: 1 };
 
-    finalizer.register(this);
+  constructor(value: R.NavMeshQuery | NavMeshQueryParams) {
+    if (value instanceof Raw.Module.NavMeshQuery) {
+      this.raw = value
+    } else {
+      this.raw = new Raw.Module.NavMeshQuery();
+      this.raw.init(value.navMesh.raw, value.maxNodes ?? 2048);
+      finalizer.register(this);
+    }
+
+    this.defaultFilter = new Raw.Module.dtQueryFilter();
+    this.defaultFilter.setIncludeFlags(0xffff);
+    this.defaultFilter.setExcludeFlags(0);
+  }
+
+  findNearestPoly(
+    position: Vector3,
+    halfExtents: Vector3,
+    filter?: R.dtQueryFilter
+  ) {
+    const result = this.raw.findNearestPoly(
+      vec3.toArray(position),
+      vec3.toArray(halfExtents),
+      filter ?? this.defaultFilter
+    );
+
+    const { status, nearestRef, isOverPoly } = result;
+
+    return {
+      status,
+      nearestRef,
+      nearestPoint: vec3.fromArray(array((i) => result.get_nearestPt(i), 3)),
+      isOverPoly,
+    };
   }
 
   /**
    * Returns the closest point on the NavMesh to the given position.
    */
-  getClosestPoint(position: Vector3): Vector3 {
-    const positionRaw = vec3.toRaw(position, this.tmpVec1);
-    const closestPointRaw = this.raw.getClosestPoint(positionRaw)
+  getClosestPoint(position: Vector3, filter?: R.dtQueryFilter): Vector3 {
+    const closestPointRaw = this.raw.getClosestPoint(
+      vec3.toArray(position),
+      vec3.toArray(this.defaultQueryHalfExtents),
+      filter ?? this.defaultFilter
+    );
 
-    return vec3.fromRaw(closestPointRaw, true);
+    return vec3.fromRaw(closestPointRaw);
   }
 
   /**
    * Returns a random point on the NavMesh within the given radius of the given position.
    */
-  getRandomPointAround(position: Vector3, radius: number): Vector3 {
-    const positionRaw = vec3.toRaw(position, this.tmpVec1);
-
-    return vec3.fromRaw(
-      this.raw.getRandomPointAround(positionRaw, radius),
-      true
+  getRandomPointAround(
+    position: Vector3,
+    radius: number,
+    filter?: R.dtQueryFilter
+  ): Vector3 {
+    const randomPointRaw = this.raw.getRandomPointAround(
+      vec3.toArray(position),
+      radius,
+      vec3.toArray(this.defaultQueryHalfExtents),
+      filter ?? this.defaultFilter
     );
+
+    return vec3.fromRaw(randomPointRaw);
   }
 
   /**
    * Compute the final position from a segment made of destination-position
    */
-  moveAlong(position: Vector3, destination: Vector3): Vector3 {
-    const positionRaw = vec3.toRaw(position, this.tmpVec1);
-    const destinationRaw = vec3.toRaw(destination, this.tmpVec2);
-
-    return vec3.fromRaw(this.raw.moveAlong(positionRaw, destinationRaw), true);
+  moveAlong(
+    position: Vector3,
+    destination: Vector3,
+    filter?: R.dtQueryFilter
+  ): Vector3 {
+    return vec3.fromRaw(
+      this.raw.moveAlong(
+        vec3.toArray(position),
+        vec3.toArray(destination),
+        vec3.toArray(this.defaultQueryHalfExtents),
+        filter ?? this.defaultFilter
+      ),
+      true
+    );
   }
 
   /**
@@ -62,31 +110,21 @@ export class NavMeshQuery {
    *
    * @returns an array of Vector3 positions that make up the path, or an empty array if no path was found.
    */
-  computePath(start: Vector3, end: Vector3): Vector3[] {
-    const startRaw = vec3.toRaw(start, this.tmpVec1);
-    const endRaw = vec3.toRaw(end, this.tmpVec2);
-    const pathRaw = this.raw.computePath(startRaw, endRaw);
+  computePath(
+    start: Vector3,
+    end: Vector3,
+    filter?: R.dtQueryFilter
+  ): Vector3[] {
+    const pathRaw = this.raw.computePath(
+      vec3.toArray(start),
+      vec3.toArray(end),
+      vec3.toArray(this.defaultQueryHalfExtents),
+      filter ?? this.defaultFilter
+    );
 
     return array((i) => pathRaw.getPoint(i), pathRaw.getPointCount()).map(
       (vec) => vec3.fromRaw(vec)
     );
-  }
-
-  /**
-   * Gets the Bounding box extent specified by setDefaultQueryExtent
-   */
-  getDefaultQueryExtent(): Vector3 {
-    return vec3.fromRaw(this.raw.getDefaultQueryExtent(), true);
-  }
-
-  /**
-   * Sets the Bounding box extent for doing spatial queries (getClosestPoint, getRandomPointAround, ...)
-   * The queries will try to find a solution within those bounds.
-   * The default is (1,1,1)
-   */
-  setDefaultQueryExtent(extent: Vector3): void {
-    const extentRaw = vec3.toRaw(extent, this.tmpVec1);
-    this.raw.setDefaultQueryExtent(extentRaw);
   }
 
   /**

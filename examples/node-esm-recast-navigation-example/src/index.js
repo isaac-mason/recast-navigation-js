@@ -1,12 +1,10 @@
-import { init, NavMeshGenerator, NavMeshQuery } from 'recast-navigation';
+import { NavMeshQuery, generateSoloNavMesh, init } from 'recast-navigation';
 import * as RecastThree from 'recast-navigation/three';
 import { BoxGeometry, Mesh } from 'three';
 
 await init();
 
 console.log(RecastThree);
-
-const navMeshGenerator = new NavMeshGenerator();
 
 const groundMesh = new Mesh(new BoxGeometry(5, 0.2, 5));
 
@@ -33,7 +31,7 @@ const config = {
 const positions = groundMesh.geometry.attributes.position.array;
 const indices = groundMesh.geometry.index.array;
 
-const { navMesh } = navMeshGenerator.generateSoloNavMesh(positions, indices, config);
+const { navMesh } = generateSoloNavMesh(positions, indices, config);
 
 const navMeshQuery = new NavMeshQuery({ navMesh });
 

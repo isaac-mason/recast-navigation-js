@@ -1,8 +1,9 @@
 import type R from '@recast-navigation/wasm';
-import { finalizer } from './finalizer';
 import type { NavMesh } from './nav-mesh';
-import { Vector3, array, emscripten, vec3 } from './utils';
-import { Wasm } from './wasm';
+import { NavMeshQuery } from './nav-mesh-query';
+import { finalizer } from './finalizer';
+import { Raw } from './raw';
+import { Vector3, vec3 } from './utils';
 
 export type CrowdParams = {
   /**
@@ -112,7 +113,7 @@ const crowdAgentParamsDefaults: CrowdAgentParams = {
 const Epsilon = 0.001;
 
 export class Crowd {
-  raw: R.Crowd;
+  raw: R.dtCrowd;
 
   /**
    * The indices of the active agents in the crowd.
@@ -141,11 +142,19 @@ export class Crowd {
    */
   timeFactor = 1;
 
-  private tmpVec1 = new Wasm.Recast.Vec3();
+  /**
+   * The NavMeshQuery used to find nearest polys for commands
+   */
+  navMeshQuery: NavMeshQuery;
 
   constructor({ maxAgents, maxAgentRadius, navMesh }: CrowdParams) {
     this.navMesh = navMesh;
-    this.raw = new Wasm.Recast.Crowd(maxAgents, maxAgentRadius, navMesh.raw);
+    this.raw = new Raw.Module.dtCrowd();
+    this.raw.init(maxAgents, maxAgentRadius, navMesh.raw.getNavMesh());
+
+    this.navMeshQuery = new NavMeshQuery(
+      new Raw.Module.NavMeshQuery(this.raw.getNavMeshQuery())
+    );
 
     finalizer.register(this);
   }
@@ -162,7 +171,7 @@ export class Crowd {
       ...crowdAgentParams,
     } as Required<CrowdAgentParams>;
 
-    const dtCrowdAgentParams = new Wasm.Recast.dtCrowdAgentParams();
+    const dtCrowdAgentParams = new Raw.Module.dtCrowdAgentParams();
     dtCrowdAgentParams.radius = params.radius;
     dtCrowdAgentParams.height = params.height;
     dtCrowdAgentParams.maxAcceleration = params.maxAcceleration;
@@ -176,7 +185,7 @@ export class Crowd {
     dtCrowdAgentParams.userData = params.userData;
 
     const agentId = this.raw.addAgent(
-      vec3.toRaw(position, this.tmpVec1),
+      vec3.toArray(position),
       dtCrowdAgentParams
     );
 
@@ -200,22 +209,38 @@ export class Crowd {
   /**
    * Submits a new move request for the specified agent.
    */
-  goto(agentIndex: number, position: Vector3) {
-    this.raw.agentGoto(agentIndex, vec3.toRaw(position, this.tmpVec1));
+  goto(agentIndex: number, position: Vector3): boolean {
+    const { nearestPoint, nearestRef } = this.navMeshQuery.findNearestPoly(
+      position,
+      this.navMeshQuery.defaultQueryHalfExtents,
+      this.navMeshQuery.defaultFilter
+    );
+
+    return this.raw.requestMoveTarget(
+      agentIndex,
+      nearestRef,
+      vec3.toArray(nearestPoint)
+    );
   }
 
   /**
    * Teleports the agent to the given position.
    */
   teleport(agentIndex: number, position: Vector3) {
-    this.raw.agentTeleport(agentIndex, vec3.toRaw(position, this.tmpVec1));
+    Raw.CrowdUtils.agentTeleport(
+      this.raw,
+      agentIndex,
+      vec3.toArray(position),
+      vec3.toArray(this.navMeshQuery.defaultQueryHalfExtents),
+      this.navMeshQuery.defaultFilter
+    );
   }
 
   /**
    * Resets the current move request for the specified agent.
    */
   resetMoveTarget(agentIndex: number) {
-    this.raw.agentResetMoveTarget(agentIndex);
+    this.raw.resetMoveTarget(agentIndex);
   }
 
   /**
@@ -231,7 +256,7 @@ export class Crowd {
     const maxStepCount = this.maximumSubStepCount;
 
     if (timeStep <= Epsilon) {
-      this.raw.update(deltaTime);
+      this.raw.update(deltaTime, undefined!);
     } else {
       let iterationCount = Math.floor(deltaTime / timeStep);
       if (maxStepCount && iterationCount > maxStepCount) {
@@ -243,7 +268,7 @@ export class Crowd {
 
       const step = deltaTime / iterationCount;
       for (let i = 0; i < iterationCount; i++) {
-        this.raw.update(step);
+        this.raw.update(step, undefined!);
       }
     }
   }
@@ -259,7 +284,7 @@ export class Crowd {
    * Returns the number of active agents in the crowd.
    */
   getActiveAgentCount(): number {
-    return this.raw.getActiveAgentCount();
+    return Raw.CrowdUtils.getActiveAgentCount(this.raw);
   }
 
   /**
@@ -273,24 +298,31 @@ export class Crowd {
    * Returns the position of the specified agent.
    */
   getAgentPosition(agentIndex: number): Vector3 {
-    this.raw.getAgentPosition(agentIndex, this.tmpVec1);
-    return vec3.fromRaw(this.tmpVec1);
+    const agent = this.raw.getAgent(agentIndex);
+
+    return { x: agent.get_npos(0), y: agent.get_npos(1), z: agent.get_npos(2) };
   }
 
   /**
    * Returns the velocity of the specified agent.
    */
   getAgentVelocity(agentIndex: number): Vector3 {
-    this.raw.getAgentVelocity(agentIndex, this.tmpVec1);
-    return vec3.fromRaw(this.tmpVec1);
+    const agent = this.raw.getAgent(agentIndex);
+
+    return { x: agent.get_vel(0), y: agent.get_vel(1), z: agent.get_vel(2) };
   }
 
   /**
    * Returns the next target position on the path to the specified agents target.
    */
   getAgentNextTargetPath(agentIndex: number): Vector3 {
-    this.raw.getAgentNextTargetPath(agentIndex, this.tmpVec1);
-    return vec3.fromRaw(this.tmpVec1);
+    const agent = this.raw.getAgent(agentIndex);
+
+    return {
+      x: agent.get_targetPos(0),
+      y: agent.get_targetPos(1),
+      z: agent.get_targetPos(2),
+    };
   }
 
   /**
@@ -301,25 +333,35 @@ export class Crowd {
    * 2 = DT_CROWDAGENT_STATE_OFFMESH
    */
   getAgentState(agentIndex: number): number {
-    return this.raw.getAgentState(agentIndex);
+    const agent = this.raw.getAgent(agentIndex);
+
+    return agent.state;
   }
 
   /**
    * Returns the local path corridor corners for the specified agent.
    */
   getAgentCorners(agentIndex: number): Vector3[] {
-    const corners = this.raw.getCorners(agentIndex);
+    const agent = this.raw.getAgent(agentIndex);
 
-    return array((i) => corners.getPoint(i), corners.getPointCount()).map(
-      (vec) => vec3.fromRaw(vec)
-    );
+    const points: Vector3[] = [];
+
+    for (let i = 0; i < agent.ncorners; i++) {
+      points.push({
+        x: agent.get_cornerVerts(i * 3),
+        y: agent.get_cornerVerts(i * 3 + 1),
+        z: agent.get_cornerVerts(i * 3 + 2),
+      });
+    }
+
+    return points;
   }
 
   /**
    * Returns the parameters for the specified agent.
    */
   getAgentParameters(agentIndex: number): CrowdAgentParams {
-    const params = this.raw.getAgentParameters(agentIndex);
+    const { params } = this.raw.getAgent(agentIndex);
 
     return {
       radius: params.radius,
@@ -351,7 +393,7 @@ export class Crowd {
       ...crowdAgentParams,
     } as CrowdAgentParams;
 
-    const dtCrowdAgentParams = new Wasm.Recast.dtCrowdAgentParams();
+    const dtCrowdAgentParams = new Raw.Module.dtCrowdAgentParams();
 
     dtCrowdAgentParams.radius = params.radius;
     dtCrowdAgentParams.height = params.height;
@@ -365,7 +407,7 @@ export class Crowd {
     dtCrowdAgentParams.queryFilterType = params.queryFilterType;
     dtCrowdAgentParams.userData = params.userData;
 
-    this.raw.setAgentParameters(agentIndex, dtCrowdAgentParams);
+    this.updateAgentParameters(agentIndex, dtCrowdAgentParams);
   }
 
   /**
@@ -386,25 +428,8 @@ export class Crowd {
     this.setAgentParameters(agentIndex, params);
   }
 
-  /**
-   * Gets the bounding box extent for doing spatial queries.
-   */
-  getDefaultQueryExtent(): Vector3 {
-    return vec3.fromRaw(this.raw.getDefaultQueryExtent());
-  }
-
-  /**
-   * Sets the Bounding box extent for doing spatial queries (getClosestPoint, getRandomPointAround, ...)
-   * The queries will try to find a solution within those bounds.
-   * The default is (1,1,1)
-   */
-  setDefaultQueryExtent(extent: Vector3): void {
-    this.raw.setDefaultQueryExtent(vec3.toRaw(extent, this.tmpVec1));
-  }
-
   destroy(): void {
-    this.raw.destroy();
     finalizer.unregister(this);
-    emscripten.destroy(this.raw);
+    Raw.Module.destroy(this.raw);
   }
 }

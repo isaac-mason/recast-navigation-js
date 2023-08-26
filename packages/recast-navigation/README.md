@@ -40,9 +40,7 @@ await init();
 ### Creating a NavMesh
 
 ```ts
-import { NavMeshGenerator } from 'recast-navigation';
-
-const navMeshGenerator = new NavMeshGenerator();
+import { generateSoloNavMesh } from 'recast-navigation';
 
 const positions = [
   /* flat array of positions */
@@ -57,7 +55,7 @@ const navMeshConfig = {
   /* ... */
 };
 
-const { navMesh } = navMeshGenerator.generateSoloNavMesh(
+const { success, navMesh } = generateSoloNavMesh(
   positions,
   indices,
   navMeshConfig
@@ -87,11 +85,17 @@ Recast Navigation supports creating Box and Cylinder obstacles.
 Note that in order to use obstacles, you must create a tiled NavMesh.
 
 ```ts
+import { generateTiledNavMesh } from 'recast-navigation';
+
 /* create a tiled NavMesh */
-const { navMesh, tileCache } = navMeshGenerator.generateTiledNavMesh(positions, indices, {
-  /* ... */
-  tileSize: 16,
-});
+const { success, navMesh, tileCache } = generateTiledNavMesh(
+  positions,
+  indices,
+  {
+    /* ... */
+    tileSize: 16,
+  }
+);
 
 /* add a Box obstacle to the NavMesh */
 const position = { x: 0, y: 0, z: 0 };
@@ -207,17 +211,33 @@ If you are using `@recast-navigation/three`, you can use `NavMeshHelper` and `Cr
 A NavMesh and TileCache can be exported and imported as a Uint8Array.
 
 ```ts
-/* exporting */
-const navMeshExporter = new NavMeshExporter();
+import { exportNavMesh, importNavMesh } from 'recast-navigation';
 
-const navMeshExport: Uint8Array = navMeshExporter.export(
+/* exporting */
+const navMeshExport: Uint8Array = exportNavMesh(
   navMesh,
   tileCache // optional
 );
 
 /* importing */
-const navMeshImporter = new NavMeshImporter();
-
-const { navMesh, tileCache } =
-  navMeshImporter.import(navMeshExport);
+const { navMesh, tileCache } = importNavMesh(navMeshExport);
 ```
+
+### Escape Hatches
+
+This library provides a higher level api over Recast, but also exposes a `Raw` api that aims to match the recast and detour libraries as much as possible.
+
+This functionality is experimental, and not all of recast is exposed yet. You will need to have familiarity with the recast and detour c++ libraries, and you may need to submit an issue or a PR if something you need is not exposed yet.
+
+Auto-generated documentation can be found here: https://docs.recast-navigation-js.isaacmason.com/variables/index.Raw.html
+
+```ts
+import { Raw } from 'recast-navigation';
+
+const navMeshData = Raw.DetourNavMeshBuilder.createNavMeshData(/* ... */);
+```
+
+The solo and tiled nav mesh generators in this library are adaptations of the `RecastDemo` examples: https://github.com/isaac-mason/recastnavigation/blob/main/RecastDemo/Source/Sample_SoloMesh.cpp
+
+You can use the solo and tiled nav mesh generators in this library as the basis of a nav mesh generator suiting your requirements. See: https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-core/src/generators
+
