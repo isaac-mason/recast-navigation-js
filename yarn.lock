@@ -4029,12 +4029,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-three/csg@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "@react-three/csg@npm:2.2.0"
+"@react-three/csg@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@react-three/csg@npm:3.0.0"
   dependencies:
-    three-bvh-csg: ^0.0.5
-  checksum: 79a78384d8db2b1ca4f9cccf79d1591b389a69c0a14f572ce5fc2e7375d5d4682b02eff295b1b7dc06ed2f44a39d9b9df6f3d2e6e5d734830ba1ecd7866f1070
+    three-bvh-csg: ^0.0.8
+  checksum: 7e6ba934074b6ca1797916ec320a33ef919d23db8d1202f52a77d79308a5d3150419f4ec31eb14c32d144564ffd514fd5efe36a5e4a0d6d1f0c0fa6a8d97b6b0
   languageName: node
   linkType: hard
 
@@ -14314,7 +14314,7 @@ __metadata:
     "@babel/core": ^7.22.5
     "@mdx-js/react": ^2.3.0
     "@pmndrs/assets": ^1.6.0
-    "@react-three/csg": ^2.2.0
+    "@react-three/csg": ^3.0.0
     "@react-three/drei": ^9.78.2
     "@react-three/fiber": ^8.12.0
     "@recast-navigation/core": 0.3.0
@@ -15824,13 +15824,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"three-bvh-csg@npm:^0.0.5":
-  version: 0.0.5
-  resolution: "three-bvh-csg@npm:0.0.5"
+"three-bvh-csg@npm:^0.0.8":
+  version: 0.0.8
+  resolution: "three-bvh-csg@npm:0.0.8"
   peerDependencies:
-    three: ^0.141.0
-    three-mesh-bvh: ^0.5.13
-  checksum: 110a536e0fe3145e25a54e64a416352cb7ceb9ace93a14060460e4b82f4c3840fcdef8dab70ee242156eb90b85dface34b2bbe4499670fcbcf43c43380d3051a
+    three: ">=0.144.0"
+    three-mesh-bvh: ^0.6.0
+  checksum: be8a973c3b8ded24ad17ef2e1c9290305069a15bfc8792529cd1611f2f06a6001c7cb4098a37473222ba3d1d11ff1976cbddbe02dda74b0910c4b04aa0e0ad67
   languageName: node
   linkType: hard
 
