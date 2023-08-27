@@ -1,5 +1,25 @@
 # @recast-navigation/three
 
+## 0.4.0
+
+### Minor Changes
+
+- de28866: feat: helpers now extend THREE.Object3D and can be directly added to a THREE.Scene
+- de28866: feat: overhaul `Raw` recast and detour bindings
+- de28866: feat: rename all helper update methods to `update`, rather than having varying method names
+
+### Patch Changes
+
+- Updated dependencies [de28866]
+- Updated dependencies [de28866]
+- Updated dependencies [de28866]
+- Updated dependencies [de28866]
+- Updated dependencies [de28866]
+- Updated dependencies [de28866]
+- Updated dependencies [de28866]
+- Updated dependencies [de28866]
+  - @recast-navigation/core@0.4.0
+
 ## 0.3.0
 
 ### Minor Changes

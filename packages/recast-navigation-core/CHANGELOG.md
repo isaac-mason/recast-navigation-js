@@ -1,5 +1,18 @@
 # @recast-navigation/core
 
+## 0.4.0
+
+### Minor Changes
+
+- de28866: feat: change `NavMeshGenerator` to two exports, `generateSoloNavMesh` and `generateTiledNavMesh`
+- de28866: feat: expose functionality for setting poly areas, poly flags, off mesh connections
+- de28866: feat: expose more of dtNavMeshQuery via NavMeshQuery
+- de28866: feat: overhaul `Raw` recast and detour bindings
+- de28866: feat: remove `NavMeshExporter` and `NavMeshImporter` classes, export functions `exportNavMesh` and `importNavMesh`
+- de28866: feat: implement builtin solo and tiled nav mesh generators in js with `Raw` api
+- de28866: feat: expose dtCrowd directly, move majority of crowd logic from c++ to js
+- de28866: feat: remove `emscripten` object, move functionality into `Raw` api
+
 ## 0.3.0
 
 ## 0.2.0
