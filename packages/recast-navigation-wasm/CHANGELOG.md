@@ -1,5 +1,20 @@
 # @recast-navigation/wasm
 
+## 0.4.0
+
+### Minor Changes
+
+- de28866: feat: change `NavMeshGenerator` to two exports, `generateSoloNavMesh` and `generateTiledNavMesh`
+- de28866: feat: expose functionality for setting poly areas, poly flags, off mesh connections
+- de28866: feat: expose more of dtNavMeshQuery via NavMeshQuery
+- de28866: feat: overhaul `Raw` recast and detour bindings
+- de28866: feat: implement builtin solo and tiled nav mesh generators in js with `Raw` api
+- de28866: feat: expose dtCrowd directly, move majority of crowd logic from c++ to js
+
+### Patch Changes
+
+- de28866: feat: update webidl-dts-gen
+
 ## 0.3.0
 
 ## 0.2.0
