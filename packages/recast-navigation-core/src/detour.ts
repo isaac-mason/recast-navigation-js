@@ -1,5 +1,5 @@
-import type R from '@recast-navigation/wasm';
 import { Raw } from './raw';
+import type R from './raw-module';
 import { Vector3, array, vec3 } from './utils';
 
 export class DetourPolyDetail {

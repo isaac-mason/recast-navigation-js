@@ -1,5 +1,5 @@
-import R from '@recast-navigation/wasm';
 import { Raw } from './raw';
+import type R from './raw-module';
 import { Vector3, array, vec3 } from './utils';
 
 export type RecastConfigType = {
@@ -189,7 +189,7 @@ export class RecastConfig {
     clone.detailSampleDist = this.raw.detailSampleDist;
     clone.detailSampleMaxError = this.raw.detailSampleMaxError;
 
-    return new RecastConfig(clone)
+    return new RecastConfig(clone);
   }
 }
 

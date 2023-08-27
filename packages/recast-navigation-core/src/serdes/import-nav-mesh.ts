@@ -1,7 +1,7 @@
-import type R from '@recast-navigation/wasm';
 import { NavMesh } from '../nav-mesh';
-import { TileCache, TileCacheMeshProcess } from '../tile-cache';
 import { Raw } from '../raw';
+import type R from '../raw-module';
+import { TileCache, TileCacheMeshProcess } from '../tile-cache';
 
 export type NavMeshImporterResult =
   | {
@@ -32,7 +32,10 @@ export const importNavMesh = (
   buf.dataPointer = dataHeap.byteOffset;
   buf.size = data.length;
 
-  const result = Raw.NavMeshImporter.importNavMesh(buf, tileCacheMeshProcess.raw);
+  const result = Raw.NavMeshImporter.importNavMesh(
+    buf,
+    tileCacheMeshProcess.raw
+  );
 
   Raw.Module._free(dataHeap.byteOffset);
 

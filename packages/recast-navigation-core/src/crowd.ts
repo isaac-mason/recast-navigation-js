@@ -1,9 +1,10 @@
-import type R from '@recast-navigation/wasm';
+import { finalizer } from './finalizer';
 import type { NavMesh } from './nav-mesh';
 import { NavMeshQuery } from './nav-mesh-query';
-import { finalizer } from './finalizer';
 import { Raw } from './raw';
+import type R from './raw-module';
 import { Vector3, vec3 } from './utils';
+
 
 export type CrowdParams = {
   /**

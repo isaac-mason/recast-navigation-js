@@ -1,15 +1,15 @@
-import type R from '@recast-navigation/wasm';
 import { NavMesh } from '../nav-mesh';
-import { TileCache, TileCacheMeshProcess } from '../tile-cache';
 import { Raw } from '../raw';
+import type R from '../raw-module';
 import {
-  RecastConfigType,
   RecastCompactHeightfield,
   RecastConfig,
+  RecastConfigType,
   RecastHeightfield,
   RecastHeightfieldLayerSet,
   recastConfigDefaults,
 } from '../recast';
+import { TileCache, TileCacheMeshProcess } from '../tile-cache';
 import { getVertsAndTris } from './common';
 
 export type TiledNavMeshGeneratorConfig = RecastConfigType & {

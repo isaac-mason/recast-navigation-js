@@ -1,8 +1,8 @@
-import type R from '@recast-navigation/wasm';
+import { DetourMeshTile, DetourOffMeshConnection, dtPoly } from './detour';
 import { finalizer } from './finalizer';
-import { array, vec3, Vector3 } from './utils';
 import { Raw } from './raw';
-import { DetourMeshTile, dtPoly, DetourOffMeshConnection } from './detour';
+import type R from './raw-module';
+import { array, vec3, Vector3 } from './utils';
 
 export class NavMeshGetTilesAtResult {
   raw: R.NavMeshGetTilesAtResult;
@@ -232,7 +232,7 @@ export class DebugNavMesh {
 
     const triangleCount = debugNavMesh.getTriangleCount();
 
-    const positions = [];
+    const positions: number[] = [];
     for (tri = 0; tri < triangleCount; tri++) {
       for (pt = 0; pt < 3; pt++) {
         const point = debugNavMesh.getTriangle(tri).getPoint(pt);
@@ -240,7 +240,7 @@ export class DebugNavMesh {
       }
     }
 
-    const indices = [];
+    const indices: number[] = [];
     for (tri = 0; tri < triangleCount * 3; tri++) {
       indices.push(tri);
     }

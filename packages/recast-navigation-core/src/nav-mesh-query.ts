@@ -1,8 +1,8 @@
-import type R from '@recast-navigation/wasm';
 import { finalizer } from './finalizer';
 import { NavMesh } from './nav-mesh';
-import { array, vec3, Vector3 } from './utils';
 import { Raw } from './raw';
+import type R from './raw-module';
+import { array, vec3, Vector3 } from './utils';
 
 export type NavMeshQueryParams = {
   navMesh: NavMesh;
@@ -22,7 +22,7 @@ export class NavMeshQuery {
 
   constructor(value: R.NavMeshQuery | NavMeshQueryParams) {
     if (value instanceof Raw.Module.NavMeshQuery) {
-      this.raw = value
+      this.raw = value;
     } else {
       this.raw = new Raw.Module.NavMeshQuery();
       this.raw.init(value.navMesh.raw, value.maxNodes ?? 2048);

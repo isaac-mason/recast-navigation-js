@@ -11,7 +11,7 @@
   "cleanOutputDir": true,
   "excludePrivate": true,
   "excludeProtected": true,
-  "excludeExternals": true,
+  "excludeExternals": false,
   "excludeInternal": true,
   "hideGenerator": true
 }
