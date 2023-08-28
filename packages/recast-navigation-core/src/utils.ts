@@ -3,6 +3,8 @@ import type R from './raw-module';
 
 export type Vector3 = { x: number; y: number; z: number };
 
+export type Vector3Tuple = [number, number, number];
+
 export const vec3 = {
   toRaw: ({ x, y, z }: Vector3, existing?: R.Vec3) => {
     if (existing) {
@@ -26,7 +28,7 @@ export const vec3 = {
   fromArray: ([x, y, z]: number[]) => {
     return { x, y, z };
   },
-  toArray: ({ x, y, z }: Vector3) => {
+  toArray: ({ x, y, z }: Vector3): Vector3Tuple => {
     return [x, y, z];
   },
 };

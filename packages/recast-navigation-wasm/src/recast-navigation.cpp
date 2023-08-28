@@ -135,85 +135,6 @@ void TileCache::destroy()
     m_tmproc = 0;
 }
 
-NavMeshQuery::NavMeshQuery()
-{
-    m_navQuery = 0;
-}
-
-NavMeshQuery::NavMeshQuery(dtNavMeshQuery *navMeshQuery)
-{
-    m_navQuery = navMeshQuery;
-}
-
-void NavMeshQuery::init(NavMesh *navMesh, const int maxNodes)
-{
-    m_navQuery = dtAllocNavMeshQuery();
-
-    const dtNavMesh *nav = navMesh->getNavMesh();
-    m_navQuery->init(nav, maxNodes);
-}
-
-NavMeshQueryFindPathResult NavMeshQuery::findPath(dtPolyRef startRef, dtPolyRef endRef, const float *startPos, const float *endPos, const dtQueryFilter *filter, int maxPath)
-{
-    NavMeshQueryFindPathResult result;
-
-    result.status = m_navQuery->findPath(startRef, endRef, startPos, endPos, filter, result.path, &result.pathCount, maxPath);
-
-    return result;
-}
-
-NavMeshQueryFindStraightPathResult NavMeshQuery::findStraightPath(
-    const float *startPos, const float *endPos,
-    const dtPolyRef *path, const int pathSize,
-    const int maxStraightPath, const int options)
-{
-    NavMeshQueryFindStraightPathResult result;
-
-    result.status = m_navQuery->findStraightPath(startPos, endPos, path, pathSize, result.straightPath, result.straightPathFlags, result.straightPathRefs, &result.straightPathCount, maxStraightPath, options);
-
-    return result;
-}
-
-NavMeshQueryFindNearestPolyResult NavMeshQuery::findNearestPoly(const float *center, const float *halfExtents, const dtQueryFilter *filter)
-{
-    NavMeshQueryFindNearestPolyResult result;
-
-    result.nearestPt = new float[3];
-    result.nearestPt[0] = 0.f;
-    result.nearestPt[1] = 0.f;
-    result.nearestPt[2] = 0.f;
-
-    result.status = m_navQuery->findNearestPoly(center, halfExtents, filter, &result.nearestRef, result.nearestPt);
-
-    return result;
-}
-
-NavMeshQueryRaycastResult NavMeshQuery::raycast(dtPolyRef startRef, const float *startPos, const float *endPos, const dtQueryFilter *filter, const unsigned int options, dtPolyRef prevRef)
-{
-    NavMeshQueryRaycastResult result;
-
-    result.status = m_navQuery->raycast(startRef, startPos, endPos, filter, options, result.raycastHit, prevRef);
-
-    return result;
-}
-
-Vec3 NavMeshQuery::getClosestPoint(const float *position, const float *halfExtents, const dtQueryFilter *filter)
-{
-    dtPolyRef polyRef;
-
-    m_navQuery->findNearestPoly(position, halfExtents, filter, &polyRef, 0);
-
-    bool posOverlay;
-    Vec3 resDetour;
-    dtStatus status = m_navQuery->closestPointOnPoly(polyRef, position, &resDetour.x, &posOverlay);
-
-    if (dtStatusFailed(status))
-    {
-        return Vec3(0.f, 0.f, 0.f);
-    }
-    return Vec3(resDetour.x, resDetour.y, resDetour.z);
-}
-
 Vec3 NavMeshQuery::getRandomPointAround(const float *position, float maxRadius, const float *halfExtents, const dtQueryFilter *filter)
 {
     dtPolyRef polyRef;
@@ -231,73 +152,6 @@ Vec3 NavMeshQuery::getRandomPointAround(const float *position, float maxRadius, 
     }
 
     return Vec3(resDetour.x, resDetour.y, resDetour.z);
-}
-
-Vec3 NavMeshQuery::moveAlong(const float *position, const float *destination, const float *halfExtents, const dtQueryFilter *filter)
-{
-    dtPolyRef polyRef;
-
-    m_navQuery->findNearestPoly(position, halfExtents, filter, &polyRef, 0);
-
-    Vec3 resDetour;
-    dtPolyRef visitedPoly[128];
-    int visitedPolyCount;
-    dtStatus status = m_navQuery->moveAlongSurface(polyRef, position, destination,
-                                                   filter,
-                                                   &resDetour.x, visitedPoly, &visitedPolyCount, sizeof(visitedPoly) / sizeof(dtPolyRef));
-    if (dtStatusFailed(status))
-    {
-        return Vec3(0.f, 0.f, 0.f);
-    }
-    return Vec3(resDetour.x, resDetour.y, resDetour.z);
-}
-
-NavPath NavMeshQuery::computePath(float *start, float *end, const float *halfExtents, const dtQueryFilter *filter) const
-{
-    NavPath navpath;
-    static const int MAX_POLYS = 256;
-    float straightPath[MAX_POLYS * 3];
-
-    dtPolyRef startRef;
-    dtPolyRef endRef;
-
-    m_navQuery->findNearestPoly(start, halfExtents, filter, &startRef, 0);
-    m_navQuery->findNearestPoly(end, halfExtents, filter, &endRef, 0);
-
-    dtPolyRef polys[MAX_POLYS];
-    int npolys;
-
-    m_navQuery->findPath(startRef, endRef, start, end, filter, polys, &npolys, MAX_POLYS);
-    int mNstraightPath = 0;
-    if (npolys)
-    {
-        unsigned char straightPathFlags[MAX_POLYS];
-        dtPolyRef straightPathPolys[MAX_POLYS];
-        int straightPathOptions;
-        bool posOverPoly;
-        float *closestEnd = end;
-
-        if (polys[npolys - 1] != endRef)
-        {
-            m_navQuery->closestPointOnPoly(polys[npolys - 1], end, closestEnd, &posOverPoly);
-        }
-        straightPathOptions = 0;
-        m_navQuery->findStraightPath(start, closestEnd, polys, npolys,
-                                     straightPath, straightPathFlags,
-                                     straightPathPolys, &mNstraightPath, MAX_POLYS, straightPathOptions);
-
-        navpath.mPoints.resize(mNstraightPath);
-        for (int i = 0; i < mNstraightPath; i++)
-        {
-            navpath.mPoints[i] = Vec3(straightPath[i * 3], straightPath[i * 3 + 1], straightPath[i * 3 + 2]);
-        }
-    }
-    return navpath;
-}
-
-void NavMeshQuery::destroy()
-{
-    dtFreeNavMeshQuery(m_navQuery);
 }
 
 static const int NAVMESHSET_MAGIC = 'M' << 24 | 'S' << 16 | 'E' << 8 | 'T'; //'MSET';
@@ -363,16 +217,9 @@ bool NavMesh::initTiled(const dtNavMeshParams *params)
     return dtStatusSucceed(status);
 };
 
-NavMeshAddTileResult NavMesh::addTile(NavMeshData *navMeshData, int flags, dtTileRef lastRef)
+dtStatus NavMesh::addTile(NavMeshData *navMeshData, int flags, dtTileRef lastRef, UnsignedIntRef *tileRef)
 {
-    dtTileRef ref;
-    dtStatus status = m_navMesh->addTile(navMeshData->data, navMeshData->size, flags, lastRef, &ref);
-
-    NavMeshAddTileResult result;
-    result.status = status;
-    result.tileRef = ref;
-
-    return result;
+    return m_navMesh->addTile(navMeshData->data, navMeshData->size, flags, lastRef, &tileRef->value);
 }
 
 NavMeshRemoveTileResult NavMesh::removeTile(dtTileRef ref)
@@ -554,13 +401,9 @@ dtPolyRef NavMesh::getPolyRefBase(const dtMeshTile *tile) const
     return m_navMesh->getPolyRefBase(tile);
 }
 
-NavMeshGetOffMeshConnectionPolyEndPointsResult NavMesh::getOffMeshConnectionPolyEndPoints(dtPolyRef prevRef, dtPolyRef polyRef) const
+dtStatus NavMesh::getOffMeshConnectionPolyEndPoints(dtPolyRef prevRef, dtPolyRef polyRef, Vec3 *startPos, Vec3 *endPos) const
 {
-    NavMeshGetOffMeshConnectionPolyEndPointsResult *result = new NavMeshGetOffMeshConnectionPolyEndPointsResult;
-
-    result->status = m_navMesh->getOffMeshConnectionPolyEndPoints(prevRef, polyRef, &result->startPos[0], &result->endPos[0]);
-
-    return *result;
+    return m_navMesh->getOffMeshConnectionPolyEndPoints(prevRef, polyRef, &startPos->x, &endPos->x);
 }
 
 const dtOffMeshConnection *NavMesh::getOffMeshConnectionByRef(dtPolyRef ref) const
@@ -573,13 +416,9 @@ dtStatus NavMesh::setPolyFlags(dtPolyRef ref, unsigned short flags)
     return m_navMesh->setPolyFlags(ref, flags);
 }
 
-NavMeshGetPolyFlagsResult NavMesh::getPolyFlags(dtPolyRef ref) const
+dtStatus NavMesh::getPolyFlags(dtPolyRef ref, UnsignedShortRef *flags) const
 {
-    NavMeshGetPolyFlagsResult *result = new NavMeshGetPolyFlagsResult;
-
-    result->status = m_navMesh->getPolyFlags(ref, &result->flags);
-
-    return *result;
+    return m_navMesh->getPolyFlags(ref, &flags->value);
 }
 
 dtStatus NavMesh::setPolyArea(dtPolyRef ref, unsigned char area)
@@ -587,13 +426,9 @@ dtStatus NavMesh::setPolyArea(dtPolyRef ref, unsigned char area)
     return m_navMesh->setPolyArea(ref, area);
 }
 
-NavMeshGetPolyAreaResult NavMesh::getPolyArea(dtPolyRef ref) const
+dtStatus NavMesh::getPolyArea(dtPolyRef ref, UnsignedCharRef *area) const
 {
-    NavMeshGetPolyAreaResult *result = new NavMeshGetPolyAreaResult;
-
-    result->status = m_navMesh->getPolyArea(ref, &result->area);
-
-    return *result;
+    return m_navMesh->getPolyArea(ref, &area->value);
 }
 
 int NavMesh::getTileStateSize(const dtMeshTile *tile) const
@@ -751,7 +586,7 @@ NavMeshImporterResult NavMeshImporter::importNavMesh(NavMeshExport *navMeshExpor
             navMeshData->data = data;
             navMeshData->size = tileHeader.dataSize;
 
-            navMesh->addTile(navMeshData, DT_TILE_FREE_DATA, tileHeader.tileRef);
+            navMesh->addTile(navMeshData, DT_TILE_FREE_DATA, tileHeader.tileRef, nullptr);
         }
 
         result->navMesh = navMesh;

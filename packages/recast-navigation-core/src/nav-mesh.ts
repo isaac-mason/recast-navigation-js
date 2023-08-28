@@ -27,29 +27,6 @@ export class NavMeshGetTilesAtResult {
   }
 }
 
-export class NavMeshAddTileResult {
-  raw: R.NavMeshAddTileResult;
-
-  constructor(raw: R.NavMeshAddTileResult) {
-    this.raw = raw;
-
-    finalizer.register(this);
-  }
-
-  tileRef(): number {
-    return this.raw.tileRef;
-  }
-
-  status(): number {
-    return this.raw.status;
-  }
-
-  destroy(): void {
-    finalizer.unregister(this);
-    Raw.Module.destroy(this.raw);
-  }
-}
-
 export class NavMeshRemoveTileResult {
   raw: R.NavMeshRemoveTileResult;
 
@@ -111,79 +88,6 @@ export class NavMeshGetTileAndPolyByRefResult {
 
   poly(): dtPoly {
     return new dtPoly(this.raw.poly);
-  }
-
-  status(): number {
-    return this.raw.status;
-  }
-
-  destroy(): void {
-    finalizer.unregister(this);
-    Raw.Module.destroy(this.raw);
-  }
-}
-
-export class NavMeshGetOffMeshConnectionPolyEndPointsResult {
-  raw: R.NavMeshGetOffMeshConnectionPolyEndPointsResult;
-
-  constructor(raw: R.NavMeshGetOffMeshConnectionPolyEndPointsResult) {
-    this.raw = raw;
-
-    finalizer.register(this);
-  }
-
-  status(): number {
-    return this.raw.status;
-  }
-
-  startPos(): Vector3 {
-    return vec3.fromArray(array((i) => this.raw.get_startPos(i), 3));
-  }
-
-  endPos(): Vector3 {
-    return vec3.fromArray(array((i) => this.raw.get_endPos(i), 3));
-  }
-
-  destroy(): void {
-    finalizer.unregister(this);
-    Raw.Module.destroy(this.raw);
-  }
-}
-
-export class NavMeshGetPolyFlagsResult {
-  raw: R.NavMeshGetPolyFlagsResult;
-
-  constructor(raw: R.NavMeshGetPolyFlagsResult) {
-    this.raw = raw;
-
-    finalizer.register(this);
-  }
-
-  flags(): number {
-    return this.raw.flags;
-  }
-
-  status(): number {
-    return this.raw.status;
-  }
-
-  destroy(): void {
-    finalizer.unregister(this);
-    Raw.Module.destroy(this.raw);
-  }
-}
-
-export class NavMeshGetPolyAreaResult {
-  raw: R.NavMeshGetPolyAreaResult;
-
-  constructor(raw: R.NavMeshGetPolyAreaResult) {
-    this.raw = raw;
-
-    finalizer.register(this);
-  }
-
-  area(): number {
-    return this.raw.area;
   }
 
   status(): number {
@@ -291,14 +195,15 @@ export class NavMesh {
    * @param lastRef
    * @returns the status of the operation and the reference of the added tile
    */
-  addTile(
-    navMeshData: R.NavMeshData,
-    flags: number,
-    lastRef: number
-  ): NavMeshAddTileResult {
-    return new NavMeshAddTileResult(
-      this.raw.addTile(navMeshData, flags, lastRef)
-    );
+  addTile(navMeshData: R.NavMeshData, flags: number, lastRef: number) {
+    const tileRef = new Raw.UnsignedIntRef();
+
+    const status = this.raw.addTile(navMeshData, flags, lastRef, tileRef);
+
+    return {
+      status,
+      tileRef: tileRef.value,
+    };
   }
 
   /**
@@ -437,13 +342,22 @@ export class NavMesh {
    * @param polyRef The reference of the off-mesh connection polygon.
    * @returns
    */
-  getOffMeshConnectionPolyEndPoints(
-    prevRef: number,
-    polyRef: number
-  ): NavMeshGetOffMeshConnectionPolyEndPointsResult {
-    return new NavMeshGetOffMeshConnectionPolyEndPointsResult(
-      this.raw.getOffMeshConnectionPolyEndPoints(prevRef, polyRef)
+  getOffMeshConnectionPolyEndPoints(prevRef: number, polyRef: number) {
+    const start = new Raw.Vec3();
+    const end = new Raw.Vec3();
+
+    const status = this.raw.getOffMeshConnectionPolyEndPoints(
+      prevRef,
+      polyRef,
+      start,
+      end
     );
+
+    return {
+      status,
+      start: vec3.fromRaw(start),
+      end: vec3.fromRaw(end),
+    };
   }
 
   /**
@@ -469,8 +383,15 @@ export class NavMesh {
    * @param ref The polygon reference.
    * @returns
    */
-  getPolyFlags(ref: number): NavMeshGetPolyFlagsResult {
-    return new NavMeshGetPolyFlagsResult(this.raw.getPolyFlags(ref));
+  getPolyFlags(ref: number) {
+    const flags = new Raw.UnsignedShortRef();
+
+    const status = this.raw.getPolyFlags(ref, flags);
+
+    return {
+      status,
+      flags: flags.value,
+    };
   }
 
   /**
@@ -487,8 +408,15 @@ export class NavMesh {
    * @param ref The polygon reference.
    * @returns
    */
-  getPolyArea(ref: number): NavMeshGetPolyAreaResult {
-    return new NavMeshGetPolyAreaResult(this.raw.getPolyArea(ref));
+  getPolyArea(ref: number) {
+    const area = new Raw.UnsignedCharRef();
+
+    const status = this.raw.getPolyArea(ref, area);
+
+    return {
+      status,
+      area: area.value,
+    };
   }
 
   /**

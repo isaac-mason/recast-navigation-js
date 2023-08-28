@@ -24,10 +24,19 @@ const classes = [
   'TileCacheData',
   'dtTileCacheParams',
   'dtTileCacheLayerHeader',
+  'Vec3',
+  'Vec2',
+  'BoolRef',
+  'IntRef',
+  'UnsignedIntRef',
+  'UnsignedCharRef',
+  'UnsignedShortRef',
+  'FloatRef',
 ] as const satisfies readonly ModuleKey[];
 
 const arrays = [
   'IntArray',
+  'UnsignedIntArray',
   'UnsignedCharArray',
   'UnsignedShortArray',
   'FloatArray',

@@ -228,8 +228,6 @@ export class TileCacheMeshProcess {
         Raw.Module.UnsignedShortArray
       );
 
-      if (!process) return;
-
       process(params, polyAreasArray, polyFlagsArray);
     }) as never;
   }

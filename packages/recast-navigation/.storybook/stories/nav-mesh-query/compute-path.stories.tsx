@@ -1,5 +1,5 @@
 import { Line, OrbitControls } from '@react-three/drei';
-import { Crowd, NavMesh, NavMeshQuery } from '@recast-navigation/core';
+import { NavMesh, NavMeshQuery } from '@recast-navigation/core';
 import { threeToSoloNavMesh } from '@recast-navigation/three';
 import React, { useEffect, useState } from 'react';
 import { Group, Mesh, MeshBasicMaterial, Vector3Tuple } from 'three';
@@ -39,7 +39,7 @@ export const ComputePath = () => {
       ch: 0.2,
     });
 
-    if (!success) return
+    if (!success) return;
 
     const navMeshQuery = new NavMeshQuery({ navMesh });
 

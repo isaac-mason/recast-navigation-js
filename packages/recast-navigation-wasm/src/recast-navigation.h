@@ -26,6 +26,36 @@ struct NavMeshIntermediates;
 struct TileCacheData;
 
 template <typename T>
+struct PrimitiveRefTemplate
+{
+    T value;
+};
+
+struct BoolRef : public PrimitiveRefTemplate<bool>
+{
+};
+
+struct IntRef : public PrimitiveRefTemplate<int>
+{
+};
+
+struct UnsignedIntRef : public PrimitiveRefTemplate<unsigned int>
+{
+};
+
+struct UnsignedCharRef : public PrimitiveRefTemplate<unsigned char>
+{
+};
+
+struct UnsignedShortRef : public PrimitiveRefTemplate<unsigned short>
+{
+};
+
+struct FloatRef : public PrimitiveRefTemplate<float>
+{
+};
+
+template <typename T>
 struct ArrayWrapperTemplate
 {
     T *data;
@@ -67,9 +97,23 @@ struct ArrayWrapperTemplate
         this->size = size;
         this->isView = false;
     }
+
+    T get(size_t index)
+    {
+        return data[index];
+    }
+
+    void set(size_t index, T value)
+    {
+        data[index] = value;
+    }
 };
 
 struct IntArray : public ArrayWrapperTemplate<int>
+{
+};
+
+struct UnsignedIntArray : public ArrayWrapperTemplate<unsigned int>
 {
 };
 
@@ -331,12 +375,6 @@ protected:
     TileCacheMeshProcessWrapper *m_tmproc;
 };
 
-struct NavMeshAddTileResult
-{
-    unsigned int status;
-    unsigned int tileRef;
-};
-
 struct NavMeshRemoveTileResult
 {
     unsigned int status;
@@ -363,25 +401,6 @@ struct NavMeshGetTileAndPolyByRefResult
     const dtPoly *poly;
 };
 
-struct NavMeshGetOffMeshConnectionPolyEndPointsResult
-{
-    dtStatus status;
-    float startPos[3];
-    float endPos[3];
-};
-
-struct NavMeshGetPolyFlagsResult
-{
-    dtStatus status;
-    unsigned short flags;
-};
-
-struct NavMeshGetPolyAreaResult
-{
-    dtStatus status;
-    unsigned char area;
-};
-
 struct NavMeshStoreTileStateResult
 {
     dtStatus status;
@@ -396,11 +415,16 @@ public:
 
     NavMesh() : m_navMesh(0) {}
 
+    NavMesh(dtNavMesh *navMesh)
+    {
+        m_navMesh = navMesh;
+    }
+
     bool initSolo(NavMeshData *navMeshData);
 
     bool initTiled(const dtNavMeshParams *params);
 
-    NavMeshAddTileResult addTile(NavMeshData *navMeshData, int flags, dtTileRef lastRef);
+    dtStatus addTile(NavMeshData *navMeshData, int flags, dtTileRef lastRef, UnsignedIntRef *tileRef);
 
     NavMeshRemoveTileResult removeTile(dtTileRef ref);
 
@@ -435,17 +459,17 @@ public:
 
     dtPolyRef getPolyRefBase(const dtMeshTile *tile) const;
 
-    NavMeshGetOffMeshConnectionPolyEndPointsResult getOffMeshConnectionPolyEndPoints(dtPolyRef prevRef, dtPolyRef polyRef) const;
+    dtStatus getOffMeshConnectionPolyEndPoints(dtPolyRef prevRef, dtPolyRef polyRef, Vec3 *startPos, Vec3 *endPos) const;
 
     const dtOffMeshConnection *getOffMeshConnectionByRef(dtPolyRef ref) const;
 
     dtStatus setPolyFlags(dtPolyRef ref, unsigned short flags);
 
-    NavMeshGetPolyFlagsResult getPolyFlags(dtPolyRef ref) const;
+    dtStatus getPolyFlags(dtPolyRef ref, UnsignedShortRef *flags) const;
 
     dtStatus setPolyArea(dtPolyRef ref, unsigned char area);
 
-    NavMeshGetPolyAreaResult getPolyArea(dtPolyRef ref) const;
+    dtStatus getPolyArea(dtPolyRef ref, UnsignedCharRef *area) const;
 
     int getTileStateSize(const dtMeshTile *tile) const;
 
@@ -467,30 +491,6 @@ protected:
         const unsigned short polyFlags);
 };
 
-struct NavMeshQueryFindPathResult
-{
-    dtStatus status;
-    dtPolyRef *path;
-    int pathCount;
-};
-
-struct NavMeshQueryFindStraightPathResult
-{
-    dtStatus status;
-    float *straightPath;
-    unsigned char *straightPathFlags;
-    dtPolyRef *straightPathRefs;
-    int straightPathCount;
-};
-
-struct NavMeshQueryFindNearestPolyResult
-{
-    dtStatus status;
-    dtPolyRef nearestRef;
-    float *nearestPt;
-    bool isOverPoly;
-};
-
 struct NavMeshQueryRaycastResult
 {
     dtStatus status;
@@ -501,32 +501,105 @@ class NavMeshQuery
 {
 public:
     dtNavMeshQuery *m_navQuery;
-    
-    NavMeshQuery();
-    NavMeshQuery(dtNavMeshQuery *navMeshQuery);
-    
-    void init(NavMesh *navMesh, const int maxNodes);
 
-    NavMeshQueryFindPathResult findPath(dtPolyRef startRef, dtPolyRef endRef, const float *startPos, const float *endPos, const dtQueryFilter *filter, int maxPath);
+    NavMeshQuery()
+    {
+        m_navQuery = 0;
+    }
 
-    NavMeshQueryFindStraightPathResult findStraightPath(
-        const float *startPos, const float *endPos,
-        const dtPolyRef *path, const int pathSize,
-        const int maxStraightPath, const int options);
+    NavMeshQuery(dtNavMeshQuery *navMeshQuery)
+    {
+        m_navQuery = navMeshQuery;
+    }
 
-    NavMeshQueryFindNearestPolyResult findNearestPoly(const float *center, const float *halfExtents, const dtQueryFilter *filter);
+    void init(NavMesh *navMesh, const int maxNodes)
+    {
+        m_navQuery = dtAllocNavMeshQuery();
 
-    NavMeshQueryRaycastResult raycast(dtPolyRef startRef, const float *startPos, const float *endPos, const dtQueryFilter *filter, const unsigned int options, dtPolyRef prevRef = 0);
+        const dtNavMesh *nav = navMesh->getNavMesh();
+        m_navQuery->init(nav, maxNodes);
+    }
 
-    Vec3 getClosestPoint(const float *position, const float *halfExtents, const dtQueryFilter *filter);
+    dtStatus findPath(dtPolyRef startRef, dtPolyRef endRef, const float *startPos, const float *endPos, const dtQueryFilter *filter, UnsignedIntArray *path, int maxPath)
+    {
+        dtPolyRef *pathArray = new dtPolyRef[maxPath];
+        int pathCount;
+
+        dtStatus status = m_navQuery->findPath(startRef, endRef, startPos, endPos, filter, pathArray, &pathCount, maxPath);
+
+        path->copy(pathArray, pathCount);
+        return status;
+    }
+
+    dtStatus closestPointOnPoly(dtPolyRef ref, const float *pos, Vec3 *closest, BoolRef *posOverPoly)
+    {
+        return m_navQuery->closestPointOnPoly(ref, pos, &closest->x, &posOverPoly->value);
+    }
+
+    dtStatus findStraightPath(
+        const float *startPos,
+        const float *endPos,
+        UnsignedIntArray *path,
+        FloatArray *straightPath,
+        UnsignedCharArray *straightPathFlags,
+        UnsignedIntArray *straightPathRefs,
+        IntRef *straightPathCount,
+        const int maxStraightPath,
+        const int options)
+    {
+        return m_navQuery->findStraightPath(startPos, endPos, path->data, path->size, straightPath->data, straightPathFlags->data, straightPathRefs->data, &straightPathCount->value, maxStraightPath, options);
+    }
+
+    dtStatus findNearestPoly(const float *center, const float *halfExtents, const dtQueryFilter *filter, UnsignedIntRef *nearestRef, Vec3 *nearestPt, BoolRef *isOverPoly)
+    {
+        return m_navQuery->findNearestPoly(center, halfExtents, filter, &nearestRef->value, &nearestPt->x, &isOverPoly->value);
+    }
+
+    dtStatus raycast(dtPolyRef startRef, const float *startPos, const float *endPos, const dtQueryFilter *filter, const unsigned int options, dtRaycastHit *hit, dtPolyRef prevRef)
+    {
+        return m_navQuery->raycast(startRef, startPos, endPos, filter, options, hit, prevRef);
+    }
+
+    Vec3 getClosestPoint(const float *position, const float *halfExtents, const dtQueryFilter *filter)
+    {
+        dtPolyRef polyRef;
+
+        m_navQuery->findNearestPoly(position, halfExtents, filter, &polyRef, 0);
+
+        bool posOverlay;
+        Vec3 resDetour;
+        dtStatus status = m_navQuery->closestPointOnPoly(polyRef, position, &resDetour.x, &posOverlay);
+
+        if (dtStatusFailed(status))
+        {
+            return Vec3(0.f, 0.f, 0.f);
+        }
+        return Vec3(resDetour.x, resDetour.y, resDetour.z);
+    }
 
     Vec3 getRandomPointAround(const float *position, float maxRadius, const float *halfExtents, const dtQueryFilter *filter);
 
-    Vec3 moveAlong(const float *position, const float *destination, const float *halfExtents, const dtQueryFilter *filter);
+    dtStatus moveAlongSurface(dtPolyRef startRef, const float *startPos, const float *endPos, const dtQueryFilter *filter, Vec3 *resultPos, UnsignedIntArray *visited, int maxVisitedSize)
+    {
+        int size = 0;
+        unsigned int *visitedArray = new unsigned int[maxVisitedSize];
 
-    NavPath computePath(float *start, float *end, const float *halfExtents, const dtQueryFilter *filter) const;
+        dtStatus status = m_navQuery->moveAlongSurface(startRef, startPos, endPos, filter, &resultPos->x, visitedArray, &size, maxVisitedSize);
 
-    void destroy();
+        visited->copy(visitedArray, size);
+
+        return status;
+    }
+
+    dtStatus getPolyHeight(dtPolyRef ref, const float *pos, FloatRef *height)
+    {
+        return m_navQuery->getPolyHeight(ref, pos, &height->value);
+    }
+
+    void destroy()
+    {
+        dtFreeNavMeshQuery(m_navQuery);
+    }
 };
 
 class CrowdUtils

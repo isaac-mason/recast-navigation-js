@@ -5,7 +5,6 @@ import { Raw } from './raw';
 import type R from './raw-module';
 import { Vector3, vec3 } from './utils';
 
-
 export type CrowdParams = {
   /**
    * The maximum number of agents that can be managed by the crowd.
@@ -213,8 +212,10 @@ export class Crowd {
   goto(agentIndex: number, position: Vector3): boolean {
     const { nearestPoint, nearestRef } = this.navMeshQuery.findNearestPoly(
       position,
-      this.navMeshQuery.defaultQueryHalfExtents,
-      this.navMeshQuery.defaultFilter
+      {
+        halfExtents: this.navMeshQuery.defaultQueryHalfExtents,
+        filter: this.navMeshQuery.defaultFilter,
+      }
     );
 
     return this.raw.requestMoveTarget(

@@ -367,11 +367,6 @@ interface DebugNavMesh {
     [Const, Ref] Triangle getTriangle(long n);
 };
 
-interface NavMeshAddTileResult {
-    attribute unsigned long status;
-    attribute unsigned long tileRef; 
-};
-
 interface NavMeshRemoveTileResult {
     attribute unsigned long status;
     attribute octet[] data;
@@ -394,22 +389,6 @@ interface NavMeshGetTileAndPolyByRefResult {
     [Const] attribute dtPoly poly;
 };
 
-interface NavMeshGetOffMeshConnectionPolyEndPointsResult {
-    attribute unsigned long status;
-    [Const] attribute float[] startPos;
-    [Const] attribute float[] endPos;
-};
-
-interface NavMeshGetPolyFlagsResult {
-    attribute unsigned long status;
-    attribute unsigned short flags;
-};
-
-interface NavMeshGetPolyAreaResult {
-    attribute unsigned long status;
-    attribute octet area;
-};
-
 interface NavMeshStoreTileStateResult {
     attribute unsigned long status;
     attribute octet[] data;
@@ -418,10 +397,11 @@ interface NavMeshStoreTileStateResult {
 
 interface NavMesh {
     void NavMesh();
+    void NavMesh(dtNavMesh navMesh);
 
     boolean initSolo(NavMeshData navMeshData);    
     boolean initTiled([Const] dtNavMeshParams params);
-    [Value] NavMeshAddTileResult addTile(NavMeshData navMeshData, long flags, unsigned long lastRef);
+    unsigned long addTile(NavMeshData navMeshData, long flags, unsigned long lastRef, UnsignedIntRef tileRef);
     [Value] NavMeshRemoveTileResult removeTile(unsigned long ref);
     [Value] DebugNavMesh getDebugNavMesh();
     dtNavMesh getNavMesh();
@@ -437,12 +417,12 @@ interface NavMesh {
     [Value] NavMeshGetTileAndPolyByRefResult getTileAndPolyByRefUnsafe([Const] unsigned long ref);
     boolean isValidPolyRef(unsigned long ref);
     unsigned long getPolyRefBase([Const] dtMeshTile tile);
-    [Value] NavMeshGetOffMeshConnectionPolyEndPointsResult getOffMeshConnectionPolyEndPoints(unsigned long prevRef, unsigned long polyRef);
+    unsigned long getOffMeshConnectionPolyEndPoints(unsigned long prevRef, unsigned long polyRef, Vec3 startPos, Vec3 endPos);
     [Const] dtOffMeshConnection getOffMeshConnectionByRef(unsigned long ref);
     unsigned long setPolyFlags(unsigned long ref, unsigned short flags);
-    [Value] NavMeshGetPolyFlagsResult getPolyFlags(unsigned long ref);
+    unsigned long getPolyFlags(unsigned long ref, UnsignedShortRef flags);
     unsigned long setPolyArea(unsigned long ref, octet area);
-    [Value] NavMeshGetPolyAreaResult getPolyArea(unsigned long ref);
+    unsigned long getPolyArea(unsigned long ref, UnsignedCharRef area);
     unsigned long getTileStateSize([Const] dtMeshTile tile);
     [Value] NavMeshStoreTileStateResult storeTileState([Const] dtMeshTile tile, [Const] long maxDataSize);
     unsigned long restoreTileState(dtMeshTile tile, [Const] octet[] data, [Const] long maxDataSize);
@@ -455,28 +435,9 @@ interface NavPath
     [Const, Ref] Vec3 getPoint(long n);
 };
 
-interface NavMeshQueryFindPathResult {
-    attribute unsigned long status;
-    attribute unsigned long[] path;
-    attribute long pathCount;
-};
-
-interface NavMeshQueryFindStraightPathResult {
-    attribute unsigned long status;
-    attribute float[] straightPath;
-    attribute octet[] straightPathFlags;
-    attribute unsigned long[] straightPathRefs;
-    attribute long straightPathCount;
-};
-
-interface NavMeshQueryFindNearestPolyResult {
-    attribute unsigned long status;
-    attribute unsigned long nearestRef;
-    attribute float[] nearestPt;
-    attribute boolean isOverPoly;
-};
-
 interface dtRaycastHit {
+    void dtRaycastHit();
+
     attribute float t;
     attribute float[] hitNormal;
     attribute long hitEdgeIndex;
@@ -486,31 +447,51 @@ interface dtRaycastHit {
     attribute float pathCost;
 };
 
-interface NavMeshQueryRaycastResult {
-    attribute unsigned long status;
-    attribute dtRaycastHit raycastHit;
+enum dtStraightPathFlags {
+    "dtStraightPathFlags::DT_STRAIGHTPATH_START",
+    "dtStraightPathFlags::DT_STRAIGHTPATH_END",
+    "dtStraightPathFlags::DT_STRAIGHTPATH_OFFMESH_CONNECTION"
+};
+
+enum dtStraightPathOptions {
+    "dtStraightPathOptions::DT_STRAIGHTPATH_AREA_CROSSINGS",
+    "dtStraightPathOptions::DT_STRAIGHTPATH_ALL_CROSSINGS",
+};
+
+enum dtFindPathOptions {
+    "dtFindPathOptions::DT_FINDPATH_ANY_ANGLE"
+};
+
+enum dtRaycastOptions {
+    "dtRaycastOptions::DT_RAYCAST_USE_COSTS"
 };
 
 interface NavMeshQuery {
+    attribute dtNavMeshQuery m_navQuery;
+
     void NavMeshQuery();
     
     void NavMeshQuery(dtNavMeshQuery navMeshQuery);
 
     void init(NavMesh navMesh, [Const] long maxNodes);
 
-    [Value] NavMeshQueryFindPathResult findPath(unsigned long startRef, unsigned long endRef, [Const] float[] startPos, [Const] float[] endPos, [Const] dtQueryFilter filter, long maxPath);
+    unsigned long findPath(unsigned long startRef, unsigned long endRef, [Const] float[] startPos, [Const] float[] endPos, [Const] dtQueryFilter filter, UnsignedIntArray path, long maxPath);
 
-    [Value] NavMeshQueryFindStraightPathResult findStraightPath([Const] float[] startPos, [Const] float[] endPos, [Const] unsigned long[] path, [Const] long pathSize, [Const] long maxStraightPath, [Const] long options);
+    unsigned long closestPointOnPoly(unsigned long ref, [Const] float[] pos, Vec3 closest, BoolRef posOverPoly);
 
-    [Value] NavMeshQueryFindNearestPolyResult findNearestPoly([Const] float[] center, [Const] float[] halfExtents, [Const] dtQueryFilter filter);
+    unsigned long findStraightPath([Const] float[] startPos, [Const] float[] endPos, UnsignedIntArray pathPolys, FloatArray straightPath, UnsignedCharArray straightPathFlags, UnsignedIntArray straightPathRefs, IntRef straightPathCountRef, [Const] long maxStraightPath, [Const] long options);
+
+    unsigned long findNearestPoly([Const] float[] center, [Const] float[] halfExtents, [Const] dtQueryFilter filter, UnsignedIntRef nearestRef, Vec3 nearestPt, BoolRef isOverPoly);
+
+    unsigned long raycast(unsigned long startRef, [Const] float[] startPos, [Const] float[] endPos, [Const] dtQueryFilter filter, [Const] unsigned long options, dtRaycastHit hit, unsigned long prevRef);
 
     [Value] Vec3 getClosestPoint(float[] position, float[] halfExtents, [Const] dtQueryFilter filter);
 
     [Value] Vec3 getRandomPointAround(float[] position, float maxRadius, float[] halfExtents, [Const] dtQueryFilter filter);
 
-    [Value] Vec3 moveAlong(float[] position, float[] destination, float[] halfExtents, [Const] dtQueryFilter filter);
+    unsigned long moveAlongSurface(unsigned long startRef, float[] startPos, float[] endPos, [Const] dtQueryFilter filter, Vec3 resultPos, UnsignedIntArray visited, long maxVisitedSize);
 
-    [Value] NavPath computePath(float[] start, float[] end, float[] halfExtents, [Const] dtQueryFilter filter);
+    unsigned long getPolyHeight(unsigned long ref, float[] pos, FloatRef height);
 
     void destroy();
 };
@@ -733,6 +714,7 @@ interface dtQueryFilter {
 };
 
 interface dtNavMeshQuery {
+    [Const] dtNavMesh getAttachedNavMesh();
 };
 
 interface dtCrowd {
@@ -1022,6 +1004,42 @@ interface ChunkyTriMesh {
     IntArray getChunkyTriMeshNodeTris(rcChunkyTriMesh chunkyTriMesh, long nodeIndex);
 };
 
+interface BoolRef {
+    void BoolRef();
+
+    attribute boolean value;
+};
+
+interface IntRef {
+    void IntRef();
+
+    attribute long value;
+};
+
+interface UnsignedIntRef {
+    void UnsignedIntRef();
+
+    attribute unsigned long value;
+};
+
+interface UnsignedCharRef {
+    void UnsignedCharRef();
+
+    attribute octet value;
+};
+
+interface UnsignedShortRef {
+    void UnsignedShortRef();
+
+    attribute unsigned long value;
+};
+
+interface FloatRef {
+    void FloatRef();
+
+    attribute float value;
+};
+
 interface IntArray {
     void IntArray();
 
@@ -1032,6 +1050,24 @@ interface IntArray {
     void resize(unsigned long long size);
     void copy([Const] long[] data, unsigned long long size);
     void free();
+
+    long get(unsigned long long i);
+    void set(unsigned long long i, long value);
+};
+
+interface UnsignedIntArray {
+    void UnsignedIntArray();
+
+    attribute unsigned long[] data;
+    attribute unsigned long long size;
+    attribute boolean isView;
+
+    void resize(unsigned long long size);
+    void copy([Const] unsigned long[] data, unsigned long long size);
+    void free();
+
+    unsigned long get(unsigned long long i);
+    void set(unsigned long long i, unsigned long value);
 };
 
 interface UnsignedCharArray {
@@ -1044,6 +1080,9 @@ interface UnsignedCharArray {
     void resize(unsigned long long size);
     void copy([Const] octet[] data, unsigned long long size);
     void free();
+
+    octet get(unsigned long long i);
+    void set(unsigned long long i, octet value);
 };
 
 interface UnsignedShortArray {
@@ -1056,6 +1095,9 @@ interface UnsignedShortArray {
     void resize(unsigned long long size);
     void copy([Const] unsigned short[] data, unsigned long long size);
     void free();
+
+    unsigned short get(unsigned long long i);
+    void set(unsigned long long i, unsigned short value);
 };
 
 interface FloatArray {
@@ -1068,6 +1110,9 @@ interface FloatArray {
     void resize(unsigned long long size);
     void copy([Const] float[] data, unsigned long long size);
     void free();
+
+    float get(unsigned long long i);
+    void set(unsigned long long i, float value);
 };
 
 interface NavMeshImporterResult {

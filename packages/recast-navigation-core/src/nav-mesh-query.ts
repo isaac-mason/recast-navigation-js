@@ -36,33 +36,58 @@ export class NavMeshQuery {
 
   findNearestPoly(
     position: Vector3,
-    halfExtents: Vector3,
-    filter?: R.dtQueryFilter
+    options?: { filter?: R.dtQueryFilter; halfExtents?: Vector3 }
   ) {
-    const result = this.raw.findNearestPoly(
-      vec3.toArray(position),
-      vec3.toArray(halfExtents),
-      filter ?? this.defaultFilter
-    );
+    const nearestRef = new Raw.UnsignedIntRef();
+    const nearestPoint = new Raw.Vec3();
+    const isOverPoly = new Raw.BoolRef();
 
-    const { status, nearestRef, isOverPoly } = result;
+    const status = this.raw.findNearestPoly(
+      vec3.toArray(position),
+      vec3.toArray(options?.halfExtents ?? this.defaultQueryHalfExtents),
+      options?.filter ?? this.defaultFilter,
+      nearestRef,
+      nearestPoint,
+      isOverPoly
+    );
 
     return {
       status,
-      nearestRef,
-      nearestPoint: vec3.fromArray(array((i) => result.get_nearestPt(i), 3)),
-      isOverPoly,
+      nearestRef: nearestRef.value,
+      nearestPoint: vec3.fromRaw(nearestPoint),
+      isOverPoly: isOverPoly.value,
+    };
+  }
+
+  closestPointOnPoly(polyRef: number, position: Vector3) {
+    const closestPoint = new Raw.Vec3();
+    const positionOverPoly = new Raw.BoolRef();
+
+    const status = this.raw.closestPointOnPoly(
+      polyRef,
+      vec3.toArray(position),
+      closestPoint,
+      positionOverPoly
+    );
+
+    return {
+      status,
+      closestPoint: vec3.fromRaw(closestPoint),
+      posOverPoly: positionOverPoly.value,
     };
   }
 
   /**
    * Returns the closest point on the NavMesh to the given position.
    */
-  getClosestPoint(position: Vector3, filter?: R.dtQueryFilter): Vector3 {
+  getClosestPoint(
+    position: Vector3,
+    options?: { filter?: R.dtQueryFilter }
+  ): Vector3 {
     const closestPointRaw = this.raw.getClosestPoint(
       vec3.toArray(position),
       vec3.toArray(this.defaultQueryHalfExtents),
-      filter ?? this.defaultFilter
+      options?.filter ?? this.defaultFilter
     );
 
     return vec3.fromRaw(closestPointRaw);
@@ -74,57 +99,135 @@ export class NavMeshQuery {
   getRandomPointAround(
     position: Vector3,
     radius: number,
-    filter?: R.dtQueryFilter
+    options?: {
+      filter?: R.dtQueryFilter;
+    }
   ): Vector3 {
     const randomPointRaw = this.raw.getRandomPointAround(
       vec3.toArray(position),
       radius,
       vec3.toArray(this.defaultQueryHalfExtents),
-      filter ?? this.defaultFilter
+      options?.filter ?? this.defaultFilter
     );
 
     return vec3.fromRaw(randomPointRaw);
   }
 
-  /**
-   * Compute the final position from a segment made of destination-position
-   */
-  moveAlong(
-    position: Vector3,
-    destination: Vector3,
-    filter?: R.dtQueryFilter
-  ): Vector3 {
-    return vec3.fromRaw(
-      this.raw.moveAlong(
-        vec3.toArray(position),
-        vec3.toArray(destination),
-        vec3.toArray(this.defaultQueryHalfExtents),
-        filter ?? this.defaultFilter
-      ),
-      true
+  moveAlongSurface(
+    startRef: number,
+    startPosition: Vector3,
+    endPosition: Vector3,
+    options?: {
+      filter?: R.dtQueryFilter;
+      maxVisitedSize?: number;
+    }
+  ) {
+    const resultPosition = new Raw.Vec3();
+    const visited = new Raw.Arrays.UnsignedIntArray();
+
+    const filter = options?.filter ?? this.defaultFilter;
+
+    const status = this.raw.moveAlongSurface(
+      startRef,
+      vec3.toArray(startPosition),
+      vec3.toArray(endPosition),
+      filter,
+      resultPosition,
+      visited,
+      options?.maxVisitedSize ?? 256
     );
+
+    return {
+      status,
+      resultPosition: vec3.fromRaw(resultPosition),
+      visited: array((i) => visited.get(i), visited.size),
+    };
   }
 
   /**
-   * Finds a path from the start position to the end position.
+   * Finds a straight path from the start position to the end position.
    *
    * @returns an array of Vector3 positions that make up the path, or an empty array if no path was found.
    */
   computePath(
     start: Vector3,
     end: Vector3,
-    filter?: R.dtQueryFilter
+    options?: {
+      filter?: R.dtQueryFilter;
+      maxPolyPathLength?: number;
+    }
   ): Vector3[] {
-    const pathRaw = this.raw.computePath(
-      vec3.toArray(start),
-      vec3.toArray(end),
-      vec3.toArray(this.defaultQueryHalfExtents),
-      filter ?? this.defaultFilter
+    const filter = options?.filter ?? this.defaultFilter;
+
+    const startArray = vec3.toArray(start);
+    const endArray = vec3.toArray(end);
+
+    const { nearestRef: startRef } = this.findNearestPoly(start, { filter });
+    const { nearestRef: endRef } = this.findNearestPoly(end, { filter });
+
+    const maxPolyPathLength = options?.maxPolyPathLength ?? 256;
+
+    const polys = new Raw.Arrays.UnsignedIntArray();
+
+    this.raw.findPath(
+      startRef,
+      endRef,
+      startArray,
+      endArray,
+      filter,
+      polys,
+      maxPolyPathLength
     );
 
-    return array((i) => pathRaw.getPoint(i), pathRaw.getPointCount()).map(
-      (vec) => vec3.fromRaw(vec)
+    if (polys.size <= 0) {
+      return [];
+    }
+
+    const lastPoly = polys.get(polys.size - 1);
+    let closestEnd = { x: end.x, y: end.y, z: end.z };
+
+    if (lastPoly !== endRef) {
+      const { closestPoint } = this.closestPointOnPoly(lastPoly, end);
+      closestEnd = closestPoint;
+    }
+
+    const maxStraightPathPolys = 256;
+
+    const straightPath = new Raw.Arrays.FloatArray();
+    straightPath.resize(maxStraightPathPolys * 3);
+
+    const straightPathFlags = new Raw.Arrays.UnsignedCharArray();
+    straightPathFlags.resize(maxStraightPathPolys);
+
+    const straightPathRefs = new Raw.Arrays.UnsignedIntArray();
+    straightPathRefs.resize(maxStraightPathPolys);
+
+    const straightPathCount = new Raw.IntRef();
+    const straightPathOptions = 0;
+
+    this.raw.findStraightPath(
+      startArray,
+      vec3.toArray(closestEnd),
+      polys,
+      straightPath,
+      straightPathFlags,
+      straightPathRefs,
+      straightPathCount,
+      maxStraightPathPolys,
+      straightPathOptions
     );
+
+    const points: Vector3[] = [];
+
+    for (let i = 0; i < straightPathCount.value; i++) {
+      points.push({
+        x: straightPath.get(i * 3),
+        y: straightPath.get(i * 3 + 1),
+        z: straightPath.get(i * 3 + 2),
+      });
+    }
+
+    return points;
   }
 
   /**
