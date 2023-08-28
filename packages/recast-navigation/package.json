@@ -57,7 +57,7 @@
     "three": "^0.155.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.22.5",
+    "@babel/core": "^7.22.11",
     "@mdx-js/react": "^2.3.0",
     "@pmndrs/assets": "^1.6.0",
     "@react-three/csg": "^3.0.0",
