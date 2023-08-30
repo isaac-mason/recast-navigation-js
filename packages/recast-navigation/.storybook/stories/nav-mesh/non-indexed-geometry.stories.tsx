@@ -2,15 +2,17 @@ import { Bounds, OrbitControls } from '@react-three/drei';
 import { NavMesh } from '@recast-navigation/core';
 import { threeToSoloNavMesh } from '@recast-navigation/three';
 import React, { useEffect, useState } from 'react';
-import { Group, Mesh } from 'three';
+import { BoxGeometry, Group, Mesh } from 'three';
 import { Debug } from '../../common/debug';
-import { DungeonEnvirionment } from '../../common/dungeon-environment';
 import { decorators } from '../../decorators';
 
 export default {
   title: 'NavMesh / Non Indexed Geometry',
   decorators,
 };
+
+const boxGeometry = new BoxGeometry(10, 10, 10);
+const nonIndexedBoxGeometry = boxGeometry.clone().toNonIndexed();
 
 export const NonIndexedGeometry = () => {
   const [group, setGroup] = useState<Group | null>(null);
@@ -24,9 +26,7 @@ export const NonIndexedGeometry = () => {
 
     group.traverse((child) => {
       if (child instanceof Mesh) {
-        const clone = child.clone();
-        clone.geometry = clone.geometry.clone().toNonIndexed();
-        meshes.push(clone);
+        meshes.push(child);
       }
     });
 
@@ -49,7 +49,15 @@ export const NonIndexedGeometry = () => {
     <>
       <Bounds fit>
         <group ref={setGroup}>
-          <DungeonEnvirionment />
+          <mesh position={[8, 0, 0]}>
+            <primitive attach="geometry" object={boxGeometry} />
+            <meshStandardMaterial color="#ccc" />
+          </mesh>
+
+          <mesh position={[-8, 0, 0]}>
+            <primitive attach="geometry" object={nonIndexedBoxGeometry} />
+            <meshStandardMaterial color="#ccc" />
+          </mesh>
         </group>
       </Bounds>
 

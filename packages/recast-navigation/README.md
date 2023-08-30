@@ -37,7 +37,14 @@ import { init } from 'recast-navigation';
 await init();
 ```
 
-### Creating a NavMesh
+### Generating a NavMesh
+
+To create a NavMesh, you can use the `generateSoloNavMesh` and `generateTiledNavMesh` functions.
+
+The input positions and indices should adhere to OpenGL conventions:
+- Use the right-handed coordinate system
+- Indices should be in counter-clockwise winding order
+- The `positions` and `indices` arguments should be flat arrays of numbers
 
 ```ts
 import { generateSoloNavMesh } from 'recast-navigation';
@@ -61,6 +68,8 @@ const { success, navMesh } = generateSoloNavMesh(
   navMeshConfig
 );
 ```
+
+If you need to do something more advanced, you can use the lower level API to create your own NavMesh generator. See the "Escape Hatches" section for more information.
 
 ### Querying a NavMesh
 

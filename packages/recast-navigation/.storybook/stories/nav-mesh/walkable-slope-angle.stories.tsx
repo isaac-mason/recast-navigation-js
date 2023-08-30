@@ -18,7 +18,7 @@ const DEGREES = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45];
 const ANGLES = DEGREES.map((angle, idx) => ({
   degrees: angle,
   rad: angle * DEG2RAD,
-  position: [(-DEGREES.length * 3) / 2 + idx * 3, 0, 0] as const,
+  position: [(-DEGREES.length * 5) / 2 + idx * 5, 0, 0] as const,
 }));
 
 export const WalkableSlope = () => {
@@ -47,8 +47,8 @@ export const WalkableSlope = () => {
     });
 
     const { navMesh } = threeToSoloNavMesh(meshes, {
-      cs: 0.1,
-      ch: 0.1,
+      cs: 0.05,
+      ch: 0.05,
       walkableSlopeAngle,
     });
 
@@ -71,7 +71,7 @@ export const WalkableSlope = () => {
         <group ref={setGroup}>
           {ANGLES.map(({ degrees, rad, position }) => (
             <mesh key={degrees} rotation-x={rad} position={position}>
-              <boxGeometry args={[2, 0.1, 5]} />
+              <boxGeometry args={[3, 1, 5]} />
               <meshBasicMaterial color="#ccc" />
             </mesh>
           ))}

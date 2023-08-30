@@ -8,15 +8,20 @@ import {
   RecastHeightfield,
   SoloNavMeshGeneratorIntermediates,
   TiledNavMeshGeneratorIntermediates,
+  generateSoloNavMesh,
+  generateTiledNavMesh,
 } from 'recast-navigation';
 import {
   HeightfieldHelper,
   NavMeshHelper,
+  getPositionsAndIndices,
   threeToSoloNavMesh,
   threeToTiledNavMesh,
 } from 'recast-navigation/three';
 import {
   Box3,
+  BufferAttribute,
+  BufferGeometry,
   Group,
   Mesh,
   MeshBasicMaterial,
@@ -45,14 +50,15 @@ const App = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
   const [gltf, setGtlf] = useState<Group>();
+  const [indexedTriangleMesh, setIndexedTriangleMesh] = useState<{
+    positions: Float32Array;
+    indices: Uint32Array;
+  }>();
 
   const [navMesh, setNavMesh] = useState<NavMesh>();
   const [intermediates, setIntermediates] = useState<
     SoloNavMeshGeneratorIntermediates | TiledNavMeshGeneratorIntermediates
   >();
-
-  const [navMeshHelperDebugColor, setNavMeshHelperDebugColor] =
-    useState('#ffa500');
 
   const recastAgent = useRef<RecastAgentRef>(null!);
 
@@ -108,6 +114,7 @@ const App = () => {
     setError(undefined);
     setLoading(true);
     setNavMesh(undefined);
+    setIndexedTriangleMesh(undefined);
 
     try {
       const meshes: Mesh[] = [];
@@ -118,10 +125,13 @@ const App = () => {
         }
       });
 
+      const [positions, indices] = getPositionsAndIndices(meshes);
+      setIndexedTriangleMesh({ positions, indices });
+
       try {
         const result = navMeshConfig.tileSize
-          ? threeToTiledNavMesh(meshes, navMeshConfig, true)
-          : threeToSoloNavMesh(meshes, navMeshConfig, true);
+          ? generateTiledNavMesh(positions, indices, navMeshConfig, true)
+          : generateSoloNavMesh(positions, indices, navMeshConfig, true);
 
         if (!result.success) {
           setError(result.error);
@@ -277,16 +287,50 @@ const App = () => {
     displayModel: {
       label: 'Show Model',
       value: true,
-      onEditEnd: setNavMeshHelperDebugColor,
     },
   });
+
+  const [navMeshGeneratorInputDebugColor, setNavMeshGeneratorInputDebugColor] =
+    useState('#ff69b4');
+
+  const {
+    displayNavMeshGenerationInput,
+    navMeshGeneratorInputWireframe,
+    navMeshGeneratorInputOpacity,
+  } = useControls('Display Options.NavMesh Generator Input', {
+    _: levaText(
+      'The indexed indexed triangle mesh that will be used for NavMesh generation.'
+    ),
+    displayNavMeshGenerationInput: {
+      label: 'Show Input',
+      value: false,
+    },
+    color: {
+      label: 'Color',
+      value: navMeshGeneratorInputDebugColor,
+      onEditEnd: setNavMeshGeneratorInputDebugColor,
+    },
+    navMeshGeneratorInputOpacity: {
+      label: 'Opacity',
+      value: 0.65,
+      min: 0,
+      max: 1,
+    },
+    navMeshGeneratorInputWireframe: {
+      label: 'Wireframe',
+      value: false,
+    },
+  });
+
+  const [navMeshHelperDebugColor, setNavMeshHelperDebugColor] =
+    useState('#ffa500');
 
   const {
     wireframe: navMeshDebugWireframe,
     opacity: navMeshDebugOpacity,
     displayNavMeshHelper,
   } = useControls('Display Options.NavMesh', {
-    _: levaText('The computed navigation mesh'),
+    _: levaText('The computed navigation mesh.'),
     displayNavMeshHelper: {
       label: 'Show NavMesh',
       value: true,
@@ -311,7 +355,7 @@ const App = () => {
   const { heightfieldHelperEnabled } = useControls(
     'Display Options.Heightfield',
     {
-      _: levaText("Visualises Recast's voxelization process"),
+      _: levaText("Visualises Recast's voxelization process."),
       heightfieldHelperEnabled: {
         value: false,
         label: 'Show Heightfield',
@@ -378,6 +422,35 @@ const App = () => {
     navMeshDebugOpacity,
   ]);
 
+  const navMeshGeneratorInputHelper = useMemo(() => {
+    if (!indexedTriangleMesh) return undefined;
+
+    const geometry = new BufferGeometry();
+
+    geometry.setAttribute(
+      'position',
+      new BufferAttribute(indexedTriangleMesh.positions, 3)
+    );
+    geometry.setIndex(new BufferAttribute(indexedTriangleMesh.indices, 1));
+
+    const mesh = new Mesh(
+      geometry,
+      new MeshBasicMaterial({
+        transparent: true,
+        color: Number(navMeshGeneratorInputDebugColor.replace('#', '0x')),
+        wireframe: navMeshGeneratorInputWireframe,
+        opacity: navMeshGeneratorInputOpacity,
+      })
+    );
+
+    return mesh;
+  }, [
+    indexedTriangleMesh,
+    navMeshGeneratorInputDebugColor,
+    navMeshGeneratorInputWireframe,
+    navMeshGeneratorInputOpacity,
+  ]);
+
   const heightfieldHelper = useMemo(() => {
     if (!navMesh || !heightfieldHelperEnabled) {
       return undefined;
@@ -419,6 +492,11 @@ const App = () => {
         <group onPointerDown={onNavMeshPointerDown}>
           <primitive object={navMeshHelper} />
         </group>
+      )}
+
+      {/* NavMesh Generation Input Helper */}
+      {displayNavMeshGenerationInput && navMeshGeneratorInputHelper && (
+        <primitive object={navMeshGeneratorInputHelper} />
       )}
 
       {/* Heightfield Helper */}

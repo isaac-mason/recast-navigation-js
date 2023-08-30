@@ -4,48 +4,30 @@ export const getVertsAndTris = (
   positions: ArrayLike<number>,
   indices: ArrayLike<number>
 ) => {
-  const triangleIndices: Vector3[] = [];
-
   const bbMin = new Vector3(Infinity, Infinity, Infinity);
   const bbMax = new Vector3(-Infinity, -Infinity, -Infinity);
 
-  let t = 0;
-
   for (let i = 0; i < indices.length; i++) {
-    const ind = indices[t++] * 3;
+    const ind = indices[i];
 
-    const v = new Vector3(
-      positions[ind],
-      positions[ind + 1],
-      positions[ind + 2]
-    );
+    const x = positions[ind * 3];
+    const y = positions[ind * 3 + 1];
+    const z = positions[ind * 3 + 2];
+    
+    bbMin.x = Math.min(bbMin.x, x);
+    bbMin.y = Math.min(bbMin.y, y);
+    bbMin.z = Math.min(bbMin.z, z);
 
-    bbMin.x = Math.min(bbMin.x, v.x);
-    bbMin.y = Math.min(bbMin.y, v.y);
-    bbMin.z = Math.min(bbMin.z, v.z);
-
-    bbMax.x = Math.max(bbMax.x, v.x);
-    bbMax.y = Math.max(bbMax.y, v.y);
-    bbMax.z = Math.max(bbMax.z, v.z);
-
-    triangleIndices[i] = v;
+    bbMax.x = Math.max(bbMax.x, x);
+    bbMax.y = Math.max(bbMax.y, y);
+    bbMax.z = Math.max(bbMax.z, z);
   }
 
-  const verts: number[] = [];
-  const nVerts = triangleIndices.length;
+  const verts = positions as number[]
+  const nVerts = indices.length;
 
-  for (let i = 0; i < triangleIndices.length; i++) {
-    verts[i * 3 + 0] = triangleIndices[i].x;
-    verts[i * 3 + 1] = triangleIndices[i].y;
-    verts[i * 3 + 2] = triangleIndices[i].z;
-  }
-
-  const tris: number[] = [];
-  const nTris = triangleIndices.length / 3;
-
-  for (let i = 0; i < triangleIndices.length; i++) {
-    tris[i] = triangleIndices.length - i - 1;
-  }
+  const tris = indices as number[];
+  const nTris = indices.length / 3;
 
   return {
     verts,
