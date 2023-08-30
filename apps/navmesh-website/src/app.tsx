@@ -1,21 +1,33 @@
-import { Environment, OrbitControls } from '@react-three/drei';
 import cityEnvironment from '@pmndrs/assets/hdri/city.exr';
-import { Canvas, ThreeEvent } from '@react-three/fiber';
+import { Environment, OrbitControls } from '@react-three/drei';
+import { Canvas, ThreeEvent, useThree } from '@react-three/fiber';
 import { Leva, button, useControls } from 'leva';
-import { Suspense, useEffect, useRef, useState } from 'react';
-import { NavMesh } from 'recast-navigation';
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  NavMesh,
+  RecastHeightfield,
+  SoloNavMeshGeneratorIntermediates,
+  TiledNavMeshGeneratorIntermediates,
+} from 'recast-navigation';
+import {
+  HeightfieldHelper,
   NavMeshHelper,
   threeToSoloNavMesh,
   threeToTiledNavMesh,
 } from 'recast-navigation/three';
-import { Group, Mesh, MeshBasicMaterial } from 'three';
+import {
+  Box3,
+  Group,
+  Mesh,
+  MeshBasicMaterial,
+  MeshStandardMaterial,
+  Vector3,
+} from 'three';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 import dungeonGltfUrl from './assets/dungeon.gltf?url';
 import { downloadText } from './features/download/download-text';
 import { navMeshToGLTF } from './features/download/nav-mesh-to-gltf';
 import { levaText } from './features/editor/leva-text';
-import { Viewer } from './features/editor/viewer';
 import { ErrorBoundary } from './features/error-handling/error-boundary';
 import { ErrorMessage } from './features/error-handling/error-message';
 import { RecastAgent, RecastAgentRef } from './features/recast/recast-agent';
@@ -25,17 +37,43 @@ import { LoadingSpinner } from './features/ui/loading-spinner';
 import { GltfDropZone } from './features/upload/gltf-drop-zone';
 import { gltfLoader } from './features/upload/gltf-loader';
 import { readFile } from './features/upload/read-file';
+import { HtmlTunnel } from './tunnels';
 
 const App = () => {
+  const camera = useThree((s) => s.camera);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
   const [gltf, setGtlf] = useState<Group>();
 
   const [navMesh, setNavMesh] = useState<NavMesh>();
-  const [navMeshHelper, setNavMeshHelper] = useState<NavMeshHelper>();
-  const [navMeshDebugColor, setNavMeshDebugColor] = useState('#ffa500');
+  const [intermediates, setIntermediates] = useState<
+    SoloNavMeshGeneratorIntermediates | TiledNavMeshGeneratorIntermediates
+  >();
+
+  const [navMeshHelperDebugColor, setNavMeshHelperDebugColor] =
+    useState('#ffa500');
 
   const recastAgent = useRef<RecastAgentRef>(null!);
+
+  /* initial camera position */
+  useEffect(() => {
+    if (!gltf) return;
+
+    const box = new Box3();
+
+    gltf.traverse((obj) => {
+      if (obj instanceof Mesh) {
+        box.expandByObject(obj);
+      }
+    });
+
+    const center = box.getCenter(new Vector3());
+
+    const initial = [center.x, box.max.y * 1.5, center.z] as const;
+
+    camera.position.set(...initial);
+  }, [gltf]);
 
   const onDropFile = async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) {
@@ -70,7 +108,6 @@ const App = () => {
     setError(undefined);
     setLoading(true);
     setNavMesh(undefined);
-    setNavMeshHelper(undefined);
 
     try {
       const meshes: Mesh[] = [];
@@ -83,13 +120,14 @@ const App = () => {
 
       try {
         const result = navMeshConfig.tileSize
-          ? threeToTiledNavMesh(meshes, navMeshConfig)
-          : threeToSoloNavMesh(meshes, navMeshConfig);
+          ? threeToTiledNavMesh(meshes, navMeshConfig, true)
+          : threeToSoloNavMesh(meshes, navMeshConfig, true);
 
         if (!result.success) {
           setError(result.error);
         } else {
           setNavMesh(result.navMesh);
+          setIntermediates(result.intermediates);
         }
       } catch (e) {
         setError('Something went wrong generating the navmesh');
@@ -143,15 +181,20 @@ const App = () => {
     );
   };
 
+  useControls(
+    'Actions',
+    {
+      'Generate NavMesh': button(() => generateNavMesh(), {
+        disabled: loading,
+      }),
+      'Export as GLTF': button(exportAsGLTF, {
+        disabled: !navMesh,
+      }),
+    },
+    [navMesh, generateNavMesh, loading]
+  );
+
   const navMeshConfig = useControls('NavMesh Generation Config', {
-    borderSize: {
-      value: 0,
-      label: 'Border Size',
-    },
-    tileSize: {
-      value: 0,
-      label: 'Tile Size',
-    },
     cs: {
       value: 0.2,
       label: 'Cell Size',
@@ -159,6 +202,14 @@ const App = () => {
     ch: {
       value: 0.2,
       label: 'Cell Height',
+    },
+    tileSize: {
+      value: 0,
+      label: 'Tile Size',
+    },
+    borderSize: {
+      value: 0,
+      label: 'Border Size',
     },
     walkableSlopeAngle: {
       value: 60,
@@ -214,24 +265,59 @@ const App = () => {
     },
   });
 
-  const { wireframe: navMeshDebugWireframe, opacity: navMeshDebugOpacity } =
-    useControls('NavMesh Debug Display', {
-      color: {
-        label: 'Color',
-        value: navMeshDebugColor,
-        onEditEnd: setNavMeshDebugColor,
-      },
-      opacity: {
-        label: 'Opacity',
-        value: 0.65,
-        min: 0,
-        max: 1,
-      },
-      wireframe: {
-        label: 'Wireframe',
+  useControls('NavMesh Generation Config.Tips', {
+    _: levaText(
+      '- Start by tweaking the cell size and cell height. Enable the "Show Heightfield" display option to visualise the voxel cells.' +
+        '\n' +
+        '- Set Tile Size to 0 to generate a solo nav mesh, and pick a value e.g. 32 to generate a tiled nav mesh'
+    ),
+  });
+
+  const { displayModel } = useControls('Display Options.Model', {
+    displayModel: {
+      label: 'Show Model',
+      value: true,
+      onEditEnd: setNavMeshHelperDebugColor,
+    },
+  });
+
+  const {
+    wireframe: navMeshDebugWireframe,
+    opacity: navMeshDebugOpacity,
+    displayNavMeshHelper,
+  } = useControls('Display Options.NavMesh', {
+    _: levaText('The computed navigation mesh'),
+    displayNavMeshHelper: {
+      label: 'Show NavMesh',
+      value: true,
+    },
+    color: {
+      label: 'Color',
+      value: navMeshHelperDebugColor,
+      onEditEnd: setNavMeshHelperDebugColor,
+    },
+    opacity: {
+      label: 'Opacity',
+      value: 0.65,
+      min: 0,
+      max: 1,
+    },
+    wireframe: {
+      label: 'Wireframe',
+      value: false,
+    },
+  });
+
+  const { heightfieldHelperEnabled } = useControls(
+    'Display Options.Heightfield',
+    {
+      _: levaText("Visualises Recast's voxelization process"),
+      heightfieldHelperEnabled: {
         value: false,
+        label: 'Show Heightfield',
       },
-    });
+    }
+  );
 
   const {
     agentEnabled,
@@ -239,120 +325,148 @@ const App = () => {
     agentHeight,
     agentMaxAcceleration,
     agentMaxSpeed,
-  } = useControls(
-    'Test Agent',
-    {
-      agentEnabled: {
-        label: 'Agent Enabled',
-        value: false,
-      },
-      agentRadius: {
-        label: 'Agent Radius',
-        value: 0.5,
-        step: 0.1,
-      },
-      agentHeight: {
-        label: 'Agent Height',
-        value: 2,
-        step: 0.1,
-      },
-      agentMaxAcceleration: {
-        label: 'Agent Max Acceleration',
-        value: 20,
-        step: 0.1,
-      },
-      agentMaxSpeed: {
-        label: 'Agent Max Speed',
-        value: 6,
-        step: 0.1,
-      },
-      text: levaText('Left click to set a target, right click to teleport.'),
+  } = useControls('Test Agent', {
+    _: levaText(
+      'Creates a Detour Crowd with a single agent for you to test your NavMesh with.\nLeft click to set a target, right click to teleport.'
+    ),
+    agentEnabled: {
+      label: 'Enabled',
+      value: false,
     },
-    {
-      collapsed: true,
-    }
-  );
-
-  useControls(
-    'Actions',
-    {
-      'Generate NavMesh': button(() => generateNavMesh(), {
-        disabled: loading,
-      }),
-      'Export as GLTF': button(exportAsGLTF, {
-        disabled: !navMesh,
-      }),
+    agentRadius: {
+      label: 'Agent Radius',
+      value: 0.5,
+      step: 0.1,
     },
-    [navMesh, generateNavMesh, loading]
-  );
+    agentHeight: {
+      label: 'Agent Height',
+      value: 2,
+      step: 0.1,
+    },
+    agentMaxAcceleration: {
+      label: 'Agent Max Acceleration',
+      value: 20,
+      step: 0.1,
+    },
+    agentMaxSpeed: {
+      label: 'Agent Max Speed',
+      value: 6,
+      step: 0.1,
+    },
+  });
 
-  useEffect(() => {
+  const navMeshHelper = useMemo(() => {
     if (!navMesh) {
-      setNavMeshHelper(undefined);
-      return;
+      return undefined;
     }
 
     const navMeshHelper = new NavMeshHelper({
       navMesh,
       navMeshMaterial: new MeshBasicMaterial({
         transparent: true,
-        color: Number(navMeshDebugColor.replace('#', '0x')),
+        color: Number(navMeshHelperDebugColor.replace('#', '0x')),
         wireframe: navMeshDebugWireframe,
         opacity: navMeshDebugOpacity,
       }),
     });
 
-    setNavMeshHelper(navMeshHelper);
-  }, [navMesh, navMeshDebugColor, navMeshDebugWireframe, navMeshDebugOpacity]);
+    return navMeshHelper;
+  }, [
+    navMesh,
+    navMeshHelperDebugColor,
+    navMeshDebugWireframe,
+    navMeshDebugOpacity,
+  ]);
+
+  const heightfieldHelper = useMemo(() => {
+    if (!navMesh || !heightfieldHelperEnabled) {
+      return undefined;
+    }
+
+    let heightfields: RecastHeightfield[] = [];
+
+    if (intermediates) {
+      if (intermediates.type === 'solo' && intermediates.heightfield) {
+        heightfields = [intermediates.heightfield].filter(Boolean);
+      } else if (intermediates.type === 'tiled') {
+        heightfields = intermediates.tileIntermediates
+          .map((t) => t.heightfield)
+          .filter(Boolean);
+      }
+    }
+
+    if (heightfields.length <= 0) {
+      return undefined;
+    }
+
+    const heightfieldHelper = new HeightfieldHelper({
+      heightfields,
+      material: new MeshStandardMaterial(),
+      highlightWalkable: true,
+    });
+
+    heightfieldHelper.update();
+
+    return heightfieldHelper;
+  }, [navMesh, heightfieldHelperEnabled]);
 
   return (
     <>
-      <Canvas>
-        {gltf && <Viewer group={gltf} />}
+      {gltf && displayModel && <primitive object={gltf} />}
 
+      {/* NavMesh Helper */}
+      {displayNavMeshHelper && navMeshHelper && (
         <group onPointerDown={onNavMeshPointerDown}>
-          {navMeshHelper && <primitive object={navMeshHelper} />}
+          <primitive object={navMeshHelper} />
         </group>
+      )}
 
-        {navMesh && agentEnabled && (
-          <RecastAgent
-            ref={recastAgent}
-            navMesh={navMesh}
-            agentHeight={agentHeight}
-            agentRadius={agentRadius}
-            agentMaxAcceleration={agentMaxAcceleration}
-            agentMaxSpeed={agentMaxSpeed}
-          />
+      {/* Heightfield Helper */}
+      {heightfieldHelperEnabled && heightfieldHelper && (
+        <primitive object={heightfieldHelper} />
+      )}
+
+      {/* Agent Tester */}
+      {navMesh && agentEnabled && (
+        <RecastAgent
+          ref={recastAgent}
+          navMesh={navMesh}
+          agentHeight={agentHeight}
+          agentRadius={agentRadius}
+          agentMaxAcceleration={agentMaxAcceleration}
+          agentMaxSpeed={agentMaxSpeed}
+        />
+      )}
+
+      <Environment files={cityEnvironment} />
+
+      <OrbitControls />
+
+      <HtmlTunnel.In>
+        {loading && (
+          <CenterLayout>
+            <LoadingSpinner />
+          </CenterLayout>
         )}
 
-        <Environment files={cityEnvironment} />
+        {!gltf && !loading && (
+          <CenterLayout>
+            <GltfDropZone onDrop={onDropFile} selectExample={selectExample} />
+          </CenterLayout>
+        )}
 
-        <OrbitControls />
-      </Canvas>
+        {error && <ErrorMessage>{error}</ErrorMessage>}
 
-      {loading && (
-        <CenterLayout>
-          <LoadingSpinner />
-        </CenterLayout>
-      )}
-
-      {!gltf && !loading && (
-        <CenterLayout>
-          <GltfDropZone onDrop={onDropFile} selectExample={selectExample} />
-        </CenterLayout>
-      )}
-
-      {error && <ErrorMessage>{error}</ErrorMessage>}
-
-      <Leva
-        hidden={!gltf}
-        theme={{
-          sizes: {
-            rootWidth: '350px',
-            controlWidth: '100px',
-          },
-        }}
-      />
+        <Leva
+          hidden={!gltf}
+          theme={{
+            sizes: {
+              rootWidth: '350px',
+              controlWidth: '100px',
+            },
+          }}
+        />
+      </HtmlTunnel.In>
     </>
   );
 };
@@ -367,7 +481,11 @@ export default () => (
           </CenterLayout>
         }
       >
-        <App />
+        <Canvas>
+          <App />
+        </Canvas>
+
+        <HtmlTunnel.Out />
       </Suspense>
     </RecastInit>
   </ErrorBoundary>

@@ -1,7 +1,7 @@
 import { createPlugin, useInputContext, styled } from 'leva/plugin';
 
 const Text = styled('div', {
-  color: '#fff',
+  color: '#ccc',
   lineHeight: '1.5em',
   paddingTop: '5px',
   whiteSpace: 'pre-line',

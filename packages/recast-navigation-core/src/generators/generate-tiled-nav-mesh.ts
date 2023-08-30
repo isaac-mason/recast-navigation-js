@@ -33,6 +33,7 @@ export const tiledNavMeshGeneratorConfigDefaults: TiledNavMeshGeneratorConfig =
   };
 
 export type TiledNavMeshGeneratorIntermediates = {
+  type: 'tiled';
   chunkyTriMesh?: R.rcChunkyTriMesh;
   tileIntermediates: {
     tx: number;
@@ -76,6 +77,7 @@ export const generateTiledNavMesh = (
   keepIntermediates = false
 ): TiledNavMeshGeneratorResult => {
   let intermediates: TiledNavMeshGeneratorIntermediates = {
+    type: 'tiled',
     chunkyTriMesh: undefined,
     tileIntermediates: [],
   };

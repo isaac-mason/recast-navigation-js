@@ -17,6 +17,7 @@ export const soloNavMeshGeneratorConfigDefaults: SoloNavMeshGeneratorConfig = {
 };
 
 export type SoloNavMeshGeneratorIntermediates = {
+  type: 'solo';
   heightfield?: RecastHeightfield;
   compactHeightfield?: RecastCompactHeightfield;
   contourSet?: RecastContourSet;
@@ -52,7 +53,9 @@ export const generateSoloNavMesh = (
   navMeshGeneratorConfig: Partial<SoloNavMeshGeneratorConfig> = {},
   keepIntermediates = false
 ): SoloNavMeshGeneratorResult => {
-  const intermediates: Partial<SoloNavMeshGeneratorIntermediates> = {};
+  const intermediates: SoloNavMeshGeneratorIntermediates = {
+    type: 'solo',
+  };
 
   const fail = (error: string): SoloNavMeshGeneratorFailResult => {
     if (!keepIntermediates) {
