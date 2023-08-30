@@ -1,5 +1,12 @@
 # @recast-navigation/wasm
 
+## 0.5.0
+
+### Minor Changes
+
+- 86554c1: feat(NavMesh): simplify `getPolyArea`, `getOffMeshConnectionsPolyEndPoints`, `addTile` return types
+- 86554c1: feat(NavMeshQuery): change methods to have a `options` argument for optional filters, half extents, max sizes
+
 ## 0.4.1
 
 ### Patch Changes
