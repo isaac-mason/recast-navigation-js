@@ -1,8 +1,8 @@
 import cityEnvironment from '@pmndrs/assets/hdri/city.exr';
-import { Environment, OrbitControls } from '@react-three/drei';
-import { Canvas, ThreeEvent, useThree } from '@react-three/fiber';
+import { Bounds, Environment, OrbitControls } from '@react-three/drei';
+import { Canvas, ThreeEvent } from '@react-three/fiber';
 import { Leva, button, useControls } from 'leva';
-import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { Suspense, useMemo, useRef, useState } from 'react';
 import {
   NavMesh,
   RecastHeightfield,
@@ -15,18 +15,14 @@ import {
   HeightfieldHelper,
   NavMeshHelper,
   getPositionsAndIndices,
-  threeToSoloNavMesh,
-  threeToTiledNavMesh,
 } from 'recast-navigation/three';
 import {
-  Box3,
   BufferAttribute,
   BufferGeometry,
   Group,
   Mesh,
   MeshBasicMaterial,
   MeshStandardMaterial,
-  Vector3,
 } from 'three';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 import dungeonGltfUrl from './assets/dungeon.gltf?url';
@@ -45,8 +41,6 @@ import { readFile } from './features/upload/read-file';
 import { HtmlTunnel } from './tunnels';
 
 const App = () => {
-  const camera = useThree((s) => s.camera);
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
   const [gltf, setGtlf] = useState<Group>();
@@ -61,25 +55,6 @@ const App = () => {
   >();
 
   const recastAgent = useRef<RecastAgentRef>(null!);
-
-  /* initial camera position */
-  useEffect(() => {
-    if (!gltf) return;
-
-    const box = new Box3();
-
-    gltf.traverse((obj) => {
-      if (obj instanceof Mesh) {
-        box.expandByObject(obj);
-      }
-    });
-
-    const center = box.getCenter(new Vector3());
-
-    const initial = [center.x, box.max.y * 1.5, center.z] as const;
-
-    camera.position.set(...initial);
-  }, [gltf]);
 
   const onDropFile = async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) {
@@ -485,7 +460,11 @@ const App = () => {
 
   return (
     <>
-      {gltf && displayModel && <primitive object={gltf} />}
+      {gltf && displayModel && (
+        <Bounds fit observe>
+          <primitive object={gltf} />
+        </Bounds>
+      )}
 
       {/* NavMesh Helper */}
       {displayNavMeshHelper && navMeshHelper && (
@@ -518,7 +497,7 @@ const App = () => {
 
       <Environment files={cityEnvironment} />
 
-      <OrbitControls />
+      <OrbitControls makeDefault />
 
       <HtmlTunnel.In>
         {loading && (
@@ -559,7 +538,7 @@ export default () => (
           </CenterLayout>
         }
       >
-        <Canvas>
+        <Canvas camera={{ position: [100, 100, 100] }}>
           <App />
         </Canvas>
 
