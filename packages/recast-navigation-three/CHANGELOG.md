@@ -1,5 +1,17 @@
 # @recast-navigation/three
 
+## 0.6.0
+
+### Minor Changes
+
+- 5e79ceb: feat(HeightfieldHelper): call update on construction
+
+### Patch Changes
+
+- Updated dependencies [5e79ceb]
+- Updated dependencies [5e79ceb]
+  - @recast-navigation/core@0.6.0
+
 ## 0.5.0
 
 ### Minor Changes
