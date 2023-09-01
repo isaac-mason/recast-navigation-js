@@ -108,6 +108,8 @@ const App = () => {
           ? generateTiledNavMesh(positions, indices, navMeshConfig, true)
           : generateSoloNavMesh(positions, indices, navMeshConfig, true);
 
+        console.log('nav mesh generation result', result);
+
         if (!result.success) {
           setError(result.error);
         } else {
@@ -453,17 +455,17 @@ const App = () => {
       highlightWalkable: true,
     });
 
-    heightfieldHelper.update();
-
     return heightfieldHelper;
   }, [navMesh, heightfieldHelperEnabled]);
 
   return (
     <>
-      {gltf && displayModel && (
-        <Bounds fit observe>
-          <primitive object={gltf} />
-        </Bounds>
+      {gltf && (
+        <group visible={displayModel}>
+          <Bounds fit observe>
+            <primitive object={gltf} />
+          </Bounds>
+        </group>
       )}
 
       {/* NavMesh Helper */}

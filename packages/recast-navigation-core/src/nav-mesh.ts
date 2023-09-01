@@ -2,7 +2,7 @@ import { DetourMeshTile, DetourOffMeshConnection, dtPoly } from './detour';
 import { finalizer } from './finalizer';
 import { Raw } from './raw';
 import type R from './raw-module';
-import { array, vec3, Vector3 } from './utils';
+import { Vector3, array, vec3 } from './utils';
 
 export class NavMeshGetTilesAtResult {
   raw: R.NavMeshGetTilesAtResult;
@@ -120,37 +120,6 @@ export class NavMeshStoreTileStateResult {
   destroy(): void {
     finalizer.unregister(this);
     Raw.Module.destroy(this.raw);
-  }
-}
-
-export class DebugNavMesh {
-  positions: number[];
-
-  indices: number[];
-
-  constructor(navMesh: NavMesh) {
-    const debugNavMesh = navMesh.raw.getDebugNavMesh();
-
-    let tri: number;
-    let pt: number;
-
-    const triangleCount = debugNavMesh.getTriangleCount();
-
-    const positions: number[] = [];
-    for (tri = 0; tri < triangleCount; tri++) {
-      for (pt = 0; pt < 3; pt++) {
-        const point = debugNavMesh.getTriangle(tri).getPoint(pt);
-        positions.push(point.x, point.y, point.z);
-      }
-    }
-
-    const indices: number[] = [];
-    for (tri = 0; tri < triangleCount * 3; tri++) {
-      indices.push(tri);
-    }
-
-    this.positions = positions;
-    this.indices = indices;
   }
 }
 
@@ -459,10 +428,81 @@ export class NavMesh {
   }
 
   /**
-   * Returns a DebugNavMesh that can be used to visualize the NavMesh.
+   * Returns a triangle mesh that can be used to visualize the NavMesh.
    */
-  getDebugNavMesh(): DebugNavMesh {
-    return new DebugNavMesh(this);
+  getDebugNavMesh(): [positions: number[], indices: number[]] {
+    const positions: number[] = [];
+    const indices: number[] = [];
+    let tri = 0;
+
+    const maxTiles = this.getMaxTiles();
+
+    for (let tileIndex = 0; tileIndex < maxTiles; tileIndex++) {
+      const tile = this.getTile(tileIndex);
+      const tileHeader = tile.header();
+
+      if (!tileHeader) continue;
+
+      const tilePolyCount = tileHeader.polyCount();
+
+      for (
+        let tilePolyIndex = 0;
+        tilePolyIndex < tilePolyCount;
+        ++tilePolyIndex
+      ) {
+        const poly = tile.polys(tilePolyIndex);
+
+        if (poly.getType() === 1) continue;
+
+        const polyVertCount = poly.vertCount();
+        const polyDetail = tile.detailMeshes(tilePolyIndex);
+        const polyDetailTriBase = polyDetail.triBase();
+        const polyDetailTriCount = polyDetail.triCount();
+
+        for (
+          let polyDetailTriIndex = 0;
+          polyDetailTriIndex < polyDetailTriCount;
+          ++polyDetailTriIndex
+        ) {
+          const detailTrisBaseIndex =
+            (polyDetailTriBase + polyDetailTriIndex) * 4;
+
+          for (let trianglePoint = 0; trianglePoint < 3; ++trianglePoint) {
+            if (
+              tile.detailTris(detailTrisBaseIndex + trianglePoint) <
+              polyVertCount
+            ) {
+              const tileVertsBaseIndex =
+                poly.verts(
+                  tile.detailTris(detailTrisBaseIndex + trianglePoint)
+                ) * 3;
+
+              positions.push(
+                tile.verts(tileVertsBaseIndex),
+                tile.verts(tileVertsBaseIndex + 1),
+                tile.verts(tileVertsBaseIndex + 2)
+              );
+            } else {
+              const tileVertsBaseIndex =
+                (polyDetail.vertBase() +
+                  tile.detailTris(detailTrisBaseIndex + trianglePoint) -
+                  poly.vertCount()) *
+                3;
+
+              positions.push(
+                tile.detailVerts(tileVertsBaseIndex),
+                tile.detailVerts(tileVertsBaseIndex + 1),
+                tile.detailVerts(tileVertsBaseIndex + 2)
+              );
+            }
+
+            indices.push(tri++);
+          }
+        }
+      }
+    }
+
+    return [positions, indices];
   }
 
   /**

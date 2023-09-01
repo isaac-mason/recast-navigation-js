@@ -354,19 +354,6 @@ interface Vec2 {
     void Vec2(float x, float y);
 };
 
-interface Triangle {
-    void Triangle();
-
-    [Const, Ref] Vec3 getPoint(long n);
-};
-
-interface DebugNavMesh {
-    void DebugNavMesh();
-
-    long getTriangleCount();
-    [Const, Ref] Triangle getTriangle(long n);
-};
-
 interface NavMeshRemoveTileResult {
     attribute unsigned long status;
     attribute octet[] data;
@@ -403,7 +390,6 @@ interface NavMesh {
     boolean initTiled([Const] dtNavMeshParams params);
     unsigned long addTile(NavMeshData navMeshData, long flags, unsigned long lastRef, UnsignedIntRef tileRef);
     [Value] NavMeshRemoveTileResult removeTile(unsigned long ref);
-    [Value] DebugNavMesh getDebugNavMesh();
     dtNavMesh getNavMesh();
     [Value] NavMeshCalcTileLocResult calcTileLoc([Const] float[] pos);
     [Const] dtMeshTile getTileAt([Const] long x, [Const] long y, [Const] long layer);
@@ -427,12 +413,6 @@ interface NavMesh {
     [Value] NavMeshStoreTileStateResult storeTileState([Const] dtMeshTile tile, [Const] long maxDataSize);
     unsigned long restoreTileState(dtMeshTile tile, [Const] octet[] data, [Const] long maxDataSize);
     void destroy();
-};
-
-interface NavPath
-{
-    long getPointCount();
-    [Const, Ref] Vec3 getPoint(long n);
 };
 
 interface dtRaycastHit {

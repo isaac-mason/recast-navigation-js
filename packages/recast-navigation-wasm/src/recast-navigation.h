@@ -166,54 +166,6 @@ struct Vec2
     Vec2(float x, float y) : x(x), y(y) {}
 };
 
-struct Triangle
-{
-    Vec3 mPoint[3];
-
-    Triangle() {}
-
-    const Vec3 &getPoint(long n)
-    {
-        if (n < 2)
-        {
-            return mPoint[n];
-        }
-        return mPoint[2];
-    }
-};
-
-struct NavPath
-{
-    std::vector<Vec3> mPoints;
-
-    int getPointCount() { return int(mPoints.size()); }
-
-    const Vec3 &getPoint(int n)
-    {
-        if (n < int(mPoints.size()))
-        {
-            return mPoints[n];
-        }
-        return mPoints.back();
-    }
-};
-
-struct DebugNavMesh
-{
-    std::vector<Triangle> mTriangles;
-
-    int getTriangleCount() { return int(mTriangles.size()); }
-
-    const Triangle &getTriangle(int n)
-    {
-        if (n < int(mTriangles.size()))
-        {
-            return mTriangles[n];
-        }
-        return mTriangles.back();
-    }
-};
-
 struct RecastFastLZCompressor : public dtTileCacheCompressor
 {
     virtual int maxCompressedSize(const int bufferSize)
@@ -428,8 +380,6 @@ public:
 
     NavMeshRemoveTileResult removeTile(dtTileRef ref);
 
-    DebugNavMesh getDebugNavMesh();
-
     dtNavMesh *getNavMesh()
     {
         return m_navMesh;
@@ -478,17 +428,6 @@ public:
     dtStatus restoreTileState(dtMeshTile *tile, const unsigned char *data, const int maxDataSize);
 
     void destroy();
-
-protected:
-    void navMeshPoly(
-        DebugNavMesh &debugNavMesh,
-        const dtNavMesh &mesh,
-        dtPolyRef ref);
-
-    void navMeshPolysWithFlags(
-        DebugNavMesh &debugNavMesh,
-        const dtNavMesh &mesh,
-        const unsigned short polyFlags);
 };
 
 struct NavMeshQueryRaycastResult

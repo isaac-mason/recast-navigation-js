@@ -15,10 +15,12 @@ export type NavMeshHelperParams = {
 
 export class NavMeshHelper extends Object3D {
   navMesh: NavMesh;
- 
+
   navMeshMaterial: Material;
 
   mesh: Mesh;
+
+  geometry: BufferGeometry;
 
   constructor({ navMesh, navMeshMaterial }: NavMeshHelperParams) {
     super();
@@ -28,15 +30,18 @@ export class NavMeshHelper extends Object3D {
     this.navMeshMaterial = navMeshMaterial
       ? navMeshMaterial
       : new MeshBasicMaterial({
-        color: 'orange',
-        transparent: true,
-        opacity: 0.7,
-      });
+          color: 'orange',
+          transparent: true,
+          opacity: 0.7,
+        });
 
-    this.mesh = new Mesh(new BufferGeometry(), this.navMeshMaterial);
-    this.add(this.mesh)
+    this.geometry = new BufferGeometry();
 
     this.update();
+
+    this.mesh = new Mesh(this.geometry, this.navMeshMaterial);
+
+    this.add(this.mesh);
   }
 
   /**
@@ -45,17 +50,15 @@ export class NavMeshHelper extends Object3D {
    * This should be called after updating the nav mesh.
    */
   update() {
-    const { positions, indices } = this.navMesh.getDebugNavMesh();
+    const [positions, indices] = this.navMesh.getDebugNavMesh();
 
-    const geometry = this.mesh.geometry;
-
-    geometry.setAttribute(
+    this.geometry.setAttribute(
       'position',
-      new BufferAttribute(new Float32Array(positions), 3)
+      new BufferAttribute(Float32Array.from(positions), 3)
     );
 
-    geometry.setIndex(new BufferAttribute(new Uint16Array(indices), 1));
+    this.geometry.setIndex(new BufferAttribute(Uint32Array.from(indices), 1));
 
-    geometry.computeVertexNormals();
+    this.geometry.computeVertexNormals();
   }
 }

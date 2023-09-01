@@ -63,6 +63,8 @@ export class HeightfieldHelper extends Object3D {
     this.material = material;
     this.defaultColor = new Color(defaultColor);
     this.walkableColor = new Color(walkableColor);
+
+    this.update();
   }
 
   update(): void {
