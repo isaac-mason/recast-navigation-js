@@ -1,5 +1,18 @@
 # @recast-navigation/core
 
+## 0.6.0
+
+### Minor Changes
+
+- 5e79ceb: feat(NavMesh): remove DebugNavMesh, change navMesh.getDebugNavMesh to return positions and indices arrays
+
+### Patch Changes
+
+- 5e79ceb: fix: debug nav mesh would not cover the whole nav mesh in some cases
+- Updated dependencies [5e79ceb]
+- Updated dependencies [5e79ceb]
+  - @recast-navigation/wasm@0.6.0
+
 ## 0.5.0
 
 ### Minor Changes

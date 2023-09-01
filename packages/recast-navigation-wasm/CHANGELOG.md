@@ -1,5 +1,12 @@
 # @recast-navigation/wasm
 
+## 0.6.0
+
+### Minor Changes
+
+- 5e79ceb: feat: remove unused NavPath
+- 5e79ceb: feat: remove DebugNavMesh, NavMesh::getDebugNavMesh, Triangle
+
 ## 0.5.0
 
 ### Minor Changes
