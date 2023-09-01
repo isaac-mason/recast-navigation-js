@@ -57,10 +57,6 @@ export const RecastAgent = forwardRef<RecastAgentRef, RecastAgentProps>(
     );
 
     useEffect(() => {
-      setNavMeshQuery(undefined);
-      setCrowd(undefined);
-      setCrowdHelper(undefined);
-
       if (!navMesh) {
         return;
       }
@@ -90,12 +86,9 @@ export const RecastAgent = forwardRef<RecastAgentRef, RecastAgentProps>(
       setCrowdHelper(crowdHelper);
 
       return () => {
-        navMeshQuery.destroy();
-        crowd.destroy();
-
-        setNavMeshQuery(undefined);
-        setCrowd(undefined);
         setCrowdHelper(undefined);
+        setCrowd(undefined);
+        setNavMeshQuery(undefined);
       };
     }, [
       navMesh,
@@ -106,12 +99,7 @@ export const RecastAgent = forwardRef<RecastAgentRef, RecastAgentProps>(
     ]);
 
     useEffect(() => {
-      if (!crowd) return;
-
-      if (!agentTarget) {
-        setAgentPath(undefined);
-        return;
-      }
+      if (!crowd || !agentTarget) return;
 
       const interval = setInterval(() => {
         const path = [crowd.getAgentPosition(0), ...crowd.getAgentCorners(0)];
@@ -125,11 +113,19 @@ export const RecastAgent = forwardRef<RecastAgentRef, RecastAgentProps>(
 
       return () => {
         clearInterval(interval);
+        setAgentPath(undefined);
       };
     }, [crowd, agentTarget]);
 
     useFrame((_, delta) => {
-      if (!crowd || !crowdHelper) return;
+      if (
+        !crowd ||
+        !crowdHelper ||
+        crowd.raw.getNavMeshQuery().getAttachedNavMesh() !==
+          navMesh?.raw.getNavMesh()
+      )
+        return;
+
       crowd.update(delta);
       crowdHelper.update();
     });
@@ -139,12 +135,10 @@ export const RecastAgent = forwardRef<RecastAgentRef, RecastAgentProps>(
         {crowdHelper && <primitive object={crowdHelper} />}
 
         {agentTarget && (
-          <group position={[0, 0, 0]}>
-            <mesh position={agentTarget}>
-              <sphereGeometry args={[0.3, 16, 16]} />
-              <meshBasicMaterial color="blue" />
-            </mesh>
-          </group>
+          <mesh position={agentTarget}>
+            <sphereGeometry args={[0.3, 16, 16]} />
+            <meshBasicMaterial color="blue" />
+          </mesh>
         )}
 
         {agentPath && <Line points={agentPath} color="blue" lineWidth={10} />}

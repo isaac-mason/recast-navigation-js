@@ -86,6 +86,10 @@ const App = () => {
   const generateNavMesh = async () => {
     if (!gltf) return;
 
+    if (navMesh) {
+      navMesh.destroy();
+    }
+
     setError(undefined);
     setLoading(true);
     setNavMesh(undefined);

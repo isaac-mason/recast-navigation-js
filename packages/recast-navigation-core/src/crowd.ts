@@ -149,7 +149,7 @@ export class Crowd {
 
   constructor({ maxAgents, maxAgentRadius, navMesh }: CrowdParams) {
     this.navMesh = navMesh;
-    this.raw = new Raw.Module.dtCrowd();
+    this.raw = Raw.Detour.allocCrowd();
     this.raw.init(maxAgents, maxAgentRadius, navMesh.raw.getNavMesh());
 
     this.navMeshQuery = new NavMeshQuery(
@@ -432,6 +432,6 @@ export class Crowd {
 
   destroy(): void {
     finalizer.unregister(this);
-    Raw.Module.destroy(this.raw);
+    Raw.Detour.freeCrowd(this.raw);
   }
 }

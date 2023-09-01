@@ -598,6 +598,16 @@ public:
     {
         return dtStatusDetail(status, detail);
     }
+
+    dtCrowd *allocCrowd()
+    {
+        return dtAllocCrowd();
+    }
+
+    void freeCrowd(dtCrowd *crowd)
+    {
+        dtFreeCrowd(crowd);
+    }
 };
 
 struct NavMeshData
