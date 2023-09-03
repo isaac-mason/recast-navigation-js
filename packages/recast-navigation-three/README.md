@@ -15,67 +15,102 @@ Three.js glue for [`recast-navigation`](https://github.com/isaac-mason/recast-na
 To use the three.js glue, you can either use the `three` entrypoint in `recast-navigation`:
 
 ```ts
-import * as RecastNavigationThree from 'recast-navigation/three';
+import { ... } from 'recast-navigation/three';
 ```
 
 Or you can use this package directly:
 
 ```ts
-import * as RecastNavigationThree from '@recast-navigation/three';
+import { ... } from '@recast-navigation/three';
 ```
 
-### `threeToSoloNavMesh` and `threeToTiledNavMesh`
+### Generating a NavMesh
 
-This package exports functions that convert arrays of `Mesh` objects to a solo or tiled navmesh.
+This package provides convenience functions for generating nav meshes from THREE.Mesh objects.
 
 ```ts
+import { threeToSoloNavMesh, threeToTiledNavMesh, threeToTileCache } from 'recast-navigation/three';
 import * as THREE from 'three';
-import { NavMesh } from 'recast-navigation';
-import { threeToSoloNavMesh, threeToTiledNavMesh } from 'recast-navigation/three';
 
 const scene = new THREE.Scene();
 
 /* add meshes to the scene */
 // ...
 
-const meshes: Mesh[] = [];
+const meshes: THREE.Mesh[] = [];
 
 scene.traverse((child) => {
-  if (child instanceof Mesh) {
+  if (child instanceof THREE.Mesh) {
     meshes.push(child);
   }
 });
 
 /* solo navmesh */
-const { navMesh }: NavMesh = threeToSoloNavMesh(meshes, { /* navmesh config */ }});
+const { navMesh } = threeToSoloNavMesh(meshes, {
+  // ... nav mesh generation config ...
+}});
 
 /* tiled navmesh */
-const { navMesh, tileCache } = threeToTiledNavMesh(meshes, { tileSize: 16 }});
+const { navMesh } = threeToTiledNavMesh(meshes, {
+  tileSize: 16,
+  // ... nav mesh generation config ...
+}});
+
+/* tiled navmesh */
+const { navMesh, tileCache } = threeToTileCache(meshes, {
+  tileSize: 16,
+  // ... nav mesh generation config ...
+}});
 ```
 
-### `NavMeshHelper`, `TileCacheHelper`, `CrowdHelper`
+### Helpers
+
+This package provides helpers for visualizing various recast-navigation objects in three.js.
+
+#### `NavMeshHelper`
 
 ```ts
-import {
-  CrowdHelper,
-  NavMeshHelper,
-  TileCacheHelper,
-} from 'recast-navigation/three';
+import { NavMeshHelper } from 'recast-navigation/three';
 
 const navMeshHelper = new NavMeshHelper({ navMesh });
-const tileCacheHelper = new TileCacheHelper({ tileCache });
-const crowdHelper = new CrowdHelper({ crowd });
-
-const scene = new THREE.Scene();
 
 scene.add(navMeshHelper);
+
+// update the helper when the navmesh changes
+navMeshHelper.update();
+```
+
+#### `TileCacheHelper`
+
+Visualises obstacles in a `TileCache`.
+
+```ts
+import { TileCacheHelper } from 'recast-navigation/three';
+
+const tileCacheHelper = new TileCacheHelper({ tileCache });
+
 scene.add(tileCacheHelper);
+
+// update the helper after adding or removing obstacles
+tileCacheHelper.update();
+```
+
+#### `CrowdHelper`
+
+Visualises agents in a `Crowd`.
+
+```ts
+import { CrowdHelper } from 'recast-navigation/three';
+
+const crowdHelper = new CrowdHelper({ crowd });
+
 scene.add(crowdHelper);
 
-navMeshHelper.update();
-tileCacheHelper.update();
+// update the helper after updating the crowd
 crowdHelper.update();
 ```
+
+#### Custom Materials
 
 You can optionally provide custom materials to the helpers.
 

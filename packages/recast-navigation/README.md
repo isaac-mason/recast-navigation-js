@@ -42,6 +42,7 @@ await init();
 To create a NavMesh, you can use the `generateSoloNavMesh` and `generateTiledNavMesh` functions.
 
 The input positions and indices should adhere to OpenGL conventions:
+
 - Use the right-handed coordinate system
 - Indices should be in counter-clockwise winding order
 - The `positions` and `indices` arguments should be flat arrays of numbers
@@ -85,49 +86,6 @@ navMeshQuery.getClosestPoint(position);
 /* get a random point around the given position */
 const radius = 0.5;
 navMeshQuery.getRandomPointAround(position, radius);
-```
-
-### Adding Obstacles to a NavMesh
-
-Recast Navigation supports creating Box and Cylinder obstacles.
-
-Note that in order to use obstacles, you must create a tiled NavMesh.
-
-```ts
-import { generateTiledNavMesh } from 'recast-navigation';
-
-/* create a tiled NavMesh */
-const { success, navMesh, tileCache } = generateTiledNavMesh(
-  positions,
-  indices,
-  {
-    /* ... */
-    tileSize: 16,
-  }
-);
-
-/* add a Box obstacle to the NavMesh */
-const position = { x: 0, y: 0, z: 0 };
-const extent = { x: 1, y: 1, z: 1 };
-const angle = 0;
-const boxObstacle = tileCache.addBoxObstacle(position, extent, angle);
-
-/* add a Cylinder obstacle to the NavMesh */
-const radius = 1;
-const height = 1;
-const cylinderObstacle = tileCache.addCylinderObstacle(
-  position,
-  radius,
-  height,
-  angle
-);
-
-/* update the NavMesh to reflect obstacle changes */
-tileCache.update(navMesh);
-
-/* remove the obstacles from the NavMesh */
-tileCache.removeObstacle(boxObstacle);
-tileCache.removeObstacle(cylinderObstacle);
 ```
 
 ### Crowds and Agents
@@ -203,6 +161,47 @@ crowd.setAgentParameters(agentIndex, {
 crowd.removeAgent(agentIndex);
 ```
 
+### Temporary Obstacles
+
+Recast Navigation supports creating Box and Cylinder obstacles.
+
+Note that in order to use obstacles, you must create a TileCache.
+
+TileCache's only support small tiles (around 32-64 squared).
+
+```ts
+import { generateTileCache } from 'recast-navigation';
+
+/* create a tile cache */
+const { success, navMesh, tileCache } = generateTileCache(positions, indices, {
+  /* ... */
+  tileSize: 16,
+});
+
+/* add a Box obstacle to the NavMesh */
+const position = { x: 0, y: 0, z: 0 };
+const extent = { x: 1, y: 1, z: 1 };
+const angle = 0;
+const boxObstacle = tileCache.addBoxObstacle(position, extent, angle);
+
+/* add a Cylinder obstacle to the NavMesh */
+const radius = 1;
+const height = 1;
+const cylinderObstacle = tileCache.addCylinderObstacle(
+  position,
+  radius,
+  height,
+  angle
+);
+
+/* update the NavMesh to reflect obstacle changes */
+tileCache.update(navMesh);
+
+/* remove the obstacles from the NavMesh */
+tileCache.removeObstacle(boxObstacle);
+tileCache.removeObstacle(cylinderObstacle);
+```
+
 ### Debugging
 
 You can use `getDebugNavMesh` to get a debug representation of the NavMesh.
@@ -246,7 +245,6 @@ import { Raw } from 'recast-navigation';
 const navMeshData = Raw.DetourNavMeshBuilder.createNavMeshData(/* ... */);
 ```
 
-The solo and tiled nav mesh generators in this library are adaptations of the `RecastDemo` examples: https://github.com/isaac-mason/recastnavigation/blob/main/RecastDemo/Source/Sample_SoloMesh.cpp
+The nav mesh and tile cache generators in this library are adaptations of the `RecastDemo` examples: https://github.com/isaac-mason/recastnavigation/blob/main/RecastDemo/Source/Sample_SoloMesh.cpp
 
-You can use the solo and tiled nav mesh generators in this library as the basis of a nav mesh generator suiting your requirements. See: https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-core/src/generators
-
+You can use the generators in this library as the basis of a nav mesh generator suiting your requirements. See: https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-core/src/generators

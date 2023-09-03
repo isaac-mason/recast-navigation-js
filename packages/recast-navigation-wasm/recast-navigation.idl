@@ -386,9 +386,9 @@ interface NavMesh {
     void NavMesh();
     void NavMesh(dtNavMesh navMesh);
 
-    boolean initSolo(NavMeshData navMeshData);    
+    boolean initSolo(UnsignedCharArray navMeshData);    
     boolean initTiled([Const] dtNavMeshParams params);
-    unsigned long addTile(NavMeshData navMeshData, long flags, unsigned long lastRef, UnsignedIntRef tileRef);
+    unsigned long addTile(UnsignedCharArray navMeshData, long flags, unsigned long lastRef, UnsignedIntRef tileRef);
     [Value] NavMeshRemoveTileResult removeTile(unsigned long ref);
     dtNavMesh getNavMesh();
     [Value] NavMeshCalcTileLocResult calcTileLoc([Const] float[] pos);
@@ -533,7 +533,7 @@ interface TileCache {
     void TileCache();
 
     boolean init([Const] dtTileCacheParams params, RecastLinearAllocator allocator, RecastFastLZCompressor compressor, [Ref] TileCacheMeshProcess meshProcess);
-    [Value] TileCacheAddTileResult addTile(TileCacheData data, octet flags);
+    [Value] TileCacheAddTileResult addTile(UnsignedCharArray data, octet flags);
     unsigned long buildNavMeshTile([Const] dtCompressedTileRef ref, NavMesh navMesh);
     unsigned long buildNavMeshTilesAt([Const] long tx, [Const] long ty, NavMesh navMesh);
     [Value] TileCacheUpdateResult update(NavMesh navMesh);
@@ -549,6 +549,10 @@ interface CrowdUtils {
     long getActiveAgentCount(dtCrowd crowd);
     boolean overOffMeshConnection(dtCrowd crowd, [Const] long idx);
     void agentTeleport(dtCrowd crowd, [Const] long idx, [Const] float[] destination, [Const] float[] halfExtents, dtQueryFilter filter);
+};
+
+enum dtTileFlags {
+    "dtTileFlags::DT_TILE_FREE_DATA"
 };
 
 interface Detour {
@@ -907,20 +911,17 @@ interface Recast {
     void freePolyMeshDetail(rcPolyMeshDetail dmesh);
 };
 
-interface NavMeshData {
-    attribute octet[] data;
-    attribute long size;
-};
-
 interface CreateNavMeshDataResult {
     attribute boolean success;
-    attribute NavMeshData navMeshData;
+    attribute UnsignedCharArray navMeshData;
 };
 
 interface DetourNavMeshBuilder {
     void DetourNavMeshBuilder();
 
-    void setSoloNavMeshCreateParams(dtNavMeshCreateParams navMeshCreateParams, rcPolyMesh polyMesh, rcPolyMeshDetail polyMeshDetail, rcConfig cfg);
+    void setPolyMeshCreateParams(dtNavMeshCreateParams navMeshCreateParams, rcPolyMesh polyMesh);
+
+    void setPolyMeshDetailCreateParams(dtNavMeshCreateParams navMeshCreateParams, rcPolyMeshDetail polyMeshDetail);
 
     void setOffMeshConCount(dtNavMeshCreateParams navMeshCreateParams, long n);
 
@@ -947,17 +948,10 @@ interface dtTileCacheLayerHeader {
     attribute octet maxy;
 };
 
-interface TileCacheData {
-    void TileCacheData();
-
-    attribute octet[] data;
-    attribute long size;
-};
-
 interface DetourTileCacheBuilder {
     void DetourTileCacheBuilder();
 
-    long buildTileCacheLayer(RecastFastLZCompressor comp, dtTileCacheLayerHeader header, [Const] UnsignedCharArray heights, [Const] UnsignedCharArray areas, [Const] UnsignedCharArray cons, TileCacheData tileCacheData);
+    long buildTileCacheLayer(RecastFastLZCompressor comp, dtTileCacheLayerHeader header, [Const] UnsignedCharArray heights, [Const] UnsignedCharArray areas, [Const] UnsignedCharArray cons, UnsignedCharArray tileCacheData);
 };
 
 interface rcChunkyTriMeshNode {
@@ -1027,75 +1021,75 @@ interface IntArray {
     void IntArray();
 
     attribute long[] data;
-    attribute unsigned long long size;
+    attribute long size;
     attribute boolean isView;
 
-    void resize(unsigned long long size);
-    void copy([Const] long[] data, unsigned long long size);
+    void resize(long size);
+    void copy([Const] long[] data, long size);
     void free();
 
-    long get(unsigned long long i);
-    void set(unsigned long long i, long value);
+    long get(long i);
+    void set(long i, long value);
 };
 
 interface UnsignedIntArray {
     void UnsignedIntArray();
 
     attribute unsigned long[] data;
-    attribute unsigned long long size;
+    attribute long size;
     attribute boolean isView;
 
-    void resize(unsigned long long size);
-    void copy([Const] unsigned long[] data, unsigned long long size);
+    void resize(long size);
+    void copy([Const] unsigned long[] data, long size);
     void free();
 
-    unsigned long get(unsigned long long i);
-    void set(unsigned long long i, unsigned long value);
+    unsigned long get(long i);
+    void set(long i, unsigned long value);
 };
 
 interface UnsignedCharArray {
     void UnsignedCharArray();
 
     attribute octet[] data;
-    attribute unsigned long long size;
+    attribute long size;
     attribute boolean isView;
 
-    void resize(unsigned long long size);
-    void copy([Const] octet[] data, unsigned long long size);
+    void resize(long size);
+    void copy([Const] octet[] data, long size);
     void free();
 
-    octet get(unsigned long long i);
-    void set(unsigned long long i, octet value);
+    octet get(long i);
+    void set(long i, octet value);
 };
 
 interface UnsignedShortArray {
     void UnsignedShortArray();
 
     attribute unsigned short[] data;
-    attribute unsigned long long size;
+    attribute long size;
     attribute boolean isView;
 
-    void resize(unsigned long long size);
-    void copy([Const] unsigned short[] data, unsigned long long size);
+    void resize(long size);
+    void copy([Const] unsigned short[] data, long size);
     void free();
 
-    unsigned short get(unsigned long long i);
-    void set(unsigned long long i, unsigned short value);
+    unsigned short get(long i);
+    void set(long i, unsigned short value);
 };
 
 interface FloatArray {
     void FloatArray();
 
     attribute float[] data;
-    attribute unsigned long long size;
+    attribute long size;
     attribute boolean isView;
 
-    void resize(unsigned long long size);
-    void copy([Const] float[] data, unsigned long long size);
+    void resize(long size);
+    void copy([Const] float[] data, long size);
     void free();
 
-    float get(unsigned long long i);
-    void set(unsigned long long i, float value);
+    float get(long i);
+    void set(long i, float value);
 };
 
 interface NavMeshImporterResult {

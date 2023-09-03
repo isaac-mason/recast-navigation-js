@@ -445,7 +445,7 @@ const App = () => {
       } else if (intermediates.type === 'tiled') {
         heightfields = intermediates.tileIntermediates
           .map((t) => t.heightfield)
-          .filter(Boolean);
+          .filter(Boolean) as RecastHeightfield[];
       }
     }
 

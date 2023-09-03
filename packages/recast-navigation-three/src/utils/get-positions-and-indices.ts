@@ -1,9 +1,3 @@
-import {
-  generateSoloNavMesh,
-  generateTiledNavMesh,
-  SoloNavMeshGeneratorConfig,
-  TiledNavMeshGeneratorConfig,
-} from '@recast-navigation/core';
 import { BufferAttribute, Mesh, Vector3 } from 'three';
 
 const tmpVec3 = new Vector3();
@@ -76,34 +70,4 @@ export const getPositionsAndIndices = (
   }
 
   return [Float32Array.from(mergedPositions), Uint32Array.from(mergedIndices)];
-};
-
-export const threeToSoloNavMesh = (
-  meshes: Mesh[],
-  navMeshGeneratorConfig: Partial<SoloNavMeshGeneratorConfig> = {},
-  keepIntermediates = false
-) => {
-  const [positions, indices] = getPositionsAndIndices(meshes);
-
-  return generateSoloNavMesh(
-    positions,
-    indices,
-    navMeshGeneratorConfig,
-    keepIntermediates
-  );
-};
-
-export const threeToTiledNavMesh = (
-  meshes: Mesh[],
-  navMeshGeneratorConfig: Partial<TiledNavMeshGeneratorConfig> = {},
-  keepIntermediates = false
-) => {
-  const [positions, indices] = getPositionsAndIndices(meshes);
-
-  return generateTiledNavMesh(
-    positions,
-    indices,
-    navMeshGeneratorConfig,
-    keepIntermediates
-  );
 };

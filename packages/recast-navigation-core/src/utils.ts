@@ -5,6 +5,10 @@ export type Vector3 = { x: number; y: number; z: number };
 
 export type Vector3Tuple = [number, number, number];
 
+export type Vector2 = { x: number; y: number };
+
+export type Vector2Tuple = [x: number, y: number];
+
 export const vec3 = {
   toRaw: ({ x, y, z }: Vector3, existing?: R.Vec3) => {
     if (existing) {

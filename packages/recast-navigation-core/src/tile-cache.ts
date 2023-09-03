@@ -176,7 +176,7 @@ export class TileCache {
   }
 
   addTile(
-    data: R.TileCacheData,
+    data: R.UnsignedCharArray,
     flags: number = Raw.Module.DT_COMPRESSEDTILE_FREE_DATA
   ): R.TileCacheAddTileResult {
     return this.raw.addTile(data, flags);

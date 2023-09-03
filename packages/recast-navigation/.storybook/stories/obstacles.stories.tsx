@@ -9,7 +9,7 @@ import {
   TileCache,
 } from '@recast-navigation/core';
 import React, { useEffect, useRef, useState } from 'react';
-import { threeToTiledNavMesh } from 'recast-navigation/three';
+import { threeToTileCache } from '@recast-navigation/three';
 import { Group, Mesh, MeshBasicMaterial, Object3D, Vector3 } from 'three';
 import { Debug } from '../common/debug';
 import { decorators } from '../decorators';
@@ -54,14 +54,13 @@ export const Obstacles = () => {
       }
     });
 
-    const { success, navMesh, tileCache } = threeToTiledNavMesh(meshes, {
+    const { success, navMesh, tileCache } = threeToTileCache(meshes, {
       ch: 0.05,
       cs: 0.1,
       tileSize: 32,
     });
 
-
-    if (!success) return
+    if (!success) return;
 
     let upToDate = false;
     while (!upToDate) {

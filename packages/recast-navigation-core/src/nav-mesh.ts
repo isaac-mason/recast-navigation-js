@@ -123,13 +123,46 @@ export class NavMeshStoreTileStateResult {
   }
 }
 
-export type NavMeshParams = {
+export type NavMeshParamsType = {
   orig: Vector3;
   tileWidth: number;
   tileHeight: number;
   maxTiles: number;
   maxPolys: number;
 };
+
+export class NavMeshParams {
+  constructor(public raw: R.dtNavMeshParams) {}
+
+  static create(params: NavMeshParamsType): NavMeshParams {
+    const raw = new Raw.Module.dtNavMeshParams();
+
+    raw.set_orig(0, params.orig.x);
+    raw.set_orig(1, params.orig.y);
+    raw.set_orig(2, params.orig.z);
+
+    raw.tileWidth = params.tileWidth;
+    raw.tileHeight = params.tileHeight;
+    raw.maxTiles = params.maxTiles;
+    raw.maxPolys = params.maxPolys;
+
+    return new NavMeshParams(raw);
+  }
+
+  clone(): NavMeshParams {
+    return NavMeshParams.create({
+      orig: {
+        x: this.raw.get_orig(0),
+        y: this.raw.get_orig(1),
+        z: this.raw.get_orig(2),
+      },
+      tileWidth: this.raw.tileWidth,
+      tileHeight: this.raw.tileHeight,
+      maxTiles: this.raw.maxTiles,
+      maxPolys: this.raw.maxPolys,
+    });
+  }
+}
 
 export class NavMesh {
   raw: R.NavMesh;
@@ -144,7 +177,7 @@ export class NavMesh {
    * @param navMeshData the nav mesh data
    * @returns the status of the operation
    */
-  initSolo(navMeshData: R.NavMeshData): boolean {
+  initSolo(navMeshData: R.UnsignedCharArray): boolean {
     return this.raw.initSolo(navMeshData);
   }
 
@@ -153,8 +186,8 @@ export class NavMesh {
    * @param params parameters for the NavMesh
    * @returns the status of the operation
    */
-  initTiled(params: R.dtNavMeshParams): boolean {
-    return this.raw.initTiled(params);
+  initTiled(params: NavMeshParams): boolean {
+    return this.raw.initTiled(params.raw);
   }
 
   /**
@@ -164,7 +197,7 @@ export class NavMesh {
    * @param lastRef
    * @returns the status of the operation and the reference of the added tile
    */
-  addTile(navMeshData: R.NavMeshData, flags: number, lastRef: number) {
+  addTile(navMeshData: R.UnsignedCharArray, flags: number, lastRef: number) {
     const tileRef = new Raw.UnsignedIntRef();
 
     const status = this.raw.addTile(navMeshData, flags, lastRef, tileRef);

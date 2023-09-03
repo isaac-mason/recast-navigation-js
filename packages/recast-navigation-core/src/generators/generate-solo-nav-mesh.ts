@@ -8,7 +8,7 @@ import {
   RecastHeightfield,
   recastConfigDefaults,
 } from '../recast';
-import { getVertsAndTris } from './common';
+import { getBoundingBox } from './common';
 
 export type SoloNavMeshGeneratorConfig = Omit<RecastConfigType, 'tileSize'>;
 
@@ -80,7 +80,13 @@ export const generateSoloNavMesh = (
     };
   };
 
-  const { verts, nVerts, tris, nTris, bbMin, bbMax } = getVertsAndTris(
+  const verts = positions as number[]
+  const nVerts = indices.length;
+
+  const tris = indices as number[];
+  const nTris = indices.length / 3;
+
+  const { bbMin, bbMax } = getBoundingBox(
     positions,
     indices
   );
@@ -310,18 +316,24 @@ export const generateSoloNavMesh = (
     }
   }
 
-  const detourNavMeshCreateParams = new Raw.dtNavMeshCreateParams();
+  const navMeshCreateParams = new Raw.dtNavMeshCreateParams();
 
-  Raw.DetourNavMeshBuilder.setSoloNavMeshCreateParams(
-    detourNavMeshCreateParams,
-    polyMesh,
-    polyMeshDetail,
-    config
-  );
-  Raw.DetourNavMeshBuilder.setOffMeshConCount(detourNavMeshCreateParams, 0);
+  Raw.DetourNavMeshBuilder.setPolyMeshCreateParams(navMeshCreateParams, polyMesh)
+    Raw.DetourNavMeshBuilder.setPolyMeshDetailCreateParams(navMeshCreateParams, polyMeshDetail)
+
+    navMeshCreateParams.walkableHeight = config.walkableHeight;
+    navMeshCreateParams.walkableRadius = config.walkableRadius;
+    navMeshCreateParams.walkableClimb = config.walkableClimb;
+
+    navMeshCreateParams.cs = config.cs;
+    navMeshCreateParams.ch = config.ch;
+
+    navMeshCreateParams.buildBvTree = true;
+
+  Raw.DetourNavMeshBuilder.setOffMeshConCount(navMeshCreateParams, 0);
 
   const createNavMeshDataResult = Raw.DetourNavMeshBuilder.createNavMeshData(
-    detourNavMeshCreateParams
+    navMeshCreateParams
   );
 
   if (!createNavMeshDataResult.success) {

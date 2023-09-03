@@ -18,12 +18,10 @@ class dtNavMeshQuery;
 class dtNavMesh;
 class MeshLoader;
 class NavMesh;
-struct NavMeshData;
 struct rcPolyMesh;
 class rcPolyMeshDetail;
 struct rcConfig;
 struct NavMeshIntermediates;
-struct TileCacheData;
 
 template <typename T>
 struct PrimitiveRefTemplate
@@ -59,7 +57,7 @@ template <typename T>
 struct ArrayWrapperTemplate
 {
     T *data;
-    size_t size;
+    int size;
     bool isView;
 
     void free()
@@ -73,7 +71,7 @@ struct ArrayWrapperTemplate
         this->data = 0;
     }
 
-    void copy(const T *data, size_t size)
+    void copy(const T *data, int size)
     {
         free();
         this->data = new T[size];
@@ -89,7 +87,7 @@ struct ArrayWrapperTemplate
         this->isView = true;
     }
 
-    void resize(size_t size)
+    void resize(int size)
     {
         free();
         data = new T[size];
@@ -98,12 +96,12 @@ struct ArrayWrapperTemplate
         this->isView = false;
     }
 
-    T get(size_t index)
+    T get(int index)
     {
         return data[index];
     }
 
-    void set(size_t index, T value)
+    void set(int index, T value)
     {
         data[index] = value;
     }
@@ -303,7 +301,7 @@ public:
 
     bool init(const dtTileCacheParams *params, RecastLinearAllocator *allocator, RecastFastLZCompressor *compressor, TileCacheMeshProcessAbstract &meshProcess);
 
-    TileCacheAddTileResult addTile(TileCacheData *data, unsigned char flags);
+    TileCacheAddTileResult addTile(UnsignedCharArray *data, unsigned char flags);
 
     dtStatus buildNavMeshTile(const dtCompressedTileRef *ref, NavMesh *navMesh);
 
@@ -365,18 +363,21 @@ class NavMesh
 public:
     dtNavMesh *m_navMesh;
 
-    NavMesh() : m_navMesh(0) {}
+    NavMesh()
+    {
+        m_navMesh = dtAllocNavMesh();
+    }
 
     NavMesh(dtNavMesh *navMesh)
     {
         m_navMesh = navMesh;
     }
 
-    bool initSolo(NavMeshData *navMeshData);
+    bool initSolo(UnsignedCharArray *navMeshData);
 
     bool initTiled(const dtNavMeshParams *params);
 
-    dtStatus addTile(NavMeshData *navMeshData, int flags, dtTileRef lastRef, UnsignedIntRef *tileRef);
+    dtStatus addTile(UnsignedCharArray *navMeshData, int flags, dtTileRef lastRef, UnsignedIntRef *tileRef);
 
     NavMeshRemoveTileResult removeTile(dtTileRef ref);
 
@@ -610,22 +611,16 @@ public:
     }
 };
 
-struct NavMeshData
-{
-    unsigned char *data;
-    int size;
-};
-
 struct CreateNavMeshDataResult
 {
     bool success;
-    NavMeshData *navMeshData;
+    UnsignedCharArray *navMeshData;
 };
 
 class DetourNavMeshBuilder
 {
 public:
-    void setSoloNavMeshCreateParams(dtNavMeshCreateParams *navMeshCreateParams, rcPolyMesh *polyMesh, rcPolyMeshDetail *polyMeshDetail, rcConfig *cfg)
+    void setPolyMeshCreateParams(dtNavMeshCreateParams *navMeshCreateParams, rcPolyMesh *polyMesh)
     {
         navMeshCreateParams->verts = polyMesh->verts;
         navMeshCreateParams->vertCount = polyMesh->nverts;
@@ -635,31 +630,17 @@ public:
         navMeshCreateParams->polyCount = polyMesh->npolys;
         navMeshCreateParams->nvp = polyMesh->nvp;
 
+        rcVcopy(navMeshCreateParams->bmin, polyMesh->bmin);
+        rcVcopy(navMeshCreateParams->bmax, polyMesh->bmax);
+    }
+
+    void setPolyMeshDetailCreateParams(dtNavMeshCreateParams *navMeshCreateParams, rcPolyMeshDetail *polyMeshDetail)
+    {
         navMeshCreateParams->detailMeshes = polyMeshDetail->meshes;
         navMeshCreateParams->detailVerts = polyMeshDetail->verts;
         navMeshCreateParams->detailVertsCount = polyMeshDetail->nverts;
         navMeshCreateParams->detailTris = polyMeshDetail->tris;
         navMeshCreateParams->detailTriCount = polyMeshDetail->ntris;
-
-        navMeshCreateParams->offMeshConVerts = 0;
-        navMeshCreateParams->offMeshConRad = 0;
-        navMeshCreateParams->offMeshConDir = 0;
-        navMeshCreateParams->offMeshConAreas = 0;
-        navMeshCreateParams->offMeshConFlags = 0;
-        navMeshCreateParams->offMeshConUserID = 0;
-        navMeshCreateParams->offMeshConCount = 0;
-
-        navMeshCreateParams->walkableHeight = cfg->walkableHeight;
-        navMeshCreateParams->walkableRadius = cfg->walkableRadius;
-        navMeshCreateParams->walkableClimb = cfg->walkableClimb;
-
-        rcVcopy(navMeshCreateParams->bmin, polyMesh->bmin);
-        rcVcopy(navMeshCreateParams->bmax, polyMesh->bmax);
-
-        navMeshCreateParams->cs = cfg->cs;
-        navMeshCreateParams->ch = cfg->ch;
-
-        navMeshCreateParams->buildBvTree = true;
     }
 
     void setOffMeshConCount(dtNavMeshCreateParams *navMeshCreateParams, size_t n)
@@ -685,7 +666,7 @@ public:
     {
         CreateNavMeshDataResult *result = new CreateNavMeshDataResult;
 
-        NavMeshData *navMeshData = new NavMeshData;
+        UnsignedCharArray *navMeshData = new UnsignedCharArray;
         result->navMeshData = navMeshData;
 
         if (!dtCreateNavMeshData(&params, &navMeshData->data, &navMeshData->size))
@@ -1003,12 +984,6 @@ public:
     }
 };
 
-struct TileCacheData
-{
-    unsigned char *data;
-    int size;
-};
-
 class DetourTileCacheBuilder
 {
 public:
@@ -1018,7 +993,7 @@ public:
         const UnsignedCharArray *heights,
         const UnsignedCharArray *areas,
         const UnsignedCharArray *cons,
-        TileCacheData *tileCacheData)
+        UnsignedCharArray *tileCacheData)
     {
         return dtBuildTileCacheLayer(comp, header, heights->data, areas->data, cons->data, &tileCacheData->data, &tileCacheData->size);
     }

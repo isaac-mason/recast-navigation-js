@@ -15,13 +15,13 @@ const instances = [
 ] as const satisfies readonly ModuleKey[];
 
 const classes = [
+  'rcConfig',
   'rcContext',
   'dtNavMeshParams',
   'dtNavMeshCreateParams',
   'RecastLinearAllocator',
   'RecastFastLZCompressor',
   'rcChunkyTriMesh',
-  'TileCacheData',
   'dtTileCacheParams',
   'dtTileCacheLayerHeader',
   'Vec3',

@@ -9,13 +9,13 @@ import { threeToSoloNavMesh } from '@recast-navigation/three';
 import { button, useControls } from 'leva';
 import React, { useState } from 'react';
 import { Group, Mesh, MeshBasicMaterial } from 'three';
-import { Debug } from '../../common/debug';
-import { NavTestEnvirionment } from '../../common/nav-test-environment';
-import { useNavMeshConfig } from '../../common/use-nav-mesh-config';
-import { decorators } from '../../decorators';
+import { Debug } from '../common/debug';
+import { NavTestEnvirionment } from '../common/nav-test-environment';
+import { useNavMeshConfig } from '../common/use-nav-mesh-config';
+import { decorators } from '../decorators';
 
 export default {
-  title: 'NavMesh / Importing And Exporting',
+  title: 'Utilities / Importing And Exporting',
   decorators,
 };
 

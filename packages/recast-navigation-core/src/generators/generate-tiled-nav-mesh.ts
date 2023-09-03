@@ -1,62 +1,49 @@
-import { NavMesh } from '../nav-mesh';
+import R from '@recast-navigation/wasm';
+import { NavMesh, NavMeshParams } from '../nav-mesh';
 import { Raw } from '../raw';
-import type R from '../raw-module';
 import {
   RecastCompactHeightfield,
   RecastConfig,
   RecastConfigType,
+  RecastContourSet,
   RecastHeightfield,
-  RecastHeightfieldLayerSet,
   recastConfigDefaults,
 } from '../recast';
-import { TileCache, TileCacheMeshProcess } from '../tile-cache';
-import { getVertsAndTris } from './common';
+import { Pretty } from '../types';
+import { Vector3Tuple, vec3 } from '../utils';
+import { dtIlog2, dtNextPow2, getBoundingBox } from './common';
 
-export type TiledNavMeshGeneratorConfig = RecastConfigType & {
-  /**
-   * How many layers (or "floors") each navmesh tile is expected to have.
-   */
-  expectedLayersPerTile: number;
-
-  /**
-   * The max number of obstacles
-   */
-  maxObstacles: number;
-};
+export type TiledNavMeshGeneratorConfig = Pretty<RecastConfigType>;
 
 export const tiledNavMeshGeneratorConfigDefaults: TiledNavMeshGeneratorConfig =
   {
     ...recastConfigDefaults,
-    tileSize: 32,
-    expectedLayersPerTile: 4,
-    maxObstacles: 128,
   };
 
 export type TiledNavMeshGeneratorIntermediates = {
   type: 'tiled';
+  buildContext?: R.rcContext;
   chunkyTriMesh?: R.rcChunkyTriMesh;
   tileIntermediates: {
     tx: number;
     ty: number;
-    heightfield: RecastHeightfield;
-    heightfieldLayerSet: RecastHeightfieldLayerSet;
-    compactHeightfield: RecastCompactHeightfield;
+    heightfield?: RecastHeightfield;
+    compactHeightfield?: RecastCompactHeightfield;
+    contourSet?: RecastContourSet;
   }[];
 };
 
 type TiledNavMeshGeneratorSuccessResult = {
-  tileCache: TileCache;
   navMesh: NavMesh;
   success: true;
   intermediates?: TiledNavMeshGeneratorIntermediates;
 };
 
 type TiledNavMeshGeneratorFailResult = {
-  tileCache: undefined;
   navMesh: undefined;
   success: false;
-  error: string;
   intermediates?: TiledNavMeshGeneratorIntermediates;
+  error: string;
 };
 
 export type TiledNavMeshGeneratorResult =
@@ -64,10 +51,10 @@ export type TiledNavMeshGeneratorResult =
   | TiledNavMeshGeneratorFailResult;
 
 /**
- * Builds a Tiled NavMesh from the given positions and indices.
+ * Builds a Tiled NavMesh
  * @param positions a flat array of positions
  * @param indices a flat array of indices
- * @param navMeshConfig optional configuration for the NavMesh
+ * @param navMeshGeneratorConfig optional configuration for the NavMesh generator
  * @param keepIntermediates if true intermediates will be returned
  */
 export const generateTiledNavMesh = (
@@ -76,150 +63,122 @@ export const generateTiledNavMesh = (
   navMeshGeneratorConfig: Partial<TiledNavMeshGeneratorConfig> = {},
   keepIntermediates = false
 ): TiledNavMeshGeneratorResult => {
-  let intermediates: TiledNavMeshGeneratorIntermediates = {
+  const buildContext = new Raw.rcContext();
+
+  const intermediates: TiledNavMeshGeneratorIntermediates = {
     type: 'tiled',
+    buildContext: buildContext,
     chunkyTriMesh: undefined,
     tileIntermediates: [],
   };
 
+  const freeIntermediates = () => {
+    for (let i = 0; i < intermediates.tileIntermediates.length; i++) {
+      const tileIntermediate = intermediates.tileIntermediates[i];
+
+      if (tileIntermediate.compactHeightfield) {
+        Raw.Recast.freeCompactHeightfield(
+          tileIntermediate.compactHeightfield.raw
+        );
+      }
+
+      if (tileIntermediate.heightfield) {
+        Raw.Recast.freeHeightfield(tileIntermediate.heightfield.raw);
+      }
+
+      if (tileIntermediate.contourSet) {
+        Raw.Recast.freeContourSet(tileIntermediate.contourSet.raw);
+      }
+    }
+  };
+
   const fail = (error: string): TiledNavMeshGeneratorFailResult => {
     if (!keepIntermediates) {
-      for (let i = 0; i < intermediates.tileIntermediates.length; i++) {
-        const tileIntermediate = intermediates.tileIntermediates[i];
-
-        if (tileIntermediate.heightfieldLayerSet) {
-          Raw.Recast.freeHeightfieldLayerSet(
-            tileIntermediate.heightfieldLayerSet.raw
-          );
-        }
-
-        if (tileIntermediate.compactHeightfield) {
-          Raw.Recast.freeCompactHeightfield(
-            tileIntermediate.compactHeightfield.raw
-          );
-        }
-
-        if (tileIntermediate.heightfield) {
-          Raw.Recast.freeHeightfield(tileIntermediate.heightfield.raw);
-        }
-      }
+      freeIntermediates();
     }
 
     return {
       success: false,
       navMesh: undefined,
-      tileCache: undefined,
       intermediates: keepIntermediates ? intermediates : undefined,
       error,
     };
   };
 
-  const { verts, nVerts, tris, nTris, bbMin, bbMax } = getVertsAndTris(
-    positions,
-    indices
-  );
+  const navMesh = new NavMesh();
 
-  const vertsArray = new Raw.Arrays.FloatArray();
-  vertsArray.copy(verts, verts.length);
-
-  const trisArray = new Raw.Arrays.IntArray();
-  trisArray.copy(tris, tris.length);
-
-  const { expectedLayersPerTile, maxObstacles, ...recastConfig } = {
+  //
+  // Initialize build config.
+  //
+  const recastConfig = RecastConfig.create({
     ...tiledNavMeshGeneratorConfigDefaults,
     ...navMeshGeneratorConfig,
-  };
+  });
+  const { raw: config } = recastConfig;
 
-  //
-  // Step 1. Initialize build config.
-  //
-  const { raw: config } = RecastConfig.create(recastConfig);
+  /* get input bounding box */
+  const { bbMin, bbMax } = getBoundingBox(positions, indices);
 
-  config.minRegionArea = config.minRegionArea * config.minRegionArea; // Note: area = size*size
-  config.mergeRegionArea = config.mergeRegionArea * config.mergeRegionArea; // Note: area = size*size
-  config.detailSampleDist =
-    config.detailSampleDist < 0.9 ? 0 : config.cs * config.detailSampleDist;
-  config.detailSampleMaxError = config.ch * config.detailSampleMaxError;
-
+  /* grid size */
   const gridSize = Raw.Recast.calcGridSize(bbMin, bbMax, config.cs);
   config.width = gridSize.width;
   config.height = gridSize.height;
 
-  const tileCache = new TileCache();
-  const navMesh = new NavMesh();
-
-  const tileSize = Math.round(config.tileSize);
-  const tileWidth = Math.floor((config.width + tileSize - 1) / tileSize);
-  const tileHeight = Math.floor((config.height + tileSize - 1) / tileSize);
-
-  // Generation params
+  config.minRegionArea = config.minRegionArea * config.minRegionArea; // Note: area = size*size
+  config.mergeRegionArea = config.mergeRegionArea * config.mergeRegionArea; // Note: area = size*size
+  config.tileSize = Math.floor(config.tileSize);
   config.borderSize = config.walkableRadius + 3; // Reserve enough padding.
   config.width = config.tileSize + config.borderSize * 2;
   config.height = config.tileSize + config.borderSize * 2;
+  config.detailSampleDist =
+    config.detailSampleDist < 0.9 ? 0 : config.cs * config.detailSampleDist;
+  config.detailSampleMaxError = config.ch * config.detailSampleMaxError;
 
-  // Tile cache params
-  const tileCacheParams = new Raw.dtTileCacheParams();
-  tileCacheParams.set_orig(0, bbMin[0]);
-  tileCacheParams.set_orig(1, bbMin[1]);
-  tileCacheParams.set_orig(2, bbMin[2]);
-  tileCacheParams.cs = config.cs;
-  tileCacheParams.ch = config.ch;
-  tileCacheParams.width = config.tileSize;
-  tileCacheParams.height = config.tileSize;
-  tileCacheParams.walkableHeight = config.walkableHeight;
-  tileCacheParams.walkableRadius = config.walkableRadius;
-  tileCacheParams.walkableClimb = config.walkableClimb;
-  tileCacheParams.maxSimplificationError = config.maxSimplificationError;
-  tileCacheParams.maxTiles = tileWidth * tileHeight * expectedLayersPerTile;
-  tileCacheParams.maxObstacles = maxObstacles;
+  // tile size
+  const tileSize = Math.floor(config.tileSize);
+  const tileWidth = Math.floor((gridSize.width + tileSize - 1) / tileSize);
+  const tileHeight = Math.floor((gridSize.height + tileSize - 1) / tileSize);
+  const tcs = config.tileSize * config.cs;
 
-  const allocator = new Raw.RecastLinearAllocator(32000);
-  const compressor = new Raw.RecastFastLZCompressor();
+  /* verts */
+  const verts = positions as number[];
+  const nVerts = indices.length;
+  const vertsArray = new Raw.Arrays.FloatArray();
+  vertsArray.copy(verts, verts.length);
 
-  const meshProcess = new TileCacheMeshProcess(
-    (navMeshCreateParams, polyAreas, polyFlags) => {
-      for (let i = 0; i < navMeshCreateParams.polyCount; ++i) {
-        polyAreas.set_data(i, 0);
-        polyFlags.set_data(i, 1);
-      }
+  /* tris */
+  const tris = indices as number[];
+  const nTris = indices.length / 3;
+  const trisArray = new Raw.Arrays.IntArray();
+  trisArray.copy(tris, tris.length);
 
-      Raw.DetourNavMeshBuilder.setOffMeshConCount(navMeshCreateParams, 0);
-    }
-  );
-
-  if (!tileCache.init(tileCacheParams, allocator, compressor, meshProcess)) {
-    return fail('Failed to initialize tile cache');
-  }
-
-  const navMeshParams = new Raw.dtNavMeshParams();
-
-  navMeshParams.set_orig(0, bbMin[0]);
-  navMeshParams.set_orig(1, bbMin[1]);
-  navMeshParams.set_orig(2, bbMin[2]);
-
-  navMeshParams.tileWidth = config.tileSize * config.cs;
-  navMeshParams.tileHeight = config.tileSize * config.cs;
+  /* Create dtNavMeshParams, initialise nav mesh for tiled use */
+  const orig = vec3.fromArray(bbMin);
 
   // Max tiles and max polys affect how the tile IDs are caculated.
   // There are 22 bits available for identifying a tile and a polygon.
   let tileBits = Math.min(
-    Math.round(
-      dtIlog2(dtNextPow2(tileWidth * tileHeight * expectedLayersPerTile))
-    ),
+    Math.floor(dtIlog2(dtNextPow2(tileWidth * tileHeight))),
     14
   );
-  if (tileBits > 14) {
-    tileBits = 14;
-  }
-  let polyBits = 22 - tileBits;
+  if (tileBits > 14) tileBits = 14;
+  const polyBits = 22 - tileBits;
+  const maxTiles = 1 << tileBits;
+  const maxPolysPerTile = 1 << polyBits;
 
-  navMeshParams.maxTiles = 1 << tileBits;
-  navMeshParams.maxPolys = 1 << polyBits;
+  const navMeshParams = NavMeshParams.create({
+    orig,
+    tileWidth: config.tileSize * config.cs,
+    tileHeight: config.tileSize * config.cs,
+    maxTiles,
+    maxPolys: maxPolysPerTile,
+  });
 
   if (!navMesh.initTiled(navMeshParams)) {
-    return fail('Failed to initialize tiled navmesh');
+    return fail('Could not init nav mesh for tiled use');
   }
 
+  /* create chunky tri mesh */
   const chunkyTriMesh = new Raw.rcChunkyTriMesh();
   intermediates.chunkyTriMesh = chunkyTriMesh;
 
@@ -235,55 +194,119 @@ export const generateTiledNavMesh = (
     return fail('Failed to build chunky triangle mesh');
   }
 
-  const rasterizeTileLayers = (tx: number, ty: number) => {
-    const rcContext = new Raw.rcContext();
+  /** @internal */
+  const buildTileMesh = (
+    tx: number,
+    ty: number,
+    bmin: Vector3Tuple,
+    bmax: Vector3Tuple
+  ):
+    | { success: true; data?: R.UnsignedCharArray }
+    | { success: false; error: string } => {
+    const failTileMesh = (error: string) => {
+      buildContext.log(Raw.Module.RC_LOG_ERROR, error);
 
-    // Tile bounds
-    const tcs = config.tileSize * config.cs;
+      return { success: false as const, error };
+    };
 
-    const { raw: tileConfig } = new RecastConfig(config).clone();
+    const tileIntermediate: {
+      tx: number;
+      ty: number;
+      heightfield?: RecastHeightfield;
+      compactHeightfield?: RecastCompactHeightfield;
+      contourSet?: RecastContourSet;
+    } = { tx, ty };
 
-    const tileBmin = [bbMin[0] + tx * tcs, bbMin[1], bbMin[2] + ty * tcs];
+    intermediates.tileIntermediates.push(tileIntermediate);
 
-    const tileBmax = [
-      bbMin[0] + (tx + 1) * tcs,
-      bbMax[1],
-      bbMin[2] + (ty + 1) * tcs,
-    ];
+    const { raw: tileConfig } = recastConfig.clone();
 
-    tileBmin[0] -= tileConfig.borderSize * tileConfig.cs;
-    tileBmin[2] -= tileConfig.borderSize * tileConfig.cs;
-    tileBmax[0] += tileConfig.borderSize * tileConfig.cs;
-    tileBmax[2] += tileConfig.borderSize * tileConfig.cs;
+    // Expand the heighfield bounding box by border size to find the extents of geometry we need to build this tile.
+    //
+    // This is done in order to make sure that the navmesh tiles connect correctly at the borders,
+    // and the obstacles close to the border work correctly with the dilation process.
+    // No polygons (or contours) will be created on the border area.
+    //
+    // IMPORTANT!
+    //
+    //   :''''''''':
+    //   : +-----+ :
+    //   : |     | :
+    //   : |     |<--- tile to build
+    //   : |     | :
+    //   : +-----+ :<-- geometry needed
+    //   :.........:
+    //
+    // You should use this bounding box to query your input geometry.
+    //
+    // For example if you build a navmesh for terrain, and want the navmesh tiles to match the terrain tile size
+    // you will need to pass in data from neighbour terrain tiles too! In a simple case, just pass in all the 8 neighbours,
+    // or use the bounding box below to only pass in a sliver of each of the 8 neighbours.
 
-    tileConfig.set_bmin(0, tileBmin[0]);
-    tileConfig.set_bmin(1, tileBmin[1]);
-    tileConfig.set_bmin(2, tileBmin[2]);
+    const tileBoundsMin = [...bmin];
+    const tileBoundsMax = [...bmax];
 
-    tileConfig.set_bmax(0, tileBmax[0]);
-    tileConfig.set_bmax(1, tileBmax[1]);
-    tileConfig.set_bmax(2, tileBmax[2]);
+    tileBoundsMin[0] -= tileConfig.borderSize * tileConfig.cs;
+    tileBoundsMin[2] -= tileConfig.borderSize * tileConfig.cs;
+
+    tileBoundsMax[0] += tileConfig.borderSize * tileConfig.cs;
+    tileBoundsMax[2] += tileConfig.borderSize * tileConfig.cs;
+
+    tileConfig.set_bmin(0, tileBoundsMin[0]);
+    tileConfig.set_bmin(1, tileBoundsMin[1]);
+    tileConfig.set_bmin(2, tileBoundsMin[2]);
+
+    tileConfig.set_bmax(0, tileBoundsMax[0]);
+    tileConfig.set_bmax(1, tileBoundsMax[1]);
+    tileConfig.set_bmax(2, tileBoundsMax[2]);
+
+    // Reset build timer
+    buildContext.resetTimers();
+
+    // Start the build process
+    buildContext.startTimer(Raw.Module.RC_TIMER_TOTAL);
+
+    buildContext.log(Raw.Module.RC_LOG_PROGRESS, 'Building navigation:');
+    buildContext.log(
+      Raw.Module.RC_LOG_PROGRESS,
+      ` - ${config.width} x ${config.height} cells`
+    );
+    buildContext.log(
+      Raw.Module.RC_LOG_PROGRESS,
+      ` - ${nVerts / 1000}fK verts, ${nTris / 1000}K tris`
+    );
 
     // Allocate voxel heightfield where we rasterize our input data to.
     const heightfield = Raw.Recast.allocHeightfield();
+    if (!heightfield) {
+      return fail('Could not allocate heightfield');
+    }
+
+    tileIntermediate.heightfield = new RecastHeightfield(heightfield);
 
     if (
       !Raw.Recast.createHeightfield(
-        rcContext,
+        buildContext,
         heightfield,
         tileConfig.width,
         tileConfig.height,
-        tileBmin,
-        tileBmax,
+        tileBoundsMin,
+        tileBoundsMax,
         tileConfig.cs,
         tileConfig.ch
       )
     ) {
-      return { n: 0 };
+      return failTileMesh('Could not create heightfield');
     }
 
-    const tbmin = [tileBmin[0], tileBmin[2]];
-    const tbmax = [tileBmax[0], tileBmax[2]];
+    // Allocate array that can hold triangle flags.
+    // If you have multiple meshes you need to process, allocate
+    // and array which can hold the max number of triangles you need to process.
+    const triAreas = new Raw.Arrays.UnsignedCharArray();
+    triAreas.resize(chunkyTriMesh.maxTrisPerChunk);
+
+    const tbmin = [tileBoundsMin[0], tileBoundsMin[2]];
+    const tbmax = [tileBoundsMax[0], tileBoundsMax[2]];
 
     // TODO: Make grow when returning too many items.
     const maxChunkIds = 512;
@@ -299,7 +322,7 @@ export const generateTiledNavMesh = (
     );
 
     if (nChunksOverlapping === 0) {
-      return { n: 0 };
+      return { success: true };
     }
 
     for (let i = 0; i < nChunksOverlapping; ++i) {
@@ -319,7 +342,7 @@ export const generateTiledNavMesh = (
       // If your input data is multiple meshes, you can transform them here, calculate
       // the are type for each of the meshes and rasterize them.
       Raw.Recast.markWalkableTriangles(
-        rcContext,
+        buildContext,
         tileConfig.walkableSlopeAngle,
         vertsArray,
         nVerts,
@@ -329,7 +352,7 @@ export const generateTiledNavMesh = (
       );
 
       const success = Raw.Recast.rasterizeTriangles(
-        rcContext,
+        buildContext,
         vertsArray,
         nVerts,
         nodeTrisArray,
@@ -342,7 +365,7 @@ export const generateTiledNavMesh = (
       triAreasArray.free();
 
       if (!success) {
-        return { n: 0 };
+        return failTileMesh('Could not rasterize triangles');
       }
     }
 
@@ -350,208 +373,234 @@ export const generateTiledNavMesh = (
     // remove unwanted overhangs caused by the conservative rasterization
     // as well as filter spans where the character cannot possibly stand.
     Raw.Recast.filterLowHangingWalkableObstacles(
-      rcContext,
-      config.walkableClimb,
+      buildContext,
+      tileConfig.walkableClimb,
       heightfield
     );
     Raw.Recast.filterLedgeSpans(
-      rcContext,
-      config.walkableHeight,
-      config.walkableClimb,
+      buildContext,
+      tileConfig.walkableHeight,
+      tileConfig.walkableClimb,
       heightfield
     );
     Raw.Recast.filterWalkableLowHeightSpans(
-      rcContext,
-      config.walkableHeight,
+      buildContext,
+      tileConfig.walkableHeight,
       heightfield
     );
 
+    // Compact the heightfield so that it is faster to handle from now on.
+    // This will result more cache coherent data as well as the neighbours
+    // between walkable cells will be calculated.
     const compactHeightfield = Raw.Recast.allocCompactHeightfield();
+
+    if (Raw.isNull(compactHeightfield)) {
+      return failTileMesh('Could not allocate compact heightfield');
+    }
+
+    tileIntermediate.compactHeightfield = new RecastCompactHeightfield(
+      compactHeightfield
+    );
+
     if (
       !Raw.Recast.buildCompactHeightfield(
-        rcContext,
-        config.walkableHeight,
-        config.walkableClimb,
+        buildContext,
+        tileConfig.walkableHeight,
+        tileConfig.walkableClimb,
         heightfield,
         compactHeightfield
       )
     ) {
-      return { n: 0 };
+      return failTileMesh('Could not build compact heightfield');
     }
 
     // Erode the walkable area by agent radius
     if (
       !Raw.Recast.erodeWalkableArea(
-        rcContext,
-        config.walkableRadius,
+        buildContext,
+        tileConfig.walkableRadius,
         compactHeightfield
       )
     ) {
-      return { n: 0 };
+      return failTileMesh('Could not erode walkable area');
     }
 
-    const heightfieldLayerSet = Raw.Recast.allocHeightfieldLayerSet();
+    // (Optional) Mark areas
+    // Raw.Recast.markConvexPolyArea(...)
+
+    // Prepare for region partitioning, by calculating Distance field along the walkable surface.
+    if (!Raw.Recast.buildDistanceField(buildContext, compactHeightfield)) {
+      return failTileMesh('Failed to build distance field');
+    }
+
+    // Partition the walkable surface into simple regions without holes.
     if (
-      !Raw.Recast.buildHeightfieldLayers(
-        rcContext,
+      !Raw.Recast.buildRegions(
+        buildContext,
         compactHeightfield,
-        config.borderSize,
-        config.walkableHeight,
-        heightfieldLayerSet
+        tileConfig.borderSize,
+        tileConfig.minRegionArea,
+        tileConfig.mergeRegionArea
       )
     ) {
-      return { n: 0 };
+      return failTileMesh('Failed to build regions');
     }
 
-    const tiles: R.TileCacheData[] = [];
+    //
+    // Trace and simplify region contours.
+    //
+    const contourSet = Raw.Recast.allocContourSet();
+    if (Raw.isNull(contourSet)) {
+      return failTileMesh('Failed to allocate contour set');
+    }
 
-    for (let i = 0; i < heightfieldLayerSet.nlayers; i++) {
-      const tile = new Raw.TileCacheData();
-      const heightfieldLayer = heightfieldLayerSet.get_layers(i);
+    tileIntermediate.contourSet = new RecastContourSet(contourSet);
 
-      // Store header
-      const header = new Raw.dtTileCacheLayerHeader();
-      header.magic = Raw.Detour.TILECACHE_MAGIC;
-      header.version = Raw.Detour.TILECACHE_VERSION;
+    if (
+      !Raw.Recast.buildContours(
+        buildContext,
+        compactHeightfield,
+        tileConfig.maxSimplificationError,
+        tileConfig.maxEdgeLen,
+        contourSet,
+        Raw.Module.RC_CONTOUR_TESS_WALL_EDGES
+      )
+    ) {
+      return failTileMesh('Failed to create contours');
+    }
 
-      // Tile layer location in the navmesh
-      header.tx = tx;
-      header.ty = ty;
-      header.tlayer = i;
+    //
+    // Build polygons mesh from contours.
+    //
+    const polyMesh = Raw.Recast.allocPolyMesh();
+    if (Raw.isNull(polyMesh)) {
+      return failTileMesh('Failed to allocate poly mesh');
+    }
 
-      header.set_bmin(0, heightfieldLayer.get_bmin(0));
-      header.set_bmin(1, heightfieldLayer.get_bmin(1));
-      header.set_bmin(2, heightfieldLayer.get_bmin(2));
+    if (
+      !Raw.Recast.buildPolyMesh(
+        buildContext,
+        contourSet,
+        tileConfig.maxVertsPerPoly,
+        polyMesh
+      )
+    ) {
+      return failTileMesh('Failed to triangulate contours');
+    }
 
-      header.set_bmax(0, heightfieldLayer.get_bmax(0));
-      header.set_bmax(1, heightfieldLayer.get_bmax(1));
-      header.set_bmax(2, heightfieldLayer.get_bmax(2));
+    //
+    // Create detail mesh which allows to access approximate height on each polygon.
+    //
+    const polyMeshDetail = Raw.Recast.allocPolyMeshDetail();
+    if (Raw.isNull(polyMeshDetail)) {
+      return failTileMesh('Failed to allocate poly mesh detail');
+    }
 
-      // Tile info
-      header.width = heightfieldLayer.width;
-      header.height = heightfieldLayer.height;
-      header.minx = heightfieldLayer.minx;
-      header.maxx = heightfieldLayer.maxx;
-      header.miny = heightfieldLayer.miny;
-      header.maxy = heightfieldLayer.maxy;
-      header.hmin = heightfieldLayer.hmin;
-      header.hmax = heightfieldLayer.hmax;
+    if (
+      !Raw.Recast.buildPolyMeshDetail(
+        buildContext,
+        polyMesh,
+        compactHeightfield,
+        tileConfig.detailSampleDist,
+        tileConfig.detailSampleMaxError,
+        polyMeshDetail
+      )
+    ) {
+      return failTileMesh('Failed to build detail mesh');
+    }
 
-      const heights = Raw.Recast.getHeightfieldLayerHeights(heightfieldLayer);
-      const areas = Raw.Recast.getHeightfieldLayerAreas(heightfieldLayer);
-      const cons = Raw.Recast.getHeightfieldLayerCons(heightfieldLayer);
-
-      const status = Raw.DetourTileCacheBuilder.buildTileCacheLayer(
-        compressor,
-        header,
-        heights,
-        areas,
-        cons,
-        tile
-      );
-
-      if (Raw.Detour.statusFailed(status)) {
-        return { n: 0 };
+    // Update poly flags from areas.
+    for (let i = 0; i < polyMesh.npolys; i++) {
+      if (polyMesh.get_areas(i) == Raw.Recast.WALKABLE_AREA) {
+        polyMesh.set_areas(i, 0);
       }
-
-      tiles.push(tile);
+      if (polyMesh.get_areas(i) == 0) {
+        polyMesh.set_flags(i, 1);
+      }
     }
 
-    intermediates.tileIntermediates.push({
-      tx,
-      ty,
-      heightfield: new RecastHeightfield(heightfield),
-      compactHeightfield: new RecastCompactHeightfield(compactHeightfield),
-      heightfieldLayerSet: new RecastHeightfieldLayerSet(heightfieldLayerSet),
-    });
+    const navMeshCreateParams = new Raw.dtNavMeshCreateParams();
 
-    return { n: tiles.length, tiles };
+    Raw.DetourNavMeshBuilder.setPolyMeshCreateParams(
+      navMeshCreateParams,
+      polyMesh
+    );
+    Raw.DetourNavMeshBuilder.setPolyMeshDetailCreateParams(
+      navMeshCreateParams,
+      polyMeshDetail
+    );
+
+    navMeshCreateParams.walkableHeight = tileConfig.walkableHeight;
+    navMeshCreateParams.walkableRadius = tileConfig.walkableRadius;
+    navMeshCreateParams.walkableClimb = tileConfig.walkableClimb;
+
+    navMeshCreateParams.cs = tileConfig.cs;
+    navMeshCreateParams.ch = tileConfig.ch;
+
+    navMeshCreateParams.buildBvTree = true;
+
+    Raw.DetourNavMeshBuilder.setOffMeshConCount(navMeshCreateParams, 0);
+
+    navMeshCreateParams.tileX = tx;
+    navMeshCreateParams.tileY = ty;
+
+    const createNavMeshDataResult =
+      Raw.DetourNavMeshBuilder.createNavMeshData(navMeshCreateParams);
+
+    if (!createNavMeshDataResult.success) {
+      return failTileMesh('Failed to create Detour navmesh data');
+    }
+
+    buildContext.log(
+      Raw.Module.RC_LOG_PROGRESS,
+      `>> Polymesh: ${polyMesh.nverts} vertices  ${polyMesh.npolys} polygons`
+    );
+
+    return { success: true, data: createNavMeshDataResult.navMeshData };
   };
 
-  // Preprocess tiles
-  for (let y = 0; y < tileHeight; ++y) {
-    for (let x = 0; x < tileWidth; ++x) {
-      const { n, tiles: newTiles } = rasterizeTileLayers(x, y);
+  buildContext.startTimer(Raw.Module.RC_TIMER_TEMP);
 
-      if (n > 0 && newTiles) {
-        for (let i = 0; i < n; i++) {
-          const tileCacheData = newTiles[i];
+  let lastBuiltTileBmin: Vector3Tuple = [0, 0, 0];
+  let lastBuiltTileBmax: Vector3Tuple = [0, 0, 0];
 
-          const addResult = tileCache.addTile(tileCacheData);
+  for (let y = 0; y < tileHeight; y++) {
+    for (let x = 0; x < tileWidth; x++) {
+      lastBuiltTileBmin[0] = bbMin[0] + x * tcs;
+      lastBuiltTileBmin[1] = bbMin[1];
+      lastBuiltTileBmin[2] = bbMin[2] + y * tcs;
 
-          if (Raw.Detour.statusFailed(addResult.status)) {
-            console.error('Failed to add tile to tile cache');
-            continue;
-          }
+      lastBuiltTileBmax[0] = bbMin[0] + (x + 1) * tcs;
+      lastBuiltTileBmax[1] = bbMax[1];
+      lastBuiltTileBmax[2] = bbMin[2] + (y + 1) * tcs;
+
+      const result = buildTileMesh(x, y, lastBuiltTileBmin, lastBuiltTileBmax);
+
+      if (result.success && result.data) {
+        navMesh.removeTile(navMesh.getTileRefAt(x, y, 0));
+
+        const addTileResult = navMesh.addTile(
+          result.data,
+          Raw.Module.DT_TILE_FREE_DATA,
+          0
+        );
+
+        if (Raw.Detour.statusFailed(addTileResult.status)) {
+          result.data.free();
         }
       }
     }
   }
 
-  // Build initial meshes
-  for (let y = 0; y < tileHeight; y++) {
-    for (let x = 0; x < tileWidth; x++) {
-      const dtStatus = tileCache.buildNavMeshTilesAt(x, y, navMesh);
+  buildContext.stopTimer(Raw.Module.RC_TIMER_TEMP);
 
-      if (Raw.Detour.statusFailed(dtStatus)) {
-        return fail(`Failed to build nav mesh tiles at ${x}, ${y}`);
-      }
-    }
-  }
-
-  // Free intermediates
   if (!keepIntermediates) {
-    for (let i = 0; i < intermediates.tileIntermediates.length; i++) {
-      const tileIntermediate = intermediates.tileIntermediates[i];
-
-      Raw.Recast.freeHeightfieldLayerSet(
-        tileIntermediate.heightfieldLayerSet.raw
-      );
-      Raw.Recast.freeCompactHeightfield(
-        tileIntermediate.compactHeightfield.raw
-      );
-      Raw.Recast.freeHeightfield(tileIntermediate.heightfield.raw);
-    }
+    freeIntermediates();
   }
 
   return {
     success: true,
-    tileCache,
     navMesh,
     intermediates: keepIntermediates ? intermediates : undefined,
   };
 };
-
-function dtIlog2(v: number) {
-  let r = 0;
-  let shift = 0;
-
-  r = Number(v > 0xffff) << 4;
-  v >>= r;
-
-  shift = Number(v > 0xff) << 3;
-  v >>= shift;
-  r |= shift;
-
-  shift = Number(v > 0xf) << 2;
-  v >>= shift;
-  r |= shift;
-
-  shift = Number(v > 0x3) << 1;
-  v >>= shift;
-  r |= shift;
-  r |= v >> 1;
-
-  return r;
-}
-
-function dtNextPow2(v: number) {
-  v--;
-  v |= v >> 1;
-  v |= v >> 2;
-  v |= v >> 4;
-  v |= v >> 8;
-  v |= v >> 16;
-  v++;
-  return v;
-}

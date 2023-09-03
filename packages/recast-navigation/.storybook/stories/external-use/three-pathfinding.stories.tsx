@@ -1,7 +1,7 @@
 import { Line, OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import React, { useEffect, useState } from 'react';
 import { NavMesh } from 'recast-navigation';
-import { threeToTiledNavMesh } from 'recast-navigation/three';
+import { threeToTileCache } from 'recast-navigation/three';
 import { BufferAttribute, BufferGeometry, Group, Mesh, Vector3 } from 'three';
 import { Pathfinding } from 'three-pathfinding';
 import { decorators } from '../../decorators';
@@ -104,7 +104,7 @@ export const ThreePathfinding = () => {
       }
     });
 
-    const { success, navMesh } = threeToTiledNavMesh(meshes, {
+    const { success, navMesh } = threeToTileCache(meshes, {
       cs: 0.02,
       ch: 0.2,
       walkableHeight: 1,
@@ -114,7 +114,7 @@ export const ThreePathfinding = () => {
       tileSize: 32,
     });
 
-    if (!success) return
+    if (!success) return;
 
     const [positions, indices] = navMeshToPositionsAndIndices(navMesh);
 

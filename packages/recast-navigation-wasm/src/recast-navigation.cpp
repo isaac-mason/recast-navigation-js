@@ -53,7 +53,7 @@ bool TileCache::init(const dtTileCacheParams *params, RecastLinearAllocator *all
     return true;
 };
 
-TileCacheAddTileResult TileCache::addTile(TileCacheData *tileCacheData, unsigned char flags)
+TileCacheAddTileResult TileCache::addTile(UnsignedCharArray *tileCacheData, unsigned char flags)
 {
     TileCacheAddTileResult *result = new TileCacheAddTileResult;
 
@@ -189,15 +189,8 @@ struct NavMeshTileHeader
     int dataSize;
 };
 
-bool NavMesh::initSolo(NavMeshData *navMeshData)
+bool NavMesh::initSolo(UnsignedCharArray *navMeshData)
 {
-    m_navMesh = dtAllocNavMesh();
-    if (!m_navMesh)
-    {
-        Log("Could not allocate solo Detour navmesh");
-        return false;
-    }
-
     dtStatus status = m_navMesh->init(navMeshData->data, navMeshData->size, DT_TILE_FREE_DATA);
 
     return dtStatusSucceed(status);
@@ -205,19 +198,12 @@ bool NavMesh::initSolo(NavMeshData *navMeshData)
 
 bool NavMesh::initTiled(const dtNavMeshParams *params)
 {
-    m_navMesh = dtAllocNavMesh();
-    if (!m_navMesh)
-    {
-        Log("Could not allocate tiled Detour navmesh");
-        return false;
-    }
-
     dtStatus status = m_navMesh->init(params);
 
     return dtStatusSucceed(status);
 };
 
-dtStatus NavMesh::addTile(NavMeshData *navMeshData, int flags, dtTileRef lastRef, UnsignedIntRef *tileRef)
+dtStatus NavMesh::addTile(UnsignedCharArray *navMeshData, int flags, dtTileRef lastRef, UnsignedIntRef *tileRef)
 {
     return m_navMesh->addTile(navMeshData->data, navMeshData->size, flags, lastRef, &tileRef->value);
 }
@@ -498,7 +484,7 @@ NavMeshImporterResult NavMeshImporter::importNavMesh(NavMeshExport *navMeshExpor
             memcpy(data, bits, readLen);
             bits += readLen;
 
-            NavMeshData *navMeshData = new NavMeshData;
+            UnsignedCharArray *navMeshData = new UnsignedCharArray;
             navMeshData->data = data;
             navMeshData->size = tileHeader.dataSize;
 
@@ -559,7 +545,7 @@ NavMeshImporterResult NavMeshImporter::importNavMesh(NavMeshExport *navMeshExpor
             memcpy(data, bits, readLen);
             bits += readLen;
 
-            TileCacheData *tileCacheData = new TileCacheData;
+            UnsignedCharArray *tileCacheData = new UnsignedCharArray;
             tileCacheData->data = data;
             tileCacheData->size = tileHeader.dataSize;
 

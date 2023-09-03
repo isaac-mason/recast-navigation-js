@@ -2,6 +2,7 @@ import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { NavMesh } from '@recast-navigation/core';
 import {
   threeToSoloNavMesh,
+  threeToTileCache,
   threeToTiledNavMesh,
 } from '@recast-navigation/three';
 import React, { useEffect, useState } from 'react';
@@ -12,7 +13,7 @@ import { NavTestEnvirionment } from '../../common/nav-test-environment';
 import { decorators } from '../../decorators';
 
 export default {
-  title: 'NavMesh',
+  title: 'NavMesh / Models',
   decorators,
 };
 
@@ -39,11 +40,12 @@ const Levels = {
 };
 
 type CommonProps = {
-  level: typeof Levels[keyof typeof Levels];
+  level: (typeof Levels)[keyof typeof Levels];
+  type: 'solo' | 'tiled' | 'tilecache';
   tileSize?: number;
 };
 
-const Common = ({ level, tileSize }: CommonProps) => {
+const Common = ({ level, type, tileSize }: CommonProps) => {
   const [group, setGroup] = useState<Group | null>(null);
 
   const [navMesh, setNavMesh] = useState<NavMesh | undefined>();
@@ -69,11 +71,14 @@ const Common = ({ level, tileSize }: CommonProps) => {
       tileSize,
     };
 
-    if (tileSize) {
+    if (type === 'solo') {
+      const { navMesh } = threeToSoloNavMesh(meshes, config, true);
+      setNavMesh(navMesh);
+    } else if (type === 'tiled') {
       const { navMesh } = threeToTiledNavMesh(meshes, config, true);
       setNavMesh(navMesh);
     } else {
-      const { navMesh } = threeToSoloNavMesh(meshes, config, true);
+      const { navMesh } = threeToTileCache(meshes, config);
       setNavMesh(navMesh);
     }
 
@@ -97,14 +102,22 @@ const Common = ({ level, tileSize }: CommonProps) => {
   );
 };
 
-export const NavTest_SoloNavMesh = () => <Common level={Levels.NavTest} />;
+export const NavTest_Solo = () => <Common type="solo" level={Levels.NavTest} />;
 
-export const NavTest_TiledNavMesh = () => (
-  <Common level={Levels.NavTest} tileSize={16} />
+export const NavTest_Tiled = () => (
+  <Common type="tiled" level={Levels.NavTest} tileSize={16} />
 );
 
-export const Dungeon_SoloNavMesh = () => <Common level={Levels.Dungeon} />;
+export const NavTest_TileCache = () => (
+  <Common type="tilecache" level={Levels.NavTest} tileSize={16} />
+);
 
-export const Dungeon_TiledNavMesh = () => (
-  <Common level={Levels.Dungeon} tileSize={32} />
+export const Dungeon_Solo = () => <Common type="solo" level={Levels.Dungeon} />;
+
+export const Dungeon_Tiled = () => (
+  <Common type="tiled" level={Levels.Dungeon} tileSize={32} />
+);
+
+export const Dungeon_TileCache = () => (
+  <Common type="tilecache" level={Levels.Dungeon} tileSize={32} />
 );
