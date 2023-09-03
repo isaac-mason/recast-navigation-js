@@ -22,11 +22,10 @@ export const tiledNavMeshGeneratorConfigDefaults: TiledNavMeshGeneratorConfig =
 
 export type TiledNavMeshGeneratorIntermediates = {
   type: 'tiled';
-  buildContext?: R.rcContext;
   chunkyTriMesh?: R.rcChunkyTriMesh;
   tileIntermediates: {
-    tx: number;
-    ty: number;
+    tileX: number;
+    tileY: number;
     heightfield?: RecastHeightfield;
     compactHeightfield?: RecastCompactHeightfield;
     contourSet?: RecastContourSet;
@@ -67,7 +66,6 @@ export const generateTiledNavMesh = (
 
   const intermediates: TiledNavMeshGeneratorIntermediates = {
     type: 'tiled',
-    buildContext: buildContext,
     chunkyTriMesh: undefined,
     tileIntermediates: [],
   };
@@ -196,10 +194,10 @@ export const generateTiledNavMesh = (
 
   /** @internal */
   const buildTileMesh = (
-    tx: number,
-    ty: number,
-    bmin: Vector3Tuple,
-    bmax: Vector3Tuple
+    tileX: number,
+    tileY: number,
+    tileBoundsMin: Vector3Tuple,
+    tileBoundsMax: Vector3Tuple
   ):
     | { success: true; data?: R.UnsignedCharArray }
     | { success: false; error: string } => {
@@ -210,12 +208,12 @@ export const generateTiledNavMesh = (
     };
 
     const tileIntermediate: {
-      tx: number;
-      ty: number;
+      tileX: number;
+      tileY: number;
       heightfield?: RecastHeightfield;
       compactHeightfield?: RecastCompactHeightfield;
       contourSet?: RecastContourSet;
-    } = { tx, ty };
+    } = { tileX, tileY };
 
     intermediates.tileIntermediates.push(tileIntermediate);
 
@@ -243,22 +241,22 @@ export const generateTiledNavMesh = (
     // you will need to pass in data from neighbour terrain tiles too! In a simple case, just pass in all the 8 neighbours,
     // or use the bounding box below to only pass in a sliver of each of the 8 neighbours.
 
-    const tileBoundsMin = [...bmin];
-    const tileBoundsMax = [...bmax];
+    const expandedTileBoundsMin = [...tileBoundsMin];
+    const expandedTileBoundsMax = [...tileBoundsMax];
 
-    tileBoundsMin[0] -= tileConfig.borderSize * tileConfig.cs;
-    tileBoundsMin[2] -= tileConfig.borderSize * tileConfig.cs;
+    expandedTileBoundsMin[0] -= tileConfig.borderSize * tileConfig.cs;
+    expandedTileBoundsMin[2] -= tileConfig.borderSize * tileConfig.cs;
 
-    tileBoundsMax[0] += tileConfig.borderSize * tileConfig.cs;
-    tileBoundsMax[2] += tileConfig.borderSize * tileConfig.cs;
+    expandedTileBoundsMin[0] += tileConfig.borderSize * tileConfig.cs;
+    expandedTileBoundsMin[2] += tileConfig.borderSize * tileConfig.cs;
 
-    tileConfig.set_bmin(0, tileBoundsMin[0]);
-    tileConfig.set_bmin(1, tileBoundsMin[1]);
-    tileConfig.set_bmin(2, tileBoundsMin[2]);
+    tileConfig.set_bmin(0, expandedTileBoundsMin[0]);
+    tileConfig.set_bmin(1, expandedTileBoundsMin[1]);
+    tileConfig.set_bmin(2, expandedTileBoundsMin[2]);
 
-    tileConfig.set_bmax(0, tileBoundsMax[0]);
-    tileConfig.set_bmax(1, tileBoundsMax[1]);
-    tileConfig.set_bmax(2, tileBoundsMax[2]);
+    tileConfig.set_bmax(0, expandedTileBoundsMax[0]);
+    tileConfig.set_bmax(1, expandedTileBoundsMax[1]);
+    tileConfig.set_bmax(2, expandedTileBoundsMax[2]);
 
     // Reset build timer
     buildContext.resetTimers();
@@ -278,8 +276,8 @@ export const generateTiledNavMesh = (
 
     // Allocate voxel heightfield where we rasterize our input data to.
     const heightfield = Raw.Recast.allocHeightfield();
-    if (!heightfield) {
-      return fail('Could not allocate heightfield');
+    if (Raw.isNull(heightfield)) {
+      return failTileMesh('Could not allocate heightfield');
     }
 
     tileIntermediate.heightfield = new RecastHeightfield(heightfield);
@@ -290,8 +288,8 @@ export const generateTiledNavMesh = (
         heightfield,
         tileConfig.width,
         tileConfig.height,
-        tileBoundsMin,
-        tileBoundsMax,
+        expandedTileBoundsMin,
+        expandedTileBoundsMax,
         tileConfig.cs,
         tileConfig.ch
       )
@@ -305,8 +303,8 @@ export const generateTiledNavMesh = (
     const triAreas = new Raw.Arrays.UnsignedCharArray();
     triAreas.resize(chunkyTriMesh.maxTrisPerChunk);
 
-    const tbmin = [tileBoundsMin[0], tileBoundsMin[2]];
-    const tbmax = [tileBoundsMax[0], tileBoundsMax[2]];
+    const tbmin = [expandedTileBoundsMin[0], expandedTileBoundsMin[2]];
+    const tbmax = [expandedTileBoundsMax[0], expandedTileBoundsMax[2]];
 
     // TODO: Make grow when returning too many items.
     const maxChunkIds = 512;
@@ -541,8 +539,8 @@ export const generateTiledNavMesh = (
 
     Raw.DetourNavMeshBuilder.setOffMeshConCount(navMeshCreateParams, 0);
 
-    navMeshCreateParams.tileX = tx;
-    navMeshCreateParams.tileY = ty;
+    navMeshCreateParams.tileX = tileX;
+    navMeshCreateParams.tileY = tileY;
 
     const createNavMeshDataResult =
       Raw.DetourNavMeshBuilder.createNavMeshData(navMeshCreateParams);
@@ -586,6 +584,7 @@ export const generateTiledNavMesh = (
         );
 
         if (Raw.Detour.statusFailed(addTileResult.status)) {
+          buildContext.log(Raw.Module.RC_LOG_WARNING, `Failed to add tile to nav mesh - tx: ${x}, ty: ${y}`);
           result.data.free();
         }
       }

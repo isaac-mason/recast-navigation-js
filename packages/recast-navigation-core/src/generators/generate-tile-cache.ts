@@ -36,8 +36,8 @@ export type TileCacheGeneratorIntermediates = {
   type: 'tilecache';
   chunkyTriMesh?: R.rcChunkyTriMesh;
   tileIntermediates: {
-    tx: number;
-    ty: number;
+    tileX: number;
+    tileY: number;
     heightfield: RecastHeightfield;
     heightfieldLayerSet: RecastHeightfieldLayerSet;
     compactHeightfield: RecastCompactHeightfield;
@@ -117,22 +117,22 @@ export const generateTileCache = (
 
   const verts = positions as number[];
   const nVerts = indices.length;
-
-  const tris = indices as number[];
-  const nTris = indices.length / 3;
-
-  const { bbMin, bbMax } = getBoundingBox(positions, indices);
-
   const vertsArray = new Raw.Arrays.FloatArray();
   vertsArray.copy(verts, verts.length);
 
+  const tris = indices as number[];
+  const nTris = indices.length / 3;
   const trisArray = new Raw.Arrays.IntArray();
   trisArray.copy(tris, tris.length);
+
+  const { bbMin, bbMax } = getBoundingBox(positions, indices);
 
   const { expectedLayersPerTile, maxObstacles, ...recastConfig } = {
     ...tileCacheGeneratorConfigDefaults,
     ...navMeshGeneratorConfig,
   };
+
+  const buildContext = new Raw.rcContext();
 
   const tileCache = new TileCache();
   const navMesh = new NavMesh();
@@ -240,20 +240,22 @@ export const generateTileCache = (
     return fail('Failed to build chunky triangle mesh');
   }
 
-  const rasterizeTileLayers = (tx: number, ty: number) => {
-    const rcContext = new Raw.rcContext();
-
+  const rasterizeTileLayers = (tileX: number, tileY: number) => {
     // Tile bounds
     const tcs = config.tileSize * config.cs;
 
     const { raw: tileConfig } = new RecastConfig(config).clone();
 
-    const tileBoundsMin = [bbMin[0] + tx * tcs, bbMin[1], bbMin[2] + ty * tcs];
+    const tileBoundsMin = [
+      bbMin[0] + tileX * tcs,
+      bbMin[1],
+      bbMin[2] + tileY * tcs,
+    ];
 
     const tileBoundsMax = [
-      bbMin[0] + (tx + 1) * tcs,
+      bbMin[0] + (tileX + 1) * tcs,
       bbMax[1],
-      bbMin[2] + (ty + 1) * tcs,
+      bbMin[2] + (tileY + 1) * tcs,
     ];
 
     tileBoundsMin[0] -= tileConfig.borderSize * tileConfig.cs;
@@ -274,7 +276,7 @@ export const generateTileCache = (
 
     if (
       !Raw.Recast.createHeightfield(
-        rcContext,
+        buildContext,
         heightfield,
         tileConfig.width,
         tileConfig.height,
@@ -324,7 +326,7 @@ export const generateTileCache = (
       // If your input data is multiple meshes, you can transform them here, calculate
       // the are type for each of the meshes and rasterize them.
       Raw.Recast.markWalkableTriangles(
-        rcContext,
+        buildContext,
         tileConfig.walkableSlopeAngle,
         vertsArray,
         nVerts,
@@ -334,7 +336,7 @@ export const generateTileCache = (
       );
 
       const success = Raw.Recast.rasterizeTriangles(
-        rcContext,
+        buildContext,
         vertsArray,
         nVerts,
         nodeTrisArray,
@@ -355,18 +357,18 @@ export const generateTileCache = (
     // remove unwanted overhangs caused by the conservative rasterization
     // as well as filter spans where the character cannot possibly stand.
     Raw.Recast.filterLowHangingWalkableObstacles(
-      rcContext,
+      buildContext,
       config.walkableClimb,
       heightfield
     );
     Raw.Recast.filterLedgeSpans(
-      rcContext,
+      buildContext,
       config.walkableHeight,
       config.walkableClimb,
       heightfield
     );
     Raw.Recast.filterWalkableLowHeightSpans(
-      rcContext,
+      buildContext,
       config.walkableHeight,
       heightfield
     );
@@ -374,7 +376,7 @@ export const generateTileCache = (
     const compactHeightfield = Raw.Recast.allocCompactHeightfield();
     if (
       !Raw.Recast.buildCompactHeightfield(
-        rcContext,
+        buildContext,
         config.walkableHeight,
         config.walkableClimb,
         heightfield,
@@ -387,7 +389,7 @@ export const generateTileCache = (
     // Erode the walkable area by agent radius
     if (
       !Raw.Recast.erodeWalkableArea(
-        rcContext,
+        buildContext,
         config.walkableRadius,
         compactHeightfield
       )
@@ -398,7 +400,7 @@ export const generateTileCache = (
     const heightfieldLayerSet = Raw.Recast.allocHeightfieldLayerSet();
     if (
       !Raw.Recast.buildHeightfieldLayers(
-        rcContext,
+        buildContext,
         compactHeightfield,
         config.borderSize,
         config.walkableHeight,
@@ -420,8 +422,8 @@ export const generateTileCache = (
       header.version = Raw.Detour.TILECACHE_VERSION;
 
       // Tile layer location in the navmesh
-      header.tx = tx;
-      header.ty = ty;
+      header.tx = tileX;
+      header.ty = tileY;
       header.tlayer = i;
 
       header.set_bmin(0, heightfieldLayer.get_bmin(0));
@@ -463,8 +465,8 @@ export const generateTileCache = (
     }
 
     intermediates.tileIntermediates.push({
-      tx,
-      ty,
+      tileX,
+      tileY,
       heightfield: new RecastHeightfield(heightfield),
       compactHeightfield: new RecastCompactHeightfield(compactHeightfield),
       heightfieldLayerSet: new RecastHeightfieldLayerSet(heightfieldLayerSet),
@@ -485,7 +487,7 @@ export const generateTileCache = (
           const addResult = tileCache.addTile(tileCacheData);
 
           if (Raw.Detour.statusFailed(addResult.status)) {
-            console.error('Failed to add tile to tile cache');
+            buildContext.log(Raw.Module.RC_LOG_WARNING, `Failed to add tile to tile cache - tx: ${x}, ty: ${y}`);
             continue;
           }
         }
