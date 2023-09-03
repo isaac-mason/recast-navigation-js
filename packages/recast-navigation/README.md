@@ -167,7 +167,7 @@ Recast Navigation supports creating Box and Cylinder obstacles.
 
 Note that in order to use obstacles, you must create a TileCache.
 
-TileCache's only support small tiles (around 32-64 squared).
+`TileCache` assumes small tiles (around 32-64 squared). Using `tileSize` values outside this range may result in unexpected behaviour.
 
 ```ts
 import { generateTileCache } from 'recast-navigation';
