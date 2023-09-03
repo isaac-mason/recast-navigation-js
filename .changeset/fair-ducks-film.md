@@ -3,4 +3,4 @@
 '@recast-navigation/wasm': minor
 ---
 
-feat: remove TileCacheData and NavMeshData, use UnsignedCharArray instead
+feat: remove `TileCacheData` and `NavMeshData`, use `UnsignedCharArray` instead
