@@ -119,7 +119,7 @@ const initialAgentPosition = navMeshQuery.getRandomPointAround(
   2 // radius
 );
 
-const agentIndex = crowd.addAgent(initialAgentPosition, {
+const agent = crowd.addAgent(initialAgentPosition, {
   radius: 0.5,
   height: 0.5,
   maxAcceleration: 4.0,
@@ -130,35 +130,35 @@ const agentIndex = crowd.addAgent(initialAgentPosition, {
 });
 
 /* get information about the agent */
-const agentPosition = crowd.getAgentPosition(agentIndex);
-const agentVelocity = crowd.getAgentVelocity(agentIndex);
-const agentNextTargetPath = crowd.getAgentNextTargetPath(agentIndex);
-const agentState = crowd.getAgentState(agentIndex);
-const agentCorners = crowd.getAgentCorners(agentIndex);
-const agentParameters = crowd.getAgentParameters(agentIndex);
+const agentPosition = agent.position();
+const agentVelocity = agent.velocity();
+const agentNextTargetPath = agent.nextTargetPath();
+const agentState = agent.state();
+const agentCorners = agent.corners();
+const agentParameters = agent.parameters();
 
 /* tell the agent to move to a target position */
 const targetPosition = { x: 0, y: 0, z: 0 };
-crowd.goto(agentIndex, targetPosition);
+agent.goto(targetPosition);
 
 /* reset the agents target */
-crowd.resetMoveTarget(agentIndex);
+agent.resetMoveTarget();
 
 /* teleport the agent to a position */
-crowd.teleport(agentIndex, targetPosition);
+agent.teleport(targetPosition);
 
 /* update some parameters of the agent */
-crowd.updateAgentParameters(agentIndex, {
+agent.updateParameters({
   maxAcceleration: 4.0,
 });
 
 /* set all parameters for an agent */
-crowd.setAgentParameters(agentIndex, {
+agent.setParameters({
   // any omitted parameters will be set to their default values
 });
 
-/* destroy the agent */
-crowd.removeAgent(agentIndex);
+/* remove the agent */
+crowd.removeAgent(agent);
 ```
 
 ### Temporary Obstacles
@@ -231,20 +231,8 @@ const navMeshExport: Uint8Array = exportNavMesh(
 const { navMesh, tileCache } = importNavMesh(navMeshExport);
 ```
 
-### Escape Hatches
+### Advanced Usage
 
-This library provides a higher level api over Recast, but also exposes a `Raw` api that aims to match the recast and detour libraries as much as possible.
+This library provides low-level APIs that aim to match the recast and detour c++ api, allowing you to create custom navigation mesh generators based on your specific needs. See: https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-core/src/generators
 
-This functionality is experimental, and not all of recast is exposed yet. You will need to have familiarity with the recast and detour c++ libraries, and you may need to submit an issue or a PR if something you need is not exposed yet.
-
-Auto-generated documentation can be found here: https://docs.recast-navigation-js.isaacmason.com/variables/index.Raw.html
-
-```ts
-import { Raw } from 'recast-navigation';
-
-const navMeshData = Raw.DetourNavMeshBuilder.createNavMeshData(/* ... */);
-```
-
-The nav mesh and tile cache generators in this library are adaptations of the `RecastDemo` examples: https://github.com/isaac-mason/recastnavigation/blob/main/RecastDemo/Source/Sample_SoloMesh.cpp
-
-You can use the generators in this library as the basis of a nav mesh generator suiting your requirements. See: https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-core/src/generators
+Please note that this functionality is experimental, and not all everything is exposed. Familiarity with the recast and detour C++ libraries is required. If you require unexposed functionality, please submit an issue or a pull request.
