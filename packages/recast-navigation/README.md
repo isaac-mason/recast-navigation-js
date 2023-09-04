@@ -70,7 +70,7 @@ const { success, navMesh } = generateSoloNavMesh(
 );
 ```
 
-If you need to do something more advanced, you can use the lower level API to create your own NavMesh generator. See the "Escape Hatches" section for more information.
+If you need to do something more advanced, you can use the lower level API to create your own NavMesh generator. See the "Advanced Usage" section for more information.
 
 ### Querying a NavMesh
 
