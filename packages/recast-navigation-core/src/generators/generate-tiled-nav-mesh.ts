@@ -239,8 +239,6 @@ export const generateTiledNavMesh = (
 
     const { raw: tileConfig } = recastConfig.clone();
 
-    console.log(tileConfig)
-
     // Expand the heighfield bounding box by border size to find the extents of geometry we need to build this tile.
     //
     // This is done in order to make sure that the navmesh tiles connect correctly at the borders,
