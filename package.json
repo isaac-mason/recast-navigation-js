@@ -22,7 +22,7 @@
     "version": "yarn changeset version && yarn install --mode update-lockfile"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.26.1",
+    "@changesets/cli": "^2.26.2",
     "@types/styled-components": "^5.1.26",
     "concurrently": "^8.2.1"
   },
