@@ -1,4 +1,4 @@
-import { DetourMeshTile, DetourOffMeshConnection, dtPoly } from './detour';
+import { DetourMeshTile, DetourOffMeshConnection, DetourPoly } from './detour';
 import { finalizer } from './finalizer';
 import { Raw } from './raw';
 import type R from './raw-module';
@@ -86,8 +86,8 @@ export class NavMeshGetTileAndPolyByRefResult {
     return new DetourMeshTile(this.raw.tile);
   }
 
-  poly(): dtPoly {
-    return new dtPoly(this.raw.poly);
+  poly(): DetourPoly {
+    return new DetourPoly(this.raw.poly);
   }
 
   status(): number {

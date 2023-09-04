@@ -1,6 +1,6 @@
 import { finalizer } from './finalizer';
 import { NavMesh } from './nav-mesh';
-import { Raw } from './raw';
+import { Arrays, Raw } from './raw';
 import type R from './raw-module';
 import { array, vec3, Vector3 } from './utils';
 
@@ -123,7 +123,7 @@ export class NavMeshQuery {
     }
   ) {
     const resultPosition = new Raw.Vec3();
-    const visited = new Raw.Arrays.UnsignedIntArray();
+    const visited = new Arrays.UnsignedIntArray();
 
     const filter = options?.filter ?? this.defaultFilter;
 
@@ -167,7 +167,7 @@ export class NavMeshQuery {
 
     const maxPolyPathLength = options?.maxPolyPathLength ?? 256;
 
-    const polys = new Raw.Arrays.UnsignedIntArray();
+    const polys = new Arrays.UnsignedIntArray();
 
     this.raw.findPath(
       startRef,
@@ -193,13 +193,13 @@ export class NavMeshQuery {
 
     const maxStraightPathPolys = 256;
 
-    const straightPath = new Raw.Arrays.FloatArray();
+    const straightPath = new Arrays.FloatArray();
     straightPath.resize(maxStraightPathPolys * 3);
 
-    const straightPathFlags = new Raw.Arrays.UnsignedCharArray();
+    const straightPathFlags = new Arrays.UnsignedCharArray();
     straightPathFlags.resize(maxStraightPathPolys);
 
-    const straightPathRefs = new Raw.Arrays.UnsignedIntArray();
+    const straightPathRefs = new Arrays.UnsignedIntArray();
     straightPathRefs.resize(maxStraightPathPolys);
 
     const straightPathCount = new Raw.IntRef();

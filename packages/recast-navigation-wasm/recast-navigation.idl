@@ -794,12 +794,52 @@ interface rcContext {
     void enableLog(boolean state);
     void resetLog();
     void log([Const] rcLogCategory category, [Const] DOMString message);
+
     void enableTimer(boolean state);
     void resetTimers();
     void startTimer([Const] rcTimerLabel label);
     void stopTimer([Const] rcTimerLabel label);
     float getAccumulatedTime([Const] rcTimerLabel label);
 };
+
+interface RecastBuildContextImplAbstract {
+    void resetLog();
+    void log([Const] rcLogCategory category, [Const] DOMString msg, [Const] long len);
+    
+    void resetTimers();
+    void startTimer([Const] rcTimerLabel label);
+    void stopTimer([Const] rcTimerLabel label);
+    long getAccumulatedTime([Const] rcTimerLabel label);
+};
+
+[JSImplementation="RecastBuildContextImplAbstract"]
+interface RecastBuildContextImpl {
+    void RecastBuildContextImpl();
+
+    void resetLog();
+    void log([Const] rcLogCategory category, [Const] DOMString msg, [Const] long len);
+    
+    void resetTimers();
+    void startTimer([Const] rcTimerLabel label);
+    void stopTimer([Const] rcTimerLabel label);
+    long getAccumulatedTime([Const] rcTimerLabel label);
+};
+
+interface RecastBuildContext {
+    void RecastBuildContext(RecastBuildContextImpl impl);
+
+    void enableLog(boolean state);
+    void resetLog();
+    void log([Const] rcLogCategory category, [Const] DOMString message);
+    void enableTimer(boolean state);
+    void resetTimers();
+    void startTimer([Const] rcTimerLabel label);
+    void stopTimer([Const] rcTimerLabel label);
+    float getAccumulatedTime([Const] rcTimerLabel label);
+    boolean logEnabled();
+    boolean timerEnabled();
+};
+RecastBuildContext implements rcContext;
 
 interface RecastCalcBoundsResult {
     attribute float[] bmin;
@@ -847,6 +887,8 @@ interface Recast {
     boolean buildCompactHeightfield(rcContext ctx, long walkableHeight, long walkableClimb, [Ref] rcHeightfield solid, [Ref] rcCompactHeightfield chf);
 
     boolean erodeWalkableArea(rcContext ctx, long radius, [Ref] rcCompactHeightfield chf);
+
+    boolean medianFilterWalkableArea(rcContext ctx, [Ref] rcCompactHeightfield chf);
 
     void markBoxArea(rcContext ctx, [Const] float[] bmin, [Const] float[] bmax, octet areaId, [Ref] rcCompactHeightfield chf);
 
@@ -971,8 +1013,8 @@ interface rcChunkyTriMesh {
     attribute long maxTrisPerChunk;
 };
 
-interface ChunkyTriMesh {
-    void ChunkyTriMesh();
+interface ChunkyTriMeshUtils {
+    void ChunkyTriMeshUtils();
 
     boolean createChunkyTriMesh([Const] FloatArray verts, [Const] IntArray tris, long ntris, long trisPerChunk, rcChunkyTriMesh chunkyTriMesh);
 

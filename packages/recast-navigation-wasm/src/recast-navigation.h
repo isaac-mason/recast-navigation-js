@@ -696,6 +696,73 @@ struct RecastCalcGridSizeResult
     int height;
 };
 
+class RecastBuildContextImplAbstract
+{
+public:
+	virtual void resetLog() {}
+
+	virtual void log(const rcLogCategory /*category*/, const char* /*msg*/, const int /*len*/) {}
+
+	virtual void resetTimers() {}
+
+	virtual void startTimer(const rcTimerLabel /*label*/) {}
+
+	virtual void stopTimer(const rcTimerLabel /*label*/) {}
+
+	virtual int getAccumulatedTime(const rcTimerLabel /*label*/) const { return -1; }	
+};
+
+class RecastBuildContext : public rcContext
+{
+public:
+    RecastBuildContextImplAbstract *impl;
+    
+    RecastBuildContext(RecastBuildContextImplAbstract *recastBuildContextImpl)
+    {
+        impl = recastBuildContextImpl;
+    }
+
+    virtual void doResetLog()
+    {
+        impl->resetLog();
+    }
+
+    virtual void doLog(const rcLogCategory category, const char* msg, const int len)
+    {
+        impl->log(category, msg, len);
+    }
+
+    virtual void doResetTimers()
+    {
+        impl->resetTimers();
+    }
+
+    virtual void doStartTimer(const rcTimerLabel label)
+    {
+        impl->startTimer(label);
+    }
+
+    virtual void doStopTimer(const rcTimerLabel label)
+    {
+        impl->stopTimer(label);
+    }
+
+    virtual int doGetAccumulatedTime(const rcTimerLabel label)
+    {
+        return impl->getAccumulatedTime(label);
+    }
+
+    bool logEnabled()
+    {
+        return m_logEnabled;
+    }
+
+    bool timerEnabled()
+    {
+        return m_timerEnabled;
+    }
+};
+
 class Recast
 {
 public:
@@ -959,7 +1026,7 @@ public:
     }
 };
 
-class ChunkyTriMesh
+class ChunkyTriMeshUtils
 {
 public:
     bool createChunkyTriMesh(const FloatArray *verts, const IntArray *tris, int ntris, int trisPerChunk, rcChunkyTriMesh *chunkyTriMesh)

@@ -1,3 +1,4 @@
+import { NavMeshCreateParams } from './detour';
 import { finalizer } from './finalizer';
 import { NavMesh } from './nav-mesh';
 import { Raw } from './raw';
@@ -24,7 +25,7 @@ export type CylinderObstacle = {
 
 export type Obstacle = BoxObstacle | CylinderObstacle;
 
-export type TileCacheParams = {
+export type TileCacheParamsType = {
   orig: ReadonlyArray<number>;
   cs: number;
   ch: number;
@@ -38,10 +39,10 @@ export type TileCacheParams = {
   maxObstacles: number;
 };
 
-export class dtTileCacheParams {
+export class DetourTileCacheParams {
   constructor(public raw: R.dtTileCacheParams) {}
 
-  static create(config: TileCacheParams): dtTileCacheParams {
+  static create(config: TileCacheParamsType): DetourTileCacheParams {
     const tileCacheParams = new Raw.Module.dtTileCacheParams();
 
     tileCacheParams.set_orig(0, config.orig[0]);
@@ -59,7 +60,7 @@ export class dtTileCacheParams {
     tileCacheParams.set_maxTiles(config.maxTiles);
     tileCacheParams.set_maxObstacles(config.maxObstacles);
 
-    return new dtTileCacheParams(tileCacheParams);
+    return new DetourTileCacheParams(tileCacheParams);
   }
 }
 
@@ -84,12 +85,12 @@ export class TileCache {
    * @param params
    */
   init(
-    params: R.dtTileCacheParams,
+    params: DetourTileCacheParams,
     alloc: R.RecastLinearAllocator,
     compressor: R.RecastFastLZCompressor,
     meshProcess: TileCacheMeshProcess
   ) {
-    return this.raw.init(params, alloc, compressor, meshProcess.raw);
+    return this.raw.init(params.raw, alloc, compressor, meshProcess.raw);
   }
 
   /**
@@ -201,7 +202,7 @@ export class TileCacheMeshProcess {
 
   constructor(
     process: (
-      navMeshCreateParams: R.dtNavMeshCreateParams,
+      navMeshCreateParams: NavMeshCreateParams,
       polyAreasArray: R.UnsignedCharArray,
       polyFlagsArray: R.UnsignedShortArray
     ) => void
@@ -213,9 +214,8 @@ export class TileCacheMeshProcess {
       polyAreasArrayPtr: number,
       polyFlagsArrayPtr: number
     ) => {
-      const params = Raw.Module.wrapPointer(
-        paramsPtr,
-        Raw.Module.dtNavMeshCreateParams
+      const params = new NavMeshCreateParams(
+        Raw.Module.wrapPointer(paramsPtr, Raw.Module.dtNavMeshCreateParams)
       );
 
       const polyAreasArray = Raw.Module.wrapPointer(
@@ -230,5 +230,25 @@ export class TileCacheMeshProcess {
 
       process(params, polyAreasArray, polyFlagsArray);
     }) as never;
+  }
+}
+
+export class DetourTileCacheBuilder {
+  static buildTileCacheLayer(
+    comp: R.RecastFastLZCompressor,
+    header: R.dtTileCacheLayerHeader,
+    heights: R.UnsignedCharArray,
+    areas: R.UnsignedCharArray,
+    cons: R.UnsignedCharArray,
+    tileCacheData: R.UnsignedCharArray
+  ): number {
+    return Raw.DetourTileCacheBuilder.buildTileCacheLayer(
+      comp,
+      header,
+      heights,
+      areas,
+      cons,
+      tileCacheData
+    );
   }
 }

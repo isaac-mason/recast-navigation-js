@@ -1,5 +1,6 @@
+import { NavMeshCreateParams, createNavMeshData } from '../detour';
 import { NavMesh } from '../nav-mesh';
-import { Raw } from '../raw';
+import { Arrays, Raw } from '../raw';
 import {
   RecastConfigType,
   RecastCompactHeightfield,
@@ -7,6 +8,28 @@ import {
   RecastContourSet,
   RecastHeightfield,
   recastConfigDefaults,
+  freeCompactHeightfield,
+  freeHeightfield,
+  freeContourSet,
+  RecastBuildContext,
+  createHeightfield,
+  allocHeightfield,
+  markWalkableTriangles,
+  rasterizeTriangles,
+  filterLowHangingWalkableObstacles,
+  filterLedgeSpans,
+  filterWalkableLowHeightSpans,
+  allocCompactHeightfield,
+  buildCompactHeightfield,
+  erodeWalkableArea,
+  buildDistanceField,
+  buildRegions,
+  allocContourSet,
+  buildContours,
+  buildPolyMesh,
+  allocPolyMesh,
+  allocPolyMeshDetail,
+  buildPolyMeshDetail,
 } from '../recast';
 import { getBoundingBox } from './common';
 
@@ -18,6 +41,7 @@ export const soloNavMeshGeneratorConfigDefaults: SoloNavMeshGeneratorConfig = {
 
 export type SoloNavMeshGeneratorIntermediates = {
   type: 'solo';
+  buildContext: RecastBuildContext;
   heightfield?: RecastHeightfield;
   compactHeightfield?: RecastCompactHeightfield;
   contourSet?: RecastContourSet;
@@ -53,22 +77,29 @@ export const generateSoloNavMesh = (
   navMeshGeneratorConfig: Partial<SoloNavMeshGeneratorConfig> = {},
   keepIntermediates = false
 ): SoloNavMeshGeneratorResult => {
+  const buildContext = new RecastBuildContext();
+
   const intermediates: SoloNavMeshGeneratorIntermediates = {
     type: 'solo',
+    buildContext,
   };
+
+  const navMesh = new NavMesh();
 
   const fail = (error: string): SoloNavMeshGeneratorFailResult => {
     if (!keepIntermediates) {
       if (intermediates.heightfield) {
-        Raw.Recast.freeHeightfield(intermediates.heightfield.raw);
+        freeHeightfield(intermediates.heightfield);
       }
       if (intermediates.compactHeightfield) {
-        Raw.Recast.freeCompactHeightfield(intermediates.compactHeightfield.raw);
+        freeCompactHeightfield(intermediates.compactHeightfield);
       }
       if (intermediates.contourSet) {
-        Raw.Recast.freeContourSet(intermediates.contourSet.raw);
+        freeContourSet(intermediates.contourSet);
       }
     }
+
+    navMesh.destroy();
 
     return {
       navMesh: undefined,
@@ -80,22 +111,17 @@ export const generateSoloNavMesh = (
     };
   };
 
-  const verts = positions as number[]
+  const verts = positions as number[];
   const nVerts = indices.length;
+  const vertsArray = new Arrays.FloatArray();
+  vertsArray.copy(verts, verts.length);
 
   const tris = indices as number[];
   const nTris = indices.length / 3;
-
-  const { bbMin, bbMax } = getBoundingBox(
-    positions,
-    indices
-  );
-
-  const vertsArray = new Raw.Arrays.FloatArray();
-  vertsArray.copy(verts, verts.length);
-
-  const trisArray = new Raw.Arrays.IntArray();
+  const trisArray = new Arrays.IntArray();
   trisArray.copy(tris, tris.length);
+
+  const { bbMin, bbMax } = getBoundingBox(positions, indices);
 
   //
   // Step 1. Initialize build config.
@@ -115,18 +141,16 @@ export const generateSoloNavMesh = (
   config.width = gridSize.width;
   config.height = gridSize.height;
 
-  const rcContext = new Raw.rcContext();
-
   //
   // Step 2. Rasterize input polygon soup.
   //
   // Allocate voxel heightfield where we rasterize our input data to.
-  const heightfield = Raw.Recast.allocHeightfield();
-  intermediates.heightfield = new RecastHeightfield(heightfield);
+  const heightfield = allocHeightfield();
+  intermediates.heightfield = heightfield;
 
   if (
-    !Raw.Recast.createHeightfield(
-      rcContext,
+    !createHeightfield(
+      buildContext,
       heightfield,
       config.width,
       config.height,
@@ -142,11 +166,11 @@ export const generateSoloNavMesh = (
   // Find triangles which are walkable based on their slope and rasterize them.
   // If your input data is multiple meshes, you can transform them here, calculate
   // the are type for each of the meshes and rasterize them.
-  const triAreasArray = new Raw.Arrays.UnsignedCharArray();
+  const triAreasArray = new Arrays.UnsignedCharArray();
   triAreasArray.resize(nTris);
 
-  Raw.Recast.markWalkableTriangles(
-    rcContext,
+  markWalkableTriangles(
+    buildContext,
     config.walkableSlopeAngle,
     vertsArray,
     nVerts,
@@ -156,8 +180,8 @@ export const generateSoloNavMesh = (
   );
 
   if (
-    !Raw.Recast.rasterizeTriangles(
-      rcContext,
+    !rasterizeTriangles(
+      buildContext,
       vertsArray,
       nVerts,
       trisArray,
@@ -178,19 +202,19 @@ export const generateSoloNavMesh = (
   // Once all geoemtry is rasterized, we do initial pass of filtering to
   // remove unwanted overhangs caused by the conservative rasterization
   // as well as filter spans where the character cannot possibly stand.
-  Raw.Recast.filterLowHangingWalkableObstacles(
-    rcContext,
+  filterLowHangingWalkableObstacles(
+    buildContext,
     config.walkableClimb,
     heightfield
   );
-  Raw.Recast.filterLedgeSpans(
-    rcContext,
+  filterLedgeSpans(
+    buildContext,
     config.walkableHeight,
     config.walkableClimb,
     heightfield
   );
-  Raw.Recast.filterWalkableLowHeightSpans(
-    rcContext,
+  filterWalkableLowHeightSpans(
+    buildContext,
     config.walkableHeight,
     heightfield
   );
@@ -201,14 +225,12 @@ export const generateSoloNavMesh = (
   // Compact the heightfield so that it is faster to handle from now on.
   // This will result more cache coherent data as well as the neighbours
   // between walkable cells will be calculated.
-  const compactHeightfield = Raw.Recast.allocCompactHeightfield();
-  intermediates.compactHeightfield = new RecastCompactHeightfield(
-    compactHeightfield
-  );
+  const compactHeightfield = allocCompactHeightfield();
+  intermediates.compactHeightfield = compactHeightfield;
 
   if (
-    !Raw.Recast.buildCompactHeightfield(
-      rcContext,
+    !buildCompactHeightfield(
+      buildContext,
       config.walkableHeight,
       config.walkableClimb,
       heightfield,
@@ -220,24 +242,20 @@ export const generateSoloNavMesh = (
 
   // Erode the walkable area by agent radius.
   if (
-    !Raw.Recast.erodeWalkableArea(
-      rcContext,
-      config.walkableRadius,
-      compactHeightfield
-    )
+    !erodeWalkableArea(buildContext, config.walkableRadius, compactHeightfield)
   ) {
     return fail('Failed to erode walkable area');
   }
 
   // Prepare for region partitioning, by calculating Distance field along the walkable surface.
-  if (!Raw.Recast.buildDistanceField(rcContext, compactHeightfield)) {
+  if (!buildDistanceField(buildContext, compactHeightfield)) {
     return fail('Failed to build distance field');
   }
 
   // Partition the walkable surface into simple regions without holes.
   if (
-    !Raw.Recast.buildRegions(
-      rcContext,
+    !buildRegions(
+      buildContext,
       compactHeightfield,
       config.borderSize,
       config.minRegionArea,
@@ -250,12 +268,12 @@ export const generateSoloNavMesh = (
   //
   // Step 5. Trace and simplify region contours.
   //
-  const contourSet = Raw.Recast.allocContourSet();
-  intermediates.contourSet = new RecastContourSet(contourSet);
+  const contourSet = allocContourSet();
+  intermediates.contourSet = contourSet;
 
   if (
-    !Raw.Recast.buildContours(
-      rcContext,
+    !buildContours(
+      buildContext,
       compactHeightfield,
       config.maxSimplificationError,
       config.maxEdgeLen,
@@ -269,14 +287,9 @@ export const generateSoloNavMesh = (
   //
   // Step 6. Build polygons mesh from contours.
   //
-  const polyMesh = Raw.Recast.allocPolyMesh();
+  const polyMesh = allocPolyMesh();
   if (
-    !Raw.Recast.buildPolyMesh(
-      rcContext,
-      contourSet,
-      config.maxVertsPerPoly,
-      polyMesh
-    )
+    !buildPolyMesh(buildContext, contourSet, config.maxVertsPerPoly, polyMesh)
   ) {
     return fail('Failed to triangulate contours');
   }
@@ -284,10 +297,10 @@ export const generateSoloNavMesh = (
   //
   // Step 7. Create detail mesh which allows to access approximate height on each polygon.
   //
-  const polyMeshDetail = Raw.Recast.allocPolyMeshDetail();
+  const polyMeshDetail = allocPolyMeshDetail();
   if (
-    !Raw.Recast.buildPolyMeshDetail(
-      rcContext,
+    !buildPolyMeshDetail(
+      buildContext,
       polyMesh,
       compactHeightfield,
       config.detailSampleDist,
@@ -299,50 +312,47 @@ export const generateSoloNavMesh = (
   }
 
   if (!keepIntermediates) {
-    Raw.Recast.freeHeightfield(heightfield);
-    Raw.Recast.freeCompactHeightfield(compactHeightfield);
-    Raw.Recast.freeContourSet(contourSet);
+    freeHeightfield(heightfield);
+    freeCompactHeightfield(compactHeightfield);
+    freeContourSet(contourSet);
   }
 
   //
   // Step 8. Create Detour data from Recast poly mesh.
   //
-  for (let i = 0; i < polyMesh.npolys; i++) {
-    if (polyMesh.get_areas(i) == Raw.Recast.WALKABLE_AREA) {
-      polyMesh.set_areas(i, 0);
+  for (let i = 0; i < polyMesh.npolys(); i++) {
+    if (polyMesh.areas(i) == Raw.Recast.WALKABLE_AREA) {
+      polyMesh.setAreas(i, 0);
     }
-    if (polyMesh.get_areas(i) == 0) {
-      polyMesh.set_flags(i, 1);
+    if (polyMesh.areas(i) == 0) {
+      polyMesh.setFlags(i, 1);
     }
   }
 
-  const navMeshCreateParams = new Raw.dtNavMeshCreateParams();
+  const navMeshCreateParams = new NavMeshCreateParams();
 
-  Raw.DetourNavMeshBuilder.setPolyMeshCreateParams(navMeshCreateParams, polyMesh)
-    Raw.DetourNavMeshBuilder.setPolyMeshDetailCreateParams(navMeshCreateParams, polyMeshDetail)
+  navMeshCreateParams.setPolyMeshCreateParams(polyMesh);
+  navMeshCreateParams.setPolyMeshDetailCreateParams(polyMeshDetail);
 
-    navMeshCreateParams.walkableHeight = config.walkableHeight;
-    navMeshCreateParams.walkableRadius = config.walkableRadius;
-    navMeshCreateParams.walkableClimb = config.walkableClimb;
+  navMeshCreateParams.setWalkableHeight(config.walkableHeight);
+  navMeshCreateParams.setWalkableRadius(config.walkableRadius);
+  navMeshCreateParams.setWalkableClimb(config.walkableClimb);
 
-    navMeshCreateParams.cs = config.cs;
-    navMeshCreateParams.ch = config.ch;
+  navMeshCreateParams.setCellSize(config.cs);
+  navMeshCreateParams.setCellHeight(config.ch);
 
-    navMeshCreateParams.buildBvTree = true;
+  navMeshCreateParams.setBuildBvTree(true);
 
-  Raw.DetourNavMeshBuilder.setOffMeshConCount(navMeshCreateParams, 0);
+  navMeshCreateParams.setOffMeshConCount(0);
 
-  const createNavMeshDataResult = Raw.DetourNavMeshBuilder.createNavMeshData(
-    navMeshCreateParams
-  );
+  const createNavMeshDataResult = createNavMeshData(navMeshCreateParams);
 
   if (!createNavMeshDataResult.success) {
     return fail('Failed to create Detour navmesh data');
   }
 
-  const navMesh = new NavMesh();
+  const { navMeshData } = createNavMeshDataResult;
 
-  const navMeshData = createNavMeshDataResult.navMeshData;
   if (!navMesh.initSolo(navMeshData)) {
     return fail('Failed to create Detour navmesh');
   }

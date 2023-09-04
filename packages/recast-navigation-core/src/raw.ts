@@ -8,10 +8,10 @@ const instances = [
   'Detour',
   'DetourNavMeshBuilder',
   'DetourTileCacheBuilder',
-  'ChunkyTriMesh',
   'NavMeshImporter',
   'NavMeshExporter',
   'CrowdUtils',
+  'ChunkyTriMeshUtils',
 ] as const satisfies readonly ModuleKey[];
 
 const classes = [
@@ -45,9 +45,6 @@ const arrays = [
 type RawApi = Pretty<
   {
     Module: typeof RawModule;
-    Arrays: {
-      [K in (typeof arrays)[number]]: (typeof RawModule)[K];
-    };
     isNull: (obj: unknown) => boolean;
   } & {
     [K in (typeof instances)[number]]: InstanceType<(typeof RawModule)[K]>;
@@ -55,6 +52,12 @@ type RawApi = Pretty<
     [K in (typeof classes)[number]]: (typeof RawModule)[K];
   }
 >;
+
+type ArraysApi = Pretty<{
+  [K in (typeof arrays)[number]]: (typeof RawModule)[K];
+}>;
+
+export const Arrays = {} as ArraysApi;
 
 /**
  * Lower level bindings for the Recast and Detour libraries.
@@ -82,8 +85,7 @@ export const init = async () => {
     (Raw as any)[clazz] = Raw.Module[clazz];
   }
 
-  Raw.Arrays = {} as RawApi['Arrays'];
   for (const array of arrays) {
-    (Raw.Arrays as any)[array] = Raw.Module[array];
+    Arrays[array] = Raw.Module[array];
   }
 };

@@ -197,6 +197,7 @@ const App = () => {
     tileSize: {
       value: 0,
       label: 'Tile Size',
+      step: 1,
     },
     borderSize: {
       value: 0,
@@ -237,6 +238,7 @@ const App = () => {
     maxVertsPerPoly: {
       value: 6,
       label: 'Max Verts Per Poly',
+      step: 1,
     },
     detailSampleDist: {
       value: 6,
@@ -249,10 +251,12 @@ const App = () => {
     expectedLayersPerTile: {
       value: 4,
       label: 'Expected Layers Per Tile',
+      step: 1,
     },
     maxLayers: {
       value: 32,
       label: 'Max Layers',
+      step: 1,
     },
   });
 

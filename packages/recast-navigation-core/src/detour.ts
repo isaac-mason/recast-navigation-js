@@ -1,6 +1,7 @@
 import { Raw } from './raw';
 import type R from './raw-module';
-import { Vector3, array, vec3 } from './utils';
+import { RecastPolyMesh, RecastPolyMeshDetail } from './recast';
+import { Vector3, Vector3Tuple, array, vec3 } from './utils';
 
 export class DetourPolyDetail {
   raw: R.dtPolyDetail;
@@ -202,7 +203,7 @@ export class DetourMeshHeader {
   }
 }
 
-export class dtPoly {
+export class DetourPoly {
   raw: R.dtPoly;
 
   constructor(raw: R.dtPoly) {
@@ -259,8 +260,8 @@ export class DetourMeshTile {
       : null;
   }
 
-  polys(index: number): dtPoly {
-    return new dtPoly(this.raw.get_polys(index));
+  polys(index: number): DetourPoly {
+    return new DetourPoly(this.raw.get_polys(index));
   }
 
   verts(index: number): number {
@@ -305,5 +306,264 @@ export class DetourMeshTile {
 
   next(): DetourMeshTile {
     return new DetourMeshTile(this.raw.next);
+  }
+}
+
+export const createNavMeshData = (navMeshCreateParams: NavMeshCreateParams) => {
+  return Raw.DetourNavMeshBuilder.createNavMeshData(navMeshCreateParams.raw);
+};
+
+export class NavMeshCreateParams {
+  raw: R.dtNavMeshCreateParams;
+
+  constructor(raw?: R.dtNavMeshCreateParams) {
+    this.raw = raw ?? new Raw.Module.dtNavMeshCreateParams();
+  }
+
+  setPolyMeshCreateParams(polyMesh: RecastPolyMesh): void {
+    Raw.DetourNavMeshBuilder.setPolyMeshCreateParams(this.raw, polyMesh.raw);
+  }
+
+  setPolyMeshDetailCreateParams(polyMeshDetail: RecastPolyMeshDetail): void {
+    Raw.DetourNavMeshBuilder.setPolyMeshDetailCreateParams(
+      this.raw,
+      polyMeshDetail.raw
+    );
+  }
+
+  setOffMeshConCount(offMeshConCount: number): void {
+    Raw.DetourNavMeshBuilder.setOffMeshConCount(this.raw, offMeshConCount);
+  }
+
+  verts(index: number): number {
+    return this.raw.get_verts(index);
+  }
+
+  setVerts(index: number, value: number): void {
+    this.raw.set_verts(index, value);
+  }
+
+  vertCount(): number {
+    return this.raw.vertCount;
+  }
+
+  polys(index: number): number {
+    return this.raw.get_polys(index);
+  }
+
+  setPolys(index: number, value: number): void {
+    this.raw.set_polys(index, value);
+  }
+
+  polyAreas(index: number): number {
+    return this.raw.get_polyAreas(index);
+  }
+
+  setPolyAreas(index: number, value: number): void {
+    this.raw.set_polyAreas(index, value);
+  }
+
+  polyFlags(index: number): number {
+    return this.raw.get_polyFlags(index);
+  }
+
+  setPolyFlags(index: number, value: number): void {
+    this.raw.set_polyFlags(index, value);
+  }
+
+  polyCount(): number {
+    return this.raw.polyCount;
+  }
+
+  nvp(): number {
+    return this.raw.nvp;
+  }
+
+  setNvp(value: number): void {
+    this.raw.nvp = value;
+  }
+
+  detailMeshes(index: number): number {
+    return this.raw.get_detailMeshes(index);
+  }
+
+  setDetailMeshes(index: number, value: number): void {
+    this.raw.set_detailMeshes(index, value);
+  }
+
+  detailVerts(index: number): number {
+    return this.raw.get_detailVerts(index);
+  }
+
+  setDetailVerts(index: number, value: number): void {
+    this.raw.set_detailVerts(index, value);
+  }
+
+  detailVertsCount(): number {
+    return this.raw.detailVertsCount;
+  }
+
+  detailTris(index: number): number {
+    return this.raw.get_detailTris(index);
+  }
+
+  setDetailTris(index: number, value: number): void {
+    this.raw.set_detailTris(index, value);
+  }
+
+  detailTriCount(): number {
+    return this.raw.detailTriCount;
+  }
+
+  offMeshConVerts(index: number): number {
+    return this.raw.get_offMeshConVerts(index);
+  }
+
+  setOffMeshConVerts(index: number, value: number): void {
+    this.raw.set_offMeshConVerts(index, value);
+  }
+
+  offMeshConRad(index: number): number {
+    return this.raw.get_offMeshConRad(index);
+  }
+
+  setOffMeshConRad(index: number, value: number): void {
+    this.raw.set_offMeshConRad(index, value);
+  }
+
+  offMeshConDir(index: number): number {
+    return this.raw.get_offMeshConDir(index);
+  }
+
+  setOffMeshConDir(index: number, value: number): void {
+    this.raw.set_offMeshConDir(index, value);
+  }
+
+  offMeshConAreas(index: number): number {
+    return this.raw.get_offMeshConAreas(index);
+  }
+
+  setOffMeshConAreas(index: number, value: number): void {
+    this.raw.set_offMeshConAreas(index, value);
+  }
+
+  offMeshConFlags(index: number): number {
+    return this.raw.get_offMeshConFlags(index);
+  }
+
+  setOffMeshConFlags(index: number, value: number): void {
+    this.raw.set_offMeshConFlags(index, value);
+  }
+
+  offMeshConUserID(index: number): number {
+    return this.raw.get_offMeshConUserID(index);
+  }
+
+  setOffMeshConUserID(index: number, value: number): void {
+    this.raw.set_offMeshConUserID(index, value);
+  }
+
+  offMeshConCount(): number {
+    return this.raw.offMeshConCount;
+  }
+
+  userId(): number {
+    return this.raw.userId;
+  }
+
+  setUserId(value: number): void {
+    this.raw.userId = value;
+  }
+
+  tileX(): number {
+    return this.raw.tileX;
+  }
+
+  setTileX(value: number): void {
+    this.raw.tileX = value;
+  }
+
+  tileY(): number {
+    return this.raw.tileY;
+  }
+
+  setTileY(value: number): void {
+    this.raw.tileY = value;
+  }
+
+  tileLayer(): number {
+    return this.raw.tileLayer;
+  }
+
+  setTileLayer(value: number): void {
+    this.raw.tileLayer = value;
+  }
+
+  boundsMin(): Vector3Tuple {
+    return array((i) => this.raw.get_bmin(i), 3) as Vector3Tuple;
+  }
+
+  setBoundsMin(value: Vector3Tuple): void {
+    this.raw.set_bmin(0, value[0]);
+    this.raw.set_bmin(1, value[1]);
+    this.raw.set_bmin(2, value[2]);
+  }
+
+  boundsMax(): Vector3Tuple {
+    return array((i) => this.raw.get_bmax(i), 3) as Vector3Tuple;
+  }
+
+  setBoundsMax(value: Vector3Tuple): void {
+    this.raw.set_bmax(0, value[0]);
+    this.raw.set_bmax(1, value[1]);
+    this.raw.set_bmax(2, value[2]);
+  }
+
+  walkableHeight(): number {
+    return this.raw.walkableHeight;
+  }
+
+  setWalkableHeight(value: number): void {
+    this.raw.walkableHeight = value;
+  }
+
+  walkableRadius(): number {
+    return this.raw.walkableRadius;
+  }
+
+  setWalkableRadius(value: number): void {
+    this.raw.walkableRadius = value;
+  }
+
+  walkableClimb(): number {
+    return this.raw.walkableClimb;
+  }
+
+  setWalkableClimb(value: number): void {
+    this.raw.walkableClimb = value;
+  }
+
+  cellSize(): number {
+    return this.raw.cs;
+  }
+
+  setCellSize(value: number): void {
+    this.raw.cs = value;
+  }
+
+  cellHeight(): number {
+    return this.raw.ch;
+  }
+
+  setCellHeight(value: number): void {
+    this.raw.ch = value;
+  }
+
+  buildBvTree(): boolean {
+    return this.raw.buildBvTree;
+  }
+
+  setBuildBvTree(value: boolean): void {
+    this.raw.buildBvTree = value;
   }
 }
