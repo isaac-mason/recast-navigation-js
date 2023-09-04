@@ -1,5 +1,25 @@
 # @recast-navigation/core
 
+## 0.7.0
+
+### Minor Changes
+
+- 730ab93: feat: rename `generateTiledNavMesh` to `generateTileCache`, add `generateTiledNavMesh` that doesn't use `TileCache` and supports large tile sizes
+- 559e67d: feat: add CrowdAgent class, move agent methods from Crowd to CrowdAgent
+- 730ab93: feat: add `NavMeshParams` class, wrapper over raw `dtNavMeshParams`
+- 730ab93: feat: remove `TileCacheData` and `NavMeshData`, use `UnsignedCharArray` instead
+- 838e1e9: feat: add rcContext implementation for timers and logging
+- 838e1e9: feat: rename dtPoly wrapper class to DetourPoly
+- 838e1e9: feat: add more higher-level wrapper classes and functions for nav mesh generation
+
+### Patch Changes
+
+- Updated dependencies [730ab93]
+- Updated dependencies [838e1e9]
+- Updated dependencies [838e1e9]
+- Updated dependencies [730ab93]
+  - @recast-navigation/wasm@0.7.0
+
 ## 0.6.0
 
 ### Minor Changes
