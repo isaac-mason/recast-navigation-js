@@ -1,5 +1,14 @@
 # @recast-navigation/wasm
 
+## 0.7.0
+
+### Minor Changes
+
+- 730ab93: feat: remove `TileCacheData` and `NavMeshData`, use `UnsignedCharArray` instead
+- 838e1e9: feat: add rcContext implementation for timers and logging
+- 838e1e9: feat: rename ChunkyTriMesh to ChunkyTriMeshUtils
+- 730ab93: feat: replace `DetourNavMeshBuilder::setSoloNavMeshCreateParams` with `DetourNavMeshBuilder::setPolyMeshCreateParams` and `DetourNavMeshBuilder::setPolyMeshDetailCreateParams`
+
 ## 0.6.0
 
 ### Minor Changes
