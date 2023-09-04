@@ -56,7 +56,7 @@ const { navMesh } = threeToTiledNavMesh(meshes, {
   // ... nav mesh generation config ...
 }});
 
-/* tiled navmesh */
+/* tile cache with support for temporary obstacles */
 const { navMesh, tileCache } = threeToTileCache(meshes, {
   tileSize: 16,
   // ... nav mesh generation config ...
