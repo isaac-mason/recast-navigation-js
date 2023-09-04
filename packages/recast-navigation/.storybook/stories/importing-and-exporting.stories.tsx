@@ -71,7 +71,7 @@ export const ImportingAndExporting = () => {
 
           const meshProcess = new TileCacheMeshProcess(
             (navMeshCreateParams, polyAreas, polyFlags) => {
-              for (let i = 0; i < navMeshCreateParams.polyCount; ++i) {
+              for (let i = 0; i < navMeshCreateParams.polyCount(); ++i) {
                 polyAreas.set_data(i, 0);
                 polyFlags.set_data(i, 1);
               }

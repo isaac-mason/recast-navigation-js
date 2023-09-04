@@ -27,6 +27,8 @@ export class NavMeshHelper extends Object3D {
 
     this.navMesh = navMesh;
 
+    this.geometry = new BufferGeometry();
+
     this.navMeshMaterial = navMeshMaterial
       ? navMeshMaterial
       : new MeshBasicMaterial({
@@ -34,8 +36,6 @@ export class NavMeshHelper extends Object3D {
           transparent: true,
           opacity: 0.7,
         });
-
-    this.geometry = new BufferGeometry();
 
     this.update();
 
@@ -56,9 +56,7 @@ export class NavMeshHelper extends Object3D {
       'position',
       new BufferAttribute(Float32Array.from(positions), 3)
     );
-
     this.geometry.setIndex(new BufferAttribute(Uint32Array.from(indices), 1));
-
     this.geometry.computeVertexNormals();
   }
 }

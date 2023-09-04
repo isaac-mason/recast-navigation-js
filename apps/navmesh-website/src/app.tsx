@@ -19,6 +19,7 @@ import {
 import {
   BufferAttribute,
   BufferGeometry,
+  Color,
   Group,
   Mesh,
   MeshBasicMaterial,
@@ -310,32 +311,27 @@ const App = () => {
   const [navMeshHelperDebugColor, setNavMeshHelperDebugColor] =
     useState('#ffa500');
 
-  const {
-    wireframe: navMeshDebugWireframe,
-    opacity: navMeshDebugOpacity,
-    displayNavMeshHelper,
-  } = useControls('Display Options.NavMesh', {
-    _: levaText('The computed navigation mesh.'),
-    displayNavMeshHelper: {
-      label: 'Show NavMesh',
-      value: true,
-    },
-    color: {
-      label: 'Color',
-      value: navMeshHelperDebugColor,
-      onEditEnd: setNavMeshHelperDebugColor,
-    },
-    opacity: {
-      label: 'Opacity',
-      value: 0.65,
-      min: 0,
-      max: 1,
-    },
-    wireframe: {
-      label: 'Wireframe',
-      value: false,
-    },
-  });
+  const { opacity: navMeshDebugOpacity, displayNavMeshHelper } = useControls(
+    'Display Options.NavMesh',
+    {
+      _: levaText('The computed navigation mesh.'),
+      displayNavMeshHelper: {
+        label: 'Show NavMesh',
+        value: true,
+      },
+      color: {
+        label: 'Color',
+        value: navMeshHelperDebugColor,
+        onEditEnd: setNavMeshHelperDebugColor,
+      },
+      opacity: {
+        label: 'Opacity',
+        value: 0.65,
+        min: 0,
+        max: 1,
+      },
+    }
+  );
 
   const { heightfieldHelperEnabled } = useControls(
     'Display Options.Heightfield',
@@ -389,23 +385,19 @@ const App = () => {
       return undefined;
     }
 
+    const color = new Color(Number(navMeshHelperDebugColor.replace('#', '0x')));
+
     const navMeshHelper = new NavMeshHelper({
       navMesh,
       navMeshMaterial: new MeshBasicMaterial({
         transparent: true,
-        color: Number(navMeshHelperDebugColor.replace('#', '0x')),
-        wireframe: navMeshDebugWireframe,
         opacity: navMeshDebugOpacity,
+        color,
       }),
     });
 
     return navMeshHelper;
-  }, [
-    navMesh,
-    navMeshHelperDebugColor,
-    navMeshDebugWireframe,
-    navMeshDebugOpacity,
-  ]);
+  }, [navMesh, navMeshHelperDebugColor, navMeshDebugOpacity]);
 
   const navMeshGeneratorInputHelper = useMemo(() => {
     if (!indexedTriangleMesh) return undefined;

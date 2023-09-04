@@ -1,4 +1,5 @@
 import { OrbitControls } from '@react-three/drei';
+import { RecastHeightfield } from '@recast-navigation/core';
 import {
   HeightfieldHelper,
   threeToTiledNavMesh,
@@ -42,9 +43,9 @@ export const HeightfieldHelperExample = () => {
     };
 
     const { intermediates } = threeToTiledNavMesh(meshes, config, true);
-    const heightfields = intermediates!.tileIntermediates.map(
-      ({ heightfield }) => heightfield
-    );
+    const heightfields = intermediates!.tileIntermediates
+      .map(({ heightfield }) => heightfield)
+      .filter(Boolean) as RecastHeightfield[];
 
     const heightfieldHelper = new HeightfieldHelper({
       heightfields,
@@ -66,9 +67,7 @@ export const HeightfieldHelperExample = () => {
         <NavTestEnvirionment />
       </group>
 
-      {heightfieldHelper && (
-        <primitive object={heightfieldHelper} />
-      )}
+      {heightfieldHelper && <primitive object={heightfieldHelper} />}
 
       <OrbitControls />
     </>
