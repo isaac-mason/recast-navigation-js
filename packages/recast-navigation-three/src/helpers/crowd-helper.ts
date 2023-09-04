@@ -5,7 +5,7 @@ import {
   Mesh,
   MeshBasicMaterial,
   Object3D,
-  Vector3
+  Vector3,
 } from 'three';
 
 export type CrowdHelperParams = {
@@ -21,39 +21,40 @@ export class CrowdHelper extends Object3D {
   agentMaterial: Material;
 
   constructor({ crowd, agentMaterial }: CrowdHelperParams) {
-    super()
+    super();
 
     this.recastCrowd = crowd;
-    
-    this.agentMaterial = agentMaterial ?? new MeshBasicMaterial({ color: 'red' });
+
+    this.agentMaterial =
+      agentMaterial ?? new MeshBasicMaterial({ color: 'red' });
 
     this.update();
   }
 
   /**
    * Update the three debug view of the crowd agents.
-   * 
+   *
    * This should be called after updating the crowd.
    */
   update() {
-    const agentsIndices = this.recastCrowd.getAgents();
+    const agents = this.recastCrowd.getAgents();
 
     const unseen = new Set(this.agentMeshes.keys());
 
-    for (const i of agentsIndices) {
-      unseen.delete(i);
+    for (const agent of agents) {
+      unseen.delete(agent.agentIndex);
 
-      const position = this.recastCrowd.getAgentPosition(i);
-      const velocity = this.recastCrowd.getAgentVelocity(i);
-      const agentParams = this.recastCrowd.getAgentParameters(i);
+      const position = agent.position();
+      const velocity = agent.velocity();
+      const agentParams = agent.parameters();
 
-      let agentMesh = this.agentMeshes.get(i);
+      let agentMesh = this.agentMeshes.get(agent.agentIndex);
 
       if (agentMesh === undefined) {
         agentMesh = this.createAgentMesh(agentParams);
-        
+
         this.add(agentMesh);
-        this.agentMeshes.set(i, agentMesh);
+        this.agentMeshes.set(agent.agentIndex, agentMesh);
       }
 
       agentMesh.position.set(
@@ -63,7 +64,7 @@ export class CrowdHelper extends Object3D {
       );
       agentMesh.lookAt(
         new Vector3().copy(agentMesh.position).add(velocity as Vector3)
-      ); 
+      );
     }
 
     for (const agentId of unseen) {

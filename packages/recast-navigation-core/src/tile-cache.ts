@@ -233,22 +233,20 @@ export class TileCacheMeshProcess {
   }
 }
 
-export class DetourTileCacheBuilder {
-  static buildTileCacheLayer(
-    comp: R.RecastFastLZCompressor,
-    header: R.dtTileCacheLayerHeader,
-    heights: R.UnsignedCharArray,
-    areas: R.UnsignedCharArray,
-    cons: R.UnsignedCharArray,
-    tileCacheData: R.UnsignedCharArray
-  ): number {
-    return Raw.DetourTileCacheBuilder.buildTileCacheLayer(
-      comp,
-      header,
-      heights,
-      areas,
-      cons,
-      tileCacheData
-    );
-  }
-}
+export const buildTileCacheLayer = (
+  comp: R.RecastFastLZCompressor,
+  header: R.dtTileCacheLayerHeader,
+  heights: R.UnsignedCharArray,
+  areas: R.UnsignedCharArray,
+  cons: R.UnsignedCharArray,
+  tileCacheData: R.UnsignedCharArray
+): number => {
+  return Raw.DetourTileCacheBuilder.buildTileCacheLayer(
+    comp,
+    header,
+    heights,
+    areas,
+    cons,
+    tileCacheData
+  );
+};

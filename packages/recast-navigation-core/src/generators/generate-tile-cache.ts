@@ -28,13 +28,13 @@ import {
   getHeightfieldLayerHeights,
   markWalkableTriangles,
   rasterizeTriangles,
-  recastConfigDefaults
+  recastConfigDefaults,
 } from '../recast';
 import {
-  DetourTileCacheBuilder,
   DetourTileCacheParams,
   TileCache,
   TileCacheMeshProcess,
+  buildTileCacheLayer,
 } from '../tile-cache';
 import { Vector2Tuple, Vector3Tuple, vec3 } from '../utils';
 import { dtIlog2, dtNextPow2, getBoundingBox } from './common';
@@ -464,7 +464,7 @@ export const generateTileCache = (
       const areas = getHeightfieldLayerAreas(heightfieldLayer);
       const cons = getHeightfieldLayerCons(heightfieldLayer);
 
-      const status = DetourTileCacheBuilder.buildTileCacheLayer(
+      const status = buildTileCacheLayer(
         compressor,
         header,
         heights,

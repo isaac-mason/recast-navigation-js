@@ -1,7 +1,7 @@
 import { Line } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
-import { Crowd, NavMesh, NavMeshQuery } from 'recast-navigation';
+import { Crowd, CrowdAgent, NavMesh, NavMeshQuery } from 'recast-navigation';
 import { CrowdHelper } from 'recast-navigation/three';
 import { MeshStandardMaterial, Vector3, Vector3Tuple } from 'three';
 
@@ -24,6 +24,7 @@ export const RecastAgent = forwardRef<RecastAgentRef, RecastAgentProps>(
     ref
   ) => {
     const [crowd, setCrowd] = useState<Crowd | undefined>();
+    const [agent, setAgent] = useState<CrowdAgent | undefined>();
     const [crowdHelper, setCrowdHelper] = useState<CrowdHelper | undefined>();
 
     const [navMeshQuery, setNavMeshQuery] = useState<
@@ -37,18 +38,18 @@ export const RecastAgent = forwardRef<RecastAgentRef, RecastAgentProps>(
       ref,
       () => ({
         goto: (position: Vector3) => {
-          if (!navMeshQuery || !crowd) return;
+          if (!navMeshQuery || !crowd || !agent) return;
 
           const target = navMeshQuery.getClosestPoint(position);
-          crowd.goto(0, target);
+          agent.goto(target);
 
           setAgentTarget(new Vector3().copy(target as Vector3));
         },
         teleport: (position: Vector3) => {
-          if (!navMeshQuery || !crowd) return;
+          if (!navMeshQuery || !crowd || !agent) return;
 
           const target = navMeshQuery.getClosestPoint(position);
-          crowd.teleport(0, target);
+          agent.teleport(target);
 
           setAgentTarget(undefined);
         },
@@ -69,12 +70,15 @@ export const RecastAgent = forwardRef<RecastAgentRef, RecastAgentProps>(
         maxAgentRadius: agentRadius,
       });
 
-      crowd.addAgent(navMeshQuery.getClosestPoint({ x: 0, y: 0, z: 0 }), {
-        radius: agentRadius,
-        height: agentHeight,
-        maxAcceleration: agentMaxAcceleration,
-        maxSpeed: agentMaxSpeed,
-      });
+      const agent = crowd.addAgent(
+        navMeshQuery.getClosestPoint({ x: 0, y: 0, z: 0 }),
+        {
+          radius: agentRadius,
+          height: agentHeight,
+          maxAcceleration: agentMaxAcceleration,
+          maxSpeed: agentMaxSpeed,
+        }
+      );
 
       const crowdHelper = new CrowdHelper({
         crowd,
@@ -83,10 +87,12 @@ export const RecastAgent = forwardRef<RecastAgentRef, RecastAgentProps>(
 
       setNavMeshQuery(navMeshQuery);
       setCrowd(crowd);
+      setAgent(agent);
       setCrowdHelper(crowdHelper);
 
       return () => {
         setCrowdHelper(undefined);
+        setAgent(undefined);
         setCrowd(undefined);
         setNavMeshQuery(undefined);
       };
@@ -99,10 +105,10 @@ export const RecastAgent = forwardRef<RecastAgentRef, RecastAgentProps>(
     ]);
 
     useEffect(() => {
-      if (!crowd || !agentTarget) return;
+      if (!crowd || !agentTarget || !agent) return;
 
       const interval = setInterval(() => {
-        const path = [crowd.getAgentPosition(0), ...crowd.getAgentCorners(0)];
+        const path = [agent.position(), ...agent.corners()];
 
         if (path.length) {
           setAgentPath(path.map((p) => [p.x, p.y + 0.1, p.z]));

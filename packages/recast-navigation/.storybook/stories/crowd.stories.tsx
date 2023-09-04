@@ -1,6 +1,11 @@
 import { Line, OrbitControls } from '@react-three/drei';
 import { ThreeEvent, useFrame } from '@react-three/fiber';
-import { Crowd, NavMesh, NavMeshQuery } from '@recast-navigation/core';
+import {
+  Crowd,
+  CrowdAgent,
+  NavMesh,
+  NavMeshQuery,
+} from '@recast-navigation/core';
 import React, { useEffect, useState } from 'react';
 import { threeToSoloNavMesh } from 'recast-navigation/three';
 import {
@@ -29,6 +34,7 @@ export const SingleAgent = () => {
   const [navMesh, setNavMesh] = useState<NavMesh | undefined>();
   const [navMeshQuery, setNavMeshQuery] = useState<NavMeshQuery | undefined>();
   const [crowd, setCrowd] = useState<Crowd | undefined>();
+  const [agent, setAgent] = useState<CrowdAgent | undefined>();
 
   const [agentTarget, setAgentTarget] = useState<Vector3 | undefined>();
   const [agentPath, setAgentPath] = useState<Vector3Tuple[] | undefined>();
@@ -49,13 +55,13 @@ export const SingleAgent = () => {
       ch: 0.2,
     });
 
-    if (!success) return
+    if (!success) return;
 
     const navMeshQuery = new NavMeshQuery({ navMesh });
 
     const crowd = new Crowd({ navMesh, maxAgents: 1, maxAgentRadius: 0.2 });
 
-    crowd.addAgent(
+    const agent = crowd.addAgent(
       navMeshQuery.getClosestPoint({ x: -2.9, y: 2.366, z: 0.9 }),
       {
         radius: 0.1,
@@ -70,6 +76,7 @@ export const SingleAgent = () => {
     setNavMesh(navMesh);
     setNavMeshQuery(navMeshQuery);
     setCrowd(crowd);
+    setAgent(agent);
 
     return () => {
       navMesh.destroy();
@@ -79,11 +86,12 @@ export const SingleAgent = () => {
       setNavMesh(undefined);
       setNavMeshQuery(undefined);
       setCrowd(undefined);
+      setAgent(undefined);
     };
   }, [group]);
 
   useEffect(() => {
-    if (!crowd) return;
+    if (!crowd || !agent) return;
 
     if (!agentTarget) {
       setAgentPath(undefined);
@@ -91,7 +99,7 @@ export const SingleAgent = () => {
     }
 
     const interval = setInterval(() => {
-      const path = [crowd.getAgentPosition(0), ...crowd.getAgentCorners(0)];
+      const path = [agent.position(), ...agent.corners()];
 
       if (path.length) {
         setAgentPath(path.map((p) => [p.x, p.y + 0.1, p.z]));
@@ -112,18 +120,18 @@ export const SingleAgent = () => {
   });
 
   const onClick = (e: ThreeEvent<MouseEvent>) => {
-    if (!navMesh || !navMeshQuery || !crowd) return;
+    if (!navMesh || !navMeshQuery || !crowd || !agent) return;
 
     e.stopPropagation();
 
     const target = navMeshQuery.getClosestPoint(e.point);
 
     if (e.button === 2) {
-      crowd.teleport(0, target);
+      agent.teleport(target);
 
       setAgentTarget(undefined);
     } else {
-      crowd.goto(0, target);
+      agent.goto(target);
 
       setAgentTarget(new Vector3().copy(target as Vector3));
     }
@@ -183,7 +191,7 @@ export const MultipleAgents = () => {
       ch: 0.2,
     });
 
-    if (!success) return
+    if (!success) return;
 
     const navMeshQuery = new NavMeshQuery({ navMesh });
 
@@ -234,7 +242,7 @@ export const MultipleAgents = () => {
     const target = navMeshQuery.getClosestPoint(e.point);
 
     for (const agent of crowd.getAgents()) {
-      crowd.goto(agent, target);
+      agent.goto(target);
     }
   };
 
