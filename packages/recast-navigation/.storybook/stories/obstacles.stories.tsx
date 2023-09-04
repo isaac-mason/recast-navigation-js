@@ -3,6 +3,7 @@ import { ThreeEvent, useFrame } from '@react-three/fiber';
 import {
   BoxObstacle,
   Crowd,
+  CrowdAgent,
   CylinderObstacle,
   NavMesh,
   NavMeshQuery,
@@ -36,6 +37,7 @@ export const Obstacles = () => {
   const [navMeshQuery, setNavMeshQuery] = useState<NavMeshQuery | undefined>();
   const [tileCache, setTileCache] = useState<TileCache | undefined>();
   const [crowd, setCrowd] = useState<Crowd | undefined>();
+  const [agent, setAgent] = useState<CrowdAgent | undefined>();
 
   const boxObstacle = useRef<BoxObstacle | undefined>();
   const cylinderObstacle = useRef<CylinderObstacle | undefined>();
@@ -76,25 +78,30 @@ export const Obstacles = () => {
       maxAgentRadius: 0.2,
     });
 
-    crowd.addAgent(navMeshQuery.getClosestPoint({ x: 0, y: 0, z: 0 }), {
-      radius: 0.2,
-      height: 1,
-      maxAcceleration: 4.0,
-      maxSpeed: 1.0,
-      collisionQueryRange: 0.5,
-      pathOptimizationRange: 0.0,
-      separationWeight: 1.0,
-    });
+    const agent = crowd.addAgent(
+      navMeshQuery.getClosestPoint({ x: 0, y: 0, z: 0 }),
+      {
+        radius: 0.2,
+        height: 1,
+        maxAcceleration: 4.0,
+        maxSpeed: 1.0,
+        collisionQueryRange: 0.5,
+        pathOptimizationRange: 0.0,
+        separationWeight: 1.0,
+      }
+    );
 
     setNavMesh(navMesh);
     setNavMeshQuery(navMeshQuery);
     setTileCache(tileCache);
     setCrowd(crowd);
+    setAgent(agent);
 
     return () => {
       setNavMesh(undefined);
       setNavMeshQuery(undefined);
       setTileCache(undefined);
+      setAgent(undefined);
       setCrowd(undefined);
 
       crowd.destroy();
@@ -135,14 +142,14 @@ export const Obstacles = () => {
   });
 
   const onClick = (e: ThreeEvent<MouseEvent>) => {
-    if (!navMesh || !navMeshQuery || !crowd) return;
+    if (!navMesh || !navMeshQuery || !crowd || !agent) return;
 
     e.stopPropagation();
 
     if (e.button === 2) {
-      crowd.teleport(0, e.point);
+      agent.teleport(e.point);
     } else {
-      crowd.goto(0, e.point);
+      agent.goto(e.point);
     }
   };
 
