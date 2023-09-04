@@ -311,27 +311,32 @@ const App = () => {
   const [navMeshHelperDebugColor, setNavMeshHelperDebugColor] =
     useState('#ffa500');
 
-  const { opacity: navMeshDebugOpacity, displayNavMeshHelper } = useControls(
-    'Display Options.NavMesh',
-    {
-      _: levaText('The computed navigation mesh.'),
-      displayNavMeshHelper: {
-        label: 'Show NavMesh',
-        value: true,
-      },
-      color: {
-        label: 'Color',
-        value: navMeshHelperDebugColor,
-        onEditEnd: setNavMeshHelperDebugColor,
-      },
-      opacity: {
-        label: 'Opacity',
-        value: 0.65,
-        min: 0,
-        max: 1,
-      },
-    }
-  );
+  const {
+    opacity: navMeshDebugOpacity,
+    wireframe: navMeshDebugWireframe,
+    displayNavMeshHelper,
+  } = useControls('Display Options.NavMesh', {
+    _: levaText('The computed navigation mesh.'),
+    displayNavMeshHelper: {
+      label: 'Show NavMesh',
+      value: true,
+    },
+    color: {
+      label: 'Color',
+      value: navMeshHelperDebugColor,
+      onEditEnd: setNavMeshHelperDebugColor,
+    },
+    opacity: {
+      label: 'Opacity',
+      value: 0.65,
+      min: 0,
+      max: 1,
+    },
+    wireframe: {
+      label: 'Wireframe',
+      value: false,
+    },
+  });
 
   const { heightfieldHelperEnabled } = useControls(
     'Display Options.Heightfield',
@@ -392,12 +397,13 @@ const App = () => {
       navMeshMaterial: new MeshBasicMaterial({
         transparent: true,
         opacity: navMeshDebugOpacity,
+        wireframe: navMeshDebugWireframe,
         color,
       }),
     });
 
     return navMeshHelper;
-  }, [navMesh, navMeshHelperDebugColor, navMeshDebugOpacity]);
+  }, [navMesh, navMeshHelperDebugColor, navMeshDebugOpacity, navMeshDebugWireframe]);
 
   const navMeshGeneratorInputHelper = useMemo(() => {
     if (!indexedTriangleMesh) return undefined;
