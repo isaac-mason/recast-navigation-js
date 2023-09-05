@@ -1,5 +1,14 @@
 # recast-navigation
 
+## 0.7.1
+
+### Patch Changes
+
+- 089a942: fix: three and @types/three peer deps
+- Updated dependencies [089a942]
+  - @recast-navigation/three@0.7.1
+  - @recast-navigation/core@0.7.1
+
 ## 0.7.0
 
 ### Patch Changes

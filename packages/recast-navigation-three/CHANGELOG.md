@@ -1,5 +1,12 @@
 # @recast-navigation/three
 
+## 0.7.1
+
+### Patch Changes
+
+- 089a942: fix: three and @types/three peer deps
+  - @recast-navigation/core@0.7.1
+
 ## 0.7.0
 
 ### Patch Changes
