@@ -27,6 +27,7 @@
     "@recast-navigation/core": "0.7.0"
   },
   "peerDependencies": {
+    "@types/three": "0.x.x",
     "three": "0.x.x"
   },
   "devDependencies": {

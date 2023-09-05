@@ -53,9 +53,6 @@
     "@recast-navigation/core": "0.7.0",
     "@recast-navigation/three": "0.7.0"
   },
-  "peerDependencies": {
-    "three": "^0.155.0"
-  },
   "devDependencies": {
     "@babel/core": "^7.22.11",
     "@mdx-js/react": "^2.3.0",
