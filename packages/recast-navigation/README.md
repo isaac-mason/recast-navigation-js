@@ -1,27 +1,55 @@
-# recast-navigation
+![cover](cover.png)
 
-### Recast Navigation for JavaScript!
+[![Version](https://img.shields.io/npm/v/recast-navigation?style=for-the-badge)](https://www.npmjs.com/package/recast-navigation)
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/isaac-mason/recast-navigation-js/release.yml?style=for-the-badge)
+[![Downloads](https://img.shields.io/npm/dt/recast-navigation.svg?style=for-the-badge)](https://www.npmjs.com/package/recast-navigation)
+[![Bundle Size](https://img.shields.io/bundlephobia/min/recast-navigation?style=for-the-badge&label=bundle%20size)](https://bundlephobia.com/result?p=recast-navigation)
 
-A WebAssembly port of [Recast Navigation](https://github.com/recastnavigation/recastnavigation), plus other goodies.
+# recast-navigation-js
 
-## Features
+### [Try the NavMesh Generator Website!](https://navmesh.isaacmason.com/)
 
 - 📐 ‎ NavMesh generation
 - 🧭 ‎ Pathfinding
 - 🧑‍🤝‍🧑 ‎ Crowd simulation
+- 🚧 ‎ Temporary obstacles
 - 🌐 ‎ Web and Node support
 - 💙 ‎ TypeScript friendly
 - 🖇 ‎ [Easy integration with three.js via @recast-navigation/three](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-three)
 
+## Overview
+
+**recast-navigation-js** is a WebAssembly port of [the Recast and Detour libraries](https://github.com/recastnavigation/recastnavigation). Recast is a state of the art navigation mesh construction toolset for games, and Detour is a path-finding and spatial reasoning toolkit.
+
+This library provides high level APIs that make it easy to get started creating navigation meshes, querying them, and simulating crowds. It also provides lower-level APIs that give you fine-grained control over the navmesh generation process. 
+
+> **Warning** This library is still in early development. Versions in the 0.x.x range may have breaking changes.
+
 ## Installation
 
-You can install the library using npm:
+This package ships as ECMAScript modules, and is compatible with Node.js and browser environments.
+
+**CDN**
+
+```html
+<script type="module">
+  import { generateSoloNavMesh } from 'https://www.unpkg.com/@recast-navigation/core@0.7.1/dist/index.es.js';
+</script>
+```
+
+**NPM**
 
 ```sh
 npm install recast-navigation
 ```
 
-This package ships as ECMAScript modules, and is compatible with Node.js and browser environments.
+If you are using Vite, you may need to opt `recast-navigation` out of pre-bundling:
+
+```js
+export default defineConfig(() => ({
+  optimizeDeps: { exclude: ['recast-navigation'] }
+)}
+```
 
 ## Usage
 
@@ -236,3 +264,69 @@ const { navMesh, tileCache } = importNavMesh(navMeshExport);
 This library provides low-level APIs that aim to match the recast and detour c++ api, allowing you to create custom navigation mesh generators based on your specific needs. See: https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-core/src/generators
 
 Please note that this functionality is experimental, and not all everything is exposed. Familiarity with the recast and detour C++ libraries is required. If you require unexposed functionality, please submit an issue or a pull request.
+
+<!-- REMOVE-FROM-DOCS-START -->
+
+## API Documentation
+
+Documentation can be found at [https://docs.recast-navigation-js.isaacmason.com](https://docs.recast-navigation-js.isaacmason.com).
+
+<!-- REMOVE-FROM-DOCS-END -->
+
+## Examples
+
+Some demonstrations of how to use the library in different environments can be found in the [examples](./examples) directory.
+
+There are also storybooks that demonstrate the library in action: [https://recast-navigation-js.isaacmason.com](https://recast-navigation-js.isaacmason.com). The source code for the storybooks can be found in [./packages/recast-navigation/.storybook/stories](./packages/recast-navigation/.storybook/stories).
+
+## Packages
+
+Functionality is spread across packages in the `@recast-navigation/*` organization, with the `recast-navigation` acting as an umbrella package.
+
+You can choose between picking the scoped packages you need, or using the umbrella `recast-navigation` package, which provides additional entrypoints for specific frameworks and libraries.
+
+All packages ship as ECMAScript modules, and are compatible with Node.js and browser environments.
+
+### [**`recast-navigation`**](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation)
+
+[![Version](https://img.shields.io/npm/v/recast-navigation)](https://www.npmjs.com/package/recast-navigation)
+
+The umbrella package for `recast-navigation`.
+
+```bash
+> npm install recast-navigation
+```
+
+### [**`@recast-navigation/core`**](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-core)
+
+[![Version](https://img.shields.io/npm/v/@recast-navigation/core)](https://www.npmjs.com/package/@recast-navigation/core)
+
+The core library!
+
+```bash
+> npm install @recast-navigation/core
+```
+
+### [**`@recast-navigation/three`**](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-three)
+
+[![Version](https://img.shields.io/npm/v/@recast-navigation/three)](https://www.npmjs.com/package/@recast-navigation/three)
+
+Helpers for three.js.
+
+```bash
+> npm install @recast-navigation/three
+```
+
+## Apps
+
+### [NavMesh Generator](https://navmesh.isaacmason.com/)
+
+A website for generating navmeshes for your game. Drag 'n' drop your GLTF, fine tune your settings, and download your navmesh!
+
+([source](./apps/navmesh-website/))
+
+## Acknowledgements
+
+- This would not exist without [Recast Navigation](https://github.com/recastnavigation/recastnavigation) itself!
+- The demos use recastnavigation's level mesh
+- The WASM build was based on the [Babylon.js Recast Extension](https://github.com/BabylonJS/Extensions/tree/master/recastjs)
