@@ -1,5 +1,13 @@
 # recast-navigation
 
+## 0.7.2
+
+### Patch Changes
+
+- 7e0ec16: chore: update README.md
+  - @recast-navigation/core@0.7.2
+  - @recast-navigation/three@0.7.2
+
 ## 0.7.1
 
 ### Patch Changes
