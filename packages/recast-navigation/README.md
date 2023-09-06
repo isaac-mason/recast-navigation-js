@@ -1,4 +1,4 @@
-![cover](cover.png)
+![cover](https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/packages/recast-navigation/cover.png)
 
 [![Version](https://img.shields.io/npm/v/recast-navigation?style=for-the-badge)](https://www.npmjs.com/package/recast-navigation)
 ![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/isaac-mason/recast-navigation-js/release.yml?style=for-the-badge)
