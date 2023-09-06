@@ -444,7 +444,7 @@ public:
 
     NavMeshQuery()
     {
-        m_navQuery = 0;
+        m_navQuery = dtAllocNavMeshQuery();
     }
 
     NavMeshQuery(dtNavMeshQuery *navMeshQuery)
@@ -454,8 +454,6 @@ public:
 
     void init(NavMesh *navMesh, const int maxNodes)
     {
-        m_navQuery = dtAllocNavMeshQuery();
-
         const dtNavMesh *nav = navMesh->getNavMesh();
         m_navQuery->init(nav, maxNodes);
     }
