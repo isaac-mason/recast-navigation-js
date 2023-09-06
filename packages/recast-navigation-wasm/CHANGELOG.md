@@ -1,5 +1,11 @@
 # @recast-navigation/wasm
 
+## 0.7.3
+
+### Patch Changes
+
+- f42a51b: feat(NavMeshQuery): alloc dtNavMeshQuery once, not every init
+
 ## 0.7.2
 
 ## 0.7.1

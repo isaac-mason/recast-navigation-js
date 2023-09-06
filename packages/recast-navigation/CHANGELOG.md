@@ -1,5 +1,13 @@
 # recast-navigation
 
+## 0.7.3
+
+### Patch Changes
+
+- 6ffbab9: fix: image in README.md
+  - @recast-navigation/core@0.7.3
+  - @recast-navigation/three@0.7.3
+
 ## 0.7.2
 
 ### Patch Changes
