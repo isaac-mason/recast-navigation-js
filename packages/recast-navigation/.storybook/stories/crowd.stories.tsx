@@ -56,7 +56,7 @@ export const SingleAgent = () => {
     const { success, navMesh } = threeToSoloNavMesh(meshes, {
       cs: cellSize,
       ch: 0.2,
-      walkableRadius: agentRadius / cellSize,
+      walkableRadius: Math.ceil(agentRadius / cellSize),
     });
 
     if (!success) return;
@@ -196,7 +196,7 @@ export const MultipleAgents = () => {
     const { success, navMesh } = threeToSoloNavMesh(meshes, {
       cs: cellSize,
       ch: 0.2,
-      walkableRadius: maxAgentRadius / cellSize,
+      walkableRadius: Math.ceil(maxAgentRadius / cellSize),
     });
 
     if (!success) return;
