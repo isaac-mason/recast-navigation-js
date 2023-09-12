@@ -50,9 +50,13 @@ export const SingleAgent = () => {
       }
     });
 
+    const agentRadius = 0.1;
+    const cellSize = 0.05;
+
     const { success, navMesh } = threeToSoloNavMesh(meshes, {
-      cs: 0.05,
+      cs: cellSize,
       ch: 0.2,
+      walkableRadius: agentRadius / cellSize,
     });
 
     if (!success) return;
@@ -64,7 +68,7 @@ export const SingleAgent = () => {
     const agent = crowd.addAgent(
       navMeshQuery.getClosestPoint({ x: -2.9, y: 2.366, z: 0.9 }),
       {
-        radius: 0.1,
+        radius: agentRadius,
         height: 0.5,
         maxAcceleration: 4.0,
         maxSpeed: 1.0,
@@ -186,21 +190,23 @@ export const MultipleAgents = () => {
       }
     });
 
+    const maxAgentRadius = 0.15;
+    const cellSize = 0.05;
+
     const { success, navMesh } = threeToSoloNavMesh(meshes, {
-      cs: 0.05,
+      cs: cellSize,
       ch: 0.2,
+      walkableRadius: maxAgentRadius / cellSize,
     });
 
     if (!success) return;
 
     const navMeshQuery = new NavMeshQuery({ navMesh });
 
-    (window as any).navMesh = navMesh;
-
     const crowd = new Crowd({
       navMesh,
       maxAgents: 10,
-      maxAgentRadius: 0.15,
+      maxAgentRadius,
     });
 
     for (let i = 0; i < 10; i++) {
