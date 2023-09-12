@@ -1,6 +1,6 @@
 import { Crowd, CrowdAgentParams } from '@recast-navigation/core';
 import {
-  CapsuleGeometry,
+  CylinderGeometry,
   Material,
   Mesh,
   MeshBasicMaterial,
@@ -78,9 +78,11 @@ export class CrowdHelper extends Object3D {
   }
 
   private createAgentMesh(agentParams: CrowdAgentParams): Mesh {
-    const geometry = new CapsuleGeometry(
+    const geometry = new CylinderGeometry(
       agentParams.radius,
-      agentParams.height - agentParams.radius * 2
+      agentParams.radius,
+      agentParams.height
+
     );
 
     return new Mesh(geometry, this.agentMaterial);
