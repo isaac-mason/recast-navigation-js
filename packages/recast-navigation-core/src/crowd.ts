@@ -379,7 +379,7 @@ export class Crowd {
     const params = {
       ...crowdAgentParamsDefaults,
       ...crowdAgentParams,
-    } as Required<CrowdAgentParams>;
+    } as CrowdAgentParams;
 
     const dtCrowdAgentParams = new Raw.Module.dtCrowdAgentParams();
     dtCrowdAgentParams.radius = params.radius;

@@ -52,6 +52,7 @@ export class NavMeshQuery {
     );
 
     return {
+      success: Raw.Detour.statusSucceed(status),
       status,
       nearestRef: nearestRef.value,
       nearestPoint: vec3.fromRaw(nearestPoint),
@@ -71,6 +72,7 @@ export class NavMeshQuery {
     );
 
     return {
+      success: Raw.Detour.statusSucceed(status),
       status,
       closestPoint: vec3.fromRaw(closestPoint),
       posOverPoly: positionOverPoly.value,
@@ -113,6 +115,14 @@ export class NavMeshQuery {
     return vec3.fromRaw(randomPointRaw);
   }
 
+  /**
+   * Moves from the start to the end position constrained to the navigation mesh.
+   * @param startRef 
+   * @param startPosition 
+   * @param endPosition 
+   * @param options 
+   * @returns 
+   */
   moveAlongSurface(
     startRef: number,
     startPosition: Vector3,
@@ -138,9 +148,31 @@ export class NavMeshQuery {
     );
 
     return {
+      success: Raw.Detour.statusSucceed(status),
       status,
       resultPosition: vec3.fromRaw(resultPosition),
       visited: array((i) => visited.get(i), visited.size),
+    };
+  }
+
+  /**
+   * Gets the height of the polygon at the provided position using the height detail
+   * @param polyRef
+   * @param position
+   * @returns
+   */
+  getPolyHeight(polyRef: number, position: Vector3) {
+    const floatRef = new Raw.FloatRef();
+    const status = this.raw.getPolyHeight(
+      polyRef,
+      vec3.toArray(position),
+      floatRef
+    );
+
+    return {
+      success: Raw.Detour.statusSucceed(status),
+      status,
+      height: floatRef.value,
     };
   }
 
