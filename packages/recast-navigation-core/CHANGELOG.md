@@ -1,5 +1,16 @@
 # @recast-navigation/core
 
+## 0.8.0
+
+### Minor Changes
+
+- 9c3a8c7: feat(NavMeshQuery): add getPolyHeight
+
+### Patch Changes
+
+- 9c3a8c7: feat: add 'success' to NavMeshQuery method return objects
+  - @recast-navigation/wasm@0.8.0
+
 ## 0.7.3
 
 ### Patch Changes

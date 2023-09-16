@@ -1,5 +1,17 @@
 # @recast-navigation/three
 
+## 0.8.0
+
+### Minor Changes
+
+- 751e029: feat: change CrowdHelper agent geometry from capsule to cylinder
+
+### Patch Changes
+
+- Updated dependencies [9c3a8c7]
+- Updated dependencies [9c3a8c7]
+  - @recast-navigation/core@0.8.0
+
 ## 0.7.3
 
 ### Patch Changes
