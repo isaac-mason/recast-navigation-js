@@ -1,5 +1,5 @@
-export const downloadText = (text: string, type: string, filename: string) => {
-  const blob = new Blob([text], { type });
+export const download = (data: BlobPart, type: string, filename: string) => {
+  const blob = new Blob([data], { type });
 
   const url = URL.createObjectURL(blob);
 
