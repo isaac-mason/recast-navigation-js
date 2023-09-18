@@ -8,6 +8,7 @@ export const readFile = (
 
     reader.onabort = () => reject('file reading was aborted');
     reader.onerror = () => reject('file reading has failed');
+
     reader.onload = async () => {
       const buffer = reader.result as ArrayBuffer;
       resolve({ buffer });

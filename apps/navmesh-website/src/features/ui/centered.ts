@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const CenterLayout = styled.div`
+export const Centered = styled.div`
   position: absolute;
   top: 0;
   left: 0;
@@ -12,11 +12,5 @@ export const CenterLayout = styled.div`
 
   width: calc(100% - 4em);
   height: calc(100vh - 4em);
-  padding: 2em;
-
-  font-weight: 600;
-  line-height: 1.3;
-  text-align: center;
-
-  color: #fff;
+  padding: 2em;  
 `;

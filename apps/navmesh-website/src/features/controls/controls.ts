@@ -31,18 +31,6 @@ export const useActionsControls = ({
     },
     [navMesh, generateNavMesh, loading]
   );
-
-  useControls(
-    'Actions.Tips',
-    {
-      _: levaText(
-        `Use "Export as Recast NavMesh" to download a binary file that can be imported by 'recast-navigation-js' with 'importNavMesh', and is also compatible with the recastnavigation RecastDemo c++ application.`
-      ),
-    },
-    {
-      collapsed: true,
-    }
-  );
 };
 
 export const useNavMeshConfigControls = () => {
@@ -224,8 +212,8 @@ export const useDisplayOptionsControls = () => {
     navMeshDebugOpacity,
     navMeshDebugWireframe,
     displayNavMeshHelper,
-  }
-}
+  };
+};
 
 export const useTestAgentControls = () => {
   const {
@@ -270,5 +258,5 @@ export const useTestAgentControls = () => {
     agentHeight,
     agentMaxAcceleration,
     agentMaxSpeed,
-  }
-}
+  };
+};

@@ -2,7 +2,7 @@ import cityEnvironment from '@pmndrs/assets/hdri/city.exr';
 import { Bounds, Environment, OrbitControls } from '@react-three/drei';
 import { Canvas, ThreeEvent } from '@react-three/fiber';
 import { Leva } from 'leva';
-import { Suspense, useCallback, useRef, useState } from 'react';
+import { Suspense, useCallback, useRef } from 'react';
 import {
   NavMesh,
   SoloNavMeshGeneratorIntermediates,
@@ -15,45 +15,71 @@ import {
 import { getPositionsAndIndices } from 'recast-navigation/three';
 import { suspend } from 'suspend-react';
 import { Group, Mesh } from 'three';
-import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
+import { create } from 'zustand';
 import dungeonGltfUrl from './assets/dungeon.gltf?url';
 import {
   useActionsControls,
   useDisplayOptionsControls,
   useNavMeshConfigControls,
   useTestAgentControls,
-} from './features/controls/controls';
-import { ErrorBoundary } from './features/error-handling/error-boundary';
-import { ErrorMessage } from './features/error-handling/error-message';
-import { download } from './features/export/download';
-import { navMeshToGLTF } from './features/export/nav-mesh-to-gltf';
-import { HeightfieldHelper } from './features/helpers/heightfield-helper';
-import { NavMeshGeneratorInputHelper } from './features/helpers/nav-mesh-generator-input-helper';
-import { NavMeshHelper } from './features/helpers/nav-mesh-helper';
+} from './features/controls';
+import { ErrorBoundary, ErrorMessage } from './features/error-handling';
+import { download, navMeshToGLTF } from './features/export';
+import {
+  HeightfieldHelper,
+  NavMeshGeneratorInputHelper,
+  NavMeshHelper,
+} from './features/helpers';
 import { RecastAgent, RecastAgentRef } from './features/recast/recast-agent';
-import { CenterLayout } from './features/ui/center-layout';
-import { LoadingSpinner } from './features/ui/loading-spinner';
-import { GltfDropZone } from './features/upload/gltf-drop-zone';
-import { gltfLoader } from './features/upload/gltf-loader';
-import { readFile } from './features/upload/read-file';
+import { Centered, LoadingSpinner } from './features/ui';
+import {
+  ModelDropZone,
+  gltfLoader,
+  loadModel,
+  readFile,
+} from './features/upload';
 import { HtmlTunnel } from './tunnels';
 
-const App = () => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string>();
+type EditorState = {
+  loading: boolean;
+  error?: string;
 
-  const [model, setModel] = useState<Group>();
+  model?: Group;
 
-  const [indexedTriangleMesh, setIndexedTriangleMesh] = useState<{
+  indexedTriangleMesh?: {
     positions: Float32Array;
     indices: Uint32Array;
-  }>();
+  };
 
-  const [generatorIntermediates, setGeneratorIntermediates] = useState<
-    SoloNavMeshGeneratorIntermediates | TiledNavMeshGeneratorIntermediates
-  >();
+  generatorIntermediates?:
+    | SoloNavMeshGeneratorIntermediates
+    | TiledNavMeshGeneratorIntermediates;
 
-  const [navMesh, setNavMesh] = useState<NavMesh>();
+  navMesh?: NavMesh;
+};
+
+const useEditorState = create<
+  EditorState & { setEditorState: (partial: Partial<EditorState>) => void }
+>((set) => ({
+  loading: false,
+  error: undefined,
+  model: undefined,
+  indexedTriangleMesh: undefined,
+  generatorIntermediates: undefined,
+  navMesh: undefined,
+  setEditorState: (partial) => set(partial),
+}));
+
+const App = () => {
+  const {
+    loading,
+    error,
+    model,
+    indexedTriangleMesh,
+    generatorIntermediates,
+    navMesh,
+    setEditorState,
+  } = useEditorState();
 
   const recastAgent = useRef<RecastAgentRef>(null!);
 
@@ -64,10 +90,12 @@ const App = () => {
       navMesh.destroy();
     }
 
-    setError(undefined);
-    setLoading(true);
-    setNavMesh(undefined);
-    setIndexedTriangleMesh(undefined);
+    setEditorState({
+      loading: true,
+      error: undefined,
+      navMesh: undefined,
+      generatorIntermediates: undefined,
+    });
 
     try {
       const meshes: Mesh[] = [];
@@ -79,7 +107,9 @@ const App = () => {
       });
 
       const [positions, indices] = getPositionsAndIndices(meshes);
-      setIndexedTriangleMesh({ positions, indices });
+      setEditorState({
+        indexedTriangleMesh: { positions, indices },
+      });
 
       const result = navMeshConfig.tileSize
         ? generateTiledNavMesh(positions, indices, navMeshConfig, true)
@@ -88,43 +118,56 @@ const App = () => {
       console.log('nav mesh generation result', result);
 
       if (!result.success) {
-        setError(result.error);
+        setEditorState({ error: result.error });
       } else {
-        setNavMesh(result.navMesh);
-        setGeneratorIntermediates(result.intermediates);
+        setEditorState({
+          navMesh: result.navMesh,
+          generatorIntermediates: result.intermediates,
+        });
       }
     } catch (e) {
       const message = (e as { message: string })?.message;
-      setError(
-        'Something went wrong generating the navmesh' + message
-          ? ` - ${message}`
-          : ''
-      );
+      setEditorState({
+        error:
+          'Something went wrong generating the navmesh' +
+          (message ? ` - ${message}` : ''),
+      });
     } finally {
-      setLoading(false);
+      setEditorState({
+        loading: false,
+      });
     }
   };
 
   const onDropFile = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
 
-    setError(undefined);
-    setLoading(true);
+    setEditorState({
+      error: undefined,
+      loading: true,
+    });
 
     try {
-      const { buffer } = await readFile(acceptedFiles[0]);
+      const modelFile = acceptedFiles[0];
+      const { buffer } = await readFile(modelFile);
 
-      const { scene } = await new Promise<GLTF>((resolve, reject) =>
-        gltfLoader.parse(buffer, '', resolve, reject)
-      );
+      const model = await loadModel(buffer, modelFile);
 
-      setModel(scene);
+      setEditorState({
+        model,
+      });
     } catch (e) {
-      setError(
-        'Something went wrong! Please ensure the file is a valid GLTF / GLB.'
-      );
+      const message = (e as { message: string })?.message;
+
+      setEditorState({
+        error:
+          `Something went wrong! Please ensure the file is a valid GLTF, GLB, FBX or OBJ` +
+          (message ? ` - ${message}` : ''),
+      });
     } finally {
-      setLoading(false);
+      setEditorState({
+        loading: false,
+      });
     }
   }, []);
 
@@ -166,18 +209,21 @@ const App = () => {
   const selectExample = useCallback(async () => {
     if (model) return;
 
-    setLoading(true);
+    setEditorState({
+      loading: true,
+    });
 
     gltfLoader.load(
       dungeonGltfUrl,
       ({ scene }) => {
-        setModel(scene);
-        setLoading(false);
+        setEditorState({ model: scene, loading: false });
       },
       undefined,
       () => {
-        setLoading(false);
-        setError('Failed to load example model');
+        setEditorState({
+          loading: false,
+          error: 'Failed to load example model',
+        });
       }
     );
   }, []);
@@ -268,9 +314,9 @@ const App = () => {
         {loading && <LoadingSpinner />}
 
         {!model && !loading && (
-          <CenterLayout>
-            <GltfDropZone onDrop={onDropFile} selectExample={selectExample} />
-          </CenterLayout>
+          <Centered>
+            <ModelDropZone onDrop={onDropFile} selectExample={selectExample} />
+          </Centered>
         )}
 
         {error && <ErrorMessage>{error}</ErrorMessage>}

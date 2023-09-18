@@ -52,7 +52,5 @@ export const HeightfieldHelper = ({
     return heightfieldHelper;
   }, [navMesh, enabled]);
 
-  console.log(enabled);
-
   return enabled && helper && <primitive object={helper} />;
 };
