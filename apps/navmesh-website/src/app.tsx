@@ -152,6 +152,7 @@ const App = () => {
       const { buffer } = await readFile(modelFile);
 
       const model = await loadModel(buffer, modelFile);
+      console.log('loaded model', model);
 
       setEditorState({
         model,
