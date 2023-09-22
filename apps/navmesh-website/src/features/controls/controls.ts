@@ -128,17 +128,6 @@ export const useDisplayOptionsControls = () => {
     },
   });
 
-  const { heightfieldHelperEnabled } = useControls(
-    'Display Options.Heightfield',
-    {
-      _: levaText("Visualises Recast's voxelization process."),
-      heightfieldHelperEnabled: {
-        value: false,
-        label: 'Show Heightfield',
-      },
-    }
-  );
-
   const [navMeshGeneratorInputDebugColor, setNavMeshGeneratorInputDebugColor] =
     useState('#ff69b4');
 
@@ -200,6 +189,17 @@ export const useDisplayOptionsControls = () => {
       value: false,
     },
   });
+
+  const { heightfieldHelperEnabled } = useControls(
+    'Display Options.Heightfield',
+    {
+      _: levaText("Visualises Recast's voxelization process."),
+      heightfieldHelperEnabled: {
+        value: false,
+        label: 'Show Heightfield',
+      },
+    }
+  );
 
   return {
     displayModel,
