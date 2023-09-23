@@ -1,5 +1,11 @@
 # @recast-navigation/wasm
 
+## 0.9.3
+
+### Patch Changes
+
+- 9b8ea41: fix: parcel and react-scripts support
+
 ## 0.9.2
 
 ## 0.9.1
