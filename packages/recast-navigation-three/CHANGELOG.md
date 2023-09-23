@@ -1,5 +1,16 @@
 # @recast-navigation/three
 
+## 0.10.0
+
+### Minor Changes
+
+- 0b38fa9: feat: add OffMeshConnectionsHelper
+
+### Patch Changes
+
+- Updated dependencies [0b38fa9]
+  - @recast-navigation/core@0.10.0
+
 ## 0.9.3
 
 ### Patch Changes

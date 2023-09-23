@@ -1,5 +1,11 @@
 # @recast-navigation/wasm
 
+## 0.10.0
+
+### Minor Changes
+
+- 0b38fa9: feat: expose off mesh connections functionality
+
 ## 0.9.3
 
 ### Patch Changes
