@@ -1,5 +1,12 @@
 # @recast-navigation/three
 
+## 0.10.1
+
+### Patch Changes
+
+- 4c55822: feat: update README.md with docs for off mesh connections
+  - @recast-navigation/core@0.10.1
+
 ## 0.10.0
 
 ### Minor Changes
