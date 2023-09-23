@@ -1,5 +1,13 @@
 # recast-navigation
 
+## 0.9.1
+
+### Patch Changes
+
+- 1291ce0: fix(package.json): 'module' path
+  - @recast-navigation/core@0.9.1
+  - @recast-navigation/three@0.9.1
+
 ## 0.9.0
 
 ### Minor Changes
