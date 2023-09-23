@@ -1,5 +1,15 @@
 # @recast-navigation/core
 
+## 0.9.0
+
+### Minor Changes
+
+- 82a1bb1: feat: add cjs builds
+
+### Patch Changes
+
+- @recast-navigation/wasm@0.9.0
+
 ## 0.8.0
 
 ### Minor Changes
