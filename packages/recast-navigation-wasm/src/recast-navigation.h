@@ -641,23 +641,35 @@ public:
         navMeshCreateParams->detailTriCount = polyMeshDetail->ntris;
     }
 
-    void setOffMeshConCount(dtNavMeshCreateParams *navMeshCreateParams, size_t n)
+    void setOffMeshConnections(dtNavMeshCreateParams *navMeshCreateParams, int offMeshConCount, float *offMeshConVerts, float *offMeshConRad, unsigned char *offMeshConDirs, unsigned char *offMeshConAreas, unsigned short *offMeshConFlags, unsigned int *offMeshConUserId)
     {
-        float *offMeshConVerts = new float[n * 3 * 2];
-        float *offMeshConRad = new float[n];
-        unsigned char *offMeshConDirs = new unsigned char[n];
-        unsigned char *offMeshConAreas = new unsigned char[n];
-        unsigned short *offMeshConFlags = new unsigned short[n];
-        unsigned int *offMeshConUserId = new unsigned int[n];
-        int offMeshConCount = n;
+        int n = offMeshConCount;
 
-        navMeshCreateParams->offMeshConVerts = offMeshConVerts;
-        navMeshCreateParams->offMeshConRad = offMeshConRad;
-        navMeshCreateParams->offMeshConDir = offMeshConDirs;
-        navMeshCreateParams->offMeshConAreas = offMeshConAreas;
-        navMeshCreateParams->offMeshConFlags = offMeshConFlags;
-        navMeshCreateParams->offMeshConUserID = offMeshConUserId;
+        float *verts = new float[n * 3 * 2];
+        memcpy(verts, offMeshConVerts, sizeof(float) * offMeshConCount * 3 * 2);
+
+        float *rads = new float[n];
+        memcpy(rads, offMeshConRad, sizeof(float) * n);
+
+        unsigned char *dirs = new unsigned char[n];
+        memcpy(dirs, offMeshConDirs, sizeof(unsigned char) * n);
+
+        unsigned char *areas = new unsigned char[n];
+        memcpy(areas, offMeshConAreas, sizeof(unsigned char) * n);
+
+        unsigned short *flags = new unsigned short[n];
+        memcpy(flags, offMeshConFlags, sizeof(unsigned short) * n);
+
+        unsigned int *userIds = new unsigned int[n];
+        memcpy(userIds, offMeshConUserId, sizeof(unsigned int) * n);
+
         navMeshCreateParams->offMeshConCount = offMeshConCount;
+        navMeshCreateParams->offMeshConVerts = verts;
+        navMeshCreateParams->offMeshConRad = rads;
+        navMeshCreateParams->offMeshConDir = dirs;
+        navMeshCreateParams->offMeshConAreas = areas;
+        navMeshCreateParams->offMeshConFlags = flags;
+        navMeshCreateParams->offMeshConUserID = userIds;
     }
 
     CreateNavMeshDataResult *createNavMeshData(dtNavMeshCreateParams &params)

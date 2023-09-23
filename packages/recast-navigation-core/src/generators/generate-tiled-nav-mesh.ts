@@ -36,9 +36,16 @@ import {
 } from '../recast';
 import { Pretty } from '../types';
 import { Vector2Tuple, Vector3Tuple, vec3 } from '../utils';
-import { dtIlog2, dtNextPow2, getBoundingBox } from './common';
+import {
+  OffMeshConnectionGeneratorParams,
+  dtIlog2,
+  dtNextPow2,
+  getBoundingBox,
+} from './common';
 
-export type TiledNavMeshGeneratorConfig = Pretty<RecastConfigType>;
+export type TiledNavMeshGeneratorConfig = Pretty<
+  RecastConfigType & OffMeshConnectionGeneratorParams
+>;
 
 export const tiledNavMeshGeneratorConfigDefaults: TiledNavMeshGeneratorConfig =
   {
@@ -530,7 +537,11 @@ export const generateTiledNavMesh = (
 
     navMeshCreateParams.setBuildBvTree(true);
 
-    navMeshCreateParams.setOffMeshConCount(0);
+    if (navMeshGeneratorConfig.offMeshConnections) {
+      navMeshCreateParams.setOffMeshConnections(
+        navMeshGeneratorConfig.offMeshConnections
+      );
+    }
 
     navMeshCreateParams.setTileX(tileX);
     navMeshCreateParams.setTileY(tileY);

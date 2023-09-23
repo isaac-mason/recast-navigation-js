@@ -36,20 +36,28 @@ import {
   TileCacheMeshProcess,
   buildTileCacheLayer,
 } from '../tile-cache';
+import { Pretty } from '../types';
 import { Vector2Tuple, Vector3Tuple, vec3 } from '../utils';
-import { dtIlog2, dtNextPow2, getBoundingBox } from './common';
+import {
+  OffMeshConnectionGeneratorParams,
+  dtIlog2,
+  dtNextPow2,
+  getBoundingBox,
+} from './common';
 
-export type TileCacheGeneratorConfig = RecastConfigType & {
-  /**
-   * How many layers (or "floors") each navmesh tile is expected to have.
-   */
-  expectedLayersPerTile: number;
+export type TileCacheGeneratorConfig = Pretty<
+  RecastConfigType & {
+    /**
+     * How many layers (or "floors") each navmesh tile is expected to have.
+     */
+    expectedLayersPerTile: number;
 
-  /**
-   * The max number of obstacles
-   */
-  maxObstacles: number;
-};
+    /**
+     * The max number of obstacles
+     */
+    maxObstacles: number;
+  } & OffMeshConnectionGeneratorParams
+>;
 
 export const tileCacheGeneratorConfigDefaults: TileCacheGeneratorConfig = {
   ...recastConfigDefaults,
@@ -213,7 +221,11 @@ export const generateTileCache = (
         polyFlags.set(i, 1);
       }
 
-      navMeshCreateParams.setOffMeshConCount(0);
+      if (navMeshGeneratorConfig.offMeshConnections) {
+        navMeshCreateParams.setOffMeshConnections(
+          navMeshGeneratorConfig.offMeshConnections
+        );
+      }
     }
   );
 

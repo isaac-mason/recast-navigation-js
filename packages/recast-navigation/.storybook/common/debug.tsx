@@ -1,11 +1,17 @@
 import { useFrame } from '@react-three/fiber';
-import { Crowd, NavMesh, TileCache } from '@recast-navigation/core';
+import {
+  Crowd,
+  NavMesh,
+  OffMeshConnection,
+  TileCache,
+} from '@recast-navigation/core';
 import {
   CrowdHelper,
   NavMeshHelper,
   TileCacheHelper,
 } from '@recast-navigation/three';
-import React, { useEffect, useState } from 'react';
+import { OffMeshConnectionsHelper } from '@recast-navigation/three/src/helpers/off-mesh-connections-helper';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Material } from 'three';
 
 export type DebugProps = {
@@ -15,6 +21,7 @@ export type DebugProps = {
   obstacleMaterial?: Material;
   crowd?: Crowd;
   agentMaterial?: Material;
+  offMeshConnections?: OffMeshConnection[];
 };
 
 export const Debug = ({
@@ -24,60 +31,42 @@ export const Debug = ({
   obstacleMaterial,
   crowd,
   agentMaterial,
+  offMeshConnections,
 }: DebugProps) => {
-  const [navMeshHelper, setNavMeshHelper] = useState<NavMeshHelper | null>(
-    null
-  );
+  const navMeshHelper = useMemo(() => {
+    if (!navMesh) return null;
 
-  const [tileCacheHelper, setTileCacheHelper] =
-    useState<TileCacheHelper | null>();
-
-  const [crowdHelper, setCrowdHelper] = useState<CrowdHelper | null>(null);
-
-  useEffect(() => {
-    if (!navMesh) return;
-
-    const navMeshHelper = new NavMeshHelper({
+    return new NavMeshHelper({
       navMesh,
       navMeshMaterial,
     });
-
-    setNavMeshHelper(navMeshHelper);
-
-    return () => {
-      setNavMeshHelper(null);
-    };
   }, [navMesh, navMeshMaterial]);
 
-  useEffect(() => {
-    if (!tileCache) return;
+  const tileCacheHelper = useMemo(() => {
+    if (!tileCache) return null;
 
-    const tileCacheHelper = new TileCacheHelper({
+    return new TileCacheHelper({
       tileCache,
       obstacleMaterial,
     });
-
-    setTileCacheHelper(tileCacheHelper);
-
-    return () => {
-      setTileCacheHelper(null);
-    };
   }, [tileCache, obstacleMaterial]);
 
-  useEffect(() => {
-    if (!crowd) return;
+  const crowdHelper = useMemo(() => {
+    if (!crowd) return null;
 
-    const crowdHelper = new CrowdHelper({
+    return new CrowdHelper({
       crowd,
       agentMaterial,
     });
-
-    setCrowdHelper(crowdHelper);
-
-    return () => {
-      setCrowdHelper(null);
-    };
   }, [crowd, agentMaterial]);
+
+  const offMeshConnectionsHelper = useMemo(() => {
+    if (!offMeshConnections) return null;
+
+    return new OffMeshConnectionsHelper({
+      offMeshConnections,
+    });
+  }, [offMeshConnections]);
 
   useFrame(() => {
     if (crowdHelper) {
@@ -118,6 +107,10 @@ export const Debug = ({
       </group>
 
       {crowdHelper && <primitive object={crowdHelper} />}
+
+      {offMeshConnectionsHelper && (
+        <primitive object={offMeshConnectionsHelper} />
+      )}
     </>
   );
 };

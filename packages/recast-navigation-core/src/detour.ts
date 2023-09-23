@@ -1,3 +1,4 @@
+import { OffMeshConnection } from './generators';
 import { Raw } from './raw';
 import type R from './raw-module';
 import { RecastPolyMesh, RecastPolyMeshDetail } from './recast';
@@ -331,8 +332,31 @@ export class NavMeshCreateParams {
     );
   }
 
-  setOffMeshConCount(offMeshConCount: number): void {
-    Raw.DetourNavMeshBuilder.setOffMeshConCount(this.raw, offMeshConCount);
+  setOffMeshConnections(offMeshConnections: OffMeshConnection[]): void {
+    if (offMeshConnections.length <= 0) return
+    
+    const verts: number[] = [];
+    const rads: number[] = [];
+    const dir: number[] = [];
+    const areas: number[] = [];
+    const flags: number[] = [];
+    const userIds: number[] = [];
+
+    for (let i = 0; i < offMeshConnections.length; i++) {
+      const connection = offMeshConnections[i];
+
+      verts.push(connection.startPosition.x, connection.startPosition.y, connection.startPosition.z);
+      verts.push(connection.endPosition.x, connection.endPosition.y, connection.endPosition.z);
+
+      rads.push(connection.radius);
+      dir.push(connection.bidirectional ? 1 : 0);
+      areas.push(connection.area);
+      flags.push(connection.flags);
+      userIds.push(connection.userId ?? 1000 + i);
+    }
+
+      
+    Raw.DetourNavMeshBuilder.setOffMeshConnections(this.raw, offMeshConnections.length, verts, rads, dir, areas, flags, userIds);
   }
 
   verts(index: number): number {
@@ -419,48 +443,24 @@ export class NavMeshCreateParams {
     return this.raw.get_offMeshConVerts(index);
   }
 
-  setOffMeshConVerts(index: number, value: number): void {
-    this.raw.set_offMeshConVerts(index, value);
-  }
-
   offMeshConRad(index: number): number {
     return this.raw.get_offMeshConRad(index);
-  }
-
-  setOffMeshConRad(index: number, value: number): void {
-    this.raw.set_offMeshConRad(index, value);
   }
 
   offMeshConDir(index: number): number {
     return this.raw.get_offMeshConDir(index);
   }
 
-  setOffMeshConDir(index: number, value: number): void {
-    this.raw.set_offMeshConDir(index, value);
-  }
-
   offMeshConAreas(index: number): number {
     return this.raw.get_offMeshConAreas(index);
-  }
-
-  setOffMeshConAreas(index: number, value: number): void {
-    this.raw.set_offMeshConAreas(index, value);
   }
 
   offMeshConFlags(index: number): number {
     return this.raw.get_offMeshConFlags(index);
   }
 
-  setOffMeshConFlags(index: number, value: number): void {
-    this.raw.set_offMeshConFlags(index, value);
-  }
-
   offMeshConUserID(index: number): number {
     return this.raw.get_offMeshConUserID(index);
-  }
-
-  setOffMeshConUserID(index: number, value: number): void {
-    this.raw.set_offMeshConUserID(index, value);
   }
 
   offMeshConCount(): number {
@@ -469,10 +469,6 @@ export class NavMeshCreateParams {
 
   userId(): number {
     return this.raw.userId;
-  }
-
-  setUserId(value: number): void {
-    this.raw.userId = value;
   }
 
   tileX(): number {

@@ -29,14 +29,14 @@
   "types": "./index.d.ts",
   "exports": {
     ".": {
+      "types": "./index.d.ts",
       "import": "./index.mjs",
-      "require": "./index.cjs",
-      "types": "./index.d.ts"
+      "require": "./index.cjs"
     },
     "./three": {
+      "types": "./three.d.ts",
       "import": "./three.mjs",
-      "require": "./index.cjs",
-      "types": "./three.d.ts"
+      "require": "./index.cjs"
     }
   },
   "files": [

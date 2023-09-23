@@ -2,38 +2,41 @@ import { NavMeshCreateParams, createNavMeshData } from '../detour';
 import { NavMesh } from '../nav-mesh';
 import { Arrays, Raw } from '../raw';
 import {
-  RecastConfigType,
+  RecastBuildContext,
   RecastCompactHeightfield,
   RecastConfig,
+  RecastConfigType,
   RecastContourSet,
   RecastHeightfield,
-  recastConfigDefaults,
-  freeCompactHeightfield,
-  freeHeightfield,
-  freeContourSet,
-  RecastBuildContext,
-  createHeightfield,
-  allocHeightfield,
-  markWalkableTriangles,
-  rasterizeTriangles,
-  filterLowHangingWalkableObstacles,
-  filterLedgeSpans,
-  filterWalkableLowHeightSpans,
   allocCompactHeightfield,
-  buildCompactHeightfield,
-  erodeWalkableArea,
-  buildDistanceField,
-  buildRegions,
   allocContourSet,
-  buildContours,
-  buildPolyMesh,
+  allocHeightfield,
   allocPolyMesh,
   allocPolyMeshDetail,
+  buildCompactHeightfield,
+  buildContours,
+  buildDistanceField,
+  buildPolyMesh,
   buildPolyMeshDetail,
+  buildRegions,
+  createHeightfield,
+  erodeWalkableArea,
+  filterLedgeSpans,
+  filterLowHangingWalkableObstacles,
+  filterWalkableLowHeightSpans,
+  freeCompactHeightfield,
+  freeContourSet,
+  freeHeightfield,
+  markWalkableTriangles,
+  rasterizeTriangles,
+  recastConfigDefaults,
 } from '../recast';
-import { getBoundingBox } from './common';
+import { Pretty } from '../types';
+import { OffMeshConnectionGeneratorParams, getBoundingBox } from './common';
 
-export type SoloNavMeshGeneratorConfig = Omit<RecastConfigType, 'tileSize'>;
+export type SoloNavMeshGeneratorConfig = Pretty<
+  Omit<RecastConfigType, 'tileSize'> & OffMeshConnectionGeneratorParams
+>;
 
 export const soloNavMeshGeneratorConfigDefaults: SoloNavMeshGeneratorConfig = {
   ...recastConfigDefaults,
@@ -343,7 +346,11 @@ export const generateSoloNavMesh = (
 
   navMeshCreateParams.setBuildBvTree(true);
 
-  navMeshCreateParams.setOffMeshConCount(0);
+  if (navMeshGeneratorConfig.offMeshConnections) {
+    navMeshCreateParams.setOffMeshConnections(
+      navMeshGeneratorConfig.offMeshConnections
+    );
+  }
 
   const createNavMeshDataResult = createNavMeshData(navMeshCreateParams);
 
