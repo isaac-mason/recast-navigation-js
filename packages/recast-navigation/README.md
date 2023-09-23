@@ -21,7 +21,7 @@
 
 **recast-navigation-js** is a WebAssembly port of [the Recast and Detour libraries](https://github.com/recastnavigation/recastnavigation). Recast is a state of the art navigation mesh construction toolset for games, and Detour is a path-finding and spatial reasoning toolkit.
 
-This library provides high level APIs that make it easy to get started creating navigation meshes, querying them, and simulating crowds. It also provides lower-level APIs that give you fine-grained control over the navmesh generation process. 
+This library provides high level APIs that make it easy to get started creating navigation meshes, querying them, and simulating crowds. It also provides lower-level APIs that give you fine-grained control over the navmesh generation process.
 
 > **Warning** This library is still in early development. Versions in the 0.x.x range may have breaking changes.
 
@@ -229,6 +229,41 @@ tileCache.update(navMesh);
 tileCache.removeObstacle(boxObstacle);
 tileCache.removeObstacle(cylinderObstacle);
 ```
+
+### Off Mesh Connections
+
+Off mesh connections are used to create links between two points on the NavMesh that are not directly connected.
+
+You can provide list of off mesh connections to the high level `generateSoloNavMesh` and `generateTiledNavMesh`, and `generateTileCache` functions.
+
+```ts
+import { OffMeshConnection } from 'recast-navigation';
+
+const startPosition = { x: 0, y: 5, z: 0 };
+const endPosition = { x: 2, y: 0, z: 0 };
+const radius = 0.5;
+const bidirectional = false;
+const area = 0;
+const flags = 1;
+const userId = 0; // optional
+
+const { success, navMesh } = generateSoloNavMesh(positions, indices, {
+  // ...
+  offMeshConnections: [
+    {
+      startPosition,
+      endPosition,
+      radius,
+      bidirectional,
+      area,
+      flags,
+      userId,
+    },
+  ],
+});
+```
+
+You can use `agent.state()` to determine if an agent is currently traversing an off mesh connection.
 
 ### Debugging
 
