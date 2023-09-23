@@ -3,7 +3,8 @@
   "private": true,
   "packageManager": "yarn@3.5.0",
   "scripts": {
-    "start": "parcel index.html"
+    "start": "parcel index.html",
+    "build": "parcel build index.html"
   },
   "dependencies": {
     "@react-three/drei": "^9.84.2",
