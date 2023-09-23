@@ -38,10 +38,10 @@
     }
   },
   "files": [
-    "index.js",
+    "index.mjs",
     "index.cjs",
     "index.d.ts",
-    "three.js",
+    "three.mjs",
     "three.cjs",
     "three.d.ts",
     "LICENSE",
