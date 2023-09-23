@@ -1,5 +1,11 @@
 # @recast-navigation/core
 
+## 0.9.2
+
+### Patch Changes
+
+- @recast-navigation/wasm@0.9.2
+
 ## 0.9.1
 
 ### Patch Changes

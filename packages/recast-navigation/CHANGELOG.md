@@ -1,5 +1,13 @@
 # recast-navigation
 
+## 0.9.2
+
+### Patch Changes
+
+- 00b3af2: fix(package.json): 'files' missing mjs files
+  - @recast-navigation/core@0.9.2
+  - @recast-navigation/three@0.9.2
+
 ## 0.9.1
 
 ### Patch Changes
