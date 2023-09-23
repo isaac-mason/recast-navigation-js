@@ -134,20 +134,6 @@ const navMeshHelper = new NavMeshHelper({
   navMeshMaterial,
 });
 
-// TileCacheHelper
-const obstacleMaterial = new THREE.MeshBasicMaterial({ color: 'blue' });
-const tileCacheHelper = new TileCacheHelper({
-  tileCache,
-  obstacleMaterial,
-});
-
-// CrowdHelper
-const agentMaterial = new THREE.MeshBasicMaterial({ color: 'red' });
-const crowdHelper = new CrowdHelper({
-  crowd,
-  agentMaterial,
-});
-
 // OffMeshConnectionsHelper
 const offMeshConnectionEntryCircleMaterial = new THREE.MeshBasicMaterial({
   color: 'green',
@@ -163,5 +149,19 @@ const offMeshConnectionsHelper = new OffMeshConnectionsHelper({
   entryCircleMaterial: offMeshConnectionEntryCircleMaterial,
   exitCircleMaterial: offMeshConnectionExitCircleMaterial,
   lineMaterial: offMeshConnectionLineMaterial,
+});
+
+// TileCacheHelper
+const obstacleMaterial = new THREE.MeshBasicMaterial({ color: 'blue' });
+const tileCacheHelper = new TileCacheHelper({
+  tileCache,
+  obstacleMaterial,
+});
+
+// CrowdHelper
+const agentMaterial = new THREE.MeshBasicMaterial({ color: 'red' });
+const crowdHelper = new CrowdHelper({
+  crowd,
+  agentMaterial,
 });
 ```

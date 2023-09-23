@@ -232,32 +232,24 @@ tileCache.removeObstacle(cylinderObstacle);
 
 ### Off Mesh Connections
 
-Off mesh connections are used to create links between two points on the NavMesh that are not directly connected.
+Off mesh connections are user-defined connections between two points on a NavMesh. You can use them to create things like ladders, teleporters, jump pads, etc.
 
-You can provide list of off mesh connections to the high level `generateSoloNavMesh` and `generateTiledNavMesh`, and `generateTileCache` functions.
+Off mesh connections can be bidirectional or unidirectional.
+
+You can provide list of off mesh connections to the high level generator functions.
 
 ```ts
-import { OffMeshConnection } from 'recast-navigation';
-
-const startPosition = { x: 0, y: 5, z: 0 };
-const endPosition = { x: 2, y: 0, z: 0 };
-const radius = 0.5;
-const bidirectional = false;
-const area = 0;
-const flags = 1;
-const userId = 0; // optional
-
 const { success, navMesh } = generateSoloNavMesh(positions, indices, {
   // ...
   offMeshConnections: [
     {
-      startPosition,
-      endPosition,
-      radius,
-      bidirectional,
-      area,
-      flags,
-      userId,
+      startPosition: { x: 0, y: 5, z: 0 },
+      endPosition: { x: 2, y: 0, z: 0 },
+      radius: 0.5,
+      bidirectional: false,
+      area: 0,
+      flags: 1,
+      userId: 0, // optional
     },
   ],
 });
