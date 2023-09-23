@@ -1,10 +1,10 @@
 {
-  "name": "node-cjs-recast-navigation-example",
+  "name": "node-cjs-example",
   "private": true,
   "version": "1.0.0",
   "description": "example of using recast-navigation in node",
   "scripts": {
-    "start": "node src/index.cjs"
+    "start": "node index.cjs"
   },
   "author": "",
   "license": "ISC",

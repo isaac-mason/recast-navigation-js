@@ -1,11 +1,11 @@
 {
-  "name": "node-esm-recast-navigation-example",
+  "name": "node-esm-example",
   "private": true,
   "type": "module",
   "version": "1.0.0",
   "description": "example of using recast-navigation in node",
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node index.mjs"
   },
   "author": "",
   "license": "ISC",

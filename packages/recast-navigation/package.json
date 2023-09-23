@@ -30,11 +30,13 @@
   "exports": {
     ".": {
       "import": "./index.mjs",
-      "require": "./index.cjs"
+      "require": "./index.cjs",
+      "types": "./index.d.ts"
     },
     "./three": {
       "import": "./three.mjs",
-      "require": "./index.cjs"
+      "require": "./index.cjs",
+      "types": "./three.d.ts"
     }
   },
   "files": [
@@ -48,7 +50,7 @@
     "README.md"
   ],
   "scripts": {
-    "clean": "(rm index.js index.d.ts three.js three.d.ts || true)",
+    "clean": "(rm index.mjs index.cjs index.d.ts three.mjs three.cjs three.d.ts || true)",
     "build": "yarn clean && rollup --config rollup.config.js --bundleConfigAsCjs",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"

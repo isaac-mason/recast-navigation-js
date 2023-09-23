@@ -12,3 +12,4 @@ dist
 .vscode
 .vercel
 emsdk
+.parcel-cache

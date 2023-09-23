@@ -9,9 +9,11 @@
   "updateInternalDependencies": "patch",
   "ignore": [
     "navmesh-website",
-    "node-cjs-recast-navigation-example",
-    "node-esm-recast-navigation-example",
-    "vite-recast-navigation-three-example"
+    "node-cjs-example",
+    "node-esm-example",
+    "parcel-example",
+    "react-scripts-example",
+    "vite-example"
   ],
   "___experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH": {
     "onlyUpdatePeerDependentsWhenOutOfRange": true

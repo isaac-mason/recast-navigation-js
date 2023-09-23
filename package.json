@@ -15,7 +15,7 @@
     "build:navmesh-website": "(cd apps/navmesh-website && yarn build)",
     "test": "concurrently --kill-others-on-fail \"yarn test:unit-tests\" \"yarn test:node-smoke-test\"",
     "test:unit-tests": "yarn workspaces foreach -t --include @recast-navigation/core run test",
-    "test:node-smoke-test": "(cd ./examples/node-cjs-recast-navigation-example && yarn start) && (cd ./examples/node-esm-recast-navigation-example && yarn start)",
+    "test:node-smoke-test": "(cd ./examples/node-cjs-example && yarn start) && (cd ./examples/node-esm-example && yarn start)",
     "change": "yarn changeset",
     "release": "yarn build && yarn test",
     "publish": "changeset publish",

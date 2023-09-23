@@ -81,7 +81,7 @@ set(EMCC_ARGS
   -s EXPORTED_RUNTIME_METHODS=["UTF8ToString","addFunction"]
   -s EXPORT_NAME="Recast"
   -s MODULARIZE=1
-  -s ENVIRONMENT='web,node'
+  -s ENVIRONMENT='web'
   -s NO_EXIT_RUNTIME=1
   -s NO_FILESYSTEM=1
   -s FILESYSTEM=0
