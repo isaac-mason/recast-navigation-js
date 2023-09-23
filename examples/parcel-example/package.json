@@ -1,5 +1,6 @@
 {
   "name": "parcel-example",
+  "private": true,
   "packageManager": "yarn@3.5.0",
   "scripts": {
     "start": "parcel index.html"
