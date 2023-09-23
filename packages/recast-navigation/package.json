@@ -24,21 +24,25 @@
   "bugs": {
     "url": "https://github.com/isaac-mason/recast-navigation-js/issues"
   },
-  "type": "module",
-  "main": "./index.js",
+  "main": "./index.cjs",
+  "module": "./index.js",
   "types": "./index.d.ts",
   "exports": {
     ".": {
-      "import": "./index.js"
+      "import": "./index.mjs",
+      "require": "./index.cjs"
     },
     "./three": {
-      "import": "./three.js"
+      "import": "./three.mjs",
+      "require": "./index.cjs"
     }
   },
   "files": [
     "index.js",
+    "index.cjs",
     "index.d.ts",
     "three.js",
+    "three.cjs",
     "three.d.ts",
     "LICENSE",
     "README.md"

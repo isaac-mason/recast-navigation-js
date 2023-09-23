@@ -12,8 +12,8 @@
   "bugs": {
     "url": "https://github.com/isaac-mason/recast-navigation-js/issues"
   },
-  "type": "module",
-  "main": "./dist/index.es.js",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "files": [
     "dist/**",

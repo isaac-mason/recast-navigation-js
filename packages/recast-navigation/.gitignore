@@ -1,7 +1,11 @@
-index.js
-index.js.map
+index.mjs
+index.mjs.map
+index.cjs
+index.cjs.map
 index.d.ts
-three.js
-three.js.map
+three.mjs
+three.mjs.map
+three.cjs
+three.cjs.map
 three.d.ts
 storybook-static

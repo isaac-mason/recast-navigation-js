@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "example of using recast-navigation in node",
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node src/index.cjs"
   },
   "author": "",
   "license": "ISC",

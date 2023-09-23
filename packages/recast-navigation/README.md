@@ -27,13 +27,13 @@ This library provides high level APIs that make it easy to get started creating 
 
 ## Installation
 
-This package ships as ECMAScript modules, and is compatible with Node.js and browser environments.
+This package ships as both ECMAScript modules and CJS, and is compatible with Node.js and browser environments.
 
 **CDN**
 
 ```html
 <script type="module">
-  import { generateSoloNavMesh } from 'https://www.unpkg.com/@recast-navigation/core@0.7.1/dist/index.es.js';
+  import { generateSoloNavMesh } from 'https://www.unpkg.com/@recast-navigation/core@0.9.0/dist/index.mjs';
 </script>
 ```
 

@@ -10,8 +10,14 @@ export default [
     input: `./src/index.ts`,
     output: [
       {
-        file: `dist/index.es.js`,
+        file: `dist/index.mjs`,
         format: 'es',
+        sourcemap: true,
+        exports: 'named',
+      },
+      {
+        file: `dist/index.cjs`,
+        format: 'cjs',
         sourcemap: true,
         exports: 'named',
       },

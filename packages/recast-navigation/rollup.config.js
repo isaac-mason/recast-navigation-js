@@ -6,7 +6,6 @@ import path from 'path';
 import filesize from 'rollup-plugin-filesize';
 
 const commonOutput = {
-  format: 'es',
   sourcemap: true,
   exports: 'named',
 };
@@ -29,9 +28,15 @@ export default [
     external: ['@recast-navigation/core'],
     output: [
       {
-        file: `./index.js`,
+        file: `./index.mjs`,
+        format: 'es',
         ...commonOutput,
       },
+      {
+        file: `./index.cjs`,
+        format: 'cjs',
+        ...commonOutput,
+      }
     ],
     plugins,
   },
@@ -40,9 +45,15 @@ export default [
     external: ['@recast-navigation/core', '@recast-navigation/three', 'three'],
     output: [
       {
-        file: `./three.js`,
+        file: `./three.mjs`,
+        format: 'es',
         ...commonOutput,
       },
+      {
+        file: `./three.cjs`,
+        format: 'cjs',
+        ...commonOutput,
+      }
     ],
     plugins,
   },

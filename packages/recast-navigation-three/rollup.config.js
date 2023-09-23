@@ -11,11 +11,17 @@ export default [
     external: ['@recast-navigation/core', 'three'],
     output: [
       {
-        file: `dist/index.es.js`,
+        file: `dist/index.mjs`,
         format: 'es',
         sourcemap: true,
         exports: 'named',
       },
+      {
+        file: `dist/index.cjs`,
+        format: 'cjs',
+        sourcemap: true,
+        exports: 'named',
+      }
     ],
     plugins: [
       terser(),
