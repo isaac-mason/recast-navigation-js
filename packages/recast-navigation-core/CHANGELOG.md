@@ -1,5 +1,12 @@
 # @recast-navigation/core
 
+## 0.10.2
+
+### Patch Changes
+
+- 0dcaa32: fix: tiled nav mesh generator bounding box expansion
+  - @recast-navigation/wasm@0.10.2
+
 ## 0.10.1
 
 ### Patch Changes
