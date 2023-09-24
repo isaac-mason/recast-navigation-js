@@ -246,7 +246,7 @@ export const generateTiledNavMesh = (
 
     const { raw: tileConfig } = recastConfig.clone();
 
-    // Expand the heighfield bounding box by border size to find the extents of geometry we need to build this tile.
+    // Expand the heightfield bounding box by border size to find the extents of geometry we need to build this tile.
     //
     // This is done in order to make sure that the navmesh tiles connect correctly at the borders,
     // and the obstacles close to the border work correctly with the dilation process.
@@ -274,8 +274,8 @@ export const generateTiledNavMesh = (
     expandedTileBoundsMin[0] -= tileConfig.borderSize * tileConfig.cs;
     expandedTileBoundsMin[2] -= tileConfig.borderSize * tileConfig.cs;
 
-    expandedTileBoundsMin[0] += tileConfig.borderSize * tileConfig.cs;
-    expandedTileBoundsMin[2] += tileConfig.borderSize * tileConfig.cs;
+    expandedTileBoundsMax[0] += tileConfig.borderSize * tileConfig.cs;
+    expandedTileBoundsMax[2] += tileConfig.borderSize * tileConfig.cs;
 
     tileConfig.set_bmin(0, expandedTileBoundsMin[0]);
     tileConfig.set_bmin(1, expandedTileBoundsMin[1]);
