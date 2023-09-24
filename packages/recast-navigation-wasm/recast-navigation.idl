@@ -453,7 +453,7 @@ interface NavMeshQuery {
     
     void NavMeshQuery(dtNavMeshQuery navMeshQuery);
 
-    void init(NavMesh navMesh, [Const] long maxNodes);
+    unsigned long init(NavMesh navMesh, [Const] long maxNodes);
 
     unsigned long findPath(unsigned long startRef, unsigned long endRef, [Const] float[] startPos, [Const] float[] endPos, [Const] dtQueryFilter filter, UnsignedIntArray path, long maxPath);
 
