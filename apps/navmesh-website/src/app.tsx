@@ -118,7 +118,10 @@ const App = () => {
       console.log('nav mesh generation result', result);
 
       if (!result.success) {
-        setEditorState({ error: result.error });
+        setEditorState({
+          error: result.error,
+          generatorIntermediates: result.intermediates,
+        });
       } else {
         setEditorState({
           navMesh: result.navMesh,
