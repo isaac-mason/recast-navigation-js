@@ -68,6 +68,7 @@ await init();
 ### Generating a NavMesh
 
 The easiest way to generate a NavMesh is using the high level generator functions:
+
 - `generateSoloNavMesh` - Generates a NavMesh with a single tile. You can use this for smaller environments.
 - `generateTiledNavMesh` - Generates a NavMesh with multiple tiles. You should use this for larger environments.
 - `generateTileCache` - Generates a TileCache that supports temporary obstacles. See the [Temporary Obstacles](https://github.com/isaac-mason/recast-navigation-js#temporary-obstacles) section.
@@ -117,6 +118,12 @@ navMeshQuery.getClosestPoint(position);
 /* get a random point around the given position */
 const radius = 0.5;
 navMeshQuery.getRandomPointAround(position, radius);
+
+/* compute a straight path between two points */
+const path: Vector3[] = navMeshQuery.computePath(
+  { x: 0, y: 0, z: 0 }, // start position
+  { x: 2, y: 0, z: 0 } // end position
+);
 ```
 
 ### Crowds and Agents
