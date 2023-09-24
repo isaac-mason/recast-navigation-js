@@ -1,5 +1,14 @@
 # recast-navigation
 
+## 0.10.2
+
+### Patch Changes
+
+- 0dcaa32: fix: tiled nav mesh generator bounding box expansion
+- Updated dependencies [0dcaa32]
+  - @recast-navigation/core@0.10.2
+  - @recast-navigation/three@0.10.2
+
 ## 0.10.1
 
 ### Patch Changes
