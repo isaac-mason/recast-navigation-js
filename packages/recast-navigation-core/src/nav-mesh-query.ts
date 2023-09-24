@@ -34,6 +34,9 @@ export class NavMeshQuery {
     this.defaultFilter.setExcludeFlags(0);
   }
 
+  /**
+   * Finds the polygon nearest to the given position.
+   */
   findNearestPoly(
     position: Vector3,
     options?: { filter?: R.dtQueryFilter; halfExtents?: Vector3 }
@@ -60,6 +63,9 @@ export class NavMeshQuery {
     };
   }
 
+  /**
+   * Returns the closest point on the given polygon to the given position.
+   */
   closestPointOnPoly(polyRef: number, position: Vector3) {
     const closestPoint = new Raw.Vec3();
     const positionOverPoly = new Raw.BoolRef();
@@ -117,11 +123,6 @@ export class NavMeshQuery {
 
   /**
    * Moves from the start to the end position constrained to the navigation mesh.
-   * @param startRef 
-   * @param startPosition 
-   * @param endPosition 
-   * @param options 
-   * @returns 
    */
   moveAlongSurface(
     startRef: number,
@@ -157,9 +158,6 @@ export class NavMeshQuery {
 
   /**
    * Gets the height of the polygon at the provided position using the height detail
-   * @param polyRef
-   * @param position
-   * @returns
    */
   getPolyHeight(polyRef: number, position: Vector3) {
     const floatRef = new Raw.FloatRef();
