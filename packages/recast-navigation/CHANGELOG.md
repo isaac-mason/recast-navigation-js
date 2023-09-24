@@ -1,5 +1,14 @@
 # recast-navigation
 
+## 0.11.0
+
+### Patch Changes
+
+- 8d8beeb: feat: improve NavMeshQuery jsdoc
+- Updated dependencies [8d8beeb]
+  - @recast-navigation/core@0.11.0
+  - @recast-navigation/three@0.11.0
+
 ## 0.10.2
 
 ### Patch Changes

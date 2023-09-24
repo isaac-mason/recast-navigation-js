@@ -1,5 +1,13 @@
 # @recast-navigation/core
 
+## 0.11.0
+
+### Patch Changes
+
+- 8d8beeb: feat: improve NavMeshQuery jsdoc
+- Updated dependencies [ce059e9]
+  - @recast-navigation/wasm@0.11.0
+
 ## 0.10.2
 
 ### Patch Changes
