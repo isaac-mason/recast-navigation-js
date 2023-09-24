@@ -67,7 +67,10 @@ await init();
 
 ### Generating a NavMesh
 
-To create a NavMesh, you can use the `generateSoloNavMesh` and `generateTiledNavMesh` functions.
+The easiest way to generate a NavMesh is with the generator utility functions:
+- `generateSoloNavMesh` - generates a NavMesh with a single tile. You can use this for smaller environments.
+- `generateTiledNavMesh` - generates a NavMesh with multiple tiles. You should use this for larger environments.
+- `generateTileCache` - generates a TileCache that supports temporary obstacles. See the [Temporary Obstacles](https://github.com/isaac-mason/recast-navigation-js#temporary-obstacles) section.
 
 The input positions and indices should adhere to OpenGL conventions:
 
@@ -98,7 +101,7 @@ const { success, navMesh } = generateSoloNavMesh(
 );
 ```
 
-If you need to do something more advanced, you can use the lower level API to create your own NavMesh generator. See the "Advanced Usage" section for more information.
+If you need to do something more advanced, you can use the lower level API to create your own NavMesh generator. See the [Advanced Usage](https://github.com/isaac-mason/recast-navigation-js#advanced-usage) section for more information.
 
 ### Querying a NavMesh
 
@@ -292,13 +295,21 @@ This library provides low-level APIs that aim to match the recast and detour c++
 
 Please note that this functionality is experimental, and not all everything is exposed. Familiarity with the recast and detour C++ libraries is required. If you require unexposed functionality, please submit an issue or a pull request.
 
+## Documentation
+
 <!-- REMOVE-FROM-DOCS-START -->
 
-## API Documentation
-
-Documentation can be found at [https://docs.recast-navigation-js.isaacmason.com](https://docs.recast-navigation-js.isaacmason.com).
+API Documentation can be found at [https://docs.recast-navigation-js.isaacmason.com](https://docs.recast-navigation-js.isaacmason.com).
 
 <!-- REMOVE-FROM-DOCS-END -->
+
+Documentation for the Recast and Detour c++ libraries can be found here:
+
+- [Recast Navigation Website](http://recastnav.com/)
+- [Recast Navigation GitHub](https://github.com/recastnavigation/recastnavigation)
+- [Recast Navigation Google Discussions](https://groups.google.com/g/recastnavigation)
+
+The GitHub issues and Google Discussions are a great resources for learning about the library and getting guidance on common issues.
 
 ## Examples
 
