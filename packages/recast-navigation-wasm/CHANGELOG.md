@@ -1,5 +1,11 @@
 # @recast-navigation/wasm
 
+## 0.11.0
+
+### Minor Changes
+
+- ce059e9: refactor: seperate recast-navigation.h and recast-navigation.cpp into multiple files
+
 ## 0.10.2
 
 ## 0.10.1
