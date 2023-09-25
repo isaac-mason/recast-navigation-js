@@ -24,7 +24,6 @@
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.2",
-    "@types/styled-components": "^5.1.26",
     "concurrently": "^8.2.1"
   },
   "packageManager": "yarn@3.5.0"
