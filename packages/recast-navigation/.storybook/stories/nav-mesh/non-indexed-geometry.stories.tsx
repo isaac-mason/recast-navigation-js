@@ -5,10 +5,12 @@ import React, { useEffect, useState } from 'react';
 import { BoxGeometry, Group, Mesh } from 'three';
 import { Debug } from '../../common/debug';
 import { decorators } from '../../decorators';
+import { parameters } from '../../parameters';
 
 export default {
   title: 'NavMesh / Non Indexed Geometry',
   decorators,
+  parameters,
 };
 
 const boxGeometry = new BoxGeometry(10, 10, 10);

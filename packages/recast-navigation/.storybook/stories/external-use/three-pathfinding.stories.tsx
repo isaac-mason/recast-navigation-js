@@ -5,10 +5,12 @@ import { threeToTileCache } from 'recast-navigation/three';
 import { BufferAttribute, BufferGeometry, Group, Mesh, Vector3 } from 'three';
 import { Pathfinding } from 'three-pathfinding';
 import { decorators } from '../../decorators';
+import { parameters } from '../../parameters';
 
 export default {
   title: 'External Use / Three Pathfinding',
   decorators,
+  parameters,
 };
 
 const navMeshToPositionsAndIndices = (navMesh: NavMesh) => {

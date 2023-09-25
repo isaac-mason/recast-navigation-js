@@ -7,10 +7,12 @@ import { Group, Mesh } from 'three';
 import { DEG2RAD } from 'three/src/math/MathUtils';
 import { Debug } from '../../common/debug';
 import { decorators } from '../../decorators';
+import { parameters } from '../../parameters';
 
 export default {
   title: 'NavMesh / Walkable Slope',
   decorators,
+  parameters,
 };
 
 const DEGREES = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45];

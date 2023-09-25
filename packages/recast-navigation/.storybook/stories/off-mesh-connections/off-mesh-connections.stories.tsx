@@ -11,10 +11,12 @@ import { Group, Mesh, MeshStandardMaterial } from 'three';
 import { Debug } from '../../common/debug';
 import { NavTestEnvirionment } from '../../common/nav-test-environment';
 import { decorators } from '../../decorators';
+import { parameters } from '../../parameters';
 
 export default {
   title: 'Off Mesh Connections / Solo NavMesh Off Mesh Connections',
   decorators,
+  parameters
 };
 
 const agentMaterial = new MeshStandardMaterial({

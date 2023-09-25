@@ -14,10 +14,12 @@ import { threeToTileCache } from '@recast-navigation/three';
 import { Group, Mesh, MeshBasicMaterial, Object3D, Vector3 } from 'three';
 import { Debug } from '../common/debug';
 import { decorators } from '../decorators';
+import { parameters } from '../parameters';
 
 export default {
   title: 'TileCache / Obstacles',
   decorators,
+  parameters,
 };
 
 const navMeshMaterial = new MeshBasicMaterial({

@@ -18,10 +18,12 @@ import {
 import { Debug } from '../common/debug';
 import { NavTestEnvirionment } from '../common/nav-test-environment';
 import { decorators } from '../decorators';
+import { parameters } from '../parameters';
 
 export default {
   title: 'Crowd / Agents',
   decorators,
+  parameters,
 };
 
 const agentMaterial = new MeshStandardMaterial({

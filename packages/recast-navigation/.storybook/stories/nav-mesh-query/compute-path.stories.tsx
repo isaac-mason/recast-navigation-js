@@ -6,10 +6,12 @@ import { Group, Mesh, MeshBasicMaterial, Vector3Tuple } from 'three';
 import { Debug } from '../../common/debug';
 import { NavTestEnvirionment } from '../../common/nav-test-environment';
 import { decorators } from '../../decorators';
+import { parameters } from '../../parameters';
 
 export default {
   title: 'NavMeshQuery / ComputePath',
   decorators,
+  parameters,
 };
 
 const navMeshMaterial = new MeshBasicMaterial({

@@ -11,10 +11,12 @@ import { Debug } from '../../common/debug';
 import { DungeonEnvirionment } from '../../common/dungeon-environment';
 import { NavTestEnvirionment } from '../../common/nav-test-environment';
 import { decorators } from '../../decorators';
+import { parameters } from '../../parameters';
 
 export default {
   title: 'NavMesh / Models',
   decorators,
+  parameters,
 };
 
 const navMeshMaterial = new MeshBasicMaterial({

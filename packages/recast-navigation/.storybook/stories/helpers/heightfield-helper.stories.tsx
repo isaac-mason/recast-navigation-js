@@ -8,10 +8,12 @@ import React, { useEffect, useState } from 'react';
 import { Group, Mesh, MeshStandardMaterial } from 'three';
 import { NavTestEnvirionment } from '../../common/nav-test-environment';
 import { decorators } from '../../decorators';
+import { parameters } from '../../parameters';
 
 export default {
   title: 'Helpers / Heightfield Helper',
   decorators,
+  parameters,
 };
 
 export const HeightfieldHelperExample = () => {
