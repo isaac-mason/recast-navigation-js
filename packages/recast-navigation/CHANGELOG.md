@@ -1,5 +1,14 @@
 # recast-navigation
 
+## 0.12.1
+
+### Patch Changes
+
+- 63fb772: fix: generateTiledNavMesh buildContext logs weren't logging nverts and npolys correctly
+- Updated dependencies [63fb772]
+  - @recast-navigation/core@0.12.1
+  - @recast-navigation/three@0.12.1
+
 ## 0.12.0
 
 ### Minor Changes
