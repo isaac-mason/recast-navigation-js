@@ -1,4 +1,4 @@
-import { OffMeshConnection } from '@recast-navigation/core';
+import { OffMeshConnectionParams } from '@recast-navigation/core';
 import {
   BufferGeometry,
   CatmullRomCurve3,
@@ -13,14 +13,14 @@ import {
 } from 'three';
 
 export type OffMeshConnectionsHelperParams = {
-  offMeshConnections?: OffMeshConnection[];
+  offMeshConnections?: OffMeshConnectionParams[];
   entryCircleMaterial?: Material;
   exitCircleMaterial?: Material;
   lineMaterial?: LineBasicMaterial;
 };
 
 export class OffMeshConnectionsHelper extends Object3D {
-  offMeshConnections: OffMeshConnection[];
+  offMeshConnections: OffMeshConnectionParams[];
 
   entryCircleMaterial: Material;
 
