@@ -299,7 +299,10 @@ export const generateTiledNavMesh = (
     // Start the build process
     buildContext.startTimer(Raw.Module.RC_TIMER_TOTAL);
 
-    buildContext.log(Raw.Module.RC_LOG_PROGRESS, 'Building navigation:');
+    buildContext.log(
+      Raw.Module.RC_LOG_PROGRESS,
+      `Building tile ${intermediates.tileIntermediates.length} at x: ${tileX}, y: ${tileY}`
+    );
     buildContext.log(
       Raw.Module.RC_LOG_PROGRESS,
       ` - ${config.width} x ${config.height} cells`
@@ -575,7 +578,7 @@ export const generateTiledNavMesh = (
 
     buildContext.log(
       Raw.Module.RC_LOG_PROGRESS,
-      `>> Polymesh: ${polyMesh.nverts} vertices  ${polyMesh.npolys} polygons`
+      `>> Polymesh: ${polyMesh.nverts()} vertices  ${polyMesh.npolys()} polygons`
     );
 
     return { success: true, data: createNavMeshDataResult.navMeshData };
