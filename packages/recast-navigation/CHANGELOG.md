@@ -1,5 +1,28 @@
 # recast-navigation
 
+## 0.12.0
+
+### Minor Changes
+
+- 6723287: feat: lower maximum memory usage for `generateTiledNavMesh` and `generateTileCache` when `keepIntermediates` is false
+
+  Previously tile intermediates were only released after processing all tiles or on failure. This has been changed so intermediates are released after processing each tile.
+
+- 22c5fe2: feat: remove unnecessary `destroy()` methods
+- defdfb2: feat(NavMeshCreateParams): add defaults for off mesh connection params `area` and `flag`
+- 257e988: feat: remove FinalizationRegistry functionality
+
+  This was added to catch situations where `destroy()` is not called to free memory. It's current implementation isn't ideal and it adds a fair amount of complexity to the library, so it's being removed for now.
+
+### Patch Changes
+
+- Updated dependencies [6723287]
+- Updated dependencies [22c5fe2]
+- Updated dependencies [defdfb2]
+- Updated dependencies [257e988]
+  - @recast-navigation/core@0.12.0
+  - @recast-navigation/three@0.12.0
+
 ## 0.11.0
 
 ### Patch Changes
