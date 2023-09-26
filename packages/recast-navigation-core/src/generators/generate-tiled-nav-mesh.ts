@@ -1,4 +1,8 @@
-import { NavMeshCreateParams, createNavMeshData } from '../detour';
+import {
+  NavMeshCreateParams,
+  createNavMeshData,
+  dtStatusToReadableString,
+} from '../detour';
 import { NavMesh, NavMeshParams } from '../nav-mesh';
 import { Arrays, Raw } from '../raw';
 import type R from '../raw-module';
@@ -68,13 +72,13 @@ export type TiledNavMeshGeneratorIntermediates = {
 type TiledNavMeshGeneratorSuccessResult = {
   navMesh: NavMesh;
   success: true;
-  intermediates?: TiledNavMeshGeneratorIntermediates;
+  intermediates: TiledNavMeshGeneratorIntermediates;
 };
 
 type TiledNavMeshGeneratorFailResult = {
   navMesh: undefined;
   success: false;
-  intermediates?: TiledNavMeshGeneratorIntermediates;
+  intermediates: TiledNavMeshGeneratorIntermediates;
   error: string;
 };
 
@@ -106,7 +110,9 @@ export const generateTiledNavMesh = (
 
   const navMesh = new NavMesh();
 
-  const freeIntermediates = () => {
+  const cleanup = () => {
+    if (keepIntermediates) return;
+
     for (let i = 0; i < intermediates.tileIntermediates.length; i++) {
       const tileIntermediate = intermediates.tileIntermediates[i];
 
@@ -122,19 +128,21 @@ export const generateTiledNavMesh = (
         freeContourSet(tileIntermediate.contourSet);
       }
     }
+
+    if (intermediates.chunkyTriMesh) {
+      intermediates.chunkyTriMesh = undefined;
+    }
   };
 
   const fail = (error: string): TiledNavMeshGeneratorFailResult => {
-    if (!keepIntermediates) {
-      freeIntermediates();
-    }
+    cleanup();
 
     navMesh.destroy();
 
     return {
       success: false,
       navMesh: undefined,
-      intermediates: keepIntermediates ? intermediates : undefined,
+      intermediates,
       error,
     };
   };
@@ -430,6 +438,11 @@ export const generateTiledNavMesh = (
       return failTileMesh('Could not build compact heightfield');
     }
 
+    if (!keepIntermediates) {
+      freeHeightfield(tileIntermediate.heightfield);
+      tileIntermediate.heightfield = undefined;
+    }
+
     // Erode the walkable area by agent radius
     if (
       !erodeWalkableArea(
@@ -513,6 +526,14 @@ export const generateTiledNavMesh = (
       return failTileMesh('Failed to build detail mesh');
     }
 
+    if (!keepIntermediates) {
+      freeCompactHeightfield(compactHeightfield);
+      tileIntermediate.compactHeightfield = undefined;
+
+      freeContourSet(contourSet);
+      tileIntermediate.contourSet = undefined;
+    }
+
     // Update poly flags from areas.
     for (let i = 0; i < polyMesh.npolys(); i++) {
       if (polyMesh.areas(i) == Raw.Recast.WALKABLE_AREA) {
@@ -589,8 +610,14 @@ export const generateTiledNavMesh = (
         if (Raw.Detour.statusFailed(addTileResult.status)) {
           buildContext.log(
             Raw.Module.RC_LOG_WARNING,
-            `Failed to add tile to nav mesh - tx: ${x}, ty: ${y}`
+            `Failed to add tile to nav mesh` +
+              '\n\t' +
+              `tx: ${x}, ty: ${y},` +
+              `status: ${dtStatusToReadableString(addTileResult.status)} (${
+                addTileResult.status
+              })`
           );
+
           result.data.free();
         }
       }
@@ -600,12 +627,12 @@ export const generateTiledNavMesh = (
   buildContext.stopTimer(Raw.Module.RC_TIMER_TEMP);
 
   if (!keepIntermediates) {
-    freeIntermediates();
+    cleanup();
   }
 
   return {
     success: true,
     navMesh,
-    intermediates: keepIntermediates ? intermediates : undefined,
+    intermediates,
   };
 };

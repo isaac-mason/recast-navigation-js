@@ -66,24 +66,26 @@ export const tileCacheGeneratorConfigDefaults: TileCacheGeneratorConfig = {
   maxObstacles: 128,
 };
 
+export type TileCacheGeneratorTileIntermediates = {
+  tileX: number;
+  tileY: number;
+  heightfield?: RecastHeightfield;
+  compactHeightfield?: RecastCompactHeightfield;
+  heightfieldLayerSet?: RecastHeightfieldLayerSet;
+};
+
 export type TileCacheGeneratorIntermediates = {
   type: 'tilecache';
   buildContext: RecastBuildContext;
   chunkyTriMesh?: RecastChunkyTriMesh;
-  tileIntermediates: {
-    tileX: number;
-    tileY: number;
-    heightfield: RecastHeightfield;
-    heightfieldLayerSet: RecastHeightfieldLayerSet;
-    compactHeightfield: RecastCompactHeightfield;
-  }[];
+  tileIntermediates: TileCacheGeneratorTileIntermediates[];
 };
 
 type TileCacheGeneratorSuccessResult = {
   tileCache: TileCache;
   navMesh: NavMesh;
   success: true;
-  intermediates?: TileCacheGeneratorIntermediates;
+  intermediates: TileCacheGeneratorIntermediates;
 };
 
 type TileCacheGeneratorFailResult = {
@@ -91,7 +93,7 @@ type TileCacheGeneratorFailResult = {
   navMesh: undefined;
   success: false;
   error: string;
-  intermediates?: TileCacheGeneratorIntermediates;
+  intermediates: TileCacheGeneratorIntermediates;
 };
 
 export type TileCacheGeneratorResult =
@@ -124,24 +126,31 @@ export const generateTileCache = (
   const tileCache = new TileCache();
   const navMesh = new NavMesh();
 
-  const fail = (error: string): TileCacheGeneratorFailResult => {
+  const cleanup = () => {
     if (!keepIntermediates) {
       for (let i = 0; i < intermediates.tileIntermediates.length; i++) {
         const tileIntermediate = intermediates.tileIntermediates[i];
 
-        if (tileIntermediate.heightfieldLayerSet) {
-          freeHeightfieldLayerSet(tileIntermediate.heightfieldLayerSet);
+        if (tileIntermediate.heightfield) {
+          freeHeightfield(tileIntermediate.heightfield);
+          tileIntermediate.heightfield = undefined;
         }
 
         if (tileIntermediate.compactHeightfield) {
           freeCompactHeightfield(tileIntermediate.compactHeightfield);
+          tileIntermediate.compactHeightfield = undefined;
         }
 
-        if (tileIntermediate.heightfield) {
-          freeHeightfield(tileIntermediate.heightfield);
+        if (tileIntermediate.heightfieldLayerSet) {
+          freeHeightfieldLayerSet(tileIntermediate.heightfieldLayerSet);
+          tileIntermediate.heightfieldLayerSet = undefined;
         }
       }
     }
+  };
+
+  const fail = (error: string): TileCacheGeneratorFailResult => {
+    cleanup();
 
     tileCache.destroy();
     navMesh.destroy();
@@ -150,7 +159,7 @@ export const generateTileCache = (
       success: false,
       navMesh: undefined,
       tileCache: undefined,
-      intermediates: keepIntermediates ? intermediates : undefined,
+      intermediates,
       error,
     };
   };
@@ -271,6 +280,12 @@ export const generateTileCache = (
   }
 
   const rasterizeTileLayers = (tileX: number, tileY: number) => {
+    // Tile intermediates
+    const tileIntermediates: TileCacheGeneratorTileIntermediates = {
+      tileX,
+      tileY,
+    };
+
     // Tile bounds
     const tcs = config.tileSize * config.cs;
 
@@ -303,6 +318,7 @@ export const generateTileCache = (
 
     // Allocate voxel heightfield where we rasterize our input data to.
     const heightfield = allocHeightfield();
+    tileIntermediates.heightfield = heightfield;
 
     if (
       !createHeightfield(
@@ -412,6 +428,11 @@ export const generateTileCache = (
       return { n: 0 };
     }
 
+    if (!keepIntermediates) {
+      freeHeightfield(tileIntermediates.heightfield);
+      tileIntermediates.heightfield = undefined;
+    }
+
     // Erode the walkable area by agent radius
     if (
       !erodeWalkableArea(
@@ -434,6 +455,11 @@ export const generateTileCache = (
       )
     ) {
       return { n: 0 };
+    }
+
+    if (!keepIntermediates) {
+      freeCompactHeightfield(compactHeightfield);
+      tileIntermediates.compactHeightfield = undefined;
     }
 
     const tiles: R.UnsignedCharArray[] = [];
@@ -492,13 +518,12 @@ export const generateTileCache = (
       tiles.push(tile);
     }
 
-    intermediates.tileIntermediates.push({
-      tileX,
-      tileY,
-      heightfield,
-      compactHeightfield,
-      heightfieldLayerSet,
-    });
+    if (!keepIntermediates) {
+      freeHeightfieldLayerSet(heightfieldLayerSet);
+      tileIntermediates.heightfieldLayerSet = undefined;
+    }
+
+    intermediates.tileIntermediates.push(tileIntermediates);
 
     return { n: tiles.length, tiles };
   };
@@ -537,21 +562,12 @@ export const generateTileCache = (
     }
   }
 
-  // Free intermediates
-  if (!keepIntermediates) {
-    for (let i = 0; i < intermediates.tileIntermediates.length; i++) {
-      const tileIntermediate = intermediates.tileIntermediates[i];
-
-      freeHeightfieldLayerSet(tileIntermediate.heightfieldLayerSet);
-      freeCompactHeightfield(tileIntermediate.compactHeightfield);
-      freeHeightfield(tileIntermediate.heightfield);
-    }
-  }
+  cleanup();
 
   return {
     success: true,
     tileCache,
     navMesh,
-    intermediates: keepIntermediates ? intermediates : undefined,
+    intermediates,
   };
 };

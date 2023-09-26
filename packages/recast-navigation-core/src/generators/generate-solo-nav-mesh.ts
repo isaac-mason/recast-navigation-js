@@ -53,13 +53,13 @@ export type SoloNavMeshGeneratorIntermediates = {
 type SoloNavMeshGeneratorSuccessResult = {
   navMesh: NavMesh;
   success: true;
-  intermediates?: SoloNavMeshGeneratorIntermediates;
+  intermediates: SoloNavMeshGeneratorIntermediates;
 };
 
 type SoloNavMeshGeneratorFailResult = {
   navMesh: undefined;
   success: false;
-  intermediates?: SoloNavMeshGeneratorIntermediates;
+  intermediates: SoloNavMeshGeneratorIntermediates;
   error: string;
 };
 
@@ -89,27 +89,32 @@ export const generateSoloNavMesh = (
 
   const navMesh = new NavMesh();
 
-  const fail = (error: string): SoloNavMeshGeneratorFailResult => {
-    if (!keepIntermediates) {
-      if (intermediates.heightfield) {
-        freeHeightfield(intermediates.heightfield);
-      }
-      if (intermediates.compactHeightfield) {
-        freeCompactHeightfield(intermediates.compactHeightfield);
-      }
-      if (intermediates.contourSet) {
-        freeContourSet(intermediates.contourSet);
-      }
+  const cleanup = () => {
+    if (keepIntermediates) return;
+
+    if (intermediates.heightfield) {
+      freeHeightfield(intermediates.heightfield);
+      intermediates.heightfield = undefined;
     }
+    if (intermediates.compactHeightfield) {
+      freeCompactHeightfield(intermediates.compactHeightfield);
+      intermediates.compactHeightfield = undefined;
+    }
+    if (intermediates.contourSet) {
+      freeContourSet(intermediates.contourSet);
+      intermediates.contourSet = undefined;
+    }
+  };
+
+  const fail = (error: string): SoloNavMeshGeneratorFailResult => {
+    cleanup();
 
     navMesh.destroy();
 
     return {
       navMesh: undefined,
       success: false,
-      intermediates: keepIntermediates
-        ? (intermediates as SoloNavMeshGeneratorIntermediates)
-        : undefined,
+      intermediates,
       error,
     };
   };
@@ -243,6 +248,11 @@ export const generateSoloNavMesh = (
     return fail('Failed to build compact data');
   }
 
+  if (!keepIntermediates) {
+    freeHeightfield(heightfield);
+    intermediates.heightfield = undefined;
+  }
+
   // Erode the walkable area by agent radius.
   if (
     !erodeWalkableArea(buildContext, config.walkableRadius, compactHeightfield)
@@ -315,9 +325,11 @@ export const generateSoloNavMesh = (
   }
 
   if (!keepIntermediates) {
-    freeHeightfield(heightfield);
     freeCompactHeightfield(compactHeightfield);
+    intermediates.compactHeightfield = undefined;
+
     freeContourSet(contourSet);
+    intermediates.contourSet = undefined;
   }
 
   //
@@ -367,6 +379,6 @@ export const generateSoloNavMesh = (
   return {
     success: true,
     navMesh,
-    intermediates: keepIntermediates ? intermediates : undefined,
+    intermediates,
   };
 };

@@ -4,6 +4,46 @@ import type R from './raw-module';
 import { RecastPolyMesh, RecastPolyMeshDetail } from './recast';
 import { Vector3, Vector3Tuple, array, vec3 } from './utils';
 
+export const dtStatusToReadableString = (status: number): string => {
+  if (Raw.Detour.statusSucceed(status)) {
+    return 'success';
+  }
+
+  if (Raw.Detour.statusInProgress(status)) {
+    return 'in progress';
+  }
+
+  if (Raw.Detour.statusFailed(status)) {
+    let reason: string | undefined = undefined;
+
+    const DT_STATUS_REASONS = {
+      DT_WRONG_MAGIC: Raw.Detour.WRONG_MAGIC,
+      DT_WRONG_VERSION: Raw.Detour.WRONG_VERSION,
+      DT_OUT_OF_MEMORY: Raw.Detour.OUT_OF_MEMORY,
+      DT_INVALID_PARAM: Raw.Detour.INVALID_PARAM,
+      DT_BUFFER_TOO_SMALL: Raw.Detour.BUFFER_TOO_SMALL,
+      DT_OUT_OF_NODES: Raw.Detour.OUT_OF_NODES,
+      DT_PARTIAL_RESULT: Raw.Detour.PARTIAL_RESULT,
+      DT_ALREADY_OCCUPIED: Raw.Detour.ALREADY_OCCUPIED,
+    };
+
+    for (const [reasonName, reasonMask] of Object.entries(DT_STATUS_REASONS)) {
+      if (Raw.Detour.statusDetail(status, reasonMask)) {
+        reason = reasonName;
+        break;
+      }
+    }
+
+    if (reason) {
+      return `failed - ${reason}`;
+    }
+
+    return `failed - unknown`;
+  }
+
+  return 'unknown';
+};
+
 export class DetourPolyDetail {
   raw: R.dtPolyDetail;
 
@@ -333,8 +373,8 @@ export class NavMeshCreateParams {
   }
 
   setOffMeshConnections(offMeshConnections: OffMeshConnection[]): void {
-    if (offMeshConnections.length <= 0) return
-    
+    if (offMeshConnections.length <= 0) return;
+
     const verts: number[] = [];
     const rads: number[] = [];
     const dir: number[] = [];
@@ -345,8 +385,16 @@ export class NavMeshCreateParams {
     for (let i = 0; i < offMeshConnections.length; i++) {
       const connection = offMeshConnections[i];
 
-      verts.push(connection.startPosition.x, connection.startPosition.y, connection.startPosition.z);
-      verts.push(connection.endPosition.x, connection.endPosition.y, connection.endPosition.z);
+      verts.push(
+        connection.startPosition.x,
+        connection.startPosition.y,
+        connection.startPosition.z
+      );
+      verts.push(
+        connection.endPosition.x,
+        connection.endPosition.y,
+        connection.endPosition.z
+      );
 
       rads.push(connection.radius);
       dir.push(connection.bidirectional ? 1 : 0);
@@ -355,8 +403,16 @@ export class NavMeshCreateParams {
       userIds.push(connection.userId ?? 1000 + i);
     }
 
-      
-    Raw.DetourNavMeshBuilder.setOffMeshConnections(this.raw, offMeshConnections.length, verts, rads, dir, areas, flags, userIds);
+    Raw.DetourNavMeshBuilder.setOffMeshConnections(
+      this.raw,
+      offMeshConnections.length,
+      verts,
+      rads,
+      dir,
+      areas,
+      flags,
+      userIds
+    );
   }
 
   verts(index: number): number {
