@@ -20,7 +20,7 @@ import dungeonGltfUrl from './assets/dungeon.gltf?url';
 import {
   useActionsControls,
   useDisplayOptionsControls,
-  useNavMeshConfigControls,
+  useNavMeshGenerationControls,
   useTestAgentControls,
 } from './features/controls';
 import { ErrorBoundary, ErrorMessage } from './features/error-handling';
@@ -112,8 +112,18 @@ const App = () => {
       });
 
       const result = navMeshConfig.tileSize
-        ? generateTiledNavMesh(positions, indices, navMeshConfig, true)
-        : generateSoloNavMesh(positions, indices, navMeshConfig, true);
+        ? generateTiledNavMesh(
+            positions,
+            indices,
+            navMeshConfig,
+            keepIntermediates
+          )
+        : generateSoloNavMesh(
+            positions,
+            indices,
+            navMeshConfig,
+            keepIntermediates
+          );
 
       console.log('nav mesh generation result', result);
 
@@ -241,7 +251,7 @@ const App = () => {
     exportAsRecastNavMesh,
   });
 
-  const { navMeshConfig } = useNavMeshConfigControls();
+  const { keepIntermediates, navMeshConfig } = useNavMeshGenerationControls();
 
   const {
     displayModel,
@@ -266,15 +276,14 @@ const App = () => {
 
   return (
     <>
-      {model && (
-        <group visible={displayModel}>
-          <Bounds fit observe>
-            <primitive object={model} />
-          </Bounds>
-        </group>
-      )}
-
       <group onPointerDown={onNavMeshPointerDown}>
+        {model && (
+          <group visible={displayModel}>
+            <Bounds fit observe>
+              <primitive object={model} />
+            </Bounds>
+          </group>
+        )}
         <NavMeshHelper
           enabled={displayNavMeshHelper}
           navMesh={navMesh}

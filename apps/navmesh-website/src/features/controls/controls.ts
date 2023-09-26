@@ -33,8 +33,8 @@ export const useActionsControls = ({
   );
 };
 
-export const useNavMeshConfigControls = () => {
-  const navMeshConfig = useControls('NavMesh Generation Config', {
+export const useNavMeshGenerationControls = () => {
+  const { keepIntermediates, ...navMeshConfig } = useControls('NavMesh Generation Config', {
     cs: {
       label: 'Cell Size',
       value: 0.2,
@@ -107,17 +107,23 @@ export const useNavMeshConfigControls = () => {
       value: 32,
       step: 1,
     },
+    keepIntermediates: {
+      label: 'Keep Intermediates',
+      value: true,
+    },
   });
 
   useControls('NavMesh Generation Config.Tips', {
     _: levaText(
       '- Start by tweaking the cell size and cell height. Enable the "Show Heightfield" display option to visualise the voxel cells.' +
         '\n' +
-        '- Set Tile Size to 0 to generate a solo nav mesh, and pick a value e.g. 32 to generate a tiled nav mesh'
+        '- Set Tile Size to 0 to generate a solo nav mesh, and pick a value e.g. 32 to generate a tiled nav mesh' +
+        '\n' +
+        '- Uncheck "Keep Intermediates" if you are trying to generate a large nav mesh and are running out of memory.'
     ),
   });
 
-  return { navMeshConfig };
+  return { keepIntermediates, navMeshConfig };
 };
 
 export const useDisplayOptionsControls = () => {
@@ -193,7 +199,7 @@ export const useDisplayOptionsControls = () => {
   const { heightfieldHelperEnabled } = useControls(
     'Display Options.Heightfield',
     {
-      _: levaText("Visualises Recast's voxelization process."),
+      _: levaText("Visualises Recast's voxelization process. Note that 'Keep Intermediates' must be checked."),
       heightfieldHelperEnabled: {
         value: false,
         label: 'Show Heightfield',
