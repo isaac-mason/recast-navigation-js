@@ -1,5 +1,4 @@
 import { DetourMeshTile, DetourOffMeshConnection, DetourPoly } from './detour';
-import { finalizer } from './finalizer';
 import { Raw } from './raw';
 import type R from './raw-module';
 import { Vector3, array, vec3 } from './utils';
@@ -9,8 +8,6 @@ export class NavMeshGetTilesAtResult {
 
   constructor(raw: R.NavMeshGetTilesAtResult) {
     this.raw = raw;
-
-    finalizer.register(this);
   }
 
   tiles(index: number): DetourMeshTile {
@@ -22,7 +19,6 @@ export class NavMeshGetTilesAtResult {
   }
 
   destroy(): void {
-    finalizer.unregister(this);
     Raw.Module.destroy(this.raw);
   }
 }
@@ -32,8 +28,6 @@ export class NavMeshRemoveTileResult {
 
   constructor(raw: R.NavMeshRemoveTileResult) {
     this.raw = raw;
-
-    finalizer.register(this);
   }
 
   data(): number[] {
@@ -45,7 +39,6 @@ export class NavMeshRemoveTileResult {
   }
 
   destroy(): void {
-    finalizer.unregister(this);
     Raw.Module.destroy(this.raw);
   }
 }
@@ -55,8 +48,6 @@ export class NavMeshCalcTileLocResult {
 
   constructor(raw: R.NavMeshCalcTileLocResult) {
     this.raw = raw;
-
-    finalizer.register(this);
   }
 
   tileX(): number {
@@ -68,7 +59,6 @@ export class NavMeshCalcTileLocResult {
   }
 
   destroy(): void {
-    finalizer.unregister(this);
     Raw.Module.destroy(this.raw);
   }
 }
@@ -78,8 +68,6 @@ export class NavMeshGetTileAndPolyByRefResult {
 
   constructor(raw: R.NavMeshGetTileAndPolyByRefResult) {
     this.raw = raw;
-
-    finalizer.register(this);
   }
 
   tile(): DetourMeshTile {
@@ -95,7 +83,6 @@ export class NavMeshGetTileAndPolyByRefResult {
   }
 
   destroy(): void {
-    finalizer.unregister(this);
     Raw.Module.destroy(this.raw);
   }
 }
@@ -105,8 +92,6 @@ export class NavMeshStoreTileStateResult {
 
   constructor(raw: R.NavMeshStoreTileStateResult) {
     this.raw = raw;
-
-    finalizer.register(this);
   }
 
   data(): number[] {
@@ -118,7 +103,6 @@ export class NavMeshStoreTileStateResult {
   }
 
   destroy(): void {
-    finalizer.unregister(this);
     Raw.Module.destroy(this.raw);
   }
 }
@@ -169,7 +153,6 @@ export class NavMesh {
 
   constructor(raw?: R.NavMesh) {
     this.raw = raw ?? new Raw.Module.NavMesh();
-    finalizer.register(this);
   }
 
   /**
@@ -543,7 +526,6 @@ export class NavMesh {
    */
   destroy(): void {
     this.raw.destroy();
-    finalizer.unregister(this);
     Raw.Module.destroy(this.raw);
   }
 }

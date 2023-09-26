@@ -1,4 +1,3 @@
-import { finalizer } from './finalizer';
 import { NavMesh } from './nav-mesh';
 import { Arrays, Raw } from './raw';
 import type R from './raw-module';
@@ -26,7 +25,6 @@ export class NavMeshQuery {
     } else {
       this.raw = new Raw.Module.NavMeshQuery();
       this.raw.init(value.navMesh.raw, value.maxNodes ?? 2048);
-      finalizer.register(this);
     }
 
     this.defaultFilter = new Raw.Module.dtQueryFilter();
@@ -264,7 +262,6 @@ export class NavMeshQuery {
    * Destroys the NavMeshQuery instance
    */
   destroy(): void {
-    finalizer.unregister(this);
     this.raw.destroy();
   }
 }

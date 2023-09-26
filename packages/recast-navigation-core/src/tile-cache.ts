@@ -1,5 +1,4 @@
 import { NavMeshCreateParams } from './detour';
-import { finalizer } from './finalizer';
 import { NavMesh } from './nav-mesh';
 import { Raw } from './raw';
 import type R from './raw-module';
@@ -76,8 +75,6 @@ export class TileCache {
 
   constructor(raw?: R.TileCache) {
     this.raw = raw ?? new Raw.Module.TileCache();
-
-    finalizer.register(this);
   }
 
   /**
@@ -192,7 +189,6 @@ export class TileCache {
   }
 
   destroy(): void {
-    finalizer.unregister(this);
     this.raw.destroy();
   }
 }

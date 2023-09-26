@@ -1,4 +1,3 @@
-import { finalizer } from './finalizer';
 import type { NavMesh } from './nav-mesh';
 import { NavMeshQuery } from './nav-mesh-query';
 import { Raw } from './raw';
@@ -335,8 +334,6 @@ export class Crowd {
     this.navMeshQuery = new NavMeshQuery(
       new Raw.Module.NavMeshQuery(this.raw.getNavMeshQuery())
     );
-
-    finalizer.register(this);
   }
 
   /**
@@ -453,7 +450,6 @@ export class Crowd {
   }
 
   destroy(): void {
-    finalizer.unregister(this);
     Raw.Detour.freeCrowd(this.raw);
   }
 }
