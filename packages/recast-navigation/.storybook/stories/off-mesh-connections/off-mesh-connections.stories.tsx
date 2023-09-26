@@ -3,7 +3,7 @@ import { ThreeEvent, useFrame } from '@react-three/fiber';
 import {
   Crowd,
   NavMeshQuery,
-  OffMeshConnection,
+  OffMeshConnectionParams,
 } from '@recast-navigation/core';
 import { threeToSoloNavMesh } from '@recast-navigation/three';
 import React, { useEffect, useState } from 'react';
@@ -16,7 +16,7 @@ import { parameters } from '../../parameters';
 export default {
   title: 'Off Mesh Connections / Solo NavMesh Off Mesh Connections',
   decorators,
-  parameters
+  parameters,
 };
 
 const agentMaterial = new MeshStandardMaterial({
@@ -30,7 +30,7 @@ const offMeshConnectionDefaults = {
   bidirectional: false,
 };
 
-const offMeshConnections: OffMeshConnection[] = [
+const offMeshConnections: OffMeshConnectionParams[] = [
   {
     ...offMeshConnectionDefaults,
     startPosition: {

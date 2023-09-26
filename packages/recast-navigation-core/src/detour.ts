@@ -1,4 +1,3 @@
-import { OffMeshConnection } from './generators';
 import { Raw } from './raw';
 import type R from './raw-module';
 import { RecastPolyMesh, RecastPolyMeshDetail } from './recast';
@@ -354,6 +353,22 @@ export const createNavMeshData = (navMeshCreateParams: NavMeshCreateParams) => {
   return Raw.DetourNavMeshBuilder.createNavMeshData(navMeshCreateParams.raw);
 };
 
+export type OffMeshConnectionParams = {
+  startPosition: Vector3;
+  endPosition: Vector3;
+  radius: number;
+  bidirectional: boolean;
+  /**
+   * @default 0
+   */
+  area?: number;
+  /**
+   * @default 1
+   */
+  flags?: number;
+  userId?: number;
+};
+
 export class NavMeshCreateParams {
   raw: R.dtNavMeshCreateParams;
 
@@ -372,7 +387,7 @@ export class NavMeshCreateParams {
     );
   }
 
-  setOffMeshConnections(offMeshConnections: OffMeshConnection[]): void {
+  setOffMeshConnections(offMeshConnections: OffMeshConnectionParams[]): void {
     if (offMeshConnections.length <= 0) return;
 
     const verts: number[] = [];
@@ -398,8 +413,8 @@ export class NavMeshCreateParams {
 
       rads.push(connection.radius);
       dir.push(connection.bidirectional ? 1 : 0);
-      areas.push(connection.area);
-      flags.push(connection.flags);
+      areas.push(connection.area ?? 0);
+      flags.push(connection.flags ?? 1);
       userIds.push(connection.userId ?? 1000 + i);
     }
 

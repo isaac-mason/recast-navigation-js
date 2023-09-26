@@ -1,4 +1,5 @@
-import { Vector3, vec3 } from '../utils';
+import { OffMeshConnectionParams } from '../detour';
+import { vec3 } from '../utils';
 
 export const getBoundingBox = (
   positions: ArrayLike<number>,
@@ -63,16 +64,6 @@ export const dtNextPow2 = (v: number) => {
   return v;
 };
 
-export type OffMeshConnection = {
-  startPosition: Vector3;
-  endPosition: Vector3;
-  radius: number;
-  bidirectional: boolean;
-  area: number;
-  flags: number;
-  userId?: number;
-};
-
 export type OffMeshConnectionGeneratorParams = {
-  offMeshConnections?: OffMeshConnection[];
+  offMeshConnections?: OffMeshConnectionParams[];
 };
