@@ -17,10 +17,6 @@ export class NavMeshGetTilesAtResult {
   tileCount(): number {
     return this.raw.tileCount;
   }
-
-  destroy(): void {
-    Raw.Module.destroy(this.raw);
-  }
 }
 
 export class NavMeshRemoveTileResult {
@@ -37,10 +33,6 @@ export class NavMeshRemoveTileResult {
   dataSize(): number {
     return this.raw.dataSize;
   }
-
-  destroy(): void {
-    Raw.Module.destroy(this.raw);
-  }
 }
 
 export class NavMeshCalcTileLocResult {
@@ -56,10 +48,6 @@ export class NavMeshCalcTileLocResult {
 
   tileY(): number {
     return this.raw.tileY;
-  }
-
-  destroy(): void {
-    Raw.Module.destroy(this.raw);
   }
 }
 
@@ -81,10 +69,6 @@ export class NavMeshGetTileAndPolyByRefResult {
   status(): number {
     return this.raw.status;
   }
-
-  destroy(): void {
-    Raw.Module.destroy(this.raw);
-  }
 }
 
 export class NavMeshStoreTileStateResult {
@@ -100,10 +84,6 @@ export class NavMeshStoreTileStateResult {
 
   dataSize(): number {
     return this.raw.dataSize;
-  }
-
-  destroy(): void {
-    Raw.Module.destroy(this.raw);
   }
 }
 
