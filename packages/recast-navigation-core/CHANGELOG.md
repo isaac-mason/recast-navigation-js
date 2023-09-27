@@ -1,5 +1,12 @@
 # @recast-navigation/core
 
+## 0.12.1
+
+### Patch Changes
+
+- 63fb772: fix: generateTiledNavMesh buildContext logs weren't logging nverts and npolys correctly
+  - @recast-navigation/wasm@0.12.1
+
 ## 0.12.0
 
 ### Minor Changes
