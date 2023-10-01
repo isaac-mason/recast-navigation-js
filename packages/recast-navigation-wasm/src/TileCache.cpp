@@ -1,6 +1,6 @@
 #include "./TileCache.h"
 
-bool TileCache::init(const dtTileCacheParams *params, RecastLinearAllocator *allocator, RecastFastLZCompressor *compressor, TileCacheMeshProcessAbstract &meshProcess)
+bool TileCache::init(const dtTileCacheParams *params, RecastLinearAllocator *allocator, RecastFastLZCompressor *compressor, TileCacheMeshProcessJsImpl &meshProcess)
 {
     if (!m_tileCache)
     {

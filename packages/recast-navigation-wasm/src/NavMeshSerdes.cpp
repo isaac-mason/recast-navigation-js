@@ -35,7 +35,7 @@ struct NavMeshTileHeader
     int dataSize;
 };
 
-NavMeshImporterResult NavMeshImporter::importNavMesh(NavMeshExport *navMeshExport, TileCacheMeshProcessAbstract &meshProcess)
+NavMeshImporterResult NavMeshImporter::importNavMesh(NavMeshExport *navMeshExport, TileCacheMeshProcessJsImpl &meshProcess)
 {
     NavMeshImporterResult *result = new NavMeshImporterResult;
     result->success = false;

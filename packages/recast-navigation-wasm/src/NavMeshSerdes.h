@@ -39,5 +39,5 @@ class NavMeshImporter
 public:
     NavMeshImporter() {}
 
-    NavMeshImporterResult importNavMesh(NavMeshExport *navMeshExport, TileCacheMeshProcessAbstract &meshProcess);
+    NavMeshImporterResult importNavMesh(NavMeshExport *navMeshExport, TileCacheMeshProcessJsImpl &meshProcess);
 };

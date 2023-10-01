@@ -510,11 +510,11 @@ interface RecastFastLZCompressor {
 };
 RecastFastLZCompressor implements dtTileCacheCompressor;
 
-interface TileCacheMeshProcessAbstract {
+interface TileCacheMeshProcessJsImpl {
     void process(dtNavMeshCreateParams params, UnsignedCharArray polyAreas, UnsignedShortArray polyFlags);
 };
 
-[JSImplementation="TileCacheMeshProcessAbstract"]
+[JSImplementation="TileCacheMeshProcessJsImpl"]
 interface TileCacheMeshProcess {
     void TileCacheMeshProcess();
 
@@ -802,7 +802,7 @@ interface rcContext {
     float getAccumulatedTime([Const] rcTimerLabel label);
 };
 
-interface RecastBuildContextImplAbstract {
+interface RecastBuildContextJsImpl {
     void resetLog();
     void log([Const] rcLogCategory category, [Const] DOMString msg, [Const] long len);
     
@@ -812,7 +812,7 @@ interface RecastBuildContextImplAbstract {
     long getAccumulatedTime([Const] rcTimerLabel label);
 };
 
-[JSImplementation="RecastBuildContextImplAbstract"]
+[JSImplementation="RecastBuildContextJsImpl"]
 interface RecastBuildContextImpl {
     void RecastBuildContextImpl();
 
@@ -1144,7 +1144,7 @@ interface NavMeshImporterResult {
 interface NavMeshImporter {
     void NavMeshImporter();
 
-    [Value] NavMeshImporterResult importNavMesh(NavMeshExport data, [Ref] TileCacheMeshProcessAbstract meshProcess);
+    [Value] NavMeshImporterResult importNavMesh(NavMeshExport data, [Ref] TileCacheMeshProcessJsImpl meshProcess);
 };
 
 interface NavMeshExport {

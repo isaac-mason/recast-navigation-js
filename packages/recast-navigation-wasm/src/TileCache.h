@@ -99,13 +99,13 @@ struct RecastLinearAllocator : public dtTileCacheAlloc
     }
 };
 
-struct TileCacheMeshProcessAbstract
+struct TileCacheMeshProcessJsImpl
 {
-    TileCacheMeshProcessAbstract()
+    TileCacheMeshProcessJsImpl()
     {
     }
 
-    virtual ~TileCacheMeshProcessAbstract()
+    virtual ~TileCacheMeshProcessJsImpl()
     {
     }
 
@@ -114,9 +114,9 @@ struct TileCacheMeshProcessAbstract
 
 struct TileCacheMeshProcessWrapper : public dtTileCacheMeshProcess
 {
-    TileCacheMeshProcessAbstract &js;
+    TileCacheMeshProcessJsImpl &js;
 
-    TileCacheMeshProcessWrapper(TileCacheMeshProcessAbstract &inJs) : js(inJs) {}
+    TileCacheMeshProcessWrapper(TileCacheMeshProcessJsImpl &inJs) : js(inJs) {}
 
     virtual void process(struct dtNavMeshCreateParams *params, unsigned char *polyAreas, unsigned short *polyFlags)
     {
@@ -152,7 +152,7 @@ public:
         m_tileCache = dtAllocTileCache();
     }
 
-    bool init(const dtTileCacheParams *params, RecastLinearAllocator *allocator, RecastFastLZCompressor *compressor, TileCacheMeshProcessAbstract &meshProcess);
+    bool init(const dtTileCacheParams *params, RecastLinearAllocator *allocator, RecastFastLZCompressor *compressor, TileCacheMeshProcessJsImpl &meshProcess);
 
     TileCacheAddTileResult addTile(UnsignedCharArray *data, unsigned char flags);
 
