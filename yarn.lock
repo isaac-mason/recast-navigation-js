@@ -4932,9 +4932,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-three/fiber@npm:^8.12.0, @react-three/fiber@npm:^8.14.2":
-  version: 8.14.2
-  resolution: "@react-three/fiber@npm:8.14.2"
+"@react-three/fiber@npm:^8.14.4":
+  version: 8.14.4
+  resolution: "@react-three/fiber@npm:8.14.4"
   dependencies:
     "@babel/runtime": ^7.17.8
     "@types/react-reconciler": ^0.26.7
@@ -4967,7 +4967,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 4f75c426024e77a7608453872eac9dcd9ec74386808108a6d0ee5d82690aa3e40f2b85e8423688b2413f4856327321295a24b002c3c057c8cdfbe8ea927f354c
+  checksum: c67ec50d00a3eb2ea4ab234c2a4066508782b8881d0426e020aface9092423c1c5affc020bb183759f05bd4c8e0c7b72f03f5a2dd22973c0440cfbad197174b0
   languageName: node
   linkType: hard
 
@@ -16701,7 +16701,7 @@ __metadata:
   dependencies:
     "@pmndrs/assets": ^1.6.0
     "@react-three/drei": ^9.84.3
-    "@react-three/fiber": ^8.12.0
+    "@react-three/fiber": ^8.14.4
     "@types/react": ^18.2.11
     "@types/react-dom": ^18.2.8
     "@types/three": ^0.155.0
@@ -17503,7 +17503,7 @@ __metadata:
   resolution: "parcel-example@workspace:examples/parcel-example"
   dependencies:
     "@react-three/drei": ^9.84.3
-    "@react-three/fiber": ^8.14.2
+    "@react-three/fiber": ^8.14.4
     parcel: ^2.9.3
     recast-navigation: "workspace:^"
     three: ^0.156.1
@@ -19341,7 +19341,7 @@ __metadata:
   resolution: "react-scripts-example@workspace:examples/react-scripts-example"
   dependencies:
     "@react-three/drei": ^9.84.3
-    "@react-three/fiber": ^8.12.0
+    "@react-three/fiber": ^8.14.4
     react: ^18.2.0
     react-dom: ^18.2.0
     react-scripts: 5.0.1
@@ -19575,7 +19575,7 @@ __metadata:
     "@pmndrs/assets": ^1.6.0
     "@react-three/csg": ^3.0.0
     "@react-three/drei": ^9.84.3
-    "@react-three/fiber": ^8.12.0
+    "@react-three/fiber": ^8.14.4
     "@recast-navigation/core": 0.12.1
     "@recast-navigation/three": 0.12.1
     "@rollup/plugin-commonjs": ^25.0.4
@@ -22661,7 +22661,7 @@ __metadata:
   resolution: "vite-example@workspace:examples/vite-example"
   dependencies:
     "@react-three/drei": ^9.84.3
-    "@react-three/fiber": ^8.12.0
+    "@react-three/fiber": ^8.14.4
     "@types/react": ^18.2.11
     "@types/react-dom": ^18.2.8
     "@types/three": ^0.155.0
