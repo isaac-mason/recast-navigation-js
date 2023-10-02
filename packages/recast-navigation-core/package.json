@@ -52,7 +52,7 @@
     "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-filesize": "^10.0.0",
     "typescript": "^5.1.6",
-    "vitest": "^0.34.3"
+    "vitest": "^0.34.6"
   },
   "packageManager": "yarn@3.2.1"
 }
