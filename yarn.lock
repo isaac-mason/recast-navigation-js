@@ -5042,7 +5042,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@recast-navigation/wasm@workspace:packages/recast-navigation-wasm"
   dependencies:
-    webidl-dts-gen: ^1.5.0
+    webidl-dts-gen: ^1.6.0
   languageName: unknown
   linkType: soft
 
@@ -22153,7 +22153,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.1.3, typescript@npm:^5.1.6, typescript@npm:^5.2.2":
+"typescript@npm:^5.1.6, typescript@npm:^5.2.2":
   version: 5.2.2
   resolution: "typescript@npm:5.2.2"
   bin:
@@ -22163,7 +22163,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^5.1.3#~builtin<compat/typescript>, typescript@patch:typescript@^5.1.6#~builtin<compat/typescript>, typescript@patch:typescript@^5.2.2#~builtin<compat/typescript>":
+"typescript@patch:typescript@^5.1.6#~builtin<compat/typescript>, typescript@patch:typescript@^5.2.2#~builtin<compat/typescript>":
   version: 5.2.2
   resolution: "typescript@patch:typescript@npm%3A5.2.2#~builtin<compat/typescript>::version=5.2.2&hash=85af82"
   bin:
@@ -22988,21 +22988,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webidl-dts-gen@npm:^1.5.0":
-  version: 1.5.0
-  resolution: "webidl-dts-gen@npm:1.5.0"
+"webidl-dts-gen@npm:^1.6.0":
+  version: 1.6.0
+  resolution: "webidl-dts-gen@npm:1.6.0"
   dependencies:
     jsdom: ^22.1.0
-    typescript: ^5.1.3
-    webidl2: ^24.3.0
+    typescript: ^5.2.2
+    webidl2: ^24.4.1
     yargs: ^17.7.2
   bin:
     webidl-dts-gen: dist/cli.js
-  checksum: 4ad92006e5e8045a96adce365ae310754a6e4517e5869278c997779348e6533354023637ed76384540e422f3cccea1c75f4176bf89b8c3ea8689832e48c1732b
+  checksum: 9601e1da06de4ec8ece8dfb332a7e16399561d148951d5e08b8ddf23ba9d26d349eaa683162a875b88917c4b776a217a06babc3e005f1b6b4ef4ac66e5f87353
   languageName: node
   linkType: hard
 
-"webidl2@npm:^24.3.0":
+"webidl2@npm:^24.4.1":
   version: 24.4.1
   resolution: "webidl2@npm:24.4.1"
   checksum: 3552460b794302e7f9ad169a9f3abb01678224b6667cbe49aa53de916f3a7ef23ce60b217bd723012a0770e3a824329b42115e5800ca0d945e95b773913a7623
