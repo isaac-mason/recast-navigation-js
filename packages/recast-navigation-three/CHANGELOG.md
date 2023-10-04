@@ -1,5 +1,11 @@
 # @recast-navigation/three
 
+## 0.13.0
+
+### Patch Changes
+
+- @recast-navigation/core@0.13.0
+
 ## 0.12.1
 
 ### Patch Changes
