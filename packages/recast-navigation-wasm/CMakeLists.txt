@@ -31,37 +31,6 @@ file(GLOB_RECURSE RECASTDETOUR_FILES
     ${CMAKE_SOURCE_DIR}/recastnavigation/RecastDemo/Contrib/fastlz/fastlz.c
 )
 
-# file(GLOB RECASTDETOUR_FILES
-#     ${CMAKE_SOURCE_DIR}/recastnavigation/Detour/Source/DetourAlloc.cpp
-#     ${CMAKE_SOURCE_DIR}/recastnavigation/Detour/Source/DetourAssert.cpp
-#     ${CMAKE_SOURCE_DIR}/recastnavigation/Detour/Source/DetourCommon.cpp
-#     ${CMAKE_SOURCE_DIR}/recastnavigation/Detour/Source/DetourNavMesh.cpp
-#     ${CMAKE_SOURCE_DIR}/recastnavigation/Detour/Source/DetourNavMeshBuilder.cpp
-#     ${CMAKE_SOURCE_DIR}/recastnavigation/Detour/Source/DetourNavMeshQuery.cpp
-#     ${CMAKE_SOURCE_DIR}/recastnavigation/Detour/Source/DetourNode.cpp
-#     ${CMAKE_SOURCE_DIR}/recastnavigation/DetourCrowd/Source/DetourCrowd.cpp
-#     ${CMAKE_SOURCE_DIR}/recastnavigation/DetourCrowd/Source/DetourLocalBoundary.cpp
-#     ${CMAKE_SOURCE_DIR}/recastnavigation/DetourCrowd/Source/DetourObstacleAvoidance.cpp
-#     ${CMAKE_SOURCE_DIR}/recastnavigation/DetourCrowd/Source/DetourPathCorridor.cpp
-#     ${CMAKE_SOURCE_DIR}/recastnavigation/DetourCrowd/Source/DetourPathQueue.cpp
-#     ${CMAKE_SOURCE_DIR}/recastnavigation/DetourCrowd/Source/DetourProximityGrid.cpp
-#     ${CMAKE_SOURCE_DIR}/recastnavigation/DetourTileCache/Source/DetourTileCache.cpp
-#     ${CMAKE_SOURCE_DIR}/recastnavigation/DetourTileCache/Source/DetourTileCacheBuilder.cpp
-#     ${CMAKE_SOURCE_DIR}/recastnavigation/Recast/Source/Recast.cpp
-#     ${CMAKE_SOURCE_DIR}/recastnavigation/Recast/Source/RecastAlloc.cpp
-#     ${CMAKE_SOURCE_DIR}/recastnavigation/Recast/Source/RecastArea.cpp
-#     ${CMAKE_SOURCE_DIR}/recastnavigation/Recast/Source/RecastAssert.cpp
-#     ${CMAKE_SOURCE_DIR}/recastnavigation/Recast/Source/RecastContour.cpp
-#     ${CMAKE_SOURCE_DIR}/recastnavigation/Recast/Source/RecastFilter.cpp
-#     ${CMAKE_SOURCE_DIR}/recastnavigation/Recast/Source/RecastLayers.cpp
-#     ${CMAKE_SOURCE_DIR}/recastnavigation/Recast/Source/RecastMesh.cpp
-#     ${CMAKE_SOURCE_DIR}/recastnavigation/Recast/Source/RecastMeshDetail.cpp
-#     ${CMAKE_SOURCE_DIR}/recastnavigation/Recast/Source/RecastRasterization.cpp
-#     ${CMAKE_SOURCE_DIR}/recastnavigation/Recast/Source/RecastRegion.cpp
-#     ${CMAKE_SOURCE_DIR}/recastnavigation/RecastDemo/Source/ChunkyTriMesh.cpp
-#     ${CMAKE_SOURCE_DIR}/recastnavigation/RecastDemo/Contrib/fastlz/fastlz.c
-# )
-
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/src
   ${CMAKE_CURRENT_SOURCE_DIR}/recastnavigation/Detour/Include
