@@ -183,6 +183,7 @@ export const Obstacles = () => {
       </PivotControls>
 
       <Debug
+        autoUpdate
         navMesh={navMesh}
         navMeshMaterial={navMeshMaterial}
         tileCache={tileCache}

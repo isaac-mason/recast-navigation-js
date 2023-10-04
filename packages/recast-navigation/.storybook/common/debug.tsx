@@ -2,7 +2,7 @@ import { useFrame } from '@react-three/fiber';
 import {
   Crowd,
   NavMesh,
-  OffMeshConnection,
+  OffMeshConnectionParams,
   TileCache,
 } from '@recast-navigation/core';
 import {
@@ -11,20 +11,22 @@ import {
   TileCacheHelper,
 } from '@recast-navigation/three';
 import { OffMeshConnectionsHelper } from '@recast-navigation/three/src/helpers/off-mesh-connections-helper';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Material } from 'three';
 
 export type DebugProps = {
+  autoUpdate?: boolean;
   navMesh?: NavMesh;
   navMeshMaterial?: Material;
   tileCache?: TileCache;
   obstacleMaterial?: Material;
   crowd?: Crowd;
   agentMaterial?: Material;
-  offMeshConnections?: OffMeshConnection[];
+  offMeshConnections?: OffMeshConnectionParams[];
 };
 
 export const Debug = ({
+  autoUpdate,
   navMesh,
   navMeshMaterial,
   tileCache,
@@ -75,7 +77,7 @@ export const Debug = ({
   });
 
   useEffect(() => {
-    if (!navMeshHelper) return;
+    if (!navMeshHelper || !autoUpdate) return;
 
     const interval = setInterval(() => {
       navMeshHelper.update();
@@ -87,7 +89,7 @@ export const Debug = ({
   }, [navMeshHelper]);
 
   useEffect(() => {
-    if (!tileCacheHelper) return;
+    if (!tileCacheHelper || !autoUpdate) return;
 
     const interval = setInterval(() => {
       tileCacheHelper.update();
