@@ -1,5 +1,11 @@
 # @recast-navigation/wasm
 
+## 0.13.0
+
+### Minor Changes
+
+- 106044a: refactor: consistent naming for JSImplementation structs
+
 ## 0.12.1
 
 ## 0.12.0

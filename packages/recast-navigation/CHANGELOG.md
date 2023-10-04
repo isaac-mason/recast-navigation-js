@@ -1,5 +1,16 @@
 # recast-navigation
 
+## 0.13.0
+
+### Minor Changes
+
+- 106044a: refactor: consistent naming for JSImplementation structs
+
+### Patch Changes
+
+- @recast-navigation/core@0.13.0
+- @recast-navigation/three@0.13.0
+
 ## 0.12.1
 
 ### Patch Changes
