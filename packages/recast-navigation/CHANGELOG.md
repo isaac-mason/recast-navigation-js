@@ -1,5 +1,13 @@
 # recast-navigation
 
+## 0.13.1
+
+### Patch Changes
+
+- 44a77fe: chore: bump webidl-dts-gen from 1.6.0 to 1.7.0
+  - @recast-navigation/core@0.13.1
+  - @recast-navigation/three@0.13.1
+
 ## 0.13.0
 
 ### Minor Changes
