@@ -3,7 +3,7 @@
   "private": true,
   "main": "src/index.js",
   "dependencies": {
-    "@react-three/drei": "^9.84.3",
+    "@react-three/drei": "^9.87.1",
     "@react-three/fiber": "^8.14.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
