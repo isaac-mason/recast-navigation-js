@@ -63,7 +63,7 @@
     "@babel/core": "^7.22.11",
     "@mdx-js/react": "^2.3.0",
     "@pmndrs/assets": "^1.6.0",
-    "@react-three/csg": "^3.0.0",
+    "@react-three/csg": "^3.1.0",
     "@react-three/drei": "^9.87.1",
     "@react-three/fiber": "^8.14.4",
     "@rollup/plugin-commonjs": "^25.0.4",
