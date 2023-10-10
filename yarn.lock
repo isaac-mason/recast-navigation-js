@@ -4900,9 +4900,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-three/drei@npm:^9.84.3":
-  version: 9.84.3
-  resolution: "@react-three/drei@npm:9.84.3"
+"@react-three/drei@npm:^9.87.1":
+  version: 9.87.1
+  resolution: "@react-three/drei@npm:9.87.1"
   dependencies:
     "@babel/runtime": ^7.11.2
     "@mediapipe/tasks-vision": 0.10.2
@@ -4922,10 +4922,11 @@ __metadata:
     stats-gl: ^1.0.4
     stats.js: ^0.17.0
     suspend-react: ^0.1.3
-    three-mesh-bvh: ^0.6.0
+    three-mesh-bvh: ^0.6.7
     three-stdlib: ^2.26.6
     troika-three-text: ^0.47.2
     utility-types: ^3.10.0
+    uuid: ^9.0.1
     zustand: ^3.5.13
   peerDependencies:
     "@react-three/fiber": ">=8.0"
@@ -4935,7 +4936,7 @@ __metadata:
   peerDependenciesMeta:
     react-dom:
       optional: true
-  checksum: 055ceb9618f19e5e74cbcab2e33af32acd9f98933a0fd4eab300e625fd66ef65bad568d4c294e7d62b4b6b123f55a08e6c0cf493c82825e8f529edbca8c46e92
+  checksum: 7b3e7658e0c421136c90eb83ddc1ba956d6ac13baf0ddc43f553fe606824476876789e35cc8b30d3f42358dbcbf7fc29b39011d6e80d1e18b57eda189fc26f93
   languageName: node
   linkType: hard
 
@@ -16754,7 +16755,7 @@ __metadata:
   resolution: "navmesh-website@workspace:apps/navmesh-website"
   dependencies:
     "@pmndrs/assets": ^1.6.0
-    "@react-three/drei": ^9.84.3
+    "@react-three/drei": ^9.87.1
     "@react-three/fiber": ^8.14.4
     "@types/react": ^18.2.11
     "@types/react-dom": ^18.2.8
@@ -17556,7 +17557,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "parcel-example@workspace:examples/parcel-example"
   dependencies:
-    "@react-three/drei": ^9.84.3
+    "@react-three/drei": ^9.87.1
     "@react-three/fiber": ^8.14.4
     parcel: ^2.9.3
     recast-navigation: "workspace:^"
@@ -19394,7 +19395,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "react-scripts-example@workspace:examples/react-scripts-example"
   dependencies:
-    "@react-three/drei": ^9.84.3
+    "@react-three/drei": ^9.87.1
     "@react-three/fiber": ^8.14.4
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -19628,7 +19629,7 @@ __metadata:
     "@mdx-js/react": ^2.3.0
     "@pmndrs/assets": ^1.6.0
     "@react-three/csg": ^3.0.0
-    "@react-three/drei": ^9.84.3
+    "@react-three/drei": ^9.87.1
     "@react-three/fiber": ^8.14.4
     "@recast-navigation/core": 0.13.1
     "@recast-navigation/three": 0.13.1
@@ -21677,12 +21678,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"three-mesh-bvh@npm:^0.6.0":
-  version: 0.6.7
-  resolution: "three-mesh-bvh@npm:0.6.7"
+"three-mesh-bvh@npm:^0.6.7":
+  version: 0.6.8
+  resolution: "three-mesh-bvh@npm:0.6.8"
   peerDependencies:
     three: ">= 0.151.0"
-  checksum: 8aaee1549bd0b7b2ddc7d943842b48876a52f7dcf23424fa7d8d4cb297f2177387199caa31ead74d4a12931a26e4a1636c9c79f730baaa31dc08e3709fe26ebb
+  checksum: d72997807f24a0f87257a649d6465aee3617a6270d80cc0315af22ef8a3ab0eccc4d2197fa546e668ec72d39d2d3d13ac7215b3e9f69f56d96f6269080b1507b
   languageName: node
   linkType: hard
 
@@ -22610,7 +22611,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uuid@npm:^9.0.0":
+"uuid@npm:^9.0.0, uuid@npm:^9.0.1":
   version: 9.0.1
   resolution: "uuid@npm:9.0.1"
   bin:
@@ -22714,7 +22715,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "vite-example@workspace:examples/vite-example"
   dependencies:
-    "@react-three/drei": ^9.84.3
+    "@react-three/drei": ^9.87.1
     "@react-three/fiber": ^8.14.4
     "@types/react": ^18.2.11
     "@types/react-dom": ^18.2.8
