@@ -5,7 +5,7 @@ import {
   exportNavMesh,
   importNavMesh,
 } from '@recast-navigation/core';
-import { threeToSoloNavMesh } from '@recast-navigation/three';
+import { threeToSoloNavMesh, threeToTileCache } from '@recast-navigation/three';
 import { button, useControls } from 'leva';
 import React, { useState } from 'react';
 import { Group, Mesh, MeshBasicMaterial } from 'three';
@@ -31,8 +31,13 @@ const controlsPrefix = 'nav-mesh-importer-exporter';
 export const ImportingAndExporting = () => {
   const [group, setGroup] = useState<Group | null>(null);
 
-  const [navMesh, setNavMesh] = useState<NavMesh | undefined>();
-  const [navMeshExport, setNavMeshExport] = useState<Uint8Array | undefined>();
+  const [result, setResult] = useState<
+    { tileCache: boolean; data: NavMesh } | undefined
+  >();
+
+  const [navMeshExport, setNavMeshExport] = useState<
+    { tileCache: boolean; data: Uint8Array } | undefined
+  >();
 
   const navMeshConfig = useNavMeshConfig(controlsPrefix);
 
@@ -50,44 +55,50 @@ export const ImportingAndExporting = () => {
           }
         });
 
-        const { navMesh } = threeToSoloNavMesh(meshes, navMeshConfig);
+        const tileCache = navMeshConfig.tileSize !== 0;
 
-        setNavMesh(navMesh);
+        const { navMesh } = tileCache
+          ? threeToTileCache(meshes, navMeshConfig)
+          : threeToSoloNavMesh(meshes, navMeshConfig);
+
+        setResult({ tileCache, data: navMesh! });
       }),
       reset: button(() => {
-        setNavMesh(undefined);
+        setResult(undefined);
       }),
       save: button(
         () => {
-          if (!navMesh) return;
+          if (!result) return;
 
-          const buffer = exportNavMesh(navMesh);
+          const buffer = exportNavMesh(result.data);
 
-          setNavMeshExport(buffer);
+          setNavMeshExport({ tileCache: result.tileCache, data: buffer });
         },
-        { disabled: !navMesh }
+        { disabled: !result }
       ),
       load: button(
         () => {
           if (!navMeshExport) return;
 
-          const meshProcess = new TileCacheMeshProcess(
-            (navMeshCreateParams, polyAreas, polyFlags) => {
-              for (let i = 0; i < navMeshCreateParams.polyCount(); ++i) {
-                polyAreas.set_data(i, 0);
-                polyFlags.set_data(i, 1);
-              }
-            }
-          );
+          const meshProcess = navMeshExport.tileCache
+            ? new TileCacheMeshProcess(
+                (navMeshCreateParams, polyAreas, polyFlags) => {
+                  for (let i = 0; i < navMeshCreateParams.polyCount(); ++i) {
+                    polyAreas.set_data(i, 0);
+                    polyFlags.set_data(i, 1);
+                  }
+                }
+              )
+            : undefined;
 
-          const { navMesh } = importNavMesh(navMeshExport, meshProcess);
+          const { navMesh } = importNavMesh(navMeshExport.data, meshProcess);
 
-          setNavMesh(navMesh);
+          setResult({ data: navMesh, tileCache: navMeshExport.tileCache });
         },
         { disabled: !navMeshExport }
       ),
     },
-    [group, navMeshConfig, navMesh, navMeshExport]
+    [group, navMeshConfig, result, navMeshExport]
   );
 
   return (
@@ -96,7 +107,7 @@ export const ImportingAndExporting = () => {
         <NavTestEnvirionment />
       </group>
 
-      <Debug navMesh={navMesh} navMeshMaterial={navMeshMaterial} />
+      <Debug navMesh={result?.data} navMeshMaterial={navMeshMaterial} />
 
       <OrbitControls />
     </>

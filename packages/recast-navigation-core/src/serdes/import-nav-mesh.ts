@@ -16,7 +16,7 @@ export type NavMeshImporterResult =
 
 export const importNavMesh = (
   data: Uint8Array,
-  tileCacheMeshProcess: TileCacheMeshProcess
+  tileCacheMeshProcess?: TileCacheMeshProcess
 ): NavMeshImporterResult => {
   const nDataBytes = data.length * data.BYTES_PER_ELEMENT;
   const dataPtr = Raw.Module._malloc(nDataBytes);
@@ -34,7 +34,7 @@ export const importNavMesh = (
 
   const result = Raw.NavMeshImporter.importNavMesh(
     buf,
-    tileCacheMeshProcess.raw
+    tileCacheMeshProcess?.raw!
   );
 
   Raw.Module._free(dataHeap.byteOffset);
