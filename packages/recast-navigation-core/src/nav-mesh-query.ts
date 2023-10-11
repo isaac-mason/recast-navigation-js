@@ -88,11 +88,11 @@ export class NavMeshQuery {
    */
   getClosestPoint(
     position: Vector3,
-    options?: { filter?: R.dtQueryFilter }
+    options?: { filter?: R.dtQueryFilter; halfExtents?: Vector3 }
   ): Vector3 {
     const closestPointRaw = this.raw.getClosestPoint(
       vec3.toArray(position),
-      vec3.toArray(this.defaultQueryHalfExtents),
+      vec3.toArray(options?.halfExtents ?? this.defaultQueryHalfExtents),
       options?.filter ?? this.defaultFilter
     );
 
@@ -107,12 +107,13 @@ export class NavMeshQuery {
     radius: number,
     options?: {
       filter?: R.dtQueryFilter;
+      halfExtents?: Vector3;
     }
   ): Vector3 {
     const randomPointRaw = this.raw.getRandomPointAround(
       vec3.toArray(position),
       radius,
-      vec3.toArray(this.defaultQueryHalfExtents),
+      vec3.toArray(options?.halfExtents ?? this.defaultQueryHalfExtents),
       options?.filter ?? this.defaultFilter
     );
 
