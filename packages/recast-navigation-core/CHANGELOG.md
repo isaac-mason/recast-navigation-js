@@ -1,5 +1,13 @@
 # @recast-navigation/core
 
+## 0.13.2
+
+### Patch Changes
+
+- 63be9aa: fix: make importNavMesh tileCacheMeshProcess argument optional
+- f32f79e: feat: add missing 'halfExtents' options to NavMeshQuery methods
+  - @recast-navigation/wasm@0.13.2
+
 ## 0.13.1
 
 ### Patch Changes
