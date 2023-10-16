@@ -7,7 +7,7 @@
         "build": "sh build.sh"
     },
     "devDependencies": {
-        "typedoc": "^0.25.0",
+        "typedoc": "^0.25.2",
         "typescript": "^5.2.2"
     }
 }
