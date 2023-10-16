@@ -65,7 +65,7 @@
     "@pmndrs/assets": "^1.6.0",
     "@react-three/csg": "^3.1.0",
     "@react-three/drei": "^9.87.1",
-    "@react-three/fiber": "^8.14.4",
+    "@react-three/fiber": "^8.14.5",
     "@rollup/plugin-commonjs": "^25.0.4",
     "@rollup/plugin-multi-entry": "^6.0.0",
     "@rollup/plugin-node-resolve": "^15.0.1",
