@@ -1,4 +1,4 @@
-import { Crowd, CrowdAgentParams } from '@recast-navigation/core';
+import { Crowd, CrowdAgent } from '@recast-navigation/core';
 import {
   CylinderGeometry,
   Material,
@@ -46,22 +46,24 @@ export class CrowdHelper extends Object3D {
 
       const position = agent.position();
       const velocity = agent.velocity();
-      const agentParams = agent.parameters();
 
-      let agentMesh = this.agentMeshes.get(agent.agentIndex);
+      let agentMesh: Mesh | undefined = this.agentMeshes.get(agent.agentIndex);
 
       if (agentMesh === undefined) {
-        agentMesh = this.createAgentMesh(agentParams);
+        agentMesh = this.createAgentMesh(agent);
 
         this.add(agentMesh);
         this.agentMeshes.set(agent.agentIndex, agentMesh);
+      } else {
+        this.updateAgentGeometry(agentMesh, agent);
       }
 
       agentMesh.position.set(
         position.x,
-        position.y + agentParams.height / 2,
+        position.y + agent.height / 2,
         position.z
       );
+
       agentMesh.lookAt(
         new Vector3().copy(agentMesh.position).add(velocity as Vector3)
       );
@@ -77,14 +79,37 @@ export class CrowdHelper extends Object3D {
     }
   }
 
-  private createAgentMesh(agentParams: CrowdAgentParams): Mesh {
-    const geometry = new CylinderGeometry(
-      agentParams.radius,
-      agentParams.radius,
-      agentParams.height
+  private createAgentMesh(agent: CrowdAgent): Mesh {
+    const mesh = new Mesh();
 
-    );
+    mesh.material = this.agentMaterial;
 
-    return new Mesh(geometry, this.agentMaterial);
+    this.updateAgentGeometry(mesh, agent);
+
+    mesh.userData = {
+      radius: agent.radius,
+      height: agent.height,
+    };
+
+    return mesh;
+  }
+
+  private updateAgentGeometry(agentMesh: Mesh, agentParams: CrowdAgent) {
+    if (
+      agentMesh.userData.radius !== agentParams.radius ||
+      agentMesh.userData.height !== agentParams.height
+    ) {
+      const geometry = new CylinderGeometry(
+        agentParams.radius,
+        agentParams.radius,
+        agentParams.height
+      );
+
+      agentMesh.geometry.dispose();
+      agentMesh.geometry = geometry;
+
+      agentMesh.userData.radius = agentParams.radius;
+      agentMesh.userData.height = agentParams.height;
+    }
   }
 }

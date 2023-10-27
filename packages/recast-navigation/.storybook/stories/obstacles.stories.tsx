@@ -9,8 +9,9 @@ import {
   NavMeshQuery,
   TileCache,
 } from '@recast-navigation/core';
-import React, { useEffect, useRef, useState } from 'react';
 import { threeToTileCache } from '@recast-navigation/three';
+import { useControls } from 'leva';
+import React, { useEffect, useRef, useState } from 'react';
 import { Group, Mesh, MeshBasicMaterial, Object3D, Vector3 } from 'three';
 import { Debug } from '../common/debug';
 import { decorators } from '../decorators';
@@ -46,6 +47,28 @@ export const Obstacles = () => {
 
   const boxObstacleTarget = useRef<Object3D | null>(null!);
   const cylinderObstacleTarget = useRef<Object3D | null>(null!);
+
+  const { agentMaxAcceleration, agentMaxSpeed } = useControls({
+    agentMaxAcceleration: {
+      value: 8,
+      step: 1,
+      min: 0.5,
+      max: 20,
+    },
+    agentMaxSpeed: {
+      value: 2,
+      step: 1,
+      min: 0.5,
+      max: 10,
+    },
+  });
+
+  useEffect(() => {
+    if (!agent) return;
+
+    agent.maxSpeed = agentMaxSpeed;
+    agent.maxAcceleration = agentMaxAcceleration;
+  }, [agent, agentMaxSpeed, agentMaxAcceleration]);
 
   useEffect(() => {
     if (!group) return;
@@ -85,8 +108,8 @@ export const Obstacles = () => {
       {
         radius: 0.2,
         height: 1,
-        maxAcceleration: 4.0,
-        maxSpeed: 1.0,
+        maxAcceleration: agentMaxAcceleration,
+        maxSpeed: agentMaxSpeed,
         collisionQueryRange: 0.5,
         pathOptimizationRange: 0.0,
         separationWeight: 1.0,
