@@ -1,5 +1,14 @@
 # recast-navigation
 
+## 0.13.3
+
+### Patch Changes
+
+- 9ef585d: feat(Agent): add getters and setters for params
+- Updated dependencies [9ef585d]
+  - @recast-navigation/core@0.13.3
+  - @recast-navigation/three@0.13.3
+
 ## 0.13.2
 
 ### Patch Changes
