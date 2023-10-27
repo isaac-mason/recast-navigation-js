@@ -109,14 +109,102 @@ export const crowdAgentParamsDefaults: CrowdAgentParams = {
   userData: 0,
 };
 
-export class CrowdAgent {
+export class CrowdAgent implements CrowdAgentParams {
   raw: R.dtCrowdAgent;
+
+  get radius(): number {
+    return this.raw.params.radius;
+  }
+
+  set radius(value: number) {
+    this.raw.params.radius = value;
+  }
+
+  get height(): number {
+    return this.raw.params.height;
+  }
+
+  set height(value: number) {
+    this.raw.params.height = value;
+  }
+
+  get maxAcceleration(): number {
+    return this.raw.params.maxAcceleration;
+  }
+
+  set maxAcceleration(value: number) {
+    this.raw.params.maxAcceleration = value;
+  }
+
+  get maxSpeed(): number {
+    return this.raw.params.maxSpeed;
+  }
+
+  set maxSpeed(value: number) {
+    this.raw.params.maxSpeed = value;
+  }
+
+  get collisionQueryRange(): number {
+    return this.raw.params.collisionQueryRange;
+  }
+
+  set collisionQueryRange(value: number) {
+    this.raw.params.collisionQueryRange = value;
+  }
+
+  get pathOptimizationRange(): number {
+    return this.raw.params.pathOptimizationRange;
+  }
+
+  set pathOptimizationRange(value: number) {
+    this.raw.params.pathOptimizationRange = value;
+  }
+
+  get separationWeight(): number {
+    return this.raw.params.separationWeight;
+  }
+
+  set separationWeight(value: number) {
+    this.raw.params.separationWeight = value;
+  }
+
+  get updateFlags(): number {
+    return this.raw.params.updateFlags;
+  }
+
+  set updateFlags(value: number) {
+    this.raw.params.updateFlags = value;
+  }
+
+  get obstacleAvoidanceType(): number {
+    return this.raw.params.obstacleAvoidanceType;
+  }
+
+  set obstacleAvoidanceType(value: number) {
+    this.raw.params.obstacleAvoidanceType = value;
+  }
+
+  get queryFilterType(): number {
+    return this.raw.params.queryFilterType;
+  }
+
+  set queryFilterType(value: number) {
+    this.raw.params.queryFilterType = value;
+  }
+
+  get userData(): unknown {
+    return this.raw.params.userData;
+  }
+
+  set userData(value: unknown) {
+    this.raw.params.userData = value;
+  }
 
   constructor(
     public crowd: Crowd,
     public agentIndex: number
   ) {
-    this.raw = crowd.raw.getAgent(agentIndex);
+    this.raw = crowd.raw.getEditableAgent(agentIndex);
   }
 
   /**
@@ -285,7 +373,7 @@ export class CrowdAgent {
     dtCrowdAgentParams.queryFilterType = params.queryFilterType;
     dtCrowdAgentParams.userData = params.userData;
 
-    this.raw.set_params(dtCrowdAgentParams);
+    this.crowd.raw.updateAgentParameters(this.agentIndex, dtCrowdAgentParams);
   }
 }
 
@@ -449,6 +537,9 @@ export class Crowd {
     return Object.values(this.agents);
   }
 
+  /**
+   * Destroys the crowd.
+   */
   destroy(): void {
     Raw.Detour.freeCrowd(this.raw);
   }

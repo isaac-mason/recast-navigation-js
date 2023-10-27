@@ -205,7 +205,7 @@ export class RecastBuildContext {
     const impl = new Raw.Module.RecastBuildContextImpl();
 
     impl.log = (category, msg, len) => {
-      if (!this.raw.logEnabled()) return
+      if (!this.raw.logEnabled()) return;
 
       // type is string, but webidl binder passes us a pointer
       const msgPointer = msg as unknown as number;
@@ -237,9 +237,8 @@ export class RecastBuildContext {
 
     impl.getAccumulatedTime = (label) => {
       if (!this.raw.timerEnabled()) return -1;
-      console.log('getAccumulatedTime', label);
 
-      return 0;
+      return this.getAccumulatedTime(label);
     };
 
     impl.resetTimers = () => {
