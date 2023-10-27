@@ -185,9 +185,12 @@ agent.resetMoveTarget();
 /* teleport the agent to a position */
 agent.teleport(targetPosition);
 
-/* update some parameters of the agent */
+/* update an agent parameter */
+agent.maxAcceleration = 4;
+
+/* update multiple parameters for an agent */
 agent.updateParameters({
-  maxAcceleration: 4.0,
+  maxAcceleration: 2,
 });
 
 /* set all parameters for an agent */
