@@ -4962,7 +4962,7 @@ __metadata:
   dependencies:
     "@babel/core": ^7.22.11
     "@recast-navigation/wasm": 0.13.3
-    "@rollup/plugin-commonjs": ^25.0.4
+    "@rollup/plugin-commonjs": ^25.0.7
     "@rollup/plugin-node-resolve": ^15.0.1
     "@rollup/plugin-terser": ^0.4.3
     "@rollup/plugin-typescript": ^11.1.5
@@ -4994,7 +4994,7 @@ __metadata:
   resolution: "@recast-navigation/three@workspace:packages/recast-navigation-three"
   dependencies:
     "@recast-navigation/core": 0.13.3
-    "@rollup/plugin-commonjs": ^25.0.4
+    "@rollup/plugin-commonjs": ^25.0.7
     "@rollup/plugin-node-resolve": ^15.0.1
     "@rollup/plugin-terser": ^0.4.3
     "@rollup/plugin-typescript": ^11.1.5
@@ -5048,22 +5048,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/plugin-commonjs@npm:^25.0.4":
-  version: 25.0.4
-  resolution: "@rollup/plugin-commonjs@npm:25.0.4"
+"@rollup/plugin-commonjs@npm:^25.0.7":
+  version: 25.0.7
+  resolution: "@rollup/plugin-commonjs@npm:25.0.7"
   dependencies:
     "@rollup/pluginutils": ^5.0.1
     commondir: ^1.0.1
     estree-walker: ^2.0.2
     glob: ^8.0.3
     is-reference: 1.2.1
-    magic-string: ^0.27.0
+    magic-string: ^0.30.3
   peerDependencies:
-    rollup: ^2.68.0||^3.0.0
+    rollup: ^2.68.0||^3.0.0||^4.0.0
   peerDependenciesMeta:
     rollup:
       optional: true
-  checksum: 073b92b765a1f8ab8db8e1aa216c1950e62f6c0c41210d10bb7530c4fc63670a16c19c0bbbf73e2752467c4468ad4c8134cf4724924388c3eed83df45630fda6
+  checksum: 052e11839a9edc556eda5dcc759ab816dcc57e9f0f905a1e6e14fff954eaa6b1e2d0d544f5bd18d863993c5eba43d8ac9c19d9bb53b1c3b1213f32cfc9d50b2e
   languageName: node
   linkType: hard
 
@@ -15945,6 +15945,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"magic-string@npm:^0.30.3":
+  version: 0.30.5
+  resolution: "magic-string@npm:0.30.5"
+  dependencies:
+    "@jridgewell/sourcemap-codec": ^1.4.15
+  checksum: da10fecff0c0a7d3faf756913ce62bd6d5e7b0402be48c3b27bfd651b90e29677e279069a63b764bcdc1b8ecdcdb898f29a5c5ec510f2323e8d62ee057a6eb18
+  languageName: node
+  linkType: hard
+
 "make-dir@npm:^2.0.0, make-dir@npm:^2.1.0":
   version: 2.1.0
   resolution: "make-dir@npm:2.1.0"
@@ -19960,7 +19969,7 @@ __metadata:
     "@react-three/fiber": ^8.14.5
     "@recast-navigation/core": 0.13.3
     "@recast-navigation/three": 0.13.3
-    "@rollup/plugin-commonjs": ^25.0.4
+    "@rollup/plugin-commonjs": ^25.0.7
     "@rollup/plugin-multi-entry": ^6.0.0
     "@rollup/plugin-node-resolve": ^15.0.1
     "@rollup/plugin-terser": ^0.4.3
