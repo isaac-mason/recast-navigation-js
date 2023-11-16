@@ -4956,12 +4956,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@recast-navigation/core@0.13.3, @recast-navigation/core@workspace:packages/recast-navigation-core":
+"@recast-navigation/core@0.14.0, @recast-navigation/core@workspace:packages/recast-navigation-core":
   version: 0.0.0-use.local
   resolution: "@recast-navigation/core@workspace:packages/recast-navigation-core"
   dependencies:
     "@babel/core": ^7.22.11
-    "@recast-navigation/wasm": 0.13.3
+    "@recast-navigation/wasm": 0.14.0
     "@rollup/plugin-commonjs": ^25.0.7
     "@rollup/plugin-node-resolve": ^15.0.1
     "@rollup/plugin-terser": ^0.4.3
@@ -4988,12 +4988,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@recast-navigation/generators@0.13.3, @recast-navigation/generators@workspace:packages/recast-navigation-generators":
+"@recast-navigation/generators@0.14.0, @recast-navigation/generators@workspace:packages/recast-navigation-generators":
   version: 0.0.0-use.local
   resolution: "@recast-navigation/generators@workspace:packages/recast-navigation-generators"
   dependencies:
-    "@recast-navigation/core": 0.13.3
-    "@recast-navigation/wasm": 0.13.3
+    "@recast-navigation/core": 0.14.0
+    "@recast-navigation/wasm": 0.14.0
     "@rollup/plugin-commonjs": ^25.0.7
     "@rollup/plugin-node-resolve": ^15.0.1
     "@rollup/plugin-terser": ^0.4.3
@@ -5018,12 +5018,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@recast-navigation/three@0.13.3, @recast-navigation/three@workspace:packages/recast-navigation-three":
+"@recast-navigation/three@0.14.0, @recast-navigation/three@workspace:packages/recast-navigation-three":
   version: 0.0.0-use.local
   resolution: "@recast-navigation/three@workspace:packages/recast-navigation-three"
   dependencies:
-    "@recast-navigation/core": 0.13.3
-    "@recast-navigation/generators": 0.13.3
+    "@recast-navigation/core": 0.14.0
+    "@recast-navigation/generators": 0.14.0
     "@rollup/plugin-commonjs": ^25.0.7
     "@rollup/plugin-node-resolve": ^15.0.1
     "@rollup/plugin-terser": ^0.4.3
@@ -5053,7 +5053,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@recast-navigation/wasm@0.13.3, @recast-navigation/wasm@workspace:packages/recast-navigation-wasm":
+"@recast-navigation/wasm@0.14.0, @recast-navigation/wasm@workspace:packages/recast-navigation-wasm":
   version: 0.0.0-use.local
   resolution: "@recast-navigation/wasm@workspace:packages/recast-navigation-wasm"
   dependencies:
@@ -17179,7 +17179,7 @@ __metadata:
   resolution: "node-cjs-example@workspace:examples/node-cjs-example"
   dependencies:
     "@types/three": ^0.155.0
-    recast-navigation: 0.13.3
+    recast-navigation: 0.14.0
     three: ^0.156.1
   languageName: unknown
   linkType: soft
@@ -17198,7 +17198,7 @@ __metadata:
   resolution: "node-esm-example@workspace:examples/node-esm-example"
   dependencies:
     "@types/three": ^0.155.0
-    recast-navigation: 0.13.3
+    recast-navigation: 0.14.0
     three: ^0.156.1
   languageName: unknown
   linkType: soft
@@ -19766,7 +19766,7 @@ __metadata:
     react: ^18.2.0
     react-dom: ^18.2.0
     react-scripts: 5.0.1
-    recast-navigation: 0.13.3
+    recast-navigation: 0.14.0
     suspend-react: ^0.1.3
     three: ^0.156.1
   languageName: unknown
@@ -19987,7 +19987,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"recast-navigation@0.13.3, recast-navigation@workspace:*, recast-navigation@workspace:^, recast-navigation@workspace:packages/recast-navigation":
+"recast-navigation@0.14.0, recast-navigation@workspace:*, recast-navigation@workspace:^, recast-navigation@workspace:packages/recast-navigation":
   version: 0.0.0-use.local
   resolution: "recast-navigation@workspace:packages/recast-navigation"
   dependencies:
@@ -19997,9 +19997,9 @@ __metadata:
     "@react-three/csg": ^3.1.0
     "@react-three/drei": ^9.87.1
     "@react-three/fiber": ^8.14.5
-    "@recast-navigation/core": 0.13.3
-    "@recast-navigation/generators": 0.13.3
-    "@recast-navigation/three": 0.13.3
+    "@recast-navigation/core": 0.14.0
+    "@recast-navigation/generators": 0.14.0
+    "@recast-navigation/three": 0.14.0
     "@rollup/plugin-commonjs": ^25.0.7
     "@rollup/plugin-multi-entry": ^6.0.0
     "@rollup/plugin-node-resolve": ^15.0.1
@@ -23068,7 +23068,7 @@ __metadata:
     "@vitejs/plugin-react": ^4.1.0
     react: ^18.2.0
     react-dom: ^18.2.0
-    recast-navigation: 0.13.3
+    recast-navigation: 0.14.0
     suspend-react: ^0.1.3
     three: ^0.156.1
     typescript: ^5.1.6
