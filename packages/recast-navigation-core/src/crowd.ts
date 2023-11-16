@@ -4,24 +4,7 @@ import { Raw } from './raw';
 import type R from './raw-module';
 import { Vector3, vec3 } from './utils';
 
-export type CrowdParams = {
-  /**
-   * The maximum number of agents that can be managed by the crowd.
-   * [Limit: >= 1]
-   */
-  maxAgents: number;
-
-  /**
-   * The maximum radius of any agent that will be added to the crowd.
-   * [Limit: > 0]
-   */
-  maxAgentRadius: number;
-
-  /**
-   * The navigation mesh to use for planning.
-   */
-  navMesh: NavMesh;
-};
+const Epsilon = 0.001;
 
 export type CrowdAgentParams = {
   /**
@@ -377,7 +360,59 @@ export class CrowdAgent implements CrowdAgentParams {
   }
 }
 
-const Epsilon = 0.001;
+export class QueryFilter {
+  raw: R.dtQueryFilter;
+
+  index: number;
+
+  get includeFlags(): number {
+    return this.raw.getIncludeFlags();
+  }
+
+  set includeFlags(flags: number) {
+    this.raw.setIncludeFlags(flags);
+  }
+
+  get excludeFlags(): number {
+    return this.raw.getExcludeFlags();
+  }
+
+  set excludeFlags(flags: number) {
+    this.raw.setExcludeFlags(flags);
+  }
+
+  constructor(raw: R.dtQueryFilter, index: number) {
+    this.raw = raw;
+    this.index = index;
+  }
+
+  getAreaCost(i: number): number {
+    return this.raw.getAreaCost(i);
+  }
+
+  setAreaCost(i: number, cost: number): void {
+    return this.raw.setAreaCost(i, cost);
+  }
+}
+
+export type CrowdParams = {
+  /**
+   * The maximum number of agents that can be managed by the crowd.
+   * [Limit: >= 1]
+   */
+  maxAgents: number;
+
+  /**
+   * The maximum radius of any agent that will be added to the crowd.
+   * [Limit: > 0]
+   */
+  maxAgentRadius: number;
+
+  /**
+   * The navigation mesh to use for planning.
+   */
+  navMesh: NavMesh;
+};
 
 export class Crowd {
   raw: R.dtCrowd;
@@ -491,7 +526,7 @@ export class Crowd {
   }
 
   /**
-   * Gets the agent with the specified index, or null if no agent has the given index.
+   * Gets the agent for the specified index, or null if no agent has the given index.
    * @param agentIndex
    * @returns
    */
@@ -535,6 +570,18 @@ export class Crowd {
    */
   getAgents(): CrowdAgent[] {
     return Object.values(this.agents);
+  }
+
+  /**
+   * Gets the query filter for the specified index.
+   * @param filterIndex the index of the query filter to retrieve, (min 0, max 15)
+   * @returns the query filter
+   */
+  getFilter(filterIndex: number): QueryFilter {
+    return new QueryFilter(
+      this.raw.getEditableFilter(filterIndex),
+      filterIndex
+    );
   }
 
   /**
