@@ -1,5 +1,17 @@
 # @recast-navigation/core
 
+## 0.14.0
+
+### Minor Changes
+
+- 3d47fb8: feat: remove off mesh connections params from generateTileCache, add docs for alternative via custom TileCacheMeshProcess
+- e0ec30e: feat: move NavMesh generators from '@recast-navigation/core' into new package '@recast-navigation/generators'
+
+### Patch Changes
+
+- 7a6d531: feat(Crowd): add getFilter, QueryFilter wrapper class for raw dtQueryFilter
+  - @recast-navigation/wasm@0.14.0
+
 ## 0.13.3
 
 ### Patch Changes
