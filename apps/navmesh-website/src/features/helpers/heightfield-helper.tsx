@@ -1,10 +1,9 @@
 import { useMemo } from 'react';
+import { NavMesh, RecastHeightfield } from 'recast-navigation';
 import {
-  NavMesh,
-  RecastHeightfield,
   SoloNavMeshGeneratorIntermediates,
   TiledNavMeshGeneratorIntermediates,
-} from 'recast-navigation';
+} from 'recast-navigation/generators';
 import { HeightfieldHelper as HeightfieldHelperImpl } from 'recast-navigation/three';
 import { MeshStandardMaterial } from 'three';
 
