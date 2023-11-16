@@ -204,9 +204,7 @@ crowd.removeAgent(agent);
 
 ### Temporary Obstacles
 
-Recast Navigation supports creating Box and Cylinder obstacles.
-
-Note that in order to use obstacles, you must create a TileCache.
+Recast Navigation supports temporary Box and Cylinder obstacles via a `TileCache`.
 
 `TileCache` assumes small tiles (around 32-64 squared). Using `tileSize` values outside this range may result in unexpected behaviour.
 
@@ -249,7 +247,7 @@ Off mesh connections are user-defined connections between two points on a NavMes
 
 Off mesh connections can be bidirectional or unidirectional.
 
-You can provide list of off mesh connections to the high level generator functions.
+You can provide list of off mesh connections to the `generateSoloNavMesh` and `generateTiledNavMesh` high level generator functions.
 
 ```ts
 const { success, navMesh } = generateSoloNavMesh(positions, indices, {
@@ -270,6 +268,43 @@ const { success, navMesh } = generateSoloNavMesh(positions, indices, {
 
 You can use `agent.state()` to determine if an agent is currently traversing an off mesh connection.
 
+#### Adding Off Mesh Connections to a TileCache
+
+To add off mesh connections to a TileCache using `generateTileCache`, you must provide a TileCacheMeshProcess implementation that creates off mesh connections. For example:
+
+```ts
+const tileCacheMeshProcess = new TileCacheMeshProcess(
+  (navMeshCreateParams, polyAreas, polyFlags) => {
+    for (let i = 0; i < navMeshCreateParams.polyCount(); ++i) {
+      polyAreas.set(i, 0);
+      polyFlags.set(i, 1);
+    }
+
+    navMeshCreateParams.setOffMeshConnections([
+      {
+        startPosition: { x: 0, y: 5, z: 0 },
+        endPosition: { x: 2, y: 0, z: 0 },
+        radius: 0.5,
+        bidirectional: false,
+        area: 0,
+        flags: 1,
+      },
+    ]);
+  }
+);
+
+const tileCacheGeneratorConfig = {
+  // ... other config ...
+  tileCacheMeshProcess,
+};
+
+const { success, navMesh, tileCache } = generateTileCache(
+  positions,
+  indices,
+  tileCacheGeneratorConfig
+);
+```
+
 ### Debugging
 
 You can use `getDebugNavMesh` to get a debug representation of the NavMesh.
@@ -280,23 +315,42 @@ const debugNavMesh = navMesh.getDebugNavMesh();
 const { positions, indices } = debugNavMesh;
 ```
 
-If you are using `@recast-navigation/three`, you can use `NavMeshHelper` and `CrowdHelper` to visualize NavMeshes and Crowds.
+If you are using `@recast-navigation/three`, you can use `NavMeshHelper` and `CrowdHelper` to visualize NavMeshes, Crowds, and NavMesh generation intermediates.
 
-### Exporting and Importing
+### Importing and Exporting
 
-A NavMesh and TileCache can be exported and imported as a Uint8Array.
+A NavMesh and TileCache can be imported and exported as a Uint8Array.
+
+See below for an example of exporting then importing a NavMesh:
+
+```ts
+import { exportNavMesh, importNavMesh } from 'recast-navigation';
+
+/* export */
+const navMeshExport: Uint8Array = exportNavMesh(navMesh);
+
+/* import */
+const { navMesh } = importNavMesh(navMeshExport);
+```
+
+To export a TileCache and NavMesh, the usage varies slightly:
 
 ```ts
 import { exportNavMesh, importNavMesh } from 'recast-navigation';
 
 /* exporting */
-const navMeshExport: Uint8Array = exportNavMesh(
-  navMesh,
-  tileCache // optional
-);
+// pass both the navMesh and the tileCache
+const navMeshExport: Uint8Array = exportNavMesh(navMesh, tileCache);
 
 /* importing */
-const { navMesh, tileCache } = importNavMesh(navMeshExport);
+// also pass the TileCacheMeshProcess implementation for the tile cache
+// if you used `generateTileCache` and didn't provide one, `createDefaultTileCacheMeshProcess` returns the default TileCacheMeshProcess `generateTileCache` uses
+const tileCacheMeshProcess = createDefaultTileCacheMeshProcess();
+
+const { navMesh, tileCache } = importNavMesh(
+  navMeshExport,
+  tileCacheMeshProcess
+);
 ```
 
 ### Advanced Usage

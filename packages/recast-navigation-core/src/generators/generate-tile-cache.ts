@@ -38,12 +38,7 @@ import {
 } from '../tile-cache';
 import { Pretty } from '../types';
 import { Vector2Tuple, Vector3Tuple, vec3 } from '../utils';
-import {
-  OffMeshConnectionGeneratorParams,
-  dtIlog2,
-  dtNextPow2,
-  getBoundingBox,
-} from './common';
+import { dtIlog2, dtNextPow2, getBoundingBox } from './common';
 
 export type TileCacheGeneratorConfig = Pretty<
   RecastConfigType & {
@@ -56,7 +51,14 @@ export type TileCacheGeneratorConfig = Pretty<
      * The max number of obstacles
      */
     maxObstacles: number;
-  } & OffMeshConnectionGeneratorParams
+
+    /**
+     * The tile cache mesh process implementation.
+     * If not provided, a default one is created via `createDefaultTileCacheMeshProcess()`
+     * @default createDefaultTileCacheMeshProcess()
+     */
+    tileCacheMeshProcess?: TileCacheMeshProcess;
+  }
 >;
 
 export const tileCacheGeneratorConfigDefaults: TileCacheGeneratorConfig = {
@@ -99,6 +101,14 @@ type TileCacheGeneratorFailResult = {
 export type TileCacheGeneratorResult =
   | TileCacheGeneratorSuccessResult
   | TileCacheGeneratorFailResult;
+
+export const createDefaultTileCacheMeshProcess = () =>
+  new TileCacheMeshProcess((navMeshCreateParams, polyAreas, polyFlags) => {
+    for (let i = 0; i < navMeshCreateParams.polyCount(); ++i) {
+      polyAreas.set(i, 0);
+      polyFlags.set(i, 1);
+    }
+  });
 
 /**
  * Builds a TileCache and NavMesh from the given positions and indices.
@@ -223,22 +233,18 @@ export const generateTileCache = (
   const allocator = new Raw.RecastLinearAllocator(32000);
   const compressor = new Raw.RecastFastLZCompressor();
 
-  const meshProcess = new TileCacheMeshProcess(
-    (navMeshCreateParams, polyAreas, polyFlags) => {
-      for (let i = 0; i < navMeshCreateParams.polyCount(); ++i) {
-        polyAreas.set(i, 0);
-        polyFlags.set(i, 1);
-      }
+  const tileCacheMeshProcess =
+    navMeshGeneratorConfig.tileCacheMeshProcess ??
+    createDefaultTileCacheMeshProcess();
 
-      if (navMeshGeneratorConfig.offMeshConnections) {
-        navMeshCreateParams.setOffMeshConnections(
-          navMeshGeneratorConfig.offMeshConnections
-        );
-      }
-    }
-  );
-
-  if (!tileCache.init(tileCacheParams, allocator, compressor, meshProcess)) {
+  if (
+    !tileCache.init(
+      tileCacheParams,
+      allocator,
+      compressor,
+      tileCacheMeshProcess
+    )
+  ) {
     return fail('Failed to initialize tile cache');
   }
 
