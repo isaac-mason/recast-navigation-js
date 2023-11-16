@@ -92,7 +92,11 @@ const { success, navMesh } = generateSoloNavMesh(
 );
 ```
 
-If you need to do something more advanced, you can use the lower level API to create your own NavMesh generator. See the [Advanced Usage](https://github.com/isaac-mason/recast-navigation-js#advanced-usage) section for more information.
+#### Advanced Usage
+
+This library provides low-level APIs that aim to match the recast and detour c++ api, allowing you to create custom navigation mesh generators based on your specific needs. You can use the NavMesh generators provided by `@recast-navigation/generators` as a basis: https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-generators/src/generators
+
+Please note that this functionality is experimental, and not all everything is exposed. Familiarity with the recast and detour C++ libraries is required. If you require unexposed functionality, please submit an issue or a pull request.
 
 ### Querying a NavMesh
 
@@ -118,7 +122,7 @@ const path: Vector3[] = navMeshQuery.computePath(
 
 ### Crowds and Agents
 
-First, create a `Crowd` instance.
+First, create a `Crowd`:
 
 ```ts
 import { Crowd } from 'recast-navigation';
@@ -129,17 +133,7 @@ const maxAgentRadius = 0.6;
 const crowd = new Crowd({ maxAgents, maxAgentRadius, navMesh });
 ```
 
-To update the crowd, first set a timeStep, then call `update` each frame with the delta time.
-
-```ts
-const dt = 1 / 60;
-crowd.timeStep = dt;
-
-// you should call this every frame
-crowd.update(dt);
-```
-
-Next, you can create and interface with agents in the crowd.
+Next, create and interface with agents in the crowd.
 
 ```ts
 const initialAgentPosition = navMeshQuery.getRandomPointAround(
@@ -192,6 +186,16 @@ agent.setParameters({
 crowd.removeAgent(agent);
 ```
 
+To update the crowd, first set a timeStep, then call `update` each frame with the delta time.
+
+```ts
+const dt = 1 / 60;
+crowd.timeStep = dt;
+
+// you should call this every frame
+crowd.update(dt);
+```
+
 ### Temporary Obstacles
 
 Recast Navigation supports temporary Box and Cylinder obstacles via a `TileCache`.
@@ -237,7 +241,7 @@ Off mesh connections are user-defined connections between two points on a NavMes
 
 Off mesh connections can be bidirectional or unidirectional.
 
-You can provide list of off mesh connections to the `generateSoloNavMesh` and `generateTiledNavMesh` high level generator functions.
+You can provide a list of off mesh connections to the `generateSoloNavMesh` and `generateTiledNavMesh` high level generator functions.
 
 ```ts
 const { success, navMesh } = generateSoloNavMesh(positions, indices, {
@@ -307,6 +311,8 @@ const { positions, indices } = debugNavMesh;
 
 If you are using `@recast-navigation/three`, you can use `NavMeshHelper` and `CrowdHelper` to visualize NavMeshes, Crowds, and NavMesh generation intermediates.
 
+See the [`@recast-navigation/three` package README](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-three/README.md) for usage information.
+
 ### Importing and Exporting
 
 A NavMesh and TileCache can be imported and exported as a Uint8Array.
@@ -342,12 +348,6 @@ const { navMesh, tileCache } = importNavMesh(
   tileCacheMeshProcess
 );
 ```
-
-### Advanced Usage
-
-This library provides low-level APIs that aim to match the recast and detour c++ api, allowing you to create custom navigation mesh generators based on your specific needs. You can use the NavMesh generators provided by `@recast-navigation/generators` as a basis: https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-generators/src/generators
-
-Please note that this functionality is experimental, and not all everything is exposed. Familiarity with the recast and detour C++ libraries is required. If you require unexposed functionality, please submit an issue or a pull request.
 
 ## Documentation
 
