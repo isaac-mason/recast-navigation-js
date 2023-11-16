@@ -260,6 +260,9 @@ export const generateSoloNavMesh = (
     return fail('Failed to erode walkable area');
   }
 
+  // (Optional) Mark areas
+  // markConvexPolyArea(...)
+
   // Prepare for region partitioning, by calculating Distance field along the walkable surface.
   if (!buildDistanceField(buildContext, compactHeightfield)) {
     return fail('Failed to build distance field');
