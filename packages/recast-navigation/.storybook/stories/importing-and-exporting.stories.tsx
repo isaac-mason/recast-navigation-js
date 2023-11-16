@@ -28,18 +28,14 @@ const navMeshMaterial = new MeshBasicMaterial({
 
 const controlsPrefix = 'nav-mesh-importer-exporter';
 
-export const ImportingAndExporting = () => {
+export const NavMeshExample = () => {
   const [group, setGroup] = useState<Group | null>(null);
 
-  const [result, setResult] = useState<
-    { tileCache: boolean; data: NavMesh } | undefined
-  >();
+  const [result, setResult] = useState<NavMesh | undefined>();
 
-  const [navMeshExport, setNavMeshExport] = useState<
-    { tileCache: boolean; data: Uint8Array } | undefined
-  >();
+  const [navMeshExport, setNavMeshExport] = useState<Uint8Array | undefined>();
 
-  const navMeshConfig = useNavMeshConfig(controlsPrefix);
+  const navMeshConfig = useNavMeshConfig(`${controlsPrefix}/navmesh`);
 
   useControls(
     controlsPrefix,
@@ -55,13 +51,9 @@ export const ImportingAndExporting = () => {
           }
         });
 
-        const tileCache = navMeshConfig.tileSize !== 0;
+        const { navMesh } = threeToSoloNavMesh(meshes, navMeshConfig);
 
-        const { navMesh } = tileCache
-          ? threeToTileCache(meshes, navMeshConfig)
-          : threeToSoloNavMesh(meshes, navMeshConfig);
-
-        setResult({ tileCache, data: navMesh! });
+        setResult(navMesh);
       }),
       reset: button(() => {
         setResult(undefined);
@@ -70,9 +62,9 @@ export const ImportingAndExporting = () => {
         () => {
           if (!result) return;
 
-          const buffer = exportNavMesh(result.data);
+          const buffer = exportNavMesh(result);
 
-          setNavMeshExport({ tileCache: result.tileCache, data: buffer });
+          setNavMeshExport(buffer);
         },
         { disabled: !result }
       ),
@@ -80,20 +72,9 @@ export const ImportingAndExporting = () => {
         () => {
           if (!navMeshExport) return;
 
-          const meshProcess = navMeshExport.tileCache
-            ? new TileCacheMeshProcess(
-                (navMeshCreateParams, polyAreas, polyFlags) => {
-                  for (let i = 0; i < navMeshCreateParams.polyCount(); ++i) {
-                    polyAreas.set_data(i, 0);
-                    polyFlags.set_data(i, 1);
-                  }
-                }
-              )
-            : undefined;
+          const { navMesh } = importNavMesh(navMeshExport);
 
-          const { navMesh } = importNavMesh(navMeshExport.data, meshProcess);
-
-          setResult({ data: navMesh, tileCache: navMeshExport.tileCache });
+          setResult(navMesh);
         },
         { disabled: !navMeshExport }
       ),
@@ -107,7 +88,85 @@ export const ImportingAndExporting = () => {
         <NavTestEnvirionment />
       </group>
 
-      <Debug navMesh={result?.data} navMeshMaterial={navMeshMaterial} />
+      <Debug navMesh={result} navMeshMaterial={navMeshMaterial} />
+
+      <OrbitControls />
+    </>
+  );
+};
+
+export const TileCacheExample = () => {
+  const [group, setGroup] = useState<Group | null>(null);
+
+  const [result, setResult] = useState<NavMesh | undefined>();
+
+  const [navMeshExport, setNavMeshExport] = useState<Uint8Array | undefined>();
+
+  const navMeshConfig = useNavMeshConfig(`${controlsPrefix}/tilecache`, {
+    tileSize: 16,
+  });
+
+  useControls(
+    controlsPrefix,
+    {
+      generate: button(() => {
+        if (!group) return;
+
+        const meshes: Mesh[] = [];
+
+        group.traverse((child) => {
+          if (child instanceof Mesh) {
+            meshes.push(child);
+          }
+        });
+
+        const { navMesh } = threeToTileCache(meshes, navMeshConfig);
+
+        setResult(navMesh);
+      }),
+      reset: button(() => {
+        setResult(undefined);
+      }),
+      save: button(
+        () => {
+          if (!result) return;
+
+          const buffer = exportNavMesh(result);
+
+          setNavMeshExport(buffer);
+        },
+        { disabled: !result }
+      ),
+      load: button(
+        () => {
+          if (!navMeshExport) return;
+
+          const meshProcess = new TileCacheMeshProcess(
+            (navMeshCreateParams, polyAreas, polyFlags) => {
+              for (let i = 0; i < navMeshCreateParams.polyCount(); ++i) {
+                polyAreas.set_data(i, 0);
+                polyFlags.set_data(i, 1);
+              }
+            }
+          );
+
+          const { navMesh } = importNavMesh(navMeshExport, meshProcess);
+
+          setResult(navMesh);
+        },
+        { disabled: !navMeshExport }
+      ),
+    },
+    [group, navMeshConfig, result, navMeshExport]
+  );
+
+  return (
+    <>
+      <group ref={setGroup}>
+        <NavTestEnvirionment />
+      </group>
+
+      <Debug navMesh={result} navMeshMaterial={navMeshMaterial} />
 
       <OrbitControls />
     </>
