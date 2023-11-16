@@ -2,6 +2,7 @@
   "name": "recast-navigation-js",
   "entryPoints": [
     "../../packages/recast-navigation/src/index.ts",
+    "../../packages/recast-navigation/src/generators.ts",
     "../../packages/recast-navigation/src/three.ts"
   ],
   "entryPointStrategy": "expand",

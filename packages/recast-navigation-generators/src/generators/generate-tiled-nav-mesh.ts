@@ -1,12 +1,9 @@
 import {
+  Arrays,
+  NavMesh,
   NavMeshCreateParams,
-  createNavMeshData,
-  dtStatusToReadableString,
-} from '../detour';
-import { NavMesh, NavMeshParams } from '../nav-mesh';
-import { Arrays, Raw } from '../raw';
-import type R from '../raw-module';
-import {
+  NavMeshParams,
+  Raw,
   RecastBuildContext,
   RecastChunkyTriMesh,
   RecastCompactHeightfield,
@@ -14,6 +11,8 @@ import {
   RecastConfigType,
   RecastContourSet,
   RecastHeightfield,
+  Vector2Tuple,
+  Vector3Tuple,
   allocCompactHeightfield,
   allocContourSet,
   allocHeightfield,
@@ -27,6 +26,8 @@ import {
   buildRegions,
   calcGridSize,
   createHeightfield,
+  createNavMeshData,
+  dtStatusToReadableString,
   erodeWalkableArea,
   filterLedgeSpans,
   filterLowHangingWalkableObstacles,
@@ -37,9 +38,10 @@ import {
   markWalkableTriangles,
   rasterizeTriangles,
   recastConfigDefaults,
-} from '../recast';
+  vec3,
+} from '@recast-navigation/core';
+import type R from '@recast-navigation/wasm';
 import { Pretty } from '../types';
-import { Vector2Tuple, Vector3Tuple, vec3 } from '../utils';
 import {
   OffMeshConnectionGeneratorParams,
   dtIlog2,

@@ -1,6 +1,7 @@
+import { NavMesh, NavMeshQuery, init } from 'recast-navigation';
+import { generateSoloNavMesh } from 'recast-navigation/generators';
 import { BoxGeometry, BufferAttribute, Mesh } from 'three';
 import { beforeAll, beforeEach, describe, test } from 'vitest';
-import { init, NavMesh, generateSoloNavMesh, NavMeshQuery } from '../src';
 
 describe('Smoke tests', () => {
   beforeAll(async () => {
@@ -20,8 +21,8 @@ describe('Smoke tests', () => {
       const indices = mesh.geometry.getIndex()!.array;
 
       const result = generateSoloNavMesh(positions, indices);
-      
-      if (!result.success) throw new Error('nav mesh generation failed')
+
+      if (!result.success) throw new Error('nav mesh generation failed');
 
       navMesh = result.navMesh;
 

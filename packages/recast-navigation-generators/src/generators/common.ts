@@ -1,5 +1,4 @@
-import { OffMeshConnectionParams } from '../detour';
-import { vec3 } from '../utils';
+import { OffMeshConnectionParams, vec3 } from '@recast-navigation/core';
 
 export const getBoundingBox = (
   positions: ArrayLike<number>,

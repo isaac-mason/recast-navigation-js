@@ -1,5 +1,6 @@
 const THREE = require('three');
 const Recast = require('recast-navigation');
+const RecastGenerators = require('recast-navigation/generators');
 const RecastThree = require('recast-navigation/three');
 
 Recast.init().then(() => {
@@ -8,7 +9,7 @@ Recast.init().then(() => {
   const groundMesh = new THREE.Mesh(new THREE.BoxGeometry(5, 0.2, 5));
 
   /**
-   * @type {import('recast-navigation').SoloNavMeshConfig}
+   * @type {import('recast-navigation/generators').SoloNavMeshGeneratorConfig}
    */
   const config = {
     borderSize: 0,
@@ -30,7 +31,7 @@ Recast.init().then(() => {
   const positions = groundMesh.geometry.attributes.position.array;
   const indices = groundMesh.geometry.index.array;
 
-  const { navMesh } = Recast.generateSoloNavMesh(positions, indices, config);
+  const { navMesh } = RecastGenerators.generateSoloNavMesh(positions, indices, config);
 
   const navMeshQuery = new Recast.NavMeshQuery({ navMesh });
 

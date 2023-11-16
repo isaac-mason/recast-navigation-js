@@ -27,21 +27,11 @@ This library provides high level APIs that make it easy to get started creating 
 
 ## Installation
 
-This package ships as both ECMAScript modules and CJS, and is compatible with Node.js and browser environments.
-
-**CDN**
-
-```html
-<script type="module">
-  import { generateSoloNavMesh } from 'https://www.unpkg.com/@recast-navigation/core@0.9.0/dist/index.mjs';
-</script>
-```
-
-**NPM**
-
 ```sh
 npm install recast-navigation
 ```
+
+This package ships as both ECMAScript modules and CJS, and is compatible with Node.js and browser environments.
 
 If you are using Vite, you may need to opt `recast-navigation` out of pre-bundling:
 
@@ -67,7 +57,7 @@ await init();
 
 ### Generating a NavMesh
 
-The easiest way to generate a NavMesh is using the high level generator functions:
+The easiest way to generate a NavMesh is using the high level generator functions from `recast-navigation/generators`:
 
 - `generateSoloNavMesh` - Generates a NavMesh with a single tile. You can use this for smaller environments.
 - `generateTiledNavMesh` - Generates a NavMesh with multiple tiles. You should use this for larger environments.
@@ -80,7 +70,7 @@ The input positions and indices should adhere to OpenGL conventions:
 - The `positions` and `indices` arguments should be flat arrays of numbers
 
 ```ts
-import { generateSoloNavMesh } from 'recast-navigation';
+import { generateSoloNavMesh } from 'recast-navigation/generators';
 
 const positions = [
   /* flat array of positions */
@@ -209,7 +199,7 @@ Recast Navigation supports temporary Box and Cylinder obstacles via a `TileCache
 `TileCache` assumes small tiles (around 32-64 squared). Using `tileSize` values outside this range may result in unexpected behaviour.
 
 ```ts
-import { generateTileCache } from 'recast-navigation';
+import { generateTileCache } from 'recast-navigation/generators';
 
 /* create a tile cache */
 const { success, navMesh, tileCache } = generateTileCache(positions, indices, {
@@ -355,7 +345,7 @@ const { navMesh, tileCache } = importNavMesh(
 
 ### Advanced Usage
 
-This library provides low-level APIs that aim to match the recast and detour c++ api, allowing you to create custom navigation mesh generators based on your specific needs. See: https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-core/src/generators
+This library provides low-level APIs that aim to match the recast and detour c++ api, allowing you to create custom navigation mesh generators based on your specific needs. You can use the NavMesh generators provided by `@recast-navigation/generators` as a basis: https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-generators/src/generators
 
 Please note that this functionality is experimental, and not all everything is exposed. Familiarity with the recast and detour C++ libraries is required. If you require unexposed functionality, please submit an issue or a pull request.
 
@@ -407,6 +397,16 @@ The core library!
 
 ```bash
 > npm install @recast-navigation/core
+```
+
+### [**`@recast-navigation/generators`**](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-generators)
+
+[![Version](https://img.shields.io/npm/v/@recast-navigation/generators)](https://www.npmjs.com/package/@recast-navigation/generators)
+
+NavMesh generator implementations. Use these to get started, and as a basis for your own NavMesh generator.
+
+```bash
+> npm install @recast-navigation/generators
 ```
 
 ### [**`@recast-navigation/three`**](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-three)

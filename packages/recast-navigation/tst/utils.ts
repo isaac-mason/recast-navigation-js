@@ -1,5 +1,5 @@
 import { expect } from 'vitest';
-import { Vector3 } from '../src';
+import { Vector3 } from '@recast-navigation/core/src';
 
 export const expectVectorToBeCloseTo = (
   expected: Vector3,

@@ -1,7 +1,9 @@
-import { NavMesh, NavMeshParams } from '../nav-mesh';
-import { Arrays, Raw } from '../raw';
-import type R from '../raw-module';
 import {
+  Arrays,
+  DetourTileCacheParams,
+  NavMesh,
+  NavMeshParams,
+  Raw,
   RecastBuildContext,
   RecastChunkyTriMesh,
   RecastCompactHeightfield,
@@ -9,11 +11,16 @@ import {
   RecastConfigType,
   RecastHeightfield,
   RecastHeightfieldLayerSet,
+  TileCache,
+  TileCacheMeshProcess,
+  Vector2Tuple,
+  Vector3Tuple,
   allocCompactHeightfield,
   allocHeightfield,
   allocHeightfieldLayerSet,
   buildCompactHeightfield,
   buildHeightfieldLayers,
+  buildTileCacheLayer,
   calcGridSize,
   createHeightfield,
   erodeWalkableArea,
@@ -29,15 +36,10 @@ import {
   markWalkableTriangles,
   rasterizeTriangles,
   recastConfigDefaults,
-} from '../recast';
-import {
-  DetourTileCacheParams,
-  TileCache,
-  TileCacheMeshProcess,
-  buildTileCacheLayer,
-} from '../tile-cache';
+  vec3,
+} from '@recast-navigation/core';
+import type R from '@recast-navigation/wasm';
 import { Pretty } from '../types';
-import { Vector2Tuple, Vector3Tuple, vec3 } from '../utils';
 import { dtIlog2, dtNextPow2, getBoundingBox } from './common';
 
 export type TileCacheGeneratorConfig = Pretty<

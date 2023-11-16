@@ -1,7 +1,8 @@
-import { NavMeshCreateParams, createNavMeshData } from '../detour';
-import { NavMesh } from '../nav-mesh';
-import { Arrays, Raw } from '../raw';
 import {
+  Arrays,
+  NavMesh,
+  NavMeshCreateParams,
+  Raw,
   RecastBuildContext,
   RecastCompactHeightfield,
   RecastConfig,
@@ -20,6 +21,7 @@ import {
   buildPolyMeshDetail,
   buildRegions,
   createHeightfield,
+  createNavMeshData,
   erodeWalkableArea,
   filterLedgeSpans,
   filterLowHangingWalkableObstacles,
@@ -30,7 +32,7 @@ import {
   markWalkableTriangles,
   rasterizeTriangles,
   recastConfigDefaults,
-} from '../recast';
+} from '@recast-navigation/core';
 import { Pretty } from '../types';
 import { OffMeshConnectionGeneratorParams, getBoundingBox } from './common';
 

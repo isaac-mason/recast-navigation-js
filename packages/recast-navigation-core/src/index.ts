@@ -1,6 +1,5 @@
 export * from './crowd';
 export * from './detour';
-export * from './generators';
 export * from './nav-mesh';
 export * from './nav-mesh-query';
 export * from './raw';

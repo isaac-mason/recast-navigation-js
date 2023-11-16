@@ -19,7 +19,7 @@
     "baseUrl": "./",
     "rootDir": "./src",
     "allowSyntheticDefaultImports": true,
-    "outDir": ".",
+    "outDir": "./dist"
   },
-  "files": ["./src/index.ts", "./src/generators.ts", "./src/three.ts"]
+  "files": ["./src/index.ts"]
 }

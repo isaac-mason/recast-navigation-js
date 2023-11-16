@@ -4985,7 +4985,36 @@ __metadata:
     rollup-plugin-copy: ^3.4.0
     rollup-plugin-filesize: ^10.0.0
     typescript: ^5.1.6
-    vitest: ^0.34.6
+  languageName: unknown
+  linkType: soft
+
+"@recast-navigation/generators@0.13.3, @recast-navigation/generators@workspace:packages/recast-navigation-generators":
+  version: 0.0.0-use.local
+  resolution: "@recast-navigation/generators@workspace:packages/recast-navigation-generators"
+  dependencies:
+    "@recast-navigation/core": 0.13.3
+    "@recast-navigation/wasm": 0.13.3
+    "@rollup/plugin-commonjs": ^25.0.7
+    "@rollup/plugin-node-resolve": ^15.0.1
+    "@rollup/plugin-terser": ^0.4.3
+    "@rollup/plugin-typescript": ^11.1.5
+    "@typescript-eslint/eslint-plugin": ^6.10.0
+    "@typescript-eslint/parser": ^6.7.3
+    eslint: ^8.51.0
+    eslint-config-airbnb: ^18.2.1
+    eslint-config-airbnb-base: ^15.0.0
+    eslint-config-prettier: ^9.0.0
+    eslint-import-resolver-typescript: ^3.5.5
+    eslint-plugin-es: ^4.1.0
+    eslint-plugin-import: ^2.29.0
+    eslint-plugin-prettier: ^5.0.1
+    eslint-plugin-simple-import-sort: ^10.0.0
+    eslint-plugin-typescript-enum: ^2.1.0
+    prettier: ^3.0.2
+    rollup: ^3.26.3
+    rollup-plugin-copy: ^3.4.0
+    rollup-plugin-filesize: ^10.0.0
+    typescript: ^5.1.6
   languageName: unknown
   linkType: soft
 
@@ -4994,6 +5023,7 @@ __metadata:
   resolution: "@recast-navigation/three@workspace:packages/recast-navigation-three"
   dependencies:
     "@recast-navigation/core": 0.13.3
+    "@recast-navigation/generators": 0.13.3
     "@rollup/plugin-commonjs": ^25.0.7
     "@rollup/plugin-node-resolve": ^15.0.1
     "@rollup/plugin-terser": ^0.4.3
@@ -19968,6 +19998,7 @@ __metadata:
     "@react-three/drei": ^9.87.1
     "@react-three/fiber": ^8.14.5
     "@recast-navigation/core": 0.13.3
+    "@recast-navigation/generators": 0.13.3
     "@recast-navigation/three": 0.13.3
     "@rollup/plugin-commonjs": ^25.0.7
     "@rollup/plugin-multi-entry": ^6.0.0
@@ -19995,6 +20026,7 @@ __metadata:
     suspend-react: ^0.1.3
     three: ^0.156.1
     three-pathfinding: ^1.2.0
+    vitest: ^0.34.6
   languageName: unknown
   linkType: soft
 

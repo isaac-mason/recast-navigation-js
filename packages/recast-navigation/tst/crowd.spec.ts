@@ -1,12 +1,7 @@
+import { Crowd, NavMesh, NavMeshQuery, init } from 'recast-navigation';
+import { generateSoloNavMesh } from 'recast-navigation/generators';
 import { BoxGeometry, BufferAttribute, Mesh } from 'three';
 import { beforeAll, beforeEach, describe, expect, test } from 'vitest';
-import {
-  Crowd,
-  NavMesh,
-  NavMeshQuery,
-  generateSoloNavMesh,
-  init,
-} from '../src';
 import { expectVectorToBeCloseTo } from './utils';
 
 describe('Crowd', () => {

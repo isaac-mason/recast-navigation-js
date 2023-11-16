@@ -33,6 +33,11 @@
       "import": "./index.mjs",
       "require": "./index.cjs"
     },
+    "./generators": {
+      "types": "./generators.d.ts",
+      "import": "./generators.mjs",
+      "require": "./generators.cjs"
+    },
     "./three": {
       "types": "./three.d.ts",
       "import": "./three.mjs",
@@ -43,6 +48,9 @@
     "index.mjs",
     "index.cjs",
     "index.d.ts",
+    "generators.mjs",
+    "generators.cjs",
+    "generators.d.ts",
     "three.mjs",
     "three.cjs",
     "three.d.ts",
@@ -50,13 +58,15 @@
     "README.md"
   ],
   "scripts": {
-    "clean": "(rm index.mjs index.cjs index.d.ts three.mjs three.cjs three.d.ts || true)",
+    "clean": "(rm index.mjs index.cjs index.d.ts generators.mjs generators.cjs generators.d.ts three.mjs three.cjs three.d.ts || true)",
     "build": "yarn clean && rollup --config rollup.config.js --bundleConfigAsCjs",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "test": "vitest run"
   },
   "dependencies": {
     "@recast-navigation/core": "0.13.3",
+    "@recast-navigation/generators": "0.13.3",
     "@recast-navigation/three": "0.13.3"
   },
   "devDependencies": {
@@ -91,7 +101,8 @@
     "storybook": "^7.4.5",
     "suspend-react": "^0.1.3",
     "three": "^0.156.1",
-    "three-pathfinding": "^1.2.0"
+    "three-pathfinding": "^1.2.0",
+    "vitest": "^0.34.6"
   },
   "packageManager": "yarn@3.2.2"
 }

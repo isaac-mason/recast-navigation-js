@@ -22,39 +22,29 @@ const plugins = [
   filesize(),
 ];
 
+const entrypoint = ({ name, external }) => ({
+  input: `./src/${name}.ts`,
+  external,
+  output: [
+    {
+      file: `./${name}.mjs`,
+      format: 'es',
+      ...commonOutput,
+    },
+    {
+      file: `./${name}.cjs`,
+      format: 'cjs',
+      ...commonOutput,
+    },
+  ],
+  plugins,
+});
+
 export default [
-  {
-    input: `./src/index.ts`,
-    external: ['@recast-navigation/core'],
-    output: [
-      {
-        file: `./index.mjs`,
-        format: 'es',
-        ...commonOutput,
-      },
-      {
-        file: `./index.cjs`,
-        format: 'cjs',
-        ...commonOutput,
-      }
-    ],
-    plugins,
-  },
-  {
-    input: `./src/three.ts`,
+  entrypoint({ name: 'index', external: ['@recast-navigation/core'] }),
+  entrypoint({ name: 'generators', external: ['@recast-navigation/core'] }),
+  entrypoint({
+    name: 'three',
     external: ['@recast-navigation/core', '@recast-navigation/three', 'three'],
-    output: [
-      {
-        file: `./three.mjs`,
-        format: 'es',
-        ...commonOutput,
-      },
-      {
-        file: `./three.cjs`,
-        format: 'cjs',
-        ...commonOutput,
-      }
-    ],
-    plugins,
-  },
+  }),
 ];

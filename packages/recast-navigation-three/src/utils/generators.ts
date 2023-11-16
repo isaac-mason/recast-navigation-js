@@ -1,11 +1,11 @@
 import {
-  generateSoloNavMesh,
-  generateTileCache,
   SoloNavMeshGeneratorConfig,
   TileCacheGeneratorConfig,
-  generateTiledNavMesh,
-  TiledNavMeshGeneratorConfig
-} from '@recast-navigation/core';
+  TiledNavMeshGeneratorConfig,
+  generateSoloNavMesh,
+  generateTileCache,
+  generateTiledNavMesh
+} from '@recast-navigation/generators';
 import { Mesh } from 'three';
 import { getPositionsAndIndices } from './get-positions-and-indices';
 

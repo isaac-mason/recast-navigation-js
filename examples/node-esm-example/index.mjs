@@ -1,4 +1,5 @@
-import { NavMeshQuery, generateSoloNavMesh, init } from 'recast-navigation';
+import { NavMeshQuery, init } from 'recast-navigation';
+import { generateSoloNavMesh } from 'recast-navigation/generators';
 import * as RecastThree from 'recast-navigation/three';
 import { BoxGeometry, Mesh } from 'three';
 
@@ -9,7 +10,7 @@ console.log(RecastThree);
 const groundMesh = new Mesh(new BoxGeometry(5, 0.2, 5));
 
 /**
- * @type {import('recast-navigation').SoloNavMeshConfig}
+ * @type {import('recast-navigation/generators').SoloNavMeshGeneratorConfig}
  */
 const config = {
   borderSize: 0,

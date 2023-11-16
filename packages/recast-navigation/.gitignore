@@ -3,9 +3,17 @@ index.mjs.map
 index.cjs
 index.cjs.map
 index.d.ts
+
+generators.mjs
+generators.mjs.map
+generators.cjs
+generators.cjs.map
+generators.d.ts
+
 three.mjs
 three.mjs.map
 three.cjs
 three.cjs.map
 three.d.ts
+
 storybook-static

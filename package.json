@@ -4,6 +4,7 @@
   "workspaces": [
     "packages/recast-navigation-wasm",
     "packages/recast-navigation-core",
+    "packages/recast-navigation-generators",
     "packages/recast-navigation-three",
     "packages/recast-navigation",
     "apps/*",
@@ -11,10 +12,10 @@
   ],
   "scripts": {
     "build": "(cd packages/recast-navigation-wasm && yarn build) && yarn workspaces foreach -t --exclude @recast-navigation/wasm run build",
-    "build:packages": "(cd packages/recast-navigation-wasm && yarn build) && yarn workspaces foreach -t --include recast-navigation --include @recast-navigation/core --include @recast-navigation/three run build",
+    "build:packages": "(cd packages/recast-navigation-wasm && yarn build) && yarn workspaces foreach -t --include recast-navigation --include @recast-navigation/core --include @recast-navigation/generators --include @recast-navigation/three run build",
     "build:navmesh-website": "(cd apps/navmesh-website && yarn build)",
     "test": "concurrently --kill-others-on-fail \"yarn test:unit-tests\" \"yarn test:node-smoke-test\" \"yarn test:bundlers-smoke-test\"",
-    "test:unit-tests": "yarn workspaces foreach -t --include @recast-navigation/core run test",
+    "test:unit-tests": "yarn workspaces foreach -t --include recast-navigation run test",
     "test:node-smoke-test": "(cd ./examples/node-cjs-example && yarn start) && (cd ./examples/node-esm-example && yarn start)",
     "test:bundlers-smoke-test": "concurrently --kill-others-on-fail \"(cd ./examples/parcel-example && yarn build)\" \"(cd ./examples/react-scripts-example && yarn build)\" \"(cd ./examples/vite-example && yarn build)\"",
     "change": "yarn changeset",

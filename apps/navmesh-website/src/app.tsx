@@ -3,15 +3,13 @@ import { Bounds, Environment, OrbitControls } from '@react-three/drei';
 import { Canvas, ThreeEvent } from '@react-three/fiber';
 import { Leva } from 'leva';
 import { Suspense, useCallback, useRef } from 'react';
+import { NavMesh, exportNavMesh, init as initRecast } from 'recast-navigation';
 import {
-  NavMesh,
   SoloNavMeshGeneratorIntermediates,
   TiledNavMeshGeneratorIntermediates,
-  exportNavMesh,
   generateSoloNavMesh,
   generateTiledNavMesh,
-  init as initRecast,
-} from 'recast-navigation';
+} from 'recast-navigation/generators';
 import { getPositionsAndIndices } from 'recast-navigation/three';
 import { suspend } from 'suspend-react';
 import { Group, Mesh } from 'three';
