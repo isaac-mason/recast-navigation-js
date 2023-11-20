@@ -1,5 +1,22 @@
 # recast-navigation
 
+## 0.15.0
+
+### Minor Changes
+
+- 91c8d94: feat: remove RecastConfig class, add createRcConfig and cloneRcConfig utils
+- 91c8d94: feat: rename RecastConfigType type to RecastConfig
+
+### Patch Changes
+
+- 4927779: fix: CrowdAgent setParameters should take a partial of CrowdAgentParams
+- Updated dependencies [91c8d94]
+- Updated dependencies [4927779]
+- Updated dependencies [91c8d94]
+  - @recast-navigation/generators@0.15.0
+  - @recast-navigation/core@0.15.0
+  - @recast-navigation/three@0.15.0
+
 ## 0.14.0
 
 ### Minor Changes
