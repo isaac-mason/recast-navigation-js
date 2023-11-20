@@ -8,7 +8,6 @@ import {
   RecastChunkyTriMesh,
   RecastCompactHeightfield,
   RecastConfig,
-  RecastConfigType,
   RecastHeightfield,
   RecastHeightfieldLayerSet,
   TileCache,
@@ -22,7 +21,9 @@ import {
   buildHeightfieldLayers,
   buildTileCacheLayer,
   calcGridSize,
+  cloneRcConfig,
   createHeightfield,
+  createRcConfig,
   erodeWalkableArea,
   filterLedgeSpans,
   filterLowHangingWalkableObstacles,
@@ -43,7 +44,7 @@ import { Pretty } from '../types';
 import { dtIlog2, dtNextPow2, getBoundingBox } from './common';
 
 export type TileCacheGeneratorConfig = Pretty<
-  RecastConfigType & {
+  RecastConfig & {
     /**
      * How many layers (or "floors") each navmesh tile is expected to have.
      */
@@ -196,7 +197,7 @@ export const generateTileCache = (
   //
   // Step 1. Initialize build config.
   //
-  const { raw: config } = RecastConfig.create(recastConfig);
+  const config = createRcConfig(recastConfig);
 
   const gridSize = calcGridSize(bbMin, bbMax, config.cs);
   config.width = gridSize.width;
@@ -297,7 +298,7 @@ export const generateTileCache = (
     // Tile bounds
     const tcs = config.tileSize * config.cs;
 
-    const { raw: tileConfig } = new RecastConfig(config).clone();
+    const tileConfig = cloneRcConfig(config);
 
     const tileBoundsMin: Vector3Tuple = [
       bbMin[0] + tileX * tcs,

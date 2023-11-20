@@ -3,7 +3,7 @@ import { Raw } from './raw';
 import type R from './raw-module';
 import { Vector2Tuple, Vector3, array, vec3 } from './utils';
 
-export type RecastConfigType = {
+export type RecastConfig = {
   /**
    * The size of the non-navigable border around the heightfield.
    * [Limit: >=0] [Units: vx]
@@ -115,7 +115,7 @@ export type RecastConfigType = {
   detailSampleMaxError: number;
 };
 
-export const recastConfigDefaults: RecastConfigType = {
+export const recastConfigDefaults: RecastConfig = {
   borderSize: 0,
   tileSize: 0,
   cs: 0.2,
@@ -133,66 +133,64 @@ export const recastConfigDefaults: RecastConfigType = {
   detailSampleMaxError: 1,
 };
 
-export class RecastConfig {
-  constructor(public raw: R.rcConfig) {}
+export const createRcConfig = (
+  partialConfig: Partial<RecastConfig>
+): R.rcConfig => {
+  const config = {
+    ...recastConfigDefaults,
+    ...partialConfig,
+  };
 
-  static create(partialConfig: Partial<RecastConfigType>): RecastConfig {
-    const config = {
-      ...recastConfigDefaults,
-      ...partialConfig,
-    };
+  const rcConfig = new Raw.Module.rcConfig();
+  rcConfig.borderSize = config.borderSize;
+  rcConfig.tileSize = config.tileSize;
+  rcConfig.cs = config.cs;
+  rcConfig.ch = config.ch;
+  rcConfig.walkableSlopeAngle = config.walkableSlopeAngle;
+  rcConfig.walkableHeight = config.walkableHeight;
+  rcConfig.walkableClimb = config.walkableClimb;
+  rcConfig.walkableRadius = config.walkableRadius;
+  rcConfig.maxEdgeLen = config.maxEdgeLen;
+  rcConfig.maxSimplificationError = config.maxSimplificationError;
+  rcConfig.minRegionArea = config.minRegionArea;
+  rcConfig.mergeRegionArea = config.mergeRegionArea;
+  rcConfig.maxVertsPerPoly = config.maxVertsPerPoly;
+  rcConfig.detailSampleDist = config.detailSampleDist;
+  rcConfig.detailSampleMaxError = config.detailSampleMaxError;
 
-    const raw = new Raw.Module.rcConfig();
-    raw.borderSize = config.borderSize;
-    raw.tileSize = config.tileSize;
-    raw.cs = config.cs;
-    raw.ch = config.ch;
-    raw.walkableSlopeAngle = config.walkableSlopeAngle;
-    raw.walkableHeight = config.walkableHeight;
-    raw.walkableClimb = config.walkableClimb;
-    raw.walkableRadius = config.walkableRadius;
-    raw.maxEdgeLen = config.maxEdgeLen;
-    raw.maxSimplificationError = config.maxSimplificationError;
-    raw.minRegionArea = config.minRegionArea;
-    raw.mergeRegionArea = config.mergeRegionArea;
-    raw.maxVertsPerPoly = config.maxVertsPerPoly;
-    raw.detailSampleDist = config.detailSampleDist;
-    raw.detailSampleMaxError = config.detailSampleMaxError;
+  return rcConfig;
+};
 
-    return new RecastConfig(raw);
-  }
+export const cloneRcConfig = (rcConfig: R.rcConfig): R.rcConfig => {
+  const clone = new Raw.Module.rcConfig();
 
-  clone(): RecastConfig {
-    const clone = new Raw.Module.rcConfig();
+  clone.set_bmin(0, rcConfig.get_bmin(0));
+  clone.set_bmin(1, rcConfig.get_bmin(1));
+  clone.set_bmin(2, rcConfig.get_bmin(2));
+  clone.set_bmax(0, rcConfig.get_bmax(0));
+  clone.set_bmax(1, rcConfig.get_bmax(1));
+  clone.set_bmax(2, rcConfig.get_bmax(2));
 
-    clone.set_bmin(0, this.raw.get_bmin(0));
-    clone.set_bmin(1, this.raw.get_bmin(1));
-    clone.set_bmin(2, this.raw.get_bmin(2));
-    clone.set_bmax(0, this.raw.get_bmax(0));
-    clone.set_bmax(1, this.raw.get_bmax(1));
-    clone.set_bmax(2, this.raw.get_bmax(2));
+  clone.width = rcConfig.width;
+  clone.height = rcConfig.height;
+  clone.borderSize = rcConfig.borderSize;
+  clone.tileSize = rcConfig.tileSize;
+  clone.cs = rcConfig.cs;
+  clone.ch = rcConfig.ch;
+  clone.walkableSlopeAngle = rcConfig.walkableSlopeAngle;
+  clone.walkableHeight = rcConfig.walkableHeight;
+  clone.walkableClimb = rcConfig.walkableClimb;
+  clone.walkableRadius = rcConfig.walkableRadius;
+  clone.maxEdgeLen = rcConfig.maxEdgeLen;
+  clone.maxSimplificationError = rcConfig.maxSimplificationError;
+  clone.minRegionArea = rcConfig.minRegionArea;
+  clone.mergeRegionArea = rcConfig.mergeRegionArea;
+  clone.maxVertsPerPoly = rcConfig.maxVertsPerPoly;
+  clone.detailSampleDist = rcConfig.detailSampleDist;
+  clone.detailSampleMaxError = rcConfig.detailSampleMaxError;
 
-    clone.width = this.raw.width;
-    clone.height = this.raw.height;
-    clone.borderSize = this.raw.borderSize;
-    clone.tileSize = this.raw.tileSize;
-    clone.cs = this.raw.cs;
-    clone.ch = this.raw.ch;
-    clone.walkableSlopeAngle = this.raw.walkableSlopeAngle;
-    clone.walkableHeight = this.raw.walkableHeight;
-    clone.walkableClimb = this.raw.walkableClimb;
-    clone.walkableRadius = this.raw.walkableRadius;
-    clone.maxEdgeLen = this.raw.maxEdgeLen;
-    clone.maxSimplificationError = this.raw.maxSimplificationError;
-    clone.minRegionArea = this.raw.minRegionArea;
-    clone.mergeRegionArea = this.raw.mergeRegionArea;
-    clone.maxVertsPerPoly = this.raw.maxVertsPerPoly;
-    clone.detailSampleDist = this.raw.detailSampleDist;
-    clone.detailSampleMaxError = this.raw.detailSampleMaxError;
-
-    return new RecastConfig(clone);
-  }
-}
+  return clone;
+};
 
 export class RecastBuildContext {
   raw: R.RecastBuildContext;

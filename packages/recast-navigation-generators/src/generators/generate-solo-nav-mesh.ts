@@ -6,7 +6,6 @@ import {
   RecastBuildContext,
   RecastCompactHeightfield,
   RecastConfig,
-  RecastConfigType,
   RecastContourSet,
   RecastHeightfield,
   allocCompactHeightfield,
@@ -22,6 +21,7 @@ import {
   buildRegions,
   createHeightfield,
   createNavMeshData,
+  createRcConfig,
   erodeWalkableArea,
   filterLedgeSpans,
   filterLowHangingWalkableObstacles,
@@ -37,7 +37,7 @@ import { Pretty } from '../types';
 import { OffMeshConnectionGeneratorParams, getBoundingBox } from './common';
 
 export type SoloNavMeshGeneratorConfig = Pretty<
-  Omit<RecastConfigType, 'tileSize'> & OffMeshConnectionGeneratorParams
+  Omit<RecastConfig, 'tileSize'> & OffMeshConnectionGeneratorParams
 >;
 
 export const soloNavMeshGeneratorConfigDefaults: SoloNavMeshGeneratorConfig = {
@@ -136,7 +136,7 @@ export const generateSoloNavMesh = (
   //
   // Step 1. Initialize build config.
   //
-  const { raw: config } = RecastConfig.create({
+  const config = createRcConfig({
     ...soloNavMeshGeneratorConfigDefaults,
     ...navMeshGeneratorConfig,
   });

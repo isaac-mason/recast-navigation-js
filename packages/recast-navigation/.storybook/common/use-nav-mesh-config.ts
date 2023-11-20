@@ -1,10 +1,10 @@
 import { useControls } from 'leva';
-import { RecastConfigType } from 'recast-navigation';
+import { RecastConfig } from 'recast-navigation';
 
 export const useNavMeshConfig = (
   prefix?: string,
-  defaults?: Partial<RecastConfigType>
-): Partial<RecastConfigType> =>
+  defaults?: Partial<RecastConfig>
+): Partial<RecastConfig> =>
   useControls(`${prefix ? prefix + '-' : ''}config`, {
     borderSize: {
       value: defaults?.borderSize ?? 0,

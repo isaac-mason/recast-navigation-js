@@ -8,7 +8,6 @@ import {
   RecastChunkyTriMesh,
   RecastCompactHeightfield,
   RecastConfig,
-  RecastConfigType,
   RecastContourSet,
   RecastHeightfield,
   Vector2Tuple,
@@ -25,8 +24,10 @@ import {
   buildPolyMeshDetail,
   buildRegions,
   calcGridSize,
+  cloneRcConfig,
   createHeightfield,
   createNavMeshData,
+  createRcConfig,
   dtStatusToReadableString,
   erodeWalkableArea,
   filterLedgeSpans,
@@ -50,7 +51,7 @@ import {
 } from './common';
 
 export type TiledNavMeshGeneratorConfig = Pretty<
-  RecastConfigType & OffMeshConnectionGeneratorParams
+  RecastConfig & OffMeshConnectionGeneratorParams
 >;
 
 export const tiledNavMeshGeneratorConfigDefaults: TiledNavMeshGeneratorConfig =
@@ -152,11 +153,10 @@ export const generateTiledNavMesh = (
   //
   // Initialize build config.
   //
-  const recastConfig = RecastConfig.create({
+  const config = createRcConfig({
     ...tiledNavMeshGeneratorConfigDefaults,
     ...navMeshGeneratorConfig,
   });
-  const { raw: config } = recastConfig;
 
   /* get input bounding box */
   const { bbMin, bbMax } = getBoundingBox(positions, indices);
@@ -254,7 +254,7 @@ export const generateTiledNavMesh = (
 
     intermediates.tileIntermediates.push(tileIntermediate);
 
-    const { raw: tileConfig } = recastConfig.clone();
+    const tileConfig = cloneRcConfig(config);
 
     // Expand the heightfield bounding box by border size to find the extents of geometry we need to build this tile.
     //
