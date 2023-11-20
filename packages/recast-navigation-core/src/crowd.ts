@@ -336,7 +336,7 @@ export class CrowdAgent implements CrowdAgentParams {
    * Any parameters not specified in the crowdAgentParams object will be set to their default values.
    * @param crowdAgentParams agent parameters
    */
-  setParameters(crowdAgentParams: CrowdAgentParams): void {
+  setParameters(crowdAgentParams: Partial<CrowdAgentParams>): void {
     const params = {
       ...crowdAgentParamsDefaults,
       ...crowdAgentParams,
