@@ -92,6 +92,8 @@ const { success, navMesh } = generateSoloNavMesh(
 );
 ```
 
+See the docs for more information on generator options: https://docs.recast-navigation-js.isaacmason.com/modules/generators.html
+
 #### Advanced Usage
 
 This library provides low-level APIs that aim to match the recast and detour c++ api, allowing you to create custom navigation mesh generators based on your specific needs. You can use the NavMesh generators provided by `@recast-navigation/generators` as a basis: https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-generators/src/generators
@@ -309,7 +311,7 @@ const debugNavMesh = navMesh.getDebugNavMesh();
 const { positions, indices } = debugNavMesh;
 ```
 
-If you are using `@recast-navigation/three`, you can use `NavMeshHelper` and `CrowdHelper` to visualize NavMeshes, Crowds, and NavMesh generation intermediates.
+If you are using three.js, you can use `NavMeshHelper` and `CrowdHelper` to visualize NavMeshes, Crowds, and NavMesh generation intermediates.
 
 See the [`@recast-navigation/three` package README](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-three/README.md) for usage information.
 
