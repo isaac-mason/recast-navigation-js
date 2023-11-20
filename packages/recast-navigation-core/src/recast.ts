@@ -14,11 +14,6 @@ export type RecastConfig = {
   /**
    * The width/height size of tile's on the xz-plane.
    * [Limit: >= 0] [Units: vx]
-   *
-   * If tileSize is provided, a tiled navmesh will be created.
-   * If tileSize is not provided, or is set to zero, a solo navmesh will be created.
-   *
-   * To use obstacles, a tiled navmesh must be generated.
    * @default 0
    */
   tileSize: number;
