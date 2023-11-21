@@ -1,5 +1,15 @@
 # recast-navigation
 
+## 0.15.1
+
+### Patch Changes
+
+- 5ab6094: fix: correct outdated RecastConfig type jsdoc
+- Updated dependencies [5ab6094]
+  - @recast-navigation/core@0.15.1
+  - @recast-navigation/generators@0.15.1
+  - @recast-navigation/three@0.15.1
+
 ## 0.15.0
 
 ### Minor Changes
