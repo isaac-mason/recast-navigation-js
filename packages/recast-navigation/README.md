@@ -41,6 +41,24 @@ export default defineConfig(() => ({
 )}
 ```
 
+## Documentation
+
+<!-- REMOVE-FROM-DOCS-START -->
+
+API Documentation can be found at [https://docs.recast-navigation-js.isaacmason.com](https://docs.recast-navigation-js.isaacmason.com).
+
+<!-- REMOVE-FROM-DOCS-END -->
+
+To get the most out of this library, you should be familiar with the Recast and Detour libraries. This article provides a good overview for the uninitiated: https://www.unrealdoc.com/p/navigation-mesh
+
+Documentation for the Recast and Detour c++ libraries can be found here:
+
+- [Recast Navigation Website](http://recastnav.com/)
+- [Recast Navigation GitHub](https://github.com/recastnavigation/recastnavigation)
+- [Recast Navigation Google Discussions](https://groups.google.com/g/recastnavigation)
+
+The GitHub issues and Google Discussions are a great resources for learning about the library and getting guidance on common issues.
+
 ## Usage
 
 ### Initialization
@@ -350,22 +368,6 @@ const { navMesh, tileCache } = importNavMesh(
   tileCacheMeshProcess
 );
 ```
-
-## Documentation
-
-<!-- REMOVE-FROM-DOCS-START -->
-
-API Documentation can be found at [https://docs.recast-navigation-js.isaacmason.com](https://docs.recast-navigation-js.isaacmason.com).
-
-<!-- REMOVE-FROM-DOCS-END -->
-
-Documentation for the Recast and Detour c++ libraries can be found here:
-
-- [Recast Navigation Website](http://recastnav.com/)
-- [Recast Navigation GitHub](https://github.com/recastnavigation/recastnavigation)
-- [Recast Navigation Google Discussions](https://groups.google.com/g/recastnavigation)
-
-The GitHub issues and Google Discussions are a great resources for learning about the library and getting guidance on common issues.
 
 ## Examples
 
