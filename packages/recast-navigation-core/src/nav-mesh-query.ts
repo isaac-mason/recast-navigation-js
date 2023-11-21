@@ -3,6 +3,38 @@ import { Arrays, Raw } from './raw';
 import type R from './raw-module';
 import { array, vec3, Vector3 } from './utils';
 
+export class QueryFilter {
+  raw: R.dtQueryFilter;
+
+  get includeFlags(): number {
+    return this.raw.getIncludeFlags();
+  }
+
+  set includeFlags(flags: number) {
+    this.raw.setIncludeFlags(flags);
+  }
+
+  get excludeFlags(): number {
+    return this.raw.getExcludeFlags();
+  }
+
+  set excludeFlags(flags: number) {
+    this.raw.setExcludeFlags(flags);
+  }
+
+  constructor(raw?: R.dtQueryFilter) {
+    this.raw = raw ?? new Raw.Module.dtQueryFilter();
+  }
+
+  getAreaCost(i: number): number {
+    return this.raw.getAreaCost(i);
+  }
+
+  setAreaCost(i: number, cost: number): void {
+    return this.raw.setAreaCost(i, cost);
+  }
+}
+
 export type NavMeshQueryParams = {
   navMesh: NavMesh;
 
@@ -15,7 +47,7 @@ export type NavMeshQueryParams = {
 export class NavMeshQuery {
   raw: R.NavMeshQuery;
 
-  defaultFilter: R.dtQueryFilter;
+  defaultFilter: QueryFilter;
 
   defaultQueryHalfExtents = { x: 1, y: 1, z: 1 };
 
@@ -27,9 +59,9 @@ export class NavMeshQuery {
       this.raw.init(value.navMesh.raw, value.maxNodes ?? 2048);
     }
 
-    this.defaultFilter = new Raw.Module.dtQueryFilter();
-    this.defaultFilter.setIncludeFlags(0xffff);
-    this.defaultFilter.setExcludeFlags(0);
+    this.defaultFilter = new QueryFilter();
+    this.defaultFilter.includeFlags = 0xffff;
+    this.defaultFilter.excludeFlags = 0;
   }
 
   /**
@@ -37,7 +69,7 @@ export class NavMeshQuery {
    */
   findNearestPoly(
     position: Vector3,
-    options?: { filter?: R.dtQueryFilter; halfExtents?: Vector3 }
+    options?: { filter?: QueryFilter; halfExtents?: Vector3 }
   ) {
     const nearestRef = new Raw.UnsignedIntRef();
     const nearestPoint = new Raw.Vec3();
@@ -46,7 +78,7 @@ export class NavMeshQuery {
     const status = this.raw.findNearestPoly(
       vec3.toArray(position),
       vec3.toArray(options?.halfExtents ?? this.defaultQueryHalfExtents),
-      options?.filter ?? this.defaultFilter,
+      options?.filter?.raw ?? this.defaultFilter.raw,
       nearestRef,
       nearestPoint,
       isOverPoly
@@ -88,12 +120,12 @@ export class NavMeshQuery {
    */
   getClosestPoint(
     position: Vector3,
-    options?: { filter?: R.dtQueryFilter; halfExtents?: Vector3 }
+    options?: { filter?: QueryFilter; halfExtents?: Vector3 }
   ): Vector3 {
     const closestPointRaw = this.raw.getClosestPoint(
       vec3.toArray(position),
       vec3.toArray(options?.halfExtents ?? this.defaultQueryHalfExtents),
-      options?.filter ?? this.defaultFilter
+      options?.filter?.raw ?? this.defaultFilter.raw
     );
 
     return vec3.fromRaw(closestPointRaw);
@@ -106,7 +138,7 @@ export class NavMeshQuery {
     position: Vector3,
     radius: number,
     options?: {
-      filter?: R.dtQueryFilter;
+      filter?: QueryFilter;
       halfExtents?: Vector3;
     }
   ): Vector3 {
@@ -114,7 +146,7 @@ export class NavMeshQuery {
       vec3.toArray(position),
       radius,
       vec3.toArray(options?.halfExtents ?? this.defaultQueryHalfExtents),
-      options?.filter ?? this.defaultFilter
+      options?.filter?.raw ?? this.defaultFilter.raw
     );
 
     return vec3.fromRaw(randomPointRaw);
@@ -128,14 +160,14 @@ export class NavMeshQuery {
     startPosition: Vector3,
     endPosition: Vector3,
     options?: {
-      filter?: R.dtQueryFilter;
+      filter?: QueryFilter;
       maxVisitedSize?: number;
     }
   ) {
     const resultPosition = new Raw.Vec3();
     const visited = new Arrays.UnsignedIntArray();
 
-    const filter = options?.filter ?? this.defaultFilter;
+    const filter = options?.filter?.raw ?? this.defaultFilter.raw;
 
     const status = this.raw.moveAlongSurface(
       startRef,
@@ -182,7 +214,7 @@ export class NavMeshQuery {
     start: Vector3,
     end: Vector3,
     options?: {
-      filter?: R.dtQueryFilter;
+      filter?: QueryFilter;
       maxPolyPathLength?: number;
     }
   ): Vector3[] {
@@ -203,7 +235,7 @@ export class NavMeshQuery {
       endRef,
       startArray,
       endArray,
-      filter,
+      filter.raw,
       polys,
       maxPolyPathLength
     );

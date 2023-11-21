@@ -1,5 +1,5 @@
 import type { NavMesh } from './nav-mesh';
-import { NavMeshQuery } from './nav-mesh-query';
+import { NavMeshQuery, QueryFilter } from './nav-mesh-query';
 import { Raw } from './raw';
 import type R from './raw-module';
 import { Vector3, vec3 } from './utils';
@@ -226,7 +226,7 @@ export class CrowdAgent implements CrowdAgentParams {
       this.agentIndex,
       vec3.toArray(position),
       vec3.toArray(this.crowd.navMeshQuery.defaultQueryHalfExtents),
-      this.crowd.navMeshQuery.defaultFilter
+      this.crowd.navMeshQuery.defaultFilter.raw
     );
   }
 
@@ -357,41 +357,6 @@ export class CrowdAgent implements CrowdAgentParams {
     dtCrowdAgentParams.userData = params.userData;
 
     this.crowd.raw.updateAgentParameters(this.agentIndex, dtCrowdAgentParams);
-  }
-}
-
-export class QueryFilter {
-  raw: R.dtQueryFilter;
-
-  index: number;
-
-  get includeFlags(): number {
-    return this.raw.getIncludeFlags();
-  }
-
-  set includeFlags(flags: number) {
-    this.raw.setIncludeFlags(flags);
-  }
-
-  get excludeFlags(): number {
-    return this.raw.getExcludeFlags();
-  }
-
-  set excludeFlags(flags: number) {
-    this.raw.setExcludeFlags(flags);
-  }
-
-  constructor(raw: R.dtQueryFilter, index: number) {
-    this.raw = raw;
-    this.index = index;
-  }
-
-  getAreaCost(i: number): number {
-    return this.raw.getAreaCost(i);
-  }
-
-  setAreaCost(i: number, cost: number): void {
-    return this.raw.setAreaCost(i, cost);
   }
 }
 
@@ -578,10 +543,7 @@ export class Crowd {
    * @returns the query filter
    */
   getFilter(filterIndex: number): QueryFilter {
-    return new QueryFilter(
-      this.raw.getEditableFilter(filterIndex),
-      filterIndex
-    );
+    return new QueryFilter(this.raw.getEditableFilter(filterIndex));
   }
 
   /**
