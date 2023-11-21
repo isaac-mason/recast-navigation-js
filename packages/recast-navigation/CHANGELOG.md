@@ -1,5 +1,18 @@
 # recast-navigation
 
+## 0.16.0
+
+### Minor Changes
+
+- b5f4f6e: feat: update NavMeshQuery to use wrapped QueryFilter class, remove 'index' from QueryFilter
+
+### Patch Changes
+
+- Updated dependencies [b5f4f6e]
+  - @recast-navigation/core@0.16.0
+  - @recast-navigation/generators@0.16.0
+  - @recast-navigation/three@0.16.0
+
 ## 0.15.1
 
 ### Patch Changes
