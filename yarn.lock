@@ -4975,13 +4975,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-three/fiber@npm:^8.14.5":
-  version: 8.14.5
-  resolution: "@react-three/fiber@npm:8.14.5"
+"@react-three/fiber@npm:^8.15.11":
+  version: 8.15.11
+  resolution: "@react-three/fiber@npm:8.15.11"
   dependencies:
     "@babel/runtime": ^7.17.8
     "@types/react-reconciler": ^0.26.7
+    "@types/webxr": "*"
     base64-js: ^1.5.1
+    buffer: ^6.0.3
     its-fine: ^1.0.6
     react-reconciler: ^0.27.0
     react-use-measure: ^2.1.1
@@ -5010,7 +5012,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 5e925b637e5c226c43e1e67fadea43e3341f4d56ccbd190cd77361ddc8eafe3656eec89be65f097689a39d12562cf9b928972640c34b3622ec42819f0ea083e0
+  checksum: df0e30641e0aaa9f89c8f4770c27aab298b653b1dcb2a47c4c279984ee6e67556c3a043907160f6efc18eabd18b93a44e671af207d890321dbe16f41f38776ee
   languageName: node
   linkType: hard
 
@@ -9299,6 +9301,16 @@ __metadata:
     base64-js: ^1.3.1
     ieee754: ^1.1.13
   checksum: e2cf8429e1c4c7b8cbd30834ac09bd61da46ce35f5c22a78e6c2f04497d6d25541b16881e30a019c6fd3154150650ccee27a308eff3e26229d788bbdeb08ab84
+  languageName: node
+  linkType: hard
+
+"buffer@npm:^6.0.3":
+  version: 6.0.3
+  resolution: "buffer@npm:6.0.3"
+  dependencies:
+    base64-js: ^1.3.1
+    ieee754: ^1.2.1
+  checksum: 5ad23293d9a731e4318e420025800b42bf0d264004c0286c8cc010af7a270c7a0f6522e84f54b9ad65cbd6db20b8badbfd8d2ebf4f80fa03dab093b89e68c3f9
   languageName: node
   linkType: hard
 
@@ -13733,7 +13745,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ieee754@npm:^1.1.13":
+"ieee754@npm:^1.1.13, ieee754@npm:^1.2.1":
   version: 1.2.1
   resolution: "ieee754@npm:1.2.1"
   checksum: 5144c0c9815e54ada181d80a0b810221a253562422e7c6c3a60b1901154184f49326ec239d618c416c1c5945a2e197107aee8d986a3dd836b53dffefd99b5e7e
@@ -17182,7 +17194,7 @@ __metadata:
   dependencies:
     "@pmndrs/assets": ^1.6.0
     "@react-three/drei": ^9.87.1
-    "@react-three/fiber": ^8.14.5
+    "@react-three/fiber": ^8.15.11
     "@types/react": ^18.2.11
     "@types/react-dom": ^18.2.8
     "@types/three": ^0.155.0
@@ -17986,7 +17998,7 @@ __metadata:
   resolution: "parcel-example@workspace:examples/parcel-example"
   dependencies:
     "@react-three/drei": ^9.87.1
-    "@react-three/fiber": ^8.14.5
+    "@react-three/fiber": ^8.15.11
     parcel: ^2.10.2
     recast-navigation: "workspace:^"
     three: ^0.156.1
@@ -19833,7 +19845,7 @@ __metadata:
   resolution: "react-scripts-example@workspace:examples/react-scripts-example"
   dependencies:
     "@react-three/drei": ^9.87.1
-    "@react-three/fiber": ^8.14.5
+    "@react-three/fiber": ^8.15.11
     react: ^18.2.0
     react-dom: ^18.2.0
     react-scripts: 5.0.1
@@ -20067,7 +20079,7 @@ __metadata:
     "@pmndrs/assets": ^1.6.0
     "@react-three/csg": ^3.1.0
     "@react-three/drei": ^9.87.1
-    "@react-three/fiber": ^8.14.5
+    "@react-three/fiber": ^8.15.11
     "@recast-navigation/core": 0.16.0
     "@recast-navigation/generators": 0.16.0
     "@recast-navigation/three": 0.16.0
@@ -23132,7 +23144,7 @@ __metadata:
   resolution: "vite-example@workspace:examples/vite-example"
   dependencies:
     "@react-three/drei": ^9.87.1
-    "@react-three/fiber": ^8.14.5
+    "@react-three/fiber": ^8.15.11
     "@types/react": ^18.2.11
     "@types/react-dom": ^18.2.8
     "@types/three": ^0.155.0
