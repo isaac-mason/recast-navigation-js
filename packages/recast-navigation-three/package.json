@@ -50,7 +50,7 @@
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "eslint-plugin-typescript-enum": "^2.1.0",
     "prettier": "^3.0.2",
-    "rollup": "^3.26.3",
+    "rollup": "^4.6.0",
     "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-filesize": "^10.0.0",
     "three": "^0.156.1",
