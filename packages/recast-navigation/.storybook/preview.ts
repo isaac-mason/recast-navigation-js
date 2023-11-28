@@ -8,4 +8,21 @@ export const parameters = {
       date: /Date$/,
     },
   },
+  options: {
+    storySort: {
+      method: 'alphabetical',
+      order: [
+        'Crowd',
+        'NavMeshQuery',
+        'NavMesh',
+        'TileCache',
+        'Utilities',
+        'External Use',
+        'Off Mesh Connections',
+        'Helpers',
+        'Advanced',
+      ],
+      locales: 'en-US',
+    },
+  },
 };

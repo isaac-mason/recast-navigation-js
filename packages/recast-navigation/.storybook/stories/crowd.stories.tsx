@@ -1,4 +1,4 @@
-import { Line, OrbitControls } from '@react-three/drei';
+import { OrbitControls } from '@react-three/drei';
 import { ThreeEvent, useFrame } from '@react-three/fiber';
 import {
   Crowd,
@@ -8,13 +8,8 @@ import {
 } from '@recast-navigation/core';
 import React, { useEffect, useState } from 'react';
 import { threeToSoloNavMesh } from 'recast-navigation/three';
-import {
-  Group,
-  Mesh,
-  MeshStandardMaterial,
-  Vector3,
-  Vector3Tuple,
-} from 'three';
+import { Group, Mesh, MeshStandardMaterial, Vector3 } from 'three';
+import { AgentPath } from '../common/agent-path';
 import { Debug } from '../common/debug';
 import { NavTestEnvirionment } from '../common/nav-test-environment';
 import { decorators } from '../decorators';
@@ -39,7 +34,6 @@ export const SingleAgent = () => {
   const [agent, setAgent] = useState<CrowdAgent | undefined>();
 
   const [agentTarget, setAgentTarget] = useState<Vector3 | undefined>();
-  const [agentPath, setAgentPath] = useState<Vector3Tuple[] | undefined>();
 
   useEffect(() => {
     if (!group) return;
@@ -96,29 +90,6 @@ export const SingleAgent = () => {
     };
   }, [group]);
 
-  useEffect(() => {
-    if (!crowd || !agent) return;
-
-    if (!agentTarget) {
-      setAgentPath(undefined);
-      return;
-    }
-
-    const interval = setInterval(() => {
-      const path = [agent.position(), ...agent.corners()];
-
-      if (path.length) {
-        setAgentPath(path.map((p) => [p.x, p.y + 0.1, p.z]));
-      } else {
-        setAgentPath(undefined);
-      }
-    }, 200);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [crowd, agentTarget]);
-
   useFrame((_, delta) => {
     if (!crowd) return;
 
@@ -145,20 +116,7 @@ export const SingleAgent = () => {
 
   return (
     <>
-      {agentPath && (
-        <group position={[0, 0.2, 0]}>
-          <primitive object={agentPath} />
-        </group>
-      )}
-
-      {agentTarget && (
-        <group position={[0, 0, 0]}>
-          <mesh position={agentTarget}>
-            <sphereGeometry args={[0.1, 16, 16]} />
-            <meshBasicMaterial color="blue" />
-          </mesh>
-        </group>
-      )}
+      <AgentPath agent={agent} target={agentTarget} />
 
       <group onPointerDown={onClick}>
         <group ref={setGroup}>
@@ -166,8 +124,6 @@ export const SingleAgent = () => {
         </group>
         <Debug navMesh={navMesh} crowd={crowd} agentMaterial={agentMaterial} />
       </group>
-
-      {agentPath && <Line points={agentPath} color="blue" lineWidth={10} />}
 
       <OrbitControls makeDefault />
     </>
