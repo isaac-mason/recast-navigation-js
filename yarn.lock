@@ -5044,7 +5044,7 @@ __metadata:
     rollup: ^4.6.0
     rollup-plugin-copy: ^3.4.0
     rollup-plugin-filesize: ^10.0.0
-    typescript: ^5.1.6
+    typescript: ^5.3.2
   languageName: unknown
   linkType: soft
 
@@ -5074,7 +5074,7 @@ __metadata:
     rollup: ^4.6.0
     rollup-plugin-copy: ^3.4.0
     rollup-plugin-filesize: ^10.0.0
-    typescript: ^5.1.6
+    typescript: ^5.3.2
   languageName: unknown
   linkType: soft
 
@@ -5106,7 +5106,7 @@ __metadata:
     rollup-plugin-copy: ^3.4.0
     rollup-plugin-filesize: ^10.0.0
     three: ^0.156.1
-    typescript: ^5.1.6
+    typescript: ^5.3.2
   peerDependencies:
     "@types/three": 0.x.x
     three: 0.x.x
@@ -10758,7 +10758,7 @@ __metadata:
   resolution: "docs@workspace:apps/docs"
   dependencies:
     typedoc: ^0.25.3
-    typescript: ^5.2.2
+    typescript: ^5.3.2
   languageName: unknown
   linkType: soft
 
@@ -17039,7 +17039,7 @@ __metadata:
     suspend-react: ^0.1.3
     three: ^0.156.1
     tunnel-rat: ^0.1.2
-    typescript: ^5.1.6
+    typescript: ^5.3.2
     vite: ^4.5.0
     vite-plugin-html: ^3.2.0
     zustand: ^4.3.8
@@ -19939,7 +19939,7 @@ __metadata:
     suspend-react: ^0.1.3
     three: ^0.156.1
     three-pathfinding: ^1.2.0
-    typescript: ^5.1.6
+    typescript: ^5.3.2
     vitest: ^0.34.6
   languageName: unknown
   linkType: soft
@@ -22508,7 +22508,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.1.6, typescript@npm:^5.2.2":
+"typescript@npm:^5.2.2":
   version: 5.2.2
   resolution: "typescript@npm:5.2.2"
   bin:
@@ -22518,13 +22518,33 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^5.1.6#~builtin<compat/typescript>, typescript@patch:typescript@^5.2.2#~builtin<compat/typescript>":
+"typescript@npm:^5.3.2":
+  version: 5.3.2
+  resolution: "typescript@npm:5.3.2"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: d92534dda639eb825db013203404c1fabca8ac630564283c9e7dc9e64fd9c9346c2de95ecebdf3e6e8c1c32941bca1cfe0da37877611feb9daf8feeaea58d230
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@^5.2.2#~builtin<compat/typescript>":
   version: 5.2.2
   resolution: "typescript@patch:typescript@npm%3A5.2.2#~builtin<compat/typescript>::version=5.2.2&hash=85af82"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 07106822b4305de3f22835cbba949a2b35451cad50888759b6818421290ff95d522b38ef7919e70fb381c5fe9c1c643d7dea22c8b31652a717ddbd57b7f4d554
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@^5.3.2#~builtin<compat/typescript>":
+  version: 5.3.2
+  resolution: "typescript@patch:typescript@npm%3A5.3.2#~builtin<compat/typescript>::version=5.3.2&hash=85af82"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: c034461079fbfde3cb584ddee52afccb15b6e32a0ce186d0b2719968786f7ca73e1b07f71fac4163088790b16811c6ccf79680de190664ef66ff0ba9c1fe4a23
   languageName: node
   linkType: hard
 
@@ -23015,7 +23035,7 @@ __metadata:
     recast-navigation: 0.16.0
     suspend-react: ^0.1.3
     three: ^0.156.1
-    typescript: ^5.1.6
+    typescript: ^5.3.2
     vite: ^4.5.0
   languageName: unknown
   linkType: soft
