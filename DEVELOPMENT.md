@@ -8,6 +8,8 @@ Before building, ensure you have the following installed:
 - Python 3.10.5
 - Emsdk v3.1.44
 
+See the emscripten website for emsdk installation instructions: https://emscripten.org/docs/getting_started/downloads.html
+
 To build the project, run the following:
 
 ```sh
