@@ -75,7 +75,7 @@
     "@pmndrs/assets": "^1.6.0",
     "@react-three/csg": "^3.1.0",
     "@react-three/drei": "^9.90.0",
-    "@react-three/fiber": "^8.15.11",
+    "@react-three/fiber": "^8.15.12",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@rollup/plugin-terser": "^0.4.3",
