@@ -11,9 +11,9 @@
     "examples/*"
   ],
   "scripts": {
-    "build": "(cd packages/recast-navigation-wasm && yarn build) && yarn workspaces foreach -t --exclude @recast-navigation/wasm run build",
-    "build:packages": "(cd packages/recast-navigation-wasm && yarn build) && yarn workspaces foreach -t --include recast-navigation --include @recast-navigation/core --include @recast-navigation/generators --include @recast-navigation/three run build",
-    "build:navmesh-website": "(cd apps/navmesh-website && yarn build)",
+    "build": "yarn build:packages && yarn build:apps",
+    "build:packages": "yarn workspaces foreach -t --include @recast-navigation/wasm --include @recast-navigation/core --include @recast-navigation/generators --include @recast-navigation/three --include recast-navigation run build",
+    "build:apps": "yarn workspaces foreach -t --include navmesh-website --include docs run build",
     "test": "concurrently --kill-others-on-fail \"yarn test:unit-tests\" \"yarn test:node-smoke-test\" \"yarn test:bundlers-smoke-test\"",
     "test:unit-tests": "yarn workspaces foreach -t --include recast-navigation run test",
     "test:node-smoke-test": "(cd ./examples/node-cjs-example && yarn start) && (cd ./examples/node-esm-example && yarn start)",
