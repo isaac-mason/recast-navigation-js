@@ -54,7 +54,7 @@
     "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-filesize": "^10.0.0",
     "three": "^0.156.1",
-    "typescript": "^5.1.6"
+    "typescript": "^5.3.2"
   },
   "packageManager": "yarn@3.2.1"
 }
