@@ -7,7 +7,7 @@
     "build": "parcel build index.html"
   },
   "dependencies": {
-    "@react-three/drei": "^9.90.0",
+    "@react-three/drei": "^9.91.0",
     "@react-three/fiber": "^8.15.12",
     "react": "18.2.0",
     "recast-navigation": "workspace:^",
