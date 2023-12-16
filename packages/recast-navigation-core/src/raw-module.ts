@@ -1,3 +1,3 @@
-import RawModule from '@recast-navigation/wasm/wasm-compat';
+import RawModule from '@recast-navigation/wasm';
 
 export default RawModule;
