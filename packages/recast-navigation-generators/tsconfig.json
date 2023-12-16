@@ -4,7 +4,7 @@
     "useDefineForClassFields": true,
     "module": "ES2022",
     "lib": ["ES2022", "DOM"],
-    "moduleResolution": "Node",
+    "moduleResolution": "Bundler",
     "strict": true,
     "sourceMap": true,
     "resolveJsonModule": true,

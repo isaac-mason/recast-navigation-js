@@ -6,7 +6,7 @@ import {
   MeshStandardMaterial,
   Scene,
 } from 'three';
-import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter';
+import { GLTFExporter } from 'three/addons';
 
 const navMeshToPositionsAndIndices = (navMesh: NavMesh) => {
   const positions: number[] = [];

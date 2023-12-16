@@ -5,13 +5,8 @@ import {
   REVISION,
   WebGLRenderer,
 } from 'three';
-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader.js';
+import { DRACOLoader, FBXLoader, GLTF, GLTFLoader, KTX2Loader, OBJLoader } from 'three/addons';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
-import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
-import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
-import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
 const THREE_PATH = `https://unpkg.com/three@0.${REVISION}.x`;
 

@@ -17,12 +17,15 @@
   "types": "./dist/recast-navigation.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/recast-navigation.d.ts",
       "import": "./dist/recast-navigation.wasm-compat.js"
     },
     "./wasm": {
+      "types": "./dist/recast-navigation.d.ts",
       "import": "./dist/recast-navigation.wasm.js"
     },
     "./wasm-compat": {
+      "types": "./dist/recast-navigation.d.ts",
       "import": "./dist/recast-navigation.wasm-compat.js"
     }
   },

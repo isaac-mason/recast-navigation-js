@@ -32,7 +32,7 @@
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@rollup/plugin-terser": "^0.4.3",
     "@rollup/plugin-typescript": "^11.1.5",
-    "@types/three": "^0.155.0",
+    "@types/three": "^0.159.0",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.7.3",
     "babel-loader": "^9.1.3",

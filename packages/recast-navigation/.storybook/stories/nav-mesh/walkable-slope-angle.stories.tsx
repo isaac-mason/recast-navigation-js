@@ -1,4 +1,4 @@
-import { Bounds, OrbitControls, Text } from '@react-three/drei';
+import { Bounds, OrbitControls } from '@react-three/drei';
 import { NavMesh } from '@recast-navigation/core';
 import { threeToSoloNavMesh } from '@recast-navigation/three';
 import { useControls } from 'leva';
@@ -64,12 +64,6 @@ export const WalkableSlope = () => {
   return (
     <>
       <Bounds fit observe>
-        {ANGLES.map(({ degrees, position }) => (
-          <Text key={degrees} position={[position[0], 3, -3]}>
-            {degrees}°
-          </Text>
-        ))}
-
         <group ref={setGroup}>
           {ANGLES.map(({ degrees, rad, position }) => (
             <mesh key={degrees} rotation-x={rad} position={position}>
