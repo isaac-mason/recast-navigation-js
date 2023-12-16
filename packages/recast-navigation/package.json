@@ -62,7 +62,7 @@
     "build": "yarn clean && rollup --config rollup.config.js --bundleConfigAsCjs",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "test": "vitest run"
+    "test": "tsc && vitest run"
   },
   "dependencies": {
     "@recast-navigation/core": "0.16.0",
