@@ -4982,9 +4982,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-three/drei@npm:^9.92.3":
-  version: 9.92.3
-  resolution: "@react-three/drei@npm:9.92.3"
+"@react-three/drei@npm:^9.92.4":
+  version: 9.92.4
+  resolution: "@react-three/drei@npm:9.92.4"
   dependencies:
     "@babel/runtime": ^7.11.2
     "@mediapipe/tasks-vision": 0.10.8
@@ -4997,7 +4997,7 @@ __metadata:
     lodash.clamp: ^4.0.3
     lodash.omit: ^4.5.0
     lodash.pick: ^4.4.0
-    maath: ^0.9.0
+    maath: ^0.10.7
     meshline: ^3.1.6
     react-composer: ^5.0.3
     react-merge-refs: ^1.1.0
@@ -5018,7 +5018,7 @@ __metadata:
   peerDependenciesMeta:
     react-dom:
       optional: true
-  checksum: 9bdbc0e1f76c516b439bff84a7ccc04cfa4c9d407571fff022478625b8099dffc268f6c21f60b0b8e1bf8587c19978ddf4458f6c91a3f0a430c743148f2d2c45
+  checksum: 38daa713b89dc4552c782f4746d584acb44b12dd2a16e03e198192946f952630f827d1ed8f9dcd78ac6b75b6c052db5f0904f4eb25f76afa56f49a3d8c5af835
   languageName: node
   linkType: hard
 
@@ -15746,13 +15746,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"maath@npm:^0.9.0":
-  version: 0.9.0
-  resolution: "maath@npm:0.9.0"
+"maath@npm:^0.10.7":
+  version: 0.10.7
+  resolution: "maath@npm:0.10.7"
   peerDependencies:
     "@types/three": ">=0.144.0"
     three: ">=0.144.0"
-  checksum: 35a2cf9e86d9c92d2b9154cabb4149928e212c5c53054397dcc26bb3084073857d2c620f45d7ca2214a2f2f296882bffc9b2bb44a1009bead380fd84d158ae21
+  checksum: 84059fa070eb3dac0c36cf35c41fe0a33ba56f5e6d19e72446c118312c95403efbcbfe7c3fd378812fdc3814654c9f25d8aee14c8657fc946936fabc4a460c54
   languageName: node
   linkType: hard
 
@@ -16952,7 +16952,7 @@ __metadata:
   resolution: "navmesh-website@workspace:apps/navmesh-website"
   dependencies:
     "@pmndrs/assets": ^1.6.0
-    "@react-three/drei": ^9.92.3
+    "@react-three/drei": ^9.92.4
     "@react-three/fiber": ^8.15.12
     "@types/react": ^18.2.11
     "@types/react-dom": ^18.2.8
@@ -17775,7 +17775,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "parcel-example@workspace:examples/parcel-example"
   dependencies:
-    "@react-three/drei": ^9.92.3
+    "@react-three/drei": ^9.92.4
     "@react-three/fiber": ^8.15.12
     parcel: ^2.10.2
     react: 18.2.0
@@ -19603,7 +19603,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "react-scripts-example@workspace:examples/react-scripts-example"
   dependencies:
-    "@react-three/drei": ^9.92.3
+    "@react-three/drei": ^9.92.4
     "@react-three/fiber": ^8.15.12
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -19837,7 +19837,7 @@ __metadata:
     "@mdx-js/react": ^2.3.0
     "@pmndrs/assets": ^1.6.0
     "@react-three/csg": ^3.1.0
-    "@react-three/drei": ^9.92.3
+    "@react-three/drei": ^9.92.4
     "@react-three/fiber": ^8.15.12
     "@recast-navigation/core": 0.16.0
     "@recast-navigation/generators": 0.16.0
@@ -22962,7 +22962,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "vite-example@workspace:examples/vite-example"
   dependencies:
-    "@react-three/drei": ^9.92.3
+    "@react-three/drei": ^9.92.4
     "@react-three/fiber": ^8.15.12
     "@types/react": ^18.2.11
     "@types/react-dom": ^18.2.8
