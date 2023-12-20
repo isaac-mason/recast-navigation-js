@@ -1,5 +1,12 @@
 # @recast-navigation/core
 
+## 0.16.1
+
+### Patch Changes
+
+- 467747f: feat: add usage oriented aliases to 'Arrays' such as 'TriAreasArray'
+  - @recast-navigation/wasm@0.16.1
+
 ## 0.16.0
 
 ### Minor Changes
