@@ -137,12 +137,12 @@ export const generateNavMesh = (
 
   const verts = positions as number[];
   const nVerts = indices.length;
-  const vertsArray = new Arrays.FloatArray();
+  const vertsArray = new Arrays.VertsArray();
   vertsArray.copy(verts, verts.length);
 
   const tris = indices as number[];
   const nTris = indices.length / 3;
-  const trisArray = new Arrays.IntArray();
+  const trisArray = new Arrays.TrisArray();
   trisArray.copy(tris, tris.length);
 
   const { bbMin, bbMax } = getBoundingBox(positions, indices);
@@ -186,7 +186,7 @@ export const generateNavMesh = (
     return fail('Could not create heightfield');
   }
 
-  const triAreasArray = new Arrays.UnsignedCharArray();
+  const triAreasArray = new Arrays.TriAreasArray();
   triAreasArray.resize(nTris);
 
   markWalkableTriangles(

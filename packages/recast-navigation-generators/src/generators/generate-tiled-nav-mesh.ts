@@ -185,13 +185,13 @@ export const generateTiledNavMesh = (
   /* verts */
   const verts = positions as number[];
   const nVerts = indices.length;
-  const vertsArray = new Arrays.FloatArray();
+  const vertsArray = new Arrays.VertsArray();
   vertsArray.copy(verts, verts.length);
 
   /* tris */
   const tris = indices as number[];
   const nTris = indices.length / 3;
-  const trisArray = new Arrays.IntArray();
+  const trisArray = new Arrays.TrisArray();
   trisArray.copy(tris, tris.length);
 
   /* Create dtNavMeshParams, initialise nav mesh for tiled use */
@@ -336,7 +336,7 @@ export const generateTiledNavMesh = (
     // Allocate array that can hold triangle flags.
     // If you have multiple meshes you need to process, allocate
     // and array which can hold the max number of triangles you need to process.
-    const triAreas = new Arrays.UnsignedCharArray();
+    const triAreas = new Arrays.TriAreasArray();
     triAreas.resize(chunkyTriMesh.maxTrisPerChunk());
 
     const tbmin: Vector2Tuple = [
@@ -350,7 +350,7 @@ export const generateTiledNavMesh = (
 
     // TODO: Make grow when returning too many items.
     const maxChunkIds = 512;
-    const chunkIdsArray = new Arrays.IntArray();
+    const chunkIdsArray = new Arrays.ChunkIdsArray();
     chunkIdsArray.resize(maxChunkIds);
 
     const nChunksOverlapping = chunkyTriMesh.getChunksOverlappingRect(
@@ -371,7 +371,7 @@ export const generateTiledNavMesh = (
 
       const nodeTrisArray = chunkyTriMesh.getNodeTris(nodeId);
 
-      const triAreasArray = new Arrays.UnsignedCharArray();
+      const triAreasArray = new Arrays.TriAreasArray();
       triAreasArray.resize(nNodeTris);
 
       // Find triangles which are walkable based on their slope and rasterize them.
@@ -588,8 +588,8 @@ export const generateTiledNavMesh = (
 
   buildContext.startTimer(Raw.Module.RC_TIMER_TEMP);
 
-  let lastBuiltTileBmin: Vector3Tuple = [0, 0, 0];
-  let lastBuiltTileBmax: Vector3Tuple = [0, 0, 0];
+  const lastBuiltTileBmin: Vector3Tuple = [0, 0, 0];
+  const lastBuiltTileBmax: Vector3Tuple = [0, 0, 0];
 
   for (let y = 0; y < tileHeight; y++) {
     for (let x = 0; x < tileWidth; x++) {

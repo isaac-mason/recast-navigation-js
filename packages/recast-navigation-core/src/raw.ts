@@ -42,6 +42,14 @@ const arrays = [
   'FloatArray',
 ] as const satisfies readonly ModuleKey[];
 
+const arrayAliases = {
+  VertsArray: 'FloatArray',
+  TrisArray: 'IntArray',
+  TriAreasArray: 'UnsignedCharArray',
+  ChunkIdsArray: 'IntArray',
+  TileCacheData: 'UnsignedCharArray',
+} satisfies Record<string, (typeof arrays)[number]>;
+
 type RawApi = Pretty<
   {
     Module: typeof RawModule;
@@ -53,9 +61,15 @@ type RawApi = Pretty<
   }
 >;
 
-type ArraysApi = Pretty<{
+type Arrays = {
   [K in (typeof arrays)[number]]: (typeof RawModule)[K];
-}>;
+};
+
+type ArrayAliases = {
+  [K in keyof typeof arrayAliases]: (typeof RawModule)[(typeof arrayAliases)[K]];
+};
+
+type ArraysApi = Pretty<Arrays & ArrayAliases>;
 
 export const Arrays = {} as ArraysApi;
 
@@ -87,5 +101,10 @@ export const init = async () => {
 
   for (const array of arrays) {
     Arrays[array] = Raw.Module[array];
+  }
+
+  for (const [arrayAlias, target] of Object.entries(arrayAliases)) {
+    Arrays[arrayAlias as keyof ArrayAliases] =
+      Raw.Module[target as keyof Arrays];
   }
 };

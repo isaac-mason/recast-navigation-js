@@ -129,7 +129,7 @@ export const generateTileCache = (
 ): TileCacheGeneratorResult => {
   const buildContext = new RecastBuildContext();
 
-  let intermediates: TileCacheGeneratorIntermediates = {
+  const intermediates: TileCacheGeneratorIntermediates = {
     type: 'tilecache',
     buildContext,
     chunkyTriMesh: undefined,
@@ -179,12 +179,12 @@ export const generateTileCache = (
 
   const verts = positions as number[];
   const nVerts = indices.length;
-  const vertsArray = new Arrays.FloatArray();
+  const vertsArray = new Arrays.VertsArray();
   vertsArray.copy(verts, verts.length);
 
   const tris = indices as number[];
   const nTris = indices.length / 3;
-  const trisArray = new Arrays.IntArray();
+  const trisArray = new Arrays.TrisArray();
   trisArray.copy(tris, tris.length);
 
   const { bbMin, bbMax } = getBoundingBox(positions, indices);
@@ -349,7 +349,7 @@ export const generateTileCache = (
 
     // TODO: Make grow when returning too many items.
     const maxChunkIds = 512;
-    const chunkIdsArray = new Arrays.IntArray();
+    const chunkIdsArray = new Arrays.ChunkIdsArray();
     chunkIdsArray.resize(maxChunkIds);
 
     const nChunksOverlapping = chunkyTriMesh.getChunksOverlappingRect(
@@ -370,7 +370,7 @@ export const generateTileCache = (
 
       const nodeTrisArray = chunkyTriMesh.getNodeTris(nodeId);
 
-      const triAreasArray = new Arrays.UnsignedCharArray();
+      const triAreasArray = new Arrays.TriAreasArray();
       triAreasArray.resize(nNodeTris);
 
       // Find triangles which are walkable based on their slope and rasterize them.
@@ -474,7 +474,7 @@ export const generateTileCache = (
     const tiles: R.UnsignedCharArray[] = [];
 
     for (let i = 0; i < heightfieldLayerSet.nlayers(); i++) {
-      const tile = new Arrays.UnsignedCharArray();
+      const tile = new Arrays.TileCacheData();
       const heightfieldLayer = heightfieldLayerSet.layers(i);
 
       // Store header
