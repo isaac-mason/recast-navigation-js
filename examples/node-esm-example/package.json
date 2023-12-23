@@ -11,7 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@types/three": "^0.159.0",
-    "recast-navigation": "0.16.0",
+    "recast-navigation": "0.16.1",
     "three": "^0.159.0"
   }
 }
