@@ -8,6 +8,7 @@ export const exportNavMesh = (
 ): Uint8Array => {
   const navMeshExport = Raw.NavMeshExporter.exportNavMesh(
     navMesh.raw,
+    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
     tileCache?.raw!
   );
 

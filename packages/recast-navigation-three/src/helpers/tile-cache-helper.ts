@@ -46,7 +46,7 @@ export class TileCacheHelper extends Object3D {
     const unseen = new Set(this.obstacleMeshes.keys());
 
     for (const [, obstacle] of this.tileCache.obstacles) {
-      let obstacleMesh = this.obstacleMeshes.get(obstacle);
+      const obstacleMesh = this.obstacleMeshes.get(obstacle);
 
       unseen.delete(obstacle);
 

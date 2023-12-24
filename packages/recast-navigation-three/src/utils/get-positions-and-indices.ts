@@ -16,7 +16,7 @@ export const getPositionsAndIndices = (
     }
 
     let meshToMerge = mesh;
-    let index: ArrayLike<number> | undefined = mesh.geometry.getIndex()?.array;
+    const index: ArrayLike<number> | undefined = mesh.geometry.getIndex()?.array;
 
     if (!index) {
       meshToMerge = meshToMerge.clone();

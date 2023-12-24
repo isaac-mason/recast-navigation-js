@@ -34,6 +34,7 @@ export const importNavMesh = (
 
   const result = Raw.NavMeshImporter.importNavMesh(
     buf,
+    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
     tileCacheMeshProcess?.raw!
   );
 
