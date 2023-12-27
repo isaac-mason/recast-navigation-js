@@ -5081,7 +5081,7 @@ __metadata:
     "@rollup/plugin-node-resolve": "npm:^15.0.1"
     "@rollup/plugin-terser": "npm:^0.4.3"
     "@rollup/plugin-typescript": "npm:^11.1.5"
-    "@types/three": "npm:^0.159.0"
+    "@types/three": "npm:^0.160.0"
     babel-loader: "npm:^9.1.3"
     eslint: "npm:^8.56.0"
     prettier: "npm:^3.1.0"
@@ -5123,13 +5123,13 @@ __metadata:
     "@rollup/plugin-node-resolve": "npm:^15.0.1"
     "@rollup/plugin-terser": "npm:^0.4.3"
     "@rollup/plugin-typescript": "npm:^11.1.5"
-    "@types/three": "npm:^0.159.0"
+    "@types/three": "npm:^0.160.0"
     eslint: "npm:^8.56.0"
     prettier: "npm:^3.1.0"
     rollup: "npm:^4.6.0"
     rollup-plugin-copy: "npm:^3.4.0"
     rollup-plugin-filesize: "npm:^10.0.0"
-    three: "npm:^0.159.0"
+    three: "npm:^0.160.0"
     typescript: "npm:^5.3.2"
   peerDependencies:
     "@types/three": 0.x.x
@@ -7171,15 +7171,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:^0.159.0":
-  version: 0.159.0
-  resolution: "@types/three@npm:0.159.0"
+"@types/three@npm:^0.160.0":
+  version: 0.160.0
+  resolution: "@types/three@npm:0.160.0"
   dependencies:
     "@types/stats.js": "npm:*"
     "@types/webxr": "npm:*"
     fflate: "npm:~0.6.10"
     meshoptimizer: "npm:~0.18.1"
-  checksum: a166eee8be977645812276200da18877594fde37793499cdc8d47612fb9c2574218cd0adc603f7104189e1aab74cc0308357ef07f67c2f74a1c0c85ddbe589b0
+  checksum: cb65496c7592988d6d1e0df563e42435c60fd113136ef362edf9861c384c957bb376acd1bea163cf9ae81caea116a5c297e334f9a66e7ffe25b413742bf003c3
   languageName: node
   linkType: hard
 
@@ -16735,7 +16735,7 @@ __metadata:
     "@react-three/fiber": "npm:^8.15.12"
     "@types/react": "npm:^18.2.11"
     "@types/react-dom": "npm:^18.2.8"
-    "@types/three": "npm:^0.159.0"
+    "@types/three": "npm:^0.160.0"
     "@vitejs/plugin-react": "npm:^4.2.0"
     leva: "npm:^0.9.35"
     react: "npm:^18.2.0"
@@ -16744,7 +16744,7 @@ __metadata:
     recast-navigation: "workspace:*"
     styled-components: "npm:^6.1.0"
     suspend-react: "npm:^0.1.3"
-    three: "npm:^0.159.0"
+    three: "npm:^0.160.0"
     tunnel-rat: "npm:^0.1.2"
     typescript: "npm:^5.3.2"
     vite: "npm:^5.0.10"
@@ -16799,9 +16799,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "node-cjs-example@workspace:examples/node-cjs-example"
   dependencies:
-    "@types/three": "npm:^0.159.0"
+    "@types/three": "npm:^0.160.0"
     recast-navigation: "npm:0.16.1"
-    three: "npm:^0.159.0"
+    three: "npm:^0.160.0"
   languageName: unknown
   linkType: soft
 
@@ -16818,9 +16818,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "node-esm-example@workspace:examples/node-esm-example"
   dependencies:
-    "@types/three": "npm:^0.159.0"
+    "@types/three": "npm:^0.160.0"
     recast-navigation: "npm:0.16.1"
-    three: "npm:^0.159.0"
+    three: "npm:^0.160.0"
   languageName: unknown
   linkType: soft
 
@@ -17556,7 +17556,7 @@ __metadata:
     parcel: "npm:^2.10.2"
     react: "npm:18.2.0"
     recast-navigation: "workspace:^"
-    three: "npm:^0.159.0"
+    three: "npm:^0.160.0"
   languageName: unknown
   linkType: soft
 
@@ -19388,7 +19388,7 @@ __metadata:
     react-scripts: "npm:5.0.1"
     recast-navigation: "npm:0.16.1"
     suspend-react: "npm:^0.1.3"
-    three: "npm:^0.159.0"
+    three: "npm:^0.160.0"
   languageName: unknown
   linkType: soft
 
@@ -19634,7 +19634,7 @@ __metadata:
     "@storybook/react-vite": "npm:^7.5.3"
     "@types/react": "npm:^18.2.11"
     "@types/react-dom": "npm:^18.2.8"
-    "@types/three": "npm:^0.159.0"
+    "@types/three": "npm:^0.160.0"
     eslint: "npm:^8.56.0"
     leva: "npm:^0.9.35"
     react: "npm:^18.2.0"
@@ -19644,7 +19644,7 @@ __metadata:
     rollup-plugin-filesize: "npm:^10.0.0"
     storybook: "npm:^7.5.3"
     suspend-react: "npm:^0.1.3"
-    three: "npm:^0.159.0"
+    three: "npm:^0.160.0"
     three-pathfinding: "npm:^1.2.0"
     typescript: "npm:^5.3.2"
     vitest: "npm:^1.1.0"
@@ -21703,10 +21703,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"three@npm:^0.159.0":
-  version: 0.159.0
-  resolution: "three@npm:0.159.0"
-  checksum: ef1d94f8c1b66d35fa4e3836f40cbd85d23a598e40d9e9e2af2f31c7ad790422dd843ff7a9baab28df0494cbb7bc46e6016499ce2de2665c49099c7753412c34
+"three@npm:^0.160.0":
+  version: 0.160.0
+  resolution: "three@npm:0.160.0"
+  checksum: 2053f5f89fa051a2baf02b0ff3b3724528f1b1b9a289c803c1d80df2cb9caf3224b1581327dc18b2f261f81d280de87d22886d1eccaa2ba46fdc3b8eb6e15326
   languageName: node
   linkType: hard
 
@@ -22713,13 +22713,13 @@ __metadata:
     "@react-three/fiber": "npm:^8.15.12"
     "@types/react": "npm:^18.2.11"
     "@types/react-dom": "npm:^18.2.8"
-    "@types/three": "npm:^0.159.0"
+    "@types/three": "npm:^0.160.0"
     "@vitejs/plugin-react": "npm:^4.2.0"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     recast-navigation: "npm:0.16.1"
     suspend-react: "npm:^0.1.3"
-    three: "npm:^0.159.0"
+    three: "npm:^0.160.0"
     typescript: "npm:^5.3.2"
     vite: "npm:^5.0.10"
   languageName: unknown
