@@ -16748,7 +16748,7 @@ __metadata:
     tunnel-rat: "npm:^0.1.2"
     typescript: "npm:^5.3.2"
     vite: "npm:^5.0.10"
-    vite-plugin-html: "npm:^3.2.0"
+    vite-plugin-html: "npm:^3.2.1"
     zustand: "npm:^4.3.8"
   languageName: unknown
   linkType: soft
@@ -22740,9 +22740,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-plugin-html@npm:^3.2.0":
-  version: 3.2.0
-  resolution: "vite-plugin-html@npm:3.2.0"
+"vite-plugin-html@npm:^3.2.1":
+  version: 3.2.1
+  resolution: "vite-plugin-html@npm:3.2.1"
   dependencies:
     "@rollup/pluginutils": "npm:^4.2.0"
     colorette: "npm:^2.0.16"
@@ -22758,7 +22758,7 @@ __metadata:
     pathe: "npm:^0.2.0"
   peerDependencies:
     vite: ">=2.0.0"
-  checksum: 4cdd595d0926d600d76ba89c3224eb2b0f3dadf8e40103260b5a24fce4f610e1bab49f443c6fd739b69ea88b3d1d76bc178083354350c6af6b3bb70b0dafb0ff
+  checksum: c55d10c0da2795f9bc8f6e7bb149d66e1236125a5004becf0c79da278d96cf7b2c1746cbe629c4c71795285eb955e68b3f56bed378abffe0973070de687502fc
   languageName: node
   linkType: hard
 
