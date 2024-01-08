@@ -73,7 +73,7 @@
   "devDependencies": {
     "@babel/core": "^7.23.7",
     "@isaac-mason/eslint-config-typescript": "^0.0.3",
-    "@mdx-js/react": "^2.3.0",
+    "@mdx-js/react": "^3.0.0",
     "@pmndrs/assets": "^1.6.0",
     "@react-three/csg": "^3.1.0",
     "@react-three/drei": "^9.92.5",
