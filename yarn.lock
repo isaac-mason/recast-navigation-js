@@ -10724,7 +10724,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "docs@workspace:apps/docs"
   dependencies:
-    typedoc: "npm:^0.25.5"
+    typedoc: "npm:^0.25.7"
     typescript: "npm:^5.3.2"
   languageName: unknown
   linkType: soft
@@ -22368,9 +22368,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc@npm:^0.25.5":
-  version: 0.25.5
-  resolution: "typedoc@npm:0.25.5"
+"typedoc@npm:^0.25.7":
+  version: 0.25.7
+  resolution: "typedoc@npm:0.25.7"
   dependencies:
     lunr: "npm:^2.3.9"
     marked: "npm:^4.3.0"
@@ -22380,7 +22380,7 @@ __metadata:
     typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x || 5.0.x || 5.1.x || 5.2.x || 5.3.x
   bin:
     typedoc: bin/typedoc
-  checksum: cae408d05601d9ecbd6ef1518e3f2fd285c4b9447767be36633a3b4c577fac74acb2d9ecb24ae945f46dcb6b42cce14e3084f67d93652680b74ec07a13dece45
+  checksum: fa88c808e9912ef248cc45b4defea49522e93b97b4bb67423670257a4507ccabdc25c1518a39f6058a728d08675ee0947de55944419fa4bb9f870d84ba4db764
   languageName: node
   linkType: hard
 
