@@ -68,7 +68,8 @@
   "dependencies": {
     "@recast-navigation/core": "0.16.1",
     "@recast-navigation/generators": "0.16.1",
-    "@recast-navigation/three": "0.16.1"
+    "@recast-navigation/three": "0.16.1",
+    "@recast-navigation/wasm": "0.16.1"
   },
   "devDependencies": {
     "@babel/core": "^7.23.7",

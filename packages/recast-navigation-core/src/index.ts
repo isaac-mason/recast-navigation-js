@@ -7,6 +7,3 @@ export * from './recast';
 export * from './serdes';
 export * from './tile-cache';
 export * from './utils';
-
-import Wasm from './raw-module';
-export { Wasm };

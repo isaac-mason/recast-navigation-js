@@ -1,5 +1,5 @@
+import type Recast from '@recast-navigation/wasm';
 import { Raw } from './raw';
-import type R from './raw-module';
 import { RecastPolyMesh, RecastPolyMeshDetail } from './recast';
 import { Vector3, Vector3Tuple, array, vec3 } from './utils';
 
@@ -44,9 +44,9 @@ export const dtStatusToReadableString = (status: number): string => {
 };
 
 export class DetourPolyDetail {
-  raw: R.dtPolyDetail;
+  raw: Recast.dtPolyDetail;
 
-  constructor(raw: R.dtPolyDetail) {
+  constructor(raw: Recast.dtPolyDetail) {
     this.raw = raw;
   }
 
@@ -68,9 +68,9 @@ export class DetourPolyDetail {
 }
 
 export class DetourLink {
-  raw: R.dtLink;
+  raw: Recast.dtLink;
 
-  constructor(raw: R.dtLink) {
+  constructor(raw: Recast.dtLink) {
     this.raw = raw;
   }
 
@@ -100,9 +100,9 @@ export class DetourLink {
 }
 
 export class DetourBVNode {
-  raw: R.dtBVNode;
+  raw: Recast.dtBVNode;
 
-  constructor(raw: R.dtBVNode) {
+  constructor(raw: Recast.dtBVNode) {
     this.raw = raw;
   }
 
@@ -120,9 +120,9 @@ export class DetourBVNode {
 }
 
 export class DetourOffMeshConnection {
-  raw: R.dtOffMeshConnection;
+  raw: Recast.dtOffMeshConnection;
 
-  constructor(raw: R.dtOffMeshConnection) {
+  constructor(raw: Recast.dtOffMeshConnection) {
     this.raw = raw;
   }
 
@@ -152,9 +152,9 @@ export class DetourOffMeshConnection {
 }
 
 export class DetourMeshHeader {
-  raw: R.dtMeshHeader;
+  raw: Recast.dtMeshHeader;
 
-  constructor(raw: R.dtMeshHeader) {
+  constructor(raw: Recast.dtMeshHeader) {
     this.raw = raw;
   }
 
@@ -244,9 +244,9 @@ export class DetourMeshHeader {
 }
 
 export class DetourPoly {
-  raw: R.dtPoly;
+  raw: Recast.dtPoly;
 
-  constructor(raw: R.dtPoly) {
+  constructor(raw: Recast.dtPoly) {
     this.raw = raw;
   }
 
@@ -280,9 +280,9 @@ export class DetourPoly {
 }
 
 export class DetourMeshTile {
-  raw: R.dtMeshTile;
+  raw: Recast.dtMeshTile;
 
-  constructor(raw: R.dtMeshTile) {
+  constructor(raw: Recast.dtMeshTile) {
     this.raw = raw;
   }
 
@@ -370,9 +370,9 @@ export type OffMeshConnectionParams = {
 };
 
 export class NavMeshCreateParams {
-  raw: R.dtNavMeshCreateParams;
+  raw: Recast.dtNavMeshCreateParams;
 
-  constructor(raw?: R.dtNavMeshCreateParams) {
+  constructor(raw?: Recast.dtNavMeshCreateParams) {
     this.raw = raw ?? new Raw.Module.dtNavMeshCreateParams();
   }
 

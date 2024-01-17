@@ -19828,6 +19828,7 @@ __metadata:
     "@recast-navigation/core": "npm:0.16.1"
     "@recast-navigation/generators": "npm:0.16.1"
     "@recast-navigation/three": "npm:0.16.1"
+    "@recast-navigation/wasm": "npm:0.16.1"
     "@rollup/plugin-commonjs": "npm:^25.0.7"
     "@rollup/plugin-node-resolve": "npm:^15.0.1"
     "@rollup/plugin-terser": "npm:^0.4.3"

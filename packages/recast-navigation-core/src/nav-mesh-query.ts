@@ -1,10 +1,10 @@
+import type Recast from '@recast-navigation/wasm';
 import { NavMesh } from './nav-mesh';
 import { Arrays, Raw } from './raw';
-import type R from './raw-module';
-import { array, vec3, Vector3 } from './utils';
+import { Vector3, array, vec3 } from './utils';
 
 export class QueryFilter {
-  raw: R.dtQueryFilter;
+  raw: Recast.dtQueryFilter;
 
   get includeFlags(): number {
     return this.raw.getIncludeFlags();
@@ -22,7 +22,7 @@ export class QueryFilter {
     this.raw.setExcludeFlags(flags);
   }
 
-  constructor(raw?: R.dtQueryFilter) {
+  constructor(raw?: Recast.dtQueryFilter) {
     this.raw = raw ?? new Raw.Module.dtQueryFilter();
   }
 
@@ -45,13 +45,13 @@ export type NavMeshQueryParams = {
 };
 
 export class NavMeshQuery {
-  raw: R.NavMeshQuery;
+  raw: Recast.NavMeshQuery;
 
   defaultFilter: QueryFilter;
 
   defaultQueryHalfExtents = { x: 1, y: 1, z: 1 };
 
-  constructor(value: R.NavMeshQuery | NavMeshQueryParams) {
+  constructor(value: Recast.NavMeshQuery | NavMeshQueryParams) {
     if (value instanceof Raw.Module.NavMeshQuery) {
       this.raw = value;
     } else {

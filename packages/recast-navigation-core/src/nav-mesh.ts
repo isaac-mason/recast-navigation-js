@@ -1,12 +1,12 @@
+import type Recast from '@recast-navigation/wasm';
 import { DetourMeshTile, DetourOffMeshConnection, DetourPoly } from './detour';
 import { Raw } from './raw';
-import type R from './raw-module';
 import { Vector3, array, vec3 } from './utils';
 
 export class NavMeshGetTilesAtResult {
-  raw: R.NavMeshGetTilesAtResult;
+  raw: Recast.NavMeshGetTilesAtResult;
 
-  constructor(raw: R.NavMeshGetTilesAtResult) {
+  constructor(raw: Recast.NavMeshGetTilesAtResult) {
     this.raw = raw;
   }
 
@@ -20,9 +20,9 @@ export class NavMeshGetTilesAtResult {
 }
 
 export class NavMeshRemoveTileResult {
-  raw: R.NavMeshRemoveTileResult;
+  raw: Recast.NavMeshRemoveTileResult;
 
-  constructor(raw: R.NavMeshRemoveTileResult) {
+  constructor(raw: Recast.NavMeshRemoveTileResult) {
     this.raw = raw;
   }
 
@@ -36,9 +36,9 @@ export class NavMeshRemoveTileResult {
 }
 
 export class NavMeshCalcTileLocResult {
-  raw: R.NavMeshCalcTileLocResult;
+  raw: Recast.NavMeshCalcTileLocResult;
 
-  constructor(raw: R.NavMeshCalcTileLocResult) {
+  constructor(raw: Recast.NavMeshCalcTileLocResult) {
     this.raw = raw;
   }
 
@@ -52,9 +52,9 @@ export class NavMeshCalcTileLocResult {
 }
 
 export class NavMeshGetTileAndPolyByRefResult {
-  raw: R.NavMeshGetTileAndPolyByRefResult;
+  raw: Recast.NavMeshGetTileAndPolyByRefResult;
 
-  constructor(raw: R.NavMeshGetTileAndPolyByRefResult) {
+  constructor(raw: Recast.NavMeshGetTileAndPolyByRefResult) {
     this.raw = raw;
   }
 
@@ -72,9 +72,9 @@ export class NavMeshGetTileAndPolyByRefResult {
 }
 
 export class NavMeshStoreTileStateResult {
-  raw: R.NavMeshStoreTileStateResult;
+  raw: Recast.NavMeshStoreTileStateResult;
 
-  constructor(raw: R.NavMeshStoreTileStateResult) {
+  constructor(raw: Recast.NavMeshStoreTileStateResult) {
     this.raw = raw;
   }
 
@@ -96,7 +96,7 @@ export type NavMeshParamsType = {
 };
 
 export class NavMeshParams {
-  constructor(public raw: R.dtNavMeshParams) {}
+  constructor(public raw: Recast.dtNavMeshParams) {}
 
   static create(params: NavMeshParamsType): NavMeshParams {
     const raw = new Raw.Module.dtNavMeshParams();
@@ -129,9 +129,9 @@ export class NavMeshParams {
 }
 
 export class NavMesh {
-  raw: R.NavMesh;
+  raw: Recast.NavMesh;
 
-  constructor(raw?: R.NavMesh) {
+  constructor(raw?: Recast.NavMesh) {
     this.raw = raw ?? new Raw.Module.NavMesh();
   }
 
@@ -140,7 +140,7 @@ export class NavMesh {
    * @param navMeshData the nav mesh data
    * @returns the status of the operation
    */
-  initSolo(navMeshData: R.UnsignedCharArray): boolean {
+  initSolo(navMeshData: Recast.UnsignedCharArray): boolean {
     return this.raw.initSolo(navMeshData);
   }
 
@@ -160,7 +160,11 @@ export class NavMesh {
    * @param lastRef
    * @returns the status of the operation and the reference of the added tile
    */
-  addTile(navMeshData: R.UnsignedCharArray, flags: number, lastRef: number) {
+  addTile(
+    navMeshData: Recast.UnsignedCharArray,
+    flags: number,
+    lastRef: number
+  ) {
     const tileRef = new Raw.UnsignedIntRef();
 
     const status = this.raw.addTile(navMeshData, flags, lastRef, tileRef);

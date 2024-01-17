@@ -1,7 +1,7 @@
+import type Recast from '@recast-navigation/wasm';
 import type { NavMesh } from './nav-mesh';
 import { NavMeshQuery, QueryFilter } from './nav-mesh-query';
 import { Raw } from './raw';
-import type R from './raw-module';
 import { Vector3, vec3 } from './utils';
 
 const Epsilon = 0.001;
@@ -93,7 +93,7 @@ export const crowdAgentParamsDefaults: CrowdAgentParams = {
 };
 
 export class CrowdAgent implements CrowdAgentParams {
-  raw: R.dtCrowdAgent;
+  raw: Recast.dtCrowdAgent;
 
   get radius(): number {
     return this.raw.params.radius;
@@ -380,7 +380,7 @@ export type CrowdParams = {
 };
 
 export class Crowd {
-  raw: R.dtCrowd;
+  raw: Recast.dtCrowd;
 
   /**
    * The agents in the crowd.

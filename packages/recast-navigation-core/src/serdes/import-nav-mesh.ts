@@ -1,6 +1,6 @@
+import type Recast from '@recast-navigation/wasm';
 import { NavMesh } from '../nav-mesh';
 import { Raw } from '../raw';
-import type R from '../raw-module';
 import { TileCache, TileCacheMeshProcess } from '../tile-cache';
 
 export type NavMeshImporterResult =
@@ -10,8 +10,8 @@ export type NavMeshImporterResult =
   | {
       navMesh: NavMesh;
       tileCache: TileCache;
-      allocator: R.RecastLinearAllocator;
-      compressor: R.RecastFastLZCompressor;
+      allocator: Recast.RecastLinearAllocator;
+      compressor: Recast.RecastFastLZCompressor;
     };
 
 export const importNavMesh = (

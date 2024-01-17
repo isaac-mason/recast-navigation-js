@@ -1,11 +1,9 @@
+import RecastWasm from '@recast-navigation/wasm';
 import { NavMeshQuery, init } from 'recast-navigation';
 import { generateSoloNavMesh } from 'recast-navigation/generators';
-import * as RecastThree from 'recast-navigation/three';
 import { BoxGeometry, Mesh } from 'three';
 
-await init();
-
-console.log(RecastThree);
+await init(RecastWasm);
 
 const groundMesh = new Mesh(new BoxGeometry(5, 0.2, 5));
 

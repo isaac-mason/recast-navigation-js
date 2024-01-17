@@ -8,6 +8,7 @@ import filesize from 'rollup-plugin-filesize';
 export default [
   {
     input: `./src/index.ts`,
+    external: ['@recast-navigation/wasm'],
     output: [
       {
         file: `dist/index.mjs`,

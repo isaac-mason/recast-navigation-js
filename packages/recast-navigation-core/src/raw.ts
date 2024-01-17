@@ -1,7 +1,7 @@
-import RawModule from './raw-module';
+import type Recast from '@recast-navigation/wasm';
 import type { Pretty } from './types';
 
-type ModuleKey = (keyof typeof RawModule)[][number];
+type ModuleKey = (keyof typeof Recast)[][number];
 
 const instances = [
   'Recast',
@@ -52,21 +52,21 @@ const arrayAliases = {
 
 type RawApi = Pretty<
   {
-    Module: typeof RawModule;
+    Module: typeof Recast;
     isNull: (obj: unknown) => boolean;
   } & {
-    [K in (typeof instances)[number]]: InstanceType<(typeof RawModule)[K]>;
+    [K in (typeof instances)[number]]: InstanceType<(typeof Recast)[K]>;
   } & {
-    [K in (typeof classes)[number]]: (typeof RawModule)[K];
+    [K in (typeof classes)[number]]: (typeof Recast)[K];
   }
 >;
 
 type Arrays = {
-  [K in (typeof arrays)[number]]: (typeof RawModule)[K];
+  [K in (typeof arrays)[number]]: (typeof Recast)[K];
 };
 
 type ArrayAliases = {
-  [K in keyof typeof arrayAliases]: (typeof RawModule)[(typeof arrayAliases)[K]];
+  [K in keyof typeof arrayAliases]: (typeof Recast)[(typeof arrayAliases)[K]];
 };
 
 type ArraysApi = Pretty<Arrays & ArrayAliases>;
@@ -84,12 +84,17 @@ export const Raw = {
   },
 } satisfies Partial<RawApi> as RawApi;
 
-export const init = async () => {
+export const init = async (recastNavigationImpl?: typeof Recast) => {
   if (Raw.Module !== undefined) {
     return;
   }
 
-  Raw.Module = await RawModule();
+  if (recastNavigationImpl !== undefined) {
+    Raw.Module = await recastNavigationImpl();
+  } else {
+    const recastModule = await import('@recast-navigation/wasm');
+    Raw.Module = await recastModule.default();
+  }
 
   for (const instance of instances) {
     (Raw as any)[instance] = new Raw.Module[instance]();

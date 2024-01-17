@@ -1,9 +1,10 @@
 const THREE = require('three');
 const Recast = require('recast-navigation');
+const RecastWasm = require('@recast-navigation/wasm');
 const RecastGenerators = require('recast-navigation/generators');
 const RecastThree = require('recast-navigation/three');
 
-Recast.init().then(() => {
+Recast.init(RecastWasm).then(() => {
   console.log(RecastThree);
 
   const groundMesh = new THREE.Mesh(new THREE.BoxGeometry(5, 0.2, 5));
