@@ -1,5 +1,20 @@
 import styled, { keyframes } from 'styled-components';
-import { Centered } from './centered';
+
+const Centered = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  box-sizing: border-box;
+  width: 100%;
+  height: 100dvh;
+  padding: 2em;
+`;
 
 const SpinnerKeyframes = keyframes`
 from {
@@ -23,4 +38,4 @@ export const LoadingSpinner = () => (
   <Centered>
     <Spinner />
   </Centered>
-)
+);
