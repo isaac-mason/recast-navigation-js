@@ -100,11 +100,11 @@ const Footer = () => {
 };
 
 export const UploadPage = () => {
-  const { model, setEditorState } = useEditorState();
+  const { setEditorState } = useEditorState();
   const navigate = useNavigate();
 
   const selectExample = useCallback(async () => {
-    if (model) return;
+    gtag('event', 'select_example');
 
     setEditorState({
       loading: true,
@@ -147,6 +147,10 @@ export const UploadPage = () => {
       });
 
       navigate(RouterPaths.editor);
+
+      gtag('event', 'successful_upload', {
+        model_file_extension: modelFile.name.split('.').pop(),
+      });
     } catch (e) {
       const message = (e as { message: string })?.message;
 

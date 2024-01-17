@@ -99,6 +99,11 @@ const Editor = () => {
 
       console.log('nav mesh generation result', result);
 
+      gtag('event', 'generate_nav_mesh', {
+        success: result.success,
+        ...navMeshConfig,
+      });
+
       if (!result.success) {
         setEditorState({
           error: result.error,
@@ -117,6 +122,8 @@ const Editor = () => {
           'Something went wrong generating the navmesh' +
           (message ? ` - ${message}` : ''),
       });
+
+      gtag('event', 'generate_nav_mesh_error');
     } finally {
       setEditorState({
         loading: false,
@@ -131,7 +138,9 @@ const Editor = () => {
 
     download(JSON.stringify(gltfJson), 'application/json', 'navmesh.gltf');
 
-    gtag({ event: 'export_as_gltf' });
+    gtag('event', 'export_as_gltf', {
+      ...navMeshConfig,
+    });
   }, [navMesh]);
 
   const exportAsRecastNavMesh = useCallback(async () => {
@@ -141,7 +150,9 @@ const Editor = () => {
 
     download(navMeshExport, 'application/octet-stream', 'navmesh.bin');
 
-    gtag({ event: 'export_as_recast_nav_mesh' });
+    gtag('event', 'export_as_recast_nav_mesh', {
+      ...navMeshConfig,
+    });
   }, [navMesh]);
 
   const onNavMeshPointerDown = useCallback(
