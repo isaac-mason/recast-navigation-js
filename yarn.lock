@@ -5032,13 +5032,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-three/csg@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "@react-three/csg@npm:3.1.0"
+"@react-three/csg@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "@react-three/csg@npm:3.2.0"
   dependencies:
-    three-bvh-csg: "npm:^0.0.10"
-    three-mesh-bvh: "npm:^0.6.7"
-  checksum: 61d936be2db3b177434040ee2a0363f0d76e2a4e2ead1c401bbae5fc001c61a2d86273e6062d2edafe29bfefbf5aa34ed60e2b4f5ab63fa0ef66f949f13dddbb
+    three-bvh-csg: "npm:^0.0.16"
+    three-mesh-bvh: "npm:^0.6.8"
+  checksum: 05030ca4952c6fc4b0a728f91e88a1f92ce85b42d3d49283c4402fff9a1dac4e6654d0eeeaf4d581e801f64dac818241db4b3caa486109948a265c25f6edf319
   languageName: node
   linkType: hard
 
@@ -19822,7 +19822,7 @@ __metadata:
     "@isaac-mason/eslint-config-typescript": "npm:^0.0.3"
     "@mdx-js/react": "npm:^2.3.0"
     "@pmndrs/assets": "npm:^1.6.0"
-    "@react-three/csg": "npm:^3.1.0"
+    "@react-three/csg": "npm:^3.2.0"
     "@react-three/drei": "npm:^9.92.5"
     "@react-three/fiber": "npm:^8.15.12"
     "@recast-navigation/core": "npm:0.16.1"
@@ -21919,17 +21919,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"three-bvh-csg@npm:^0.0.10":
-  version: 0.0.10
-  resolution: "three-bvh-csg@npm:0.0.10"
+"three-bvh-csg@npm:^0.0.16":
+  version: 0.0.16
+  resolution: "three-bvh-csg@npm:0.0.16"
   peerDependencies:
     three: ">=0.151.0"
-    three-mesh-bvh: ^0.6.5
-  checksum: 2000952db79bc1fdb0165bbec6fc12abe384890174a70c47295f2dd261c8b041cc7d1d4fcd8487867d930b49c3ba8252512a79f7c7d66bf516a77e77350e98d8
+    three-mesh-bvh: ">=0.6.6"
+  checksum: 6b9225d0edff5a0f755818d752e8f5f7bd9c06339015eb1156601c954c87991d677eeba182d59e5091861ac5b06c9611ff20caae1211d51e82d17feeeebdb8ab
   languageName: node
   linkType: hard
 
-"three-mesh-bvh@npm:^0.6.7":
+"three-mesh-bvh@npm:^0.6.7, three-mesh-bvh@npm:^0.6.8":
   version: 0.6.8
   resolution: "three-mesh-bvh@npm:0.6.8"
   peerDependencies:
