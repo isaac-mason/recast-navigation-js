@@ -5032,16 +5032,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-three/csg@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "@react-three/csg@npm:3.1.0"
-  dependencies:
-    three-bvh-csg: "npm:^0.0.10"
-    three-mesh-bvh: "npm:^0.6.7"
-  checksum: 61d936be2db3b177434040ee2a0363f0d76e2a4e2ead1c401bbae5fc001c61a2d86273e6062d2edafe29bfefbf5aa34ed60e2b4f5ab63fa0ef66f949f13dddbb
-  languageName: node
-  linkType: hard
-
 "@react-three/drei@npm:^9.92.5":
   version: 9.92.6
   resolution: "@react-three/drei@npm:9.92.6"
@@ -19822,7 +19812,6 @@ __metadata:
     "@isaac-mason/eslint-config-typescript": "npm:^0.0.3"
     "@mdx-js/react": "npm:^2.3.0"
     "@pmndrs/assets": "npm:^1.6.0"
-    "@react-three/csg": "npm:^3.1.0"
     "@react-three/drei": "npm:^9.92.5"
     "@react-three/fiber": "npm:^8.15.12"
     "@recast-navigation/core": "npm:0.16.1"
@@ -21916,16 +21905,6 @@ __metadata:
   dependencies:
     any-promise: "npm:^1.0.0"
   checksum: 486e1283a867440a904e36741ff1a177faa827cf94d69506f7e3ae4187b9afdf9ec368b3d8da225c192bfe2eb943f3f0080594156bf39f21b57cd1411e2e7f6d
-  languageName: node
-  linkType: hard
-
-"three-bvh-csg@npm:^0.0.10":
-  version: 0.0.10
-  resolution: "three-bvh-csg@npm:0.0.10"
-  peerDependencies:
-    three: ">=0.151.0"
-    three-mesh-bvh: ^0.6.5
-  checksum: 2000952db79bc1fdb0165bbec6fc12abe384890174a70c47295f2dd261c8b041cc7d1d4fcd8487867d930b49c3ba8252512a79f7c7d66bf516a77e77350e98d8
   languageName: node
   linkType: hard
 
