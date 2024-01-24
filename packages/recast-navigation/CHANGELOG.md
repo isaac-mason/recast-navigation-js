@@ -1,5 +1,13 @@
 # recast-navigation
 
+## 0.16.2
+
+### Patch Changes
+
+- @recast-navigation/core@0.16.2
+- @recast-navigation/generators@0.16.2
+- @recast-navigation/three@0.16.2
+
 ## 0.16.1
 
 ### Patch Changes
