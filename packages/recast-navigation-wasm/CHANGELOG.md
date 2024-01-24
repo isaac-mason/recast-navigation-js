@@ -1,5 +1,11 @@
 # @recast-navigation/wasm
 
+## 0.16.2
+
+### Patch Changes
+
+- 1abdcc8: chore(deps): bump webidl-dts-gen from 1.7.0 to 1.8.0
+
 ## 0.16.1
 
 ## 0.16.0
