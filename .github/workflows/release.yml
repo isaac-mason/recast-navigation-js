@@ -99,8 +99,8 @@ jobs:
         id: changesets
         uses: changesets/action@v1
         with:
-          version: yarn version
-          publish: yarn publish
+          version: yarn run version
+          publish: yarn run publish
           commit: 'chore(changeset): release packages'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
