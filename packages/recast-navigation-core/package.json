@@ -29,7 +29,7 @@
     "@recast-navigation/wasm": "0.16.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.23.7",
+    "@babel/core": "^7.23.9",
     "@isaac-mason/eslint-config-typescript": "^0.0.3",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.0.1",
