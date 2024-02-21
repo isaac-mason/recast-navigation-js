@@ -1,5 +1,13 @@
 # @recast-navigation/three
 
+## 0.16.3
+
+### Patch Changes
+
+- 8759c1b: fix: getPositionsAndIndices not correctly merging index 0 of mesh geometries
+  - @recast-navigation/core@0.16.3
+  - @recast-navigation/generators@0.16.3
+
 ## 0.16.2
 
 ### Patch Changes
