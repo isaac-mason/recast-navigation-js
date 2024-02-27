@@ -13,9 +13,9 @@ import { threeToTileCache } from '@recast-navigation/three';
 import { useControls } from 'leva';
 import React, { useEffect, useRef, useState } from 'react';
 import { Group, Mesh, MeshBasicMaterial, Object3D, Vector3 } from 'three';
-import { Debug } from '../common/debug';
-import { decorators } from '../decorators';
-import { parameters } from '../parameters';
+import { Debug } from '../../common/debug';
+import { decorators } from '../../decorators';
+import { parameters } from '../../parameters';
 
 export default {
   title: 'TileCache / Obstacles',
@@ -33,7 +33,7 @@ const obstaclesMaterial = new MeshBasicMaterial({
   wireframe: true,
 });
 
-export const Obstacles = () => {
+export const CrowdExample = () => {
   const [group, setGroup] = useState<Group | null>(null);
 
   const [navMesh, setNavMesh] = useState<NavMesh | undefined>();
