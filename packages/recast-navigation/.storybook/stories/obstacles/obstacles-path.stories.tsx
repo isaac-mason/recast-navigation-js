@@ -1,5 +1,4 @@
 import { Line, OrbitControls, PivotControls } from '@react-three/drei';
-import { useFrame } from '@react-three/fiber';
 import {
   BoxObstacle,
   NavMesh,
@@ -68,12 +67,6 @@ export const PathExample = () => {
 
     if (!success) return;
 
-    let upToDate = false;
-    while (!upToDate) {
-      const result = tileCache.update(navMesh);
-      upToDate = result.upToDate;
-    }
-
     const navMeshQuery = new NavMeshQuery({ navMesh });
 
     setNavMesh(navMesh);
@@ -89,7 +82,7 @@ export const PathExample = () => {
     };
   }, [group]);
 
-  useFrame(() => {
+  const update = () => {
     if (!navMesh || !tileCache || !navMeshQuery) return;
 
     if (boxObstacle.current) {
@@ -122,7 +115,11 @@ export const PathExample = () => {
     );
 
     setPath(path ? path.map((v) => [v.x, v.y, v.z]) : undefined);
-  });
+  };
+
+  useEffect(() => {
+    update();
+  }, [navMesh]);
 
   return (
     <>
@@ -139,6 +136,7 @@ export const PathExample = () => {
         offset={[-2, 1, 1]}
         disableRotations
         activeAxes={[true, false, true]}
+        onDrag={update}
       >
         <object3D ref={boxObstacleTarget} position={[-2, 1, 1]} />
       </PivotControls>
