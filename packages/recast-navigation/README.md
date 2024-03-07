@@ -27,11 +27,34 @@ This library provides high level APIs that make it easy to get started creating 
 
 ## Installation
 
+This package ships as both ECMAScript modules and CJS, and is compatible with Node.js and browser environments.
+
+### NPM
+
 ```sh
 npm install recast-navigation
 ```
 
-This package ships as both ECMAScript modules and CJS, and is compatible with Node.js and browser environments.
+### Unpkg
+
+```html
+<script type="importmap">
+  {
+    "imports": {
+      "@recast-navigation/core": "https://unpkg.com/@recast-navigation/core@0.17.0/dist/index.mjs",
+      "@recast-navigation/generators": "https://unpkg.com/@recast-navigation/generators@0.17.0/dist/index.mjs",
+      "@recast-navigation/three": "https://unpkg.com/@recast-navigation/three@0.17.0/dist/index.mjs"
+    }
+  }
+</script>
+<script type="module">
+  import { init } from '@recast-navigation/core';
+
+  await init();
+</script>
+```
+
+### Usage with bundlers
 
 If you are using Vite, you may need to opt `recast-navigation` out of pre-bundling:
 
@@ -50,6 +73,7 @@ API Documentation can be found at [https://docs.recast-navigation-js.isaacmason.
 <!-- REMOVE-FROM-DOCS-END -->
 
 To get the most out of this library, you should have some familiarity with the Recast and Detour libraries. These are some good resources to get started:
+
 - https://recastnav.com/md_Docs__1_Introducation.html
 - https://www.unrealdoc.com/p/navigation-mesh
 
