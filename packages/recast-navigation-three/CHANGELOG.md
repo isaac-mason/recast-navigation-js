@@ -1,5 +1,16 @@
 # @recast-navigation/three
 
+## 0.17.0
+
+### Minor Changes
+
+- 0497005: feat: update to latest recastnavigation version
+
+### Patch Changes
+
+- @recast-navigation/core@0.17.0
+- @recast-navigation/generators@0.17.0
+
 ## 0.16.4
 
 ### Patch Changes
