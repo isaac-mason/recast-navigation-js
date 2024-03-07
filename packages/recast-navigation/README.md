@@ -49,7 +49,9 @@ API Documentation can be found at [https://docs.recast-navigation-js.isaacmason.
 
 <!-- REMOVE-FROM-DOCS-END -->
 
-To get the most out of this library, you should be familiar with the Recast and Detour libraries. This article provides a good overview for the uninitiated: https://www.unrealdoc.com/p/navigation-mesh
+To get the most out of this library, you should have some familiarity with the Recast and Detour libraries. These are some good resources to get started:
+- https://recastnav.com/md_Docs__1_Introducation.html
+- https://www.unrealdoc.com/p/navigation-mesh
 
 Documentation for the Recast and Detour c++ libraries can be found here:
 
