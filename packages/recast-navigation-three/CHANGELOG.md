@@ -1,5 +1,13 @@
 # @recast-navigation/three
 
+## 0.16.4
+
+### Patch Changes
+
+- 97dc7e6: feat(three): use depthWrite false for default NavMeshHelper material
+  - @recast-navigation/core@0.16.4
+  - @recast-navigation/generators@0.16.4
+
 ## 0.16.3
 
 ### Patch Changes
