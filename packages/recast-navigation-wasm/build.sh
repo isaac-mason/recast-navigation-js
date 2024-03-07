@@ -6,7 +6,7 @@ mkdir -p dist
 
 # clone recast navigation library
 [ ! -d "recastnavigation" ] && git clone https://github.com/isaac-mason/recastnavigation.git
-(cd recastnavigation && git checkout c5cbd53024c8a9d8d097a4371215e3342d2fdc87)
+(cd recastnavigation && git checkout '599fd0f023181c0a484df2a18cf1d75a3553852e')
 
 # emscripten builds
 emcmake cmake -B build -DCMAKE_BUILD_TYPE=Release
