@@ -35,6 +35,7 @@ export class NavMeshHelper extends Object3D {
           color: 'orange',
           transparent: true,
           opacity: 0.7,
+          depthWrite: false,
         });
 
     this.update();
