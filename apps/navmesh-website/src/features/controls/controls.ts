@@ -162,7 +162,7 @@ export const useDisplayOptionsControls = () => {
     },
     navMeshGeneratorInputWireframe: {
       label: 'Wireframe',
-      value: false,
+      value: true,
     },
   });
 

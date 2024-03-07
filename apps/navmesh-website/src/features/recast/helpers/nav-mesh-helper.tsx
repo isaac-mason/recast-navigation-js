@@ -28,6 +28,7 @@ export const NavMeshHelper = ({
         opacity: navMeshDebugOpacity,
         wireframe: navMeshDebugWireframe,
         color: new Color(Number(navMeshHelperDebugColor.replace('#', '0x'))),
+        depthWrite: false,
       }),
     });
   }, [
