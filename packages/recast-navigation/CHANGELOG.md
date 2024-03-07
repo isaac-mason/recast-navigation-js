@@ -1,5 +1,14 @@
 # recast-navigation
 
+## 0.16.4
+
+### Patch Changes
+
+- Updated dependencies [97dc7e6]
+  - @recast-navigation/three@0.16.4
+  - @recast-navigation/core@0.16.4
+  - @recast-navigation/generators@0.16.4
+
 ## 0.16.3
 
 ### Patch Changes
