@@ -205,7 +205,7 @@ export class TileCacheMeshProcess {
   ) {
     this.raw = new Raw.Module.TileCacheMeshProcess();
 
-    this.raw.process = ((
+    this.raw.process = (
       paramsPtr: number,
       polyAreasArrayPtr: number,
       polyFlagsArrayPtr: number
@@ -225,7 +225,7 @@ export class TileCacheMeshProcess {
       );
 
       process(params, polyAreasArray, polyFlagsArray);
-    }) as never;
+    };
   }
 }
 

@@ -4870,7 +4870,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@recast-navigation/wasm@workspace:packages/recast-navigation-wasm"
   dependencies:
-    webidl-dts-gen: "npm:^1.8.0"
+    webidl-dts-gen: "npm:^1.9.0"
   languageName: unknown
   linkType: soft
 
@@ -22135,7 +22135,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.3.2, typescript@npm:^5.3.3":
+"typescript@npm:^5.3.2":
   version: 5.3.3
   resolution: "typescript@npm:5.3.3"
   bin:
@@ -22145,13 +22145,33 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^5.3.2#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.3.3#optional!builtin<compat/typescript>":
+"typescript@npm:^5.4.2":
+  version: 5.4.3
+  resolution: "typescript@npm:5.4.3"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: de4c69f49a7ad4b1ea66a6dcc8b055ac34eb56af059a069d8988dd811c5e649be07e042e5bf573e8d0ac3ec2f30e6c999aa651cd09f6e9cbc6113749e8b6be20
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@npm%3A^5.3.2#optional!builtin<compat/typescript>":
   version: 5.3.3
   resolution: "typescript@patch:typescript@npm%3A5.3.3#optional!builtin<compat/typescript>::version=5.3.3&hash=e012d7"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: c93786fcc9a70718ba1e3819bab56064ead5817004d1b8186f8ca66165f3a2d0100fee91fa64c840dcd45f994ca5d615d8e1f566d39a7470fc1e014dbb4cf15d
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@npm%3A^5.4.2#optional!builtin<compat/typescript>":
+  version: 5.4.3
+  resolution: "typescript@patch:typescript@npm%3A5.4.3#optional!builtin<compat/typescript>::version=5.4.3&hash=e012d7"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 3abea475798fdf7ee46e75dafc50c85f30fd1e7061559ec2af61646f23d16c91742703f04f0ac55be52f58ca05c02f77404b7b94bbad16278c9a54c9eeb4f4ea
   languageName: node
   linkType: hard
 
@@ -22848,17 +22868,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webidl-dts-gen@npm:^1.8.0":
-  version: 1.8.0
-  resolution: "webidl-dts-gen@npm:1.8.0"
+"webidl-dts-gen@npm:^1.9.0":
+  version: 1.9.0
+  resolution: "webidl-dts-gen@npm:1.9.0"
   dependencies:
     jsdom: "npm:^24.0.0"
-    typescript: "npm:^5.3.3"
+    typescript: "npm:^5.4.2"
     webidl2: "npm:^24.4.1"
     yargs: "npm:^17.7.2"
   bin:
     webidl-dts-gen: dist/cli.js
-  checksum: 045b707f79733a7dcccb34c86cc7f1f5464bc257b538586b0bc753248ebb84ba4a5687ed242890a77a6391f56814f3c6eb017e88406b5a1266dbffb5bed2e278
+  checksum: b4239380390419640b3c8a2e9b555637132580af2d70dd3ed4685d98880d133ec7ed9c57c7b274c51009109beebed1e2672018cd6f79f28c0e3ed42206550b1a
   languageName: node
   linkType: hard
 
