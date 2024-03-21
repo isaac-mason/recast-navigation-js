@@ -19,6 +19,7 @@ import {
   buildPolyMesh,
   buildPolyMeshDetail,
   buildRegions,
+  calcGridSize,
   createHeightfield,
   createNavMeshData,
   createRcConfig,
@@ -147,7 +148,7 @@ export const generateSoloNavMesh = (
     config.detailSampleDist < 0.9 ? 0 : config.cs * config.detailSampleDist;
   config.detailSampleMaxError = config.ch * config.detailSampleMaxError;
 
-  const gridSize = Raw.Recast.calcGridSize(bbMin, bbMax, config.cs);
+  const gridSize = calcGridSize(bbMin, bbMax, config.cs);
   config.width = gridSize.width;
   config.height = gridSize.height;
 
