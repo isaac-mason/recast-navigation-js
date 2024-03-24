@@ -38,7 +38,8 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "sh build.sh"
+    "build": "sh build.sh",
+    "build:debug": "sh build.sh debug"
   },
   "devDependencies": {
     "webidl-dts-gen": "^1.9.0"

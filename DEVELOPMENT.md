@@ -79,3 +79,14 @@ To run the storybooks, run the following:
 cd packages/recast-navigation
 yarn storybook
 ```
+
+## Debugging WASM
+
+In order to debug @recast-navigation/wasm, you must build the library in debug mode, then rebuild @recast-navigation/core:
+
+```ts
+(cd packages/recast-navigation-wasm && yarn build:debug)
+(cd packages/recast-navigtion-core && yarn build)
+```
+
+You can then follow these instructions to setup chrome for debugging WASM: https://developer.chrome.com/blog/wasm-debugging-2020/
