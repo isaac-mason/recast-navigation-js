@@ -3177,19 +3177,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mdx-js/react@npm:^2.3.0":
-  version: 2.3.0
-  resolution: "@mdx-js/react@npm:2.3.0"
-  dependencies:
-    "@types/mdx": "npm:^2.0.0"
-    "@types/react": "npm:>=16"
-  peerDependencies:
-    react: ">=16"
-  checksum: bce1cb1dde0a9a2b786cd9167b9e2bc0e3be52c195a4a79aaf1677470566d1fd2979d01baca2380c76aa4a1a27cd89f051484e595fdc4144a428d6af39bb667a
-  languageName: node
-  linkType: hard
-
-"@mdx-js/react@npm:^3.0.0":
+"@mdx-js/react@npm:^3.0.0, @mdx-js/react@npm:^3.0.1":
   version: 3.0.1
   resolution: "@mdx-js/react@npm:3.0.1"
   dependencies:
@@ -6968,7 +6956,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:>=16":
+"@types/react@npm:*":
   version: 18.2.45
   resolution: "@types/react@npm:18.2.45"
   dependencies:
@@ -19507,7 +19495,7 @@ __metadata:
   dependencies:
     "@babel/core": "npm:^7.23.9"
     "@isaac-mason/eslint-config-typescript": "npm:^0.0.3"
-    "@mdx-js/react": "npm:^2.3.0"
+    "@mdx-js/react": "npm:^3.0.1"
     "@pmndrs/assets": "npm:^1.6.0"
     "@react-three/drei": "npm:^9.97.0"
     "@react-three/fiber": "npm:^8.15.12"
