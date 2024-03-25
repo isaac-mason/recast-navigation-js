@@ -1,5 +1,11 @@
 # @recast-navigation/wasm
 
+## 0.17.1
+
+### Patch Changes
+
+- dce5c98: feat: bump webidl-dts-gen from 1.8.0 to 1.9.0, fix TileCacheMeshProcess types
+
 ## 0.17.0
 
 ## 0.16.4

@@ -1,5 +1,12 @@
 # @recast-navigation/core
 
+## 0.17.1
+
+### Patch Changes
+
+- Updated dependencies [dce5c98]
+  - @recast-navigation/wasm@0.17.1
+
 ## 0.17.0
 
 ### Patch Changes
