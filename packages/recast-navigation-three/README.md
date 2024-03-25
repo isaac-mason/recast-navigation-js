@@ -50,7 +50,6 @@ import * as THREE from 'three';
 /* initialize the library */
 await init();
 
-
 /* create your scene */
 const scene = new THREE.Scene();
 // ...
