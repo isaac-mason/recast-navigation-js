@@ -1,27 +1,41 @@
 # @recast-navigation/three
 
-Three.js glue for [`recast-navigation`](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation).
+Three.js helpers for [`recast-navigation`](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation).
 
 ## Installation
 
 ```bash
-> npm install @recast-navigation/three
+> npm install @recast-navigation/three recast-navigation
 ```
 
 ## Usage
 
 ### Importing
 
-To use the three.js glue, you can either use the `three` entrypoint in `recast-navigation`:
+To import the three.js glue, you can either use the `three` entrypoint in `recast-navigation`:
 
 ```ts
+import { init } from 'recast-navigation'
 import { ... } from 'recast-navigation/three';
 ```
 
-Or you can use this package directly:
+Or you can use the packages directly:
 
 ```ts
+import { init } from '@recast-navigation/core'
 import { ... } from '@recast-navigation/three';
+```
+
+### Initialization
+
+Before you can use the library, you must initialize it. This is an asynchronous operation.
+
+Calling `init()` after the library has already been initialized will return a promise that resolves immediately.
+
+```ts
+import { init } from 'recast-navigation';
+
+await init();
 ```
 
 ### Generating a NavMesh
@@ -29,39 +43,53 @@ import { ... } from '@recast-navigation/three';
 This package provides convenience functions for generating nav meshes from THREE.Mesh objects.
 
 ```ts
+import { init } from 'recast-navigation';
 import { threeToSoloNavMesh, threeToTiledNavMesh, threeToTileCache } from 'recast-navigation/three';
 import * as THREE from 'three';
 
-const scene = new THREE.Scene();
+/* initialize the library */
+await init();
 
-/* add meshes to the scene */
+
+/* create your scene */
+const scene = new THREE.Scene();
 // ...
 
+/* get meshes to generate the navmesh from */
 const meshes: THREE.Mesh[] = [];
-
 scene.traverse((child) => {
   if (child instanceof THREE.Mesh) {
     meshes.push(child);
   }
 });
 
-/* solo navmesh */
-const { navMesh } = threeToSoloNavMesh(meshes, {
+/* generate a solo navmesh */
+const { success, navMesh } = threeToSoloNavMesh(meshes, {
   // ... nav mesh generation config ...
 }});
 
-/* tiled navmesh */
-const { navMesh } = threeToTiledNavMesh(meshes, {
+/* generate a tiled navmesh */
+const { success, navMesh } = threeToTiledNavMesh(meshes, {
   tileSize: 16,
   // ... nav mesh generation config ...
 }});
 
-/* tile cache with support for temporary obstacles */
-const { navMesh, tileCache } = threeToTileCache(meshes, {
+/* generate a tile cache with support for temporary obstacles */
+const { success, navMesh, tileCache } = threeToTileCache(meshes, {
   tileSize: 16,
   // ... nav mesh generation config ...
 }});
 ```
+
+### Interacting with a NavMesh
+
+You can documentation for interacting with the generated navmesh in the core library README:
+
+https://github.com/isaac-mason/recast-navigation-js
+
+This library provides helpers that are used in conjunction with the core library.
+
+
 
 ### Helpers
 
