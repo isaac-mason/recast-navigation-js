@@ -1,5 +1,15 @@
 # recast-navigation
 
+## 0.17.1
+
+### Patch Changes
+
+- dce5c98: feat: bump webidl-dts-gen from 1.8.0 to 1.9.0, fix TileCacheMeshProcess types
+- Updated dependencies [e7f2c47]
+  - @recast-navigation/generators@0.17.1
+  - @recast-navigation/three@0.17.1
+  - @recast-navigation/core@0.17.1
+
 ## 0.17.0
 
 ### Minor Changes
