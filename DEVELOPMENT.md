@@ -14,7 +14,7 @@ https://github.com/nvm-sh/nvm
 
 ### Yarn Installation
 
-**This project uses yarn 3.**
+**This project uses yarn 4.**
 
 If you have Corepack enabled, you should be able to use this project's yarn version without doing anything special. If you don't have Corepack enabled, you can enable it by running the following:
 
@@ -24,7 +24,7 @@ If you have Corepack enabled, you should be able to use this project's yarn vers
 
 ### Python Installation
 
-**This project uses Python 3.11.5.**
+**This project uses Python 3**
 
 A python version manager will make your life easier. Give pyenv a try if you don't already have one.
 
