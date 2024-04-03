@@ -93,6 +93,31 @@ export class NavMeshQuery {
     };
   }
 
+	findPolysAroundCircle(
+    startRef: number,
+    centerPos: Vector3,
+    radius: number,
+    filter: QueryFilter,
+    maxResult: number,
+    ) {
+      const resultRef = [] as number[];
+      const resultParent = [] as number[];
+      const resultCost = [] as number[];
+      const resultCount = [] as number[];
+
+      this.raw.findPolysAroundCircle(
+        startRef,
+        vec3.toArray(centerPos),
+        radius,
+        filter.raw,
+        resultRef,
+        resultParent,
+        resultCost,
+        resultCount,
+        maxResult,
+      );
+  }
+
   /**
    * Returns the closest point on the given polygon to the given position.
    */
