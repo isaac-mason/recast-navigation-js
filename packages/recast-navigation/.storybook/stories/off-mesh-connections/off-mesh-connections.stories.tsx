@@ -9,7 +9,7 @@ import { threeToSoloNavMesh } from '@recast-navigation/three';
 import React, { useEffect, useState } from 'react';
 import { Group, Mesh, MeshStandardMaterial } from 'three';
 import { Debug } from '../../common/debug';
-import { NavTestEnvirionment } from '../../common/nav-test-environment';
+import { NavTestEnvironment } from '../../common/nav-test-environment';
 import { decorators } from '../../decorators';
 import { parameters } from '../../parameters';
 
@@ -153,7 +153,7 @@ export const SoloNavMeshOffMeshConnection = () => {
   return (
     <>
       <group ref={setGroup} onPointerDown={onPointerDown}>
-        <NavTestEnvirionment />
+        <NavTestEnvironment />
       </group>
 
       <Debug

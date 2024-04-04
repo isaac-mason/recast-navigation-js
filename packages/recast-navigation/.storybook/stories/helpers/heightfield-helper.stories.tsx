@@ -6,7 +6,7 @@ import {
 } from '@recast-navigation/three';
 import React, { useEffect, useState } from 'react';
 import { Group, Mesh, MeshStandardMaterial } from 'three';
-import { NavTestEnvirionment } from '../../common/nav-test-environment';
+import { NavTestEnvironment } from '../../common/nav-test-environment';
 import { decorators } from '../../decorators';
 import { parameters } from '../../parameters';
 
@@ -66,7 +66,7 @@ export const HeightfieldHelperExample = () => {
   return (
     <>
       <group ref={setGroup} visible={false}>
-        <NavTestEnvirionment />
+        <NavTestEnvironment />
       </group>
 
       {heightfieldHelper && <primitive object={heightfieldHelper} />}

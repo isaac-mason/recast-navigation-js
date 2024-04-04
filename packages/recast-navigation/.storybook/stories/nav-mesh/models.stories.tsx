@@ -9,7 +9,7 @@ import React, { useEffect, useState } from 'react';
 import { Group, Mesh, MeshBasicMaterial } from 'three';
 import { Debug } from '../../common/debug';
 import { DungeonEnvirionment } from '../../common/dungeon-environment';
-import { NavTestEnvirionment } from '../../common/nav-test-environment';
+import { NavTestEnvironment } from '../../common/nav-test-environment';
 import { decorators } from '../../decorators';
 import { parameters } from '../../parameters';
 
@@ -33,7 +33,7 @@ const Levels = {
     },
   },
   NavTest: {
-    Environment: NavTestEnvirionment,
+    Environment: NavTestEnvironment,
     camera: {
       position: [-10, 15, 10] as const,
       lookAt: [0, 0, 0] as const,
