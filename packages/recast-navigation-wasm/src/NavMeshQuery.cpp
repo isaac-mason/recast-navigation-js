@@ -68,6 +68,11 @@ dtStatus NavMeshQuery::findPolysAroundCircle(dtPolyRef startRef, const float *ce
     return m_navQuery->findPolysAroundCircle(startRef, centerPos, radius, filter, resultRef, resultParent, resultCost, resultCount, maxResult);
 }
 
+dtStatus NavMeshQuery::queryPolygons(const float *center, const float *halfExtents, const dtQueryFilter *filter, dtPolyRef *polys, int *polyCount, const int maxPolys)
+{
+    return m_navQuery->queryPolygons(center, halfExtents, filter, polys, polyCount, maxPolys);
+}
+
 dtStatus NavMeshQuery::raycast(dtPolyRef startRef, const float *startPos, const float *endPos, const dtQueryFilter *filter, const unsigned int options, dtRaycastHit *hit, dtPolyRef prevRef)
 {
     return m_navQuery->raycast(startRef, startPos, endPos, filter, options, hit, prevRef);

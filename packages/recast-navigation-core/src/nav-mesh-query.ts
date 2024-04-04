@@ -93,19 +93,27 @@ export class NavMeshQuery {
     };
   }
 
+  /**
+   * Finds the polygons along the navigation graph that touch the specified circle.
+   * @param startRef Reference of polygon to start search from
+   * @param centerPos Center of circle
+   * @param radius Radius of circle
+   * @param filter The polygon filter to apply to the query
+   * @param maxResult The maximum number of polygons the result arrays can hold
+   */
 	findPolysAroundCircle(
     startRef: number,
     centerPos: Vector3,
     radius: number,
-    filter: QueryFilter,
-    maxResult: number,
+    filter = this.defaultFilter,
+    maxResult = Number.MAX_SAFE_INTEGER,
     ) {
       const resultRef = [] as number[];
       const resultParent = [] as number[];
       const resultCost = [] as number[];
       const resultCount = [] as number[];
 
-      this.raw.findPolysAroundCircle(
+      const status = this.raw.findPolysAroundCircle(
         startRef,
         vec3.toArray(centerPos),
         radius,
@@ -116,6 +124,41 @@ export class NavMeshQuery {
         resultCount,
         maxResult,
       );
+
+      return {
+        success: Raw.Detour.statusSucceed(status),
+        status,
+        resultRefs: resultRef,
+        resultParents: resultParent,
+        resultCosts: resultCost,
+        resultCounts: resultCount,
+      };
+  }
+
+  queryPolygons(
+    center: Vector3,
+    halfExtents: Vector3,
+    filter = this.defaultFilter,
+    maxPolys = Number.MAX_SAFE_INTEGER,
+  ){
+    const polyRef = [] as number[];
+    const polyCount = [] as number[];
+      
+    const status = this.raw.queryPolygons(
+      vec3.toArray(center),
+      vec3.toArray(halfExtents),
+      filter.raw,
+      polyRef,
+      polyCount,
+      maxPolys,
+    );
+
+    return {
+      success: Raw.Detour.statusSucceed(status),
+      status,
+      polyRefs: polyRef,
+      polyCounts: polyCount,
+    };
   }
 
   /**
