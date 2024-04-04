@@ -51,6 +51,6 @@ export const array = <T>(getter: (index: number) => T, count: number) => {
  * @param n A non-negative integer
  * @returns Array `[0, ..., n-1]`
  */
-export function range(n: number) {
+export const range = (n: number) => {
   return [...Array(n)].map((_, i) => i);
 }
