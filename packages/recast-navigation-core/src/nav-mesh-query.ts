@@ -107,34 +107,46 @@ export class NavMeshQuery {
     radius: number,
     filter = this.defaultFilter,
     maxResult = 256,
-    ) {
-      const resultRef = [] as number[];
-      const resultParent = [] as number[];
-      const resultCost = [] as number[];
-      const resultCount = [] as number[];
+  ) {
+    const resultRef = new Arrays.UnsignedIntArray();
+    const resultParent = new Arrays.UnsignedIntArray();;
+    resultRef.resize(maxResult);
+    resultParent.resize(maxResult);
+    const resultCostRef = new Raw.FloatRef();
+    const resultCountRef = new Raw.IntRef();
 
-      const status = this.raw.findPolysAroundCircle(
-        startRef,
-        vec3.toArray(centerPos),
-        radius,
-        filter.raw,
-        resultRef,
-        resultParent,
-        resultCost,
-        resultCount,
-        maxResult,
-      );
+    const status = this.raw.findPolysAroundCircle(
+      startRef,
+      vec3.toArray(centerPos),
+      radius,
+      filter.raw,
+      resultRef,
+      resultParent,
+      resultCostRef,
+      resultCountRef,
+      maxResult,
+    );
 
-      return {
-        success: Raw.Detour.statusSucceed(status),
-        status,
-        resultRefs: resultRef,
-        resultParents: resultParent,
-        resultCosts: resultCost,
-        resultCounts: resultCount,
-      };
+    const resultCost = resultCostRef.value;
+    const resultCount = resultCountRef.value;
+
+    return {
+      success: Raw.Detour.statusSucceed(status),
+      status,
+      resultRefs: array((i) => resultRef.get(i), resultCount),
+      resultParents: array((i) => resultParent.get(i), resultCount),
+      resultCost,
+      resultCount,
+    };
   }
 
+  /**
+   * Finds polygons that overlap the search box.
+   * @param center The center of the search box
+   * @param halfExtents The search distance along each axis
+   * @param filter The polygon filter to apply to the query
+   * @param maxPolys The maximum number of polygons the search result can hold
+   */
   queryPolygons(
     center: Vector3,
     halfExtents: Vector3,
