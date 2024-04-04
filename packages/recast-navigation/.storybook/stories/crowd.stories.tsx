@@ -11,7 +11,7 @@ import { threeToSoloNavMesh } from 'recast-navigation/three';
 import { Group, Mesh, MeshStandardMaterial, Vector3 } from 'three';
 import { AgentPath } from '../common/agent-path';
 import { Debug } from '../common/debug';
-import { NavTestEnvirionment } from '../common/nav-test-environment';
+import { NavTestEnvironment } from '../common/nav-test-environment';
 import { decorators } from '../decorators';
 import { parameters } from '../parameters';
 
@@ -120,7 +120,7 @@ export const SingleAgent = () => {
 
       <group onPointerDown={onClick}>
         <group ref={setGroup}>
-          <NavTestEnvirionment />
+          <NavTestEnvironment />
         </group>
         <Debug navMesh={navMesh} crowd={crowd} agentMaterial={agentMaterial} />
       </group>
@@ -213,7 +213,7 @@ export const MultipleAgents = () => {
   return (
     <>
       <group ref={setGroup} onClick={onClick}>
-        <NavTestEnvirionment />
+        <NavTestEnvironment />
       </group>
 
       <Debug navMesh={navMesh} crowd={crowd} agentMaterial={agentMaterial} />

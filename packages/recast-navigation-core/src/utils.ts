@@ -46,3 +46,11 @@ export const array = <T>(getter: (index: number) => T, count: number) => {
 
   return array;
 };
+
+/**
+ * @param n A non-negative integer
+ * @returns Array `[0, ..., n-1]`
+ */
+export const range = (n: number) => {
+  return [...Array(n)].map((_, i) => i);
+}

@@ -43,6 +43,10 @@ public:
 
     dtStatus findNearestPoly(const float *center, const float *halfExtents, const dtQueryFilter *filter, UnsignedIntRef *nearestRef, Vec3 *nearestPt, BoolRef *isOverPoly);
 
+    dtStatus findPolysAroundCircle(dtPolyRef startRef, const float *centerPos, const float radius, const dtQueryFilter *filter, UnsignedIntArray *resultRef, UnsignedIntArray *resultParent, FloatRef *resultCost, IntRef *resultCount, const int maxResult);
+
+    dtStatus queryPolygons(const float *center, const float *halfExtents, const dtQueryFilter *filter, UnsignedIntArray *polys, IntRef *polyCount, const int maxPolys);
+
     dtStatus raycast(dtPolyRef startRef, const float *startPos, const float *endPos, const dtQueryFilter *filter, const unsigned int options, dtRaycastHit *hit, dtPolyRef prevRef);
 
     Vec3 getClosestPoint(const float *position, const float *halfExtents, const dtQueryFilter *filter);

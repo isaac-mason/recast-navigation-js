@@ -63,6 +63,16 @@ dtStatus NavMeshQuery::findNearestPoly(const float *center, const float *halfExt
     return m_navQuery->findNearestPoly(center, halfExtents, filter, &nearestRef->value, &nearestPt->x, &isOverPoly->value);
 }
 
+dtStatus NavMeshQuery::findPolysAroundCircle(dtPolyRef startRef, const float *centerPos, const float radius, const dtQueryFilter *filter, UnsignedIntArray *resultRef, UnsignedIntArray *resultParent, FloatRef *resultCost, IntRef *resultCount, const int maxResult)
+{
+    return m_navQuery->findPolysAroundCircle(startRef, centerPos, radius, filter, resultRef->data, resultParent->data, &resultCost->value, &resultCount->value, maxResult);
+}
+
+dtStatus NavMeshQuery::queryPolygons(const float *center, const float *halfExtents, const dtQueryFilter *filter, UnsignedIntArray *polys, IntRef *polyCount, const int maxPolys)
+{
+    return m_navQuery->queryPolygons(center, halfExtents, filter, polys->data, &polyCount->value, maxPolys);
+}
+
 dtStatus NavMeshQuery::raycast(dtPolyRef startRef, const float *startPos, const float *endPos, const dtQueryFilter *filter, const unsigned int options, dtRaycastHit *hit, dtPolyRef prevRef)
 {
     return m_navQuery->raycast(startRef, startPos, endPos, filter, options, hit, prevRef);

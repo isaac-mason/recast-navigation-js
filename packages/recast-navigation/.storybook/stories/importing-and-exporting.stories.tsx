@@ -10,7 +10,7 @@ import { button, useControls } from 'leva';
 import React, { useState } from 'react';
 import { Group, Mesh, MeshBasicMaterial } from 'three';
 import { Debug } from '../common/debug';
-import { NavTestEnvirionment } from '../common/nav-test-environment';
+import { NavTestEnvironment } from '../common/nav-test-environment';
 import { useNavMeshConfig } from '../common/use-nav-mesh-config';
 import { decorators } from '../decorators';
 import { parameters } from '../parameters';
@@ -85,7 +85,7 @@ export const NavMeshExample = () => {
   return (
     <>
       <group ref={setGroup}>
-        <NavTestEnvirionment />
+        <NavTestEnvironment />
       </group>
 
       <Debug navMesh={result} navMeshMaterial={navMeshMaterial} />
@@ -163,7 +163,7 @@ export const TileCacheExample = () => {
   return (
     <>
       <group ref={setGroup}>
-        <NavTestEnvirionment />
+        <NavTestEnvironment />
       </group>
 
       <Debug navMesh={result} navMeshMaterial={navMeshMaterial} />

@@ -94,6 +94,89 @@ export class NavMeshQuery {
   }
 
   /**
+   * Finds the polygons along the navigation graph that touch the specified circle.
+   * @param startRef Reference of polygon to start search from
+   * @param centerPos Center of circle
+   * @param radius Radius of circle
+   * @param filter The polygon filter to apply to the query
+   * @param maxResult The maximum number of polygons the result arrays can hold
+   */
+  findPolysAroundCircle(
+    startRef: number,
+    centerPos: Vector3,
+    radius: number,
+    filter = this.defaultFilter,
+    maxResult = 256,
+  ) {
+    const resultRef = new Arrays.UnsignedIntArray();
+    const resultParent = new Arrays.UnsignedIntArray();;
+    resultRef.resize(maxResult);
+    resultParent.resize(maxResult);
+    const resultCostRef = new Raw.FloatRef();
+    const resultCountRef = new Raw.IntRef();
+
+    const status = this.raw.findPolysAroundCircle(
+      startRef,
+      vec3.toArray(centerPos),
+      radius,
+      filter.raw,
+      resultRef,
+      resultParent,
+      resultCostRef,
+      resultCountRef,
+      maxResult,
+    );
+
+    const resultCost = resultCostRef.value;
+    const resultCount = resultCountRef.value;
+
+    return {
+      success: Raw.Detour.statusSucceed(status),
+      status,
+      resultRefs: array((i) => resultRef.get(i), resultCount),
+      resultParents: array((i) => resultParent.get(i), resultCount),
+      resultCost,
+      resultCount,
+    };
+  }
+
+  /**
+   * Finds polygons that overlap the search box.
+   * @param center The center of the search box
+   * @param halfExtents The search distance along each axis
+   * @param filter The polygon filter to apply to the query
+   * @param maxPolys The maximum number of polygons the search result can hold
+   */
+  queryPolygons(
+    center: Vector3,
+    halfExtents: Vector3,
+    filter = this.defaultFilter,
+    maxPolys = 256,
+  ){
+    const polysRef = new Arrays.UnsignedIntArray();
+    polysRef.resize(maxPolys);
+    const polyCountRef = new Raw.IntRef();
+      
+    const status = this.raw.queryPolygons(
+      vec3.toArray(center),
+      vec3.toArray(halfExtents),
+      filter.raw,
+      polysRef,
+      polyCountRef,
+      maxPolys,
+    );
+
+    const polyCount = polyCountRef.value;
+
+    return {
+      success: Raw.Detour.statusSucceed(status),
+      status,
+      polyRefs: array((i) => polysRef.get(i), polyCount),
+      polyCount,
+    };
+  }
+
+  /**
    * Returns the closest point on the given polygon to the given position.
    */
   closestPointOnPoly(polyRef: number, position: Vector3) {
