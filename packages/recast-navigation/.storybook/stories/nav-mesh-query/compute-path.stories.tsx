@@ -4,7 +4,7 @@ import { threeToSoloNavMesh } from '@recast-navigation/three';
 import React, { useEffect, useState } from 'react';
 import { Group, Mesh, MeshBasicMaterial, Vector3Tuple } from 'three';
 import { Debug } from '../../common/debug';
-import { NavTestEnvirionment } from '../../common/nav-test-environment';
+import { NavTestEnvironment } from '../../common/nav-test-environment';
 import { decorators } from '../../decorators';
 import { parameters } from '../../parameters';
 
@@ -73,7 +73,7 @@ export const ComputePath = () => {
   return (
     <>
       <group ref={setGroup}>
-        <NavTestEnvirionment />
+        <NavTestEnvironment />
       </group>
 
       {path && <Line points={path} color={'orange'} lineWidth={10} />}

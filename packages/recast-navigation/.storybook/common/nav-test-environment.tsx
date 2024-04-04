@@ -1,13 +1,21 @@
+import type { ThreeEvent } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import React from 'react';
 import { GLTF } from 'three-stdlib';
 
 const assetUrl = 'nav_test.glb';
 
-export const NavTestEnvirionment = () => {
+export const NavTestEnvironment = (props: {
+  onPointerUp?: (event: ThreeEvent<PointerEvent>) => void;
+}) => {
   const gltf = useGLTF(assetUrl) as GLTF;
 
-  return <primitive object={gltf.scene} />;
+  return (
+    <primitive
+      object={gltf.scene}
+      onPointerUp={props.onPointerUp}
+    />
+  );
 };
 
 useGLTF.preload(assetUrl);
