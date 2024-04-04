@@ -7,6 +7,7 @@ const assetUrl = 'nav_test.glb';
 
 export const NavTestEnvironment = (props: {
   onPointerUp?: (event: ThreeEvent<PointerEvent>) => void;
+  onPointerDown?: (event: ThreeEvent<PointerEvent>) => void;
 }) => {
   const gltf = useGLTF(assetUrl) as GLTF;
 
@@ -14,6 +15,7 @@ export const NavTestEnvironment = (props: {
     <primitive
       object={gltf.scene}
       onPointerUp={props.onPointerUp}
+      onPointerDown={props.onPointerDown}
     />
   );
 };
