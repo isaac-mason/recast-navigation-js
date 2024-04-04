@@ -42,7 +42,7 @@
     "build:debug": "sh build.sh debug"
   },
   "devDependencies": {
-    "webidl-dts-gen": "^1.9.0"
+    "webidl-dts-gen": "^1.10.0"
   },
   "packageManager": "yarn@3.2.2"
 }

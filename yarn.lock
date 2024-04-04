@@ -4870,7 +4870,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@recast-navigation/wasm@workspace:packages/recast-navigation-wasm"
   dependencies:
-    webidl-dts-gen: "npm:^1.9.0"
+    webidl-dts-gen: "npm:^1.10.0"
   languageName: unknown
   linkType: soft
 
@@ -22848,9 +22848,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webidl-dts-gen@npm:^1.9.0":
-  version: 1.9.0
-  resolution: "webidl-dts-gen@npm:1.9.0"
+"webidl-dts-gen@npm:^1.10.0":
+  version: 1.10.0
+  resolution: "webidl-dts-gen@npm:1.10.0"
   dependencies:
     jsdom: "npm:^24.0.0"
     typescript: "npm:^5.4.2"
@@ -22858,7 +22858,7 @@ __metadata:
     yargs: "npm:^17.7.2"
   bin:
     webidl-dts-gen: dist/cli.js
-  checksum: b4239380390419640b3c8a2e9b555637132580af2d70dd3ed4685d98880d133ec7ed9c57c7b274c51009109beebed1e2672018cd6f79f28c0e3ed42206550b1a
+  checksum: f74bb4d85ac347f5a3d3f258f7df530157302b879a2320f36e0ac1134ed19dddaaa4081b5a64a0ca8c6ea1c9b53139148a2a6d918b7c69dee6e79e216857c6e5
   languageName: node
   linkType: hard
 
