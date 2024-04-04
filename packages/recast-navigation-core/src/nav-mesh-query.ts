@@ -101,7 +101,7 @@ export class NavMeshQuery {
    * @param filter The polygon filter to apply to the query
    * @param maxResult The maximum number of polygons the result arrays can hold
    */
-	findPolysAroundCircle(
+  findPolysAroundCircle(
     startRef: number,
     centerPos: Vector3,
     radius: number,
