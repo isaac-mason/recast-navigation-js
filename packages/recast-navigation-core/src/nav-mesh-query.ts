@@ -106,7 +106,7 @@ export class NavMeshQuery {
     centerPos: Vector3,
     radius: number,
     filter = this.defaultFilter,
-    maxResult = 2048,
+    maxResult = 256,
     ) {
       const resultRef = [] as number[];
       const resultParent = [] as number[];
@@ -139,7 +139,7 @@ export class NavMeshQuery {
     center: Vector3,
     halfExtents: Vector3,
     filter = this.defaultFilter,
-    maxPolys = 2048,
+    maxPolys = 256,
   ){
     const polysRef = new Arrays.UnsignedIntArray();
     polysRef.resize(maxPolys);
