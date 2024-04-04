@@ -141,23 +141,26 @@ export class NavMeshQuery {
     filter = this.defaultFilter,
     maxPolys = 2048,
   ){
-    const polyRef = [] as number[];
+    const polysRef = new Arrays.UnsignedIntArray();
+    polysRef.resize(maxPolys);
     const polyCountRef = new Raw.IntRef();
       
     const status = this.raw.queryPolygons(
       vec3.toArray(center),
       vec3.toArray(halfExtents),
       filter.raw,
-      polyRef,
+      polysRef,
       polyCountRef,
       maxPolys,
     );
 
+    const polyCount = polyCountRef.value;
+
     return {
       success: Raw.Detour.statusSucceed(status),
       status,
-      polyRefs: polyRef,
-      polyCount: polyCountRef.value,
+      polyRefs: array((i) => polysRef.get(i), polyCount),
+      polyCount,
     };
   }
 

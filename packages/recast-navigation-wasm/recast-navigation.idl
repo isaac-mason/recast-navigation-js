@@ -465,7 +465,7 @@ interface NavMeshQuery {
 
 	unsigned long findPolysAroundCircle(unsigned long startRef, [Const] float[] centerPos, [Const] float radius, [Const] dtQueryFilter filter, unsigned long[] resultRef, unsigned long[] resultParent, float[] resultCost, long[] resultCount, [Const] long maxResult);
 
-    unsigned long queryPolygons([Const] float[] center, [Const] float[] halfExtents, [Const] dtQueryFilter filter, unsigned long[] polys, IntRef polyCount, [Const] long maxPolys);
+    unsigned long queryPolygons([Const] float[] center, [Const] float[] halfExtents, [Const] dtQueryFilter filter, UnsignedIntArray polys, IntRef polyCount, [Const] long maxPolys);
 
     unsigned long raycast(unsigned long startRef, [Const] float[] startPos, [Const] float[] endPos, [Const] dtQueryFilter filter, [Const] unsigned long options, dtRaycastHit hit, unsigned long prevRef);
 
