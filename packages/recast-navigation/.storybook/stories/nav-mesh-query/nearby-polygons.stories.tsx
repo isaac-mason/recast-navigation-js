@@ -9,7 +9,7 @@ import { parameters } from '../../parameters';
 import { NavTestEnvironment } from '../../common/nav-test-environment';
 import { Debug } from '../../common/debug';
 
-export function NearbyPolygons() {
+export function ClickNearbyPolygons() {
 
   const [state, setState] = React.useState({} as {
     group: THREE.Group;
@@ -47,15 +47,16 @@ export function NearbyPolygons() {
 
             const query = new NavMeshQuery({ navMesh: state.navMesh });
             const center = e.point;
-            const halfExtents = { x: .5, y: .5, z: .5 };
-            const queryPolygonsResult = query.queryPolygons(center, halfExtents, undefined, 100);
-            console.log('queryPolygons', queryPolygonsResult);
+            const maxPolys = 100;
             
-            // const { nearestRef: startRef } = query.findNearestPoly(center);
-            // console.log('findNearestPoly', startRef);
-            // const findPolysAroundCircleResult = query.findPolysAroundCircle(startRef, center, 5, undefined, 5);
-            // console.log('findPolysAroundCircle', findPolysAroundCircleResult.success, findPolysAroundCircleResult);
+            const { nearestRef: startRef } = query.findNearestPoly(center);
+            console.info('findNearestPoly', startRef);
+            const findPolysAroundCircleResult = query.findPolysAroundCircle(startRef, center, 0.5, undefined, maxPolys);
+            console.info('findPolysAroundCircle', findPolysAroundCircleResult);
 
+            const halfExtents = { x: .5, y: .5, z: .5 };
+            const queryPolygonsResult = query.queryPolygons(center, halfExtents, undefined, maxPolys);
+            console.info('queryPolygons', queryPolygonsResult);
             const geom = polyRefsToGeom(queryPolygonsResult.polyRefs, state.navMesh);
 
             setState(s => ({ ...s, nearbyPolys: geom }));
@@ -72,13 +73,10 @@ export function NearbyPolygons() {
   );
 }
 
-const navMeshMaterial = new THREE.MeshBasicMaterial({ wireframe: true, color: 'red' });
-const nearbyPolyMaterial = new THREE.MeshBasicMaterial({ color: 'blue', wireframe: false });
-
 function polyRefsToGeom(polyRefs: number[], navMesh: NavMesh): THREE.BufferGeometry {
   const geom = new THREE.BufferGeometry();
   const vertices = [] as THREE.Vector3Tuple[];
-  const rings = [] as number[][];
+  const triangles = [] as number[][];
   // Only one tile because we use `threeToSoloNavMesh`
   let allVertices = undefined as undefined | THREE.Vector3Tuple[];
   
@@ -93,22 +91,20 @@ function polyRefsToGeom(polyRefs: number[], navMesh: NavMesh): THREE.BufferGeome
       [] as THREE.Vector3Tuple[],
     );
 
-    rings.push(range(vertexIds.length).map(x => x + vertices.length));
+    triangles.push(range(vertexIds.length).map(x => x + vertices.length));
     vertices.push(...vertexIds.map(id => allVertices![id]));
   }
 
-  console.log({
-    vertices,
-    rings,
-  })
-
   geom.setAttribute("position", new THREE.BufferAttribute(new Float32Array(vertices.flatMap(v => v)), 3));
-  geom.setIndex(rings.flatMap(r => r));
+  geom.setIndex(triangles.flatMap(r => r));
   return geom;
 }
 
+const navMeshMaterial = new THREE.MeshBasicMaterial({ wireframe: true, color: 'red' });
+const nearbyPolyMaterial = new THREE.MeshBasicMaterial({ color: 'blue', transparent: true, opacity: 0.3 });
+
 export default {
-  title: 'NavMeshQuery / NearbyPolygons',
+  title: 'NavMeshQuery / ClickNearbyPolygons',
   decorators,
   parameters,
 };
