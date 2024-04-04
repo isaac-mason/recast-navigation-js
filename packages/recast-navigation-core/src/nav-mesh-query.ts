@@ -106,7 +106,7 @@ export class NavMeshQuery {
     centerPos: Vector3,
     radius: number,
     filter = this.defaultFilter,
-    maxResult = Number.MAX_SAFE_INTEGER,
+    maxResult = 2048,
     ) {
       const resultRef = [] as number[];
       const resultParent = [] as number[];
@@ -139,17 +139,17 @@ export class NavMeshQuery {
     center: Vector3,
     halfExtents: Vector3,
     filter = this.defaultFilter,
-    maxPolys = Number.MAX_SAFE_INTEGER,
+    maxPolys = 2048,
   ){
     const polyRef = [] as number[];
-    const polyCount = [] as number[];
+    const polyCountRef = new Raw.IntRef();
       
     const status = this.raw.queryPolygons(
       vec3.toArray(center),
       vec3.toArray(halfExtents),
       filter.raw,
       polyRef,
-      polyCount,
+      polyCountRef,
       maxPolys,
     );
 
@@ -157,7 +157,7 @@ export class NavMeshQuery {
       success: Raw.Detour.statusSucceed(status),
       status,
       polyRefs: polyRef,
-      polyCounts: polyCount,
+      polyCount: polyCountRef.value,
     };
   }
 
