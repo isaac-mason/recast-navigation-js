@@ -463,7 +463,7 @@ interface NavMeshQuery {
 
     unsigned long findNearestPoly([Const] float[] center, [Const] float[] halfExtents, [Const] dtQueryFilter filter, UnsignedIntRef nearestRef, Vec3 nearestPt, BoolRef isOverPoly);
 
-	unsigned long findPolysAroundCircle(unsigned long startRef, [Const] float[] centerPos, [Const] float radius, [Const] dtQueryFilter filter, UnsignedIntArray resultRef, UnsignedIntArray resultParent, FloatRef resultCost, IntRef resultCount, [Const] long maxResult);
+    unsigned long findPolysAroundCircle(unsigned long startRef, [Const] float[] centerPos, [Const] float radius, [Const] dtQueryFilter filter, UnsignedIntArray resultRef, UnsignedIntArray resultParent, FloatRef resultCost, IntRef resultCount, [Const] long maxResult);
 
     unsigned long queryPolygons([Const] float[] center, [Const] float[] halfExtents, [Const] dtQueryFilter filter, UnsignedIntArray polys, IntRef polyCount, [Const] long maxPolys);
 
@@ -660,15 +660,15 @@ interface dtObstacleAvoidanceParams {
     void dtObstacleAvoidanceParams();
 
     attribute float velBias;
-	attribute float weightDesVel;
-	attribute float weightCurVel;
-	attribute float weightSide;
-	attribute float weightToi;
-	attribute float horizTime;
-	attribute octet gridSize;
-	attribute octet adaptiveDivs;
-	attribute octet adaptiveRings;
-	attribute octet adaptiveDepth;
+    attribute float weightDesVel;
+    attribute float weightCurVel;
+    attribute float weightSide;
+    attribute float weightToi;
+    attribute float horizTime;
+    attribute octet gridSize;
+    attribute octet adaptiveDivs;
+    attribute octet adaptiveRings;
+    attribute octet adaptiveDepth;
 };
 
 interface dtObstacleAvoidanceDebugData {
@@ -687,9 +687,9 @@ interface dtQueryFilter {
     void dtQueryFilter();
 
     // float getCost([Const] float[] pa, [Const] float[] pb,
-	// 			  [Const] unsigned long prevRef, [Const] dtMeshTile prevTile, [Const] dtPoly prevPoly,
-	// 			  [Const] unsigned long curRef, [Const] dtMeshTile curTile, [Const] dtPoly curPoly,
-	// 			  [Const] unsigned long nextRef, [Const] dtMeshTile nextTile, [Const] dtPoly nextPoly);
+    // 			  [Const] unsigned long prevRef, [Const] dtMeshTile prevTile, [Const] dtPoly prevPoly,
+    // 			  [Const] unsigned long curRef, [Const] dtMeshTile curTile, [Const] dtPoly curPoly,
+    // 			  [Const] unsigned long nextRef, [Const] dtMeshTile nextTile, [Const] dtPoly nextPoly);
 
     float getAreaCost([Const] long i);
 
@@ -750,42 +750,42 @@ enum rcBuildContoursFlags {
 };
 
 enum rcLogCategory {
-	"rcLogCategory::RC_LOG_PROGRESS",
-	"rcLogCategory::RC_LOG_WARNING",
+    "rcLogCategory::RC_LOG_PROGRESS",
+    "rcLogCategory::RC_LOG_WARNING",
     "rcLogCategory::RC_LOG_ERROR"
 };
 
 enum rcTimerLabel
 {
-	"rcTimerLabel::RC_TIMER_TOTAL",
-	"rcTimerLabel::RC_TIMER_TEMP",
-	"rcTimerLabel::RC_TIMER_RASTERIZE_TRIANGLES",
-	"rcTimerLabel::RC_TIMER_BUILD_COMPACTHEIGHTFIELD",
-	"rcTimerLabel::RC_TIMER_BUILD_CONTOURS",
-	"rcTimerLabel::RC_TIMER_BUILD_CONTOURS_TRACE",
-	"rcTimerLabel::RC_TIMER_BUILD_CONTOURS_SIMPLIFY",
-	"rcTimerLabel::RC_TIMER_FILTER_BORDER",
-	"rcTimerLabel::RC_TIMER_FILTER_WALKABLE",
-	"rcTimerLabel::RC_TIMER_MEDIAN_AREA",
-	"rcTimerLabel::RC_TIMER_FILTER_LOW_OBSTACLES",
-	"rcTimerLabel::RC_TIMER_BUILD_POLYMESH",
-	"rcTimerLabel::RC_TIMER_MERGE_POLYMESH",
-	"rcTimerLabel::RC_TIMER_ERODE_AREA",
-	"rcTimerLabel::RC_TIMER_MARK_BOX_AREA",
-	"rcTimerLabel::RC_TIMER_MARK_CYLINDER_AREA",
-	"rcTimerLabel::RC_TIMER_MARK_CONVEXPOLY_AREA",
-	"rcTimerLabel::RC_TIMER_BUILD_DISTANCEFIELD",
-	"rcTimerLabel::RC_TIMER_BUILD_DISTANCEFIELD_DIST",
-	"rcTimerLabel::RC_TIMER_BUILD_DISTANCEFIELD_BLUR",
-	"rcTimerLabel::RC_TIMER_BUILD_REGIONS",
-	"rcTimerLabel::RC_TIMER_BUILD_REGIONS_WATERSHED",
-	"rcTimerLabel::RC_TIMER_BUILD_REGIONS_EXPAND",
-	"rcTimerLabel::RC_TIMER_BUILD_REGIONS_FLOOD",
-	"rcTimerLabel::RC_TIMER_BUILD_REGIONS_FILTER",
-	"rcTimerLabel::RC_TIMER_BUILD_LAYERS", 
-	"rcTimerLabel::RC_TIMER_BUILD_POLYMESHDETAIL",
-	"rcTimerLabel::RC_TIMER_MERGE_POLYMESHDETAIL",
-	"rcTimerLabel::RC_MAX_TIMERS"
+    "rcTimerLabel::RC_TIMER_TOTAL",
+    "rcTimerLabel::RC_TIMER_TEMP",
+    "rcTimerLabel::RC_TIMER_RASTERIZE_TRIANGLES",
+    "rcTimerLabel::RC_TIMER_BUILD_COMPACTHEIGHTFIELD",
+    "rcTimerLabel::RC_TIMER_BUILD_CONTOURS",
+    "rcTimerLabel::RC_TIMER_BUILD_CONTOURS_TRACE",
+    "rcTimerLabel::RC_TIMER_BUILD_CONTOURS_SIMPLIFY",
+    "rcTimerLabel::RC_TIMER_FILTER_BORDER",
+    "rcTimerLabel::RC_TIMER_FILTER_WALKABLE",
+    "rcTimerLabel::RC_TIMER_MEDIAN_AREA",
+    "rcTimerLabel::RC_TIMER_FILTER_LOW_OBSTACLES",
+    "rcTimerLabel::RC_TIMER_BUILD_POLYMESH",
+    "rcTimerLabel::RC_TIMER_MERGE_POLYMESH",
+    "rcTimerLabel::RC_TIMER_ERODE_AREA",
+    "rcTimerLabel::RC_TIMER_MARK_BOX_AREA",
+    "rcTimerLabel::RC_TIMER_MARK_CYLINDER_AREA",
+    "rcTimerLabel::RC_TIMER_MARK_CONVEXPOLY_AREA",
+    "rcTimerLabel::RC_TIMER_BUILD_DISTANCEFIELD",
+    "rcTimerLabel::RC_TIMER_BUILD_DISTANCEFIELD_DIST",
+    "rcTimerLabel::RC_TIMER_BUILD_DISTANCEFIELD_BLUR",
+    "rcTimerLabel::RC_TIMER_BUILD_REGIONS",
+    "rcTimerLabel::RC_TIMER_BUILD_REGIONS_WATERSHED",
+    "rcTimerLabel::RC_TIMER_BUILD_REGIONS_EXPAND",
+    "rcTimerLabel::RC_TIMER_BUILD_REGIONS_FLOOD",
+    "rcTimerLabel::RC_TIMER_BUILD_REGIONS_FILTER",
+    "rcTimerLabel::RC_TIMER_BUILD_LAYERS", 
+    "rcTimerLabel::RC_TIMER_BUILD_POLYMESHDETAIL",
+    "rcTimerLabel::RC_TIMER_MERGE_POLYMESHDETAIL",
+    "rcTimerLabel::RC_MAX_TIMERS"
 };
 
 enum dtCompressedTileFlags {
