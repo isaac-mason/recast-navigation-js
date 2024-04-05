@@ -1,5 +1,11 @@
 # @recast-navigation/wasm
 
+## 0.18.1
+
+### Patch Changes
+
+- 236b810: feat: bump webidl-dts-gen from 1.10.0 to 1.11.0
+
 ## 0.18.0
 
 ### Minor Changes

@@ -1,5 +1,12 @@
 # @recast-navigation/core
 
+## 0.18.1
+
+### Patch Changes
+
+- Updated dependencies [236b810]
+  - @recast-navigation/wasm@0.18.1
+
 ## 0.18.0
 
 ### Minor Changes
