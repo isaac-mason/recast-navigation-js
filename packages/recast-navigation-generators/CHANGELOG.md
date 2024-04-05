@@ -1,5 +1,16 @@
 # @recast-navigation/generators
 
+## 0.18.0
+
+### Patch Changes
+
+- e7f2c47: feat: use wrapped calcGridSize instead of Raw.Recast.calcGridSize
+- Updated dependencies [5dd7153]
+- Updated dependencies [5dd7153]
+- Updated dependencies [dce5c98]
+  - @recast-navigation/core@0.18.0
+  - @recast-navigation/wasm@0.18.0
+
 ## 0.17.0
 
 ### Patch Changes
