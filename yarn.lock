@@ -7004,14 +7004,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^18.2.69":
-  version: 18.2.69
-  resolution: "@types/react@npm:18.2.69"
+"@types/react@npm:^18.2.73":
+  version: 18.2.73
+  resolution: "@types/react@npm:18.2.73"
   dependencies:
     "@types/prop-types": "npm:*"
-    "@types/scheduler": "npm:*"
     csstype: "npm:^3.0.2"
-  checksum: 5cc185f00ad5a4c2261e127ad25241448492f391e2206738b0477cbdba6aa75692e18ece5e75854ed513342d95c9ee83315744cb6b1470d488772cef1f8b40c8
+  checksum: 799e30e73464dff40e04f4eb7499ebc31f99b1711a69263b9af340af738e35c9cdf53084e3dacc3b21c031aaa0cba1b51f4ba60490204b7abb75f115b841583f
   languageName: node
   linkType: hard
 
@@ -16698,7 +16697,7 @@ __metadata:
     "@pmndrs/assets": "npm:^1.6.0"
     "@react-three/drei": "npm:^9.97.0"
     "@react-three/fiber": "npm:^8.15.12"
-    "@types/react": "npm:^18.2.69"
+    "@types/react": "npm:^18.2.73"
     "@types/react-dom": "npm:^18.2.8"
     "@types/three": "npm:^0.160.0"
     "@vitejs/plugin-react": "npm:^4.2.0"
@@ -19539,7 +19538,7 @@ __metadata:
     "@storybook/addon-mdx-gfm": "npm:^8.0.1"
     "@storybook/react": "npm:^8.0.1"
     "@storybook/react-vite": "npm:^8.0.1"
-    "@types/react": "npm:^18.2.69"
+    "@types/react": "npm:^18.2.73"
     "@types/react-dom": "npm:^18.2.8"
     "@types/three": "npm:^0.160.0"
     eslint: "npm:^8.56.0"
@@ -22593,7 +22592,7 @@ __metadata:
   dependencies:
     "@react-three/drei": "npm:^9.97.0"
     "@react-three/fiber": "npm:^8.15.12"
-    "@types/react": "npm:^18.2.69"
+    "@types/react": "npm:^18.2.73"
     "@types/react-dom": "npm:^18.2.8"
     "@types/three": "npm:^0.160.0"
     "@vitejs/plugin-react": "npm:^4.2.0"
