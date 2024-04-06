@@ -256,7 +256,21 @@ const { success, navMesh, tileCache } = generateTileCache(positions, indices, {
   /* ... */
   tileSize: 16,
 });
+```
 
+You can use `addCylinderObstacle`, `addBoxObstacle`, and `removeObstacle` to add and remove obstacles from the TileCache. 
+
+After adding or removing obstacles you can call `tileCache.update(navMesh)` to rebuild navmesh tiles.
+
+Adding or removing an obstacle will internally create an "obstacle request". TileCache supports queuing up to 64 obstacle requests.
+
+The `tileCache.update` method returns `upToDate`, whether the tile cache is fully up to date with obstacle requests and tile rebuilds. Each update call processes up to 64 tiles touched by added or removed obstacles. If the tile cache isn't up to date another call will continue processing obstacle requests and tile rebuilds; otherwise it will have no effect.
+
+If not many obstacle requests occur between updates, an easy pattern is to call `tileCache.update` periodically, such as every game update.
+
+If many obstacle requests have been made and you need to avoid reaching the 64 obstacle request limit, you can call `tileCache.update` multiple times, bailing out when `upToDate` is true or after a maximum number of updates.
+
+```ts
 /* add a Box obstacle to the NavMesh */
 const position = { x: 0, y: 0, z: 0 };
 const extent = { x: 1, y: 1, z: 1 };
@@ -273,12 +287,19 @@ const cylinderObstacle = tileCache.addCylinderObstacle(
   angle
 );
 
-/* update the NavMesh to reflect obstacle changes */
-tileCache.update(navMesh);
-
 /* remove the obstacles from the NavMesh */
 tileCache.removeObstacle(boxObstacle);
-tileCache.removeObstacle(cylinderObstacle);
+
+/* update to reflect obstacle changes */
+// if few obstacles are added/removed between updates, you could call tileCache.update every game update
+tileCache.update(navMesh);
+
+// if your obstacle requests are touch many tiles, you may call update multiple times
+const maxTileCacheUpdates = 5
+for (let i = 0; i < maxTileCacheUpdates; i++) {
+  const { upToDate } = tileCache.update(navMesh);
+  if (upToDate) break;
+}
 ```
 
 ### Off Mesh Connections
