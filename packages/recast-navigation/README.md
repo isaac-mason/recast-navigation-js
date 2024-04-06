@@ -294,7 +294,7 @@ tileCache.removeObstacle(boxObstacle);
 // if few obstacles are added/removed between updates, you could call tileCache.update every game update
 tileCache.update(navMesh);
 
-// if your obstacle requests are touch many tiles, you may call update multiple times
+// if your obstacle requests affect many tiles, you may need to call update multiple times
 const maxTileCacheUpdates = 5
 for (let i = 0; i < maxTileCacheUpdates; i++) {
   const { upToDate } = tileCache.update(navMesh);
