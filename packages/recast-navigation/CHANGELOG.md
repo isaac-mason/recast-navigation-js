@@ -1,5 +1,17 @@
 # recast-navigation
 
+## 0.18.2
+
+### Patch Changes
+
+- 489bdb5: feat(TileCache): improve tileCache.update jsdoc
+- 489bdb5: feat(TileCache): add 'success' to tileCache.update result
+- Updated dependencies [489bdb5]
+- Updated dependencies [489bdb5]
+  - @recast-navigation/core@0.18.2
+  - @recast-navigation/generators@0.18.2
+  - @recast-navigation/three@0.18.2
+
 ## 0.18.1
 
 ### Patch Changes
