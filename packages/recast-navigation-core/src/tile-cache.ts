@@ -64,6 +64,7 @@ export class DetourTileCacheParams {
 }
 
 export type TileCacheUpdateResult = {
+  success: boolean;
   status: number;
   upToDate: boolean;
 };
@@ -92,12 +93,29 @@ export class TileCache {
 
   /**
    * Updates the tile cache by rebuilding tiles touched by unfinished obstacle requests.
-   * This should be called after adding or removing obstacles.
+   *
+   * After adding or removing obstacles you can call `tileCache.update(navMesh)` to rebuild navmesh tiles.
+   *
+   * Adding or removing an obstacle will internally create an "obstacle request".
+   * TileCache supports queuing up to 64 obstacle requests.
+   *
+   * The `tileCache.update` method returns `upToDate`, whether the tile cache is fully up to date with obstacle requests and tile rebuilds.
+   * Each update call processes up to 64 tiles touched by added or removed obstacles.
+   * If the tile cache isn't up to date another call will continue processing obstacle requests and tile rebuilds; otherwise it will have no effect.
+   *
+   * If not many obstacle requests occur between updates, an easy pattern is to call `tileCache.update` periodically, such as every game update.
+   * If many obstacle requests have been made and you need to avoid reaching the 64 obstacle request limit, you can call `tileCache.update` multiple times, bailing out when `upToDate` is true or after a maximum number of updates.
+   * 
+   * @example
+   * ```ts
+   * const { success, status, upToDate } = tileCache.update(navMesh);
+   * ```
    */
   update(navMesh: NavMesh): TileCacheUpdateResult {
     const { status, upToDate } = this.raw.update(navMesh.raw);
 
     return {
+      success: Raw.Detour.statusSucceed(status),
       status,
       upToDate,
     };
