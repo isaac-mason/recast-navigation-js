@@ -1,5 +1,13 @@
 # @recast-navigation/core
 
+## 0.18.2
+
+### Patch Changes
+
+- 489bdb5: feat(TileCache): improve tileCache.update jsdoc
+- 489bdb5: feat(TileCache): add 'success' to tileCache.update result
+  - @recast-navigation/wasm@0.18.2
+
 ## 0.18.1
 
 ### Patch Changes
