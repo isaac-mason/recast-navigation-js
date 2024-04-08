@@ -103,7 +103,7 @@
     "three": "^0.160.0",
     "three-pathfinding": "^1.2.0",
     "typescript": "^5.4.3",
-    "vitest": "^1.2.0"
+    "vitest": "^1.4.0"
   },
   "packageManager": "yarn@3.2.2"
 }
