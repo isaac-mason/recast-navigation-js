@@ -396,10 +396,22 @@ import { dtStatusToReadableString } from 'recast-navigation';
 console.log(dtStatusToReadableString(status));
 ```
 
-If you need to check for particular status codes, you can use `Raw.Detour`:
+If you need to work with status codes programmatically, you can use these utilities:
 
 ```ts
 import { Raw } from 'recast-navigation';
+
+// returns true if the status is a success
+Raw.Detour.statusSucceed(status);
+
+// returns true if the status is in progress
+Raw.Detour.statusInProgress(status);
+
+// returns true if the status is a failure
+Raw.Detour.statusFailed(status);
+
+// get the detail of the status
+const detail = Raw.Detour.statusDetail(status);
 
 // Raw.Detour.WRONG_MAGIC;
 // Raw.Detour.WRONG_VERSION;
