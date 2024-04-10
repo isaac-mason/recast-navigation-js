@@ -83,7 +83,7 @@ Documentation for the Recast and Detour c++ libraries can be found here:
 - [Recast Navigation GitHub](https://github.com/recastnavigation/recastnavigation)
 - [Recast Navigation Google Discussions](https://groups.google.com/g/recastnavigation)
 
-The GitHub issues and Google Discussions are a great resources for learning about the library and getting guidance on common issues.
+The GitHub issues and Google Discussions are great resources for learning about the library and getting guidance on common issues.
 
 ## Usage
 
