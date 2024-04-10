@@ -50,45 +50,64 @@ TileCacheUpdateResult TileCache::update(NavMesh *navMesh)
     return *result;
 };
 
-dtObstacleRef *TileCache::addCylinderObstacle(const Vec3 &position, float radius, float height)
+TileCacheAddObstacleResult TileCache::addCylinderObstacle(const Vec3 &position, float radius, float height)
 {
     dtObstacleRef ref(-1);
+
+    TileCacheAddObstacleResult *result = new TileCacheAddObstacleResult;
+
     if (!m_tileCache)
     {
-        return nullptr;
+        result->status = DT_FAILURE;
+        return *result;
     }
 
-    m_tileCache->addObstacle(&position.x, radius, height, &ref);
+    result->status = m_tileCache->addObstacle(&position.x, radius, height, &ref);
+    
     m_obstacles.push_back(ref);
-    return &m_obstacles.back();
+
+    result->ref = &m_obstacles.back();
+
+    return *result;
 }
 
-dtObstacleRef *TileCache::addBoxObstacle(const Vec3 &position, const Vec3 &extent, float angle)
+TileCacheAddObstacleResult TileCache::addBoxObstacle(const Vec3 &position, const Vec3 &extent, float angle)
 {
     dtObstacleRef ref(-1);
+
+    TileCacheAddObstacleResult *result = new TileCacheAddObstacleResult;
+
     if (!m_tileCache)
     {
-        return nullptr;
+        result->status = DT_FAILURE; 
+        return *result;
     }
 
-    m_tileCache->addBoxObstacle(&position.x, &extent.x, angle, &ref);
+    result->status = m_tileCache->addBoxObstacle(&position.x, &extent.x, angle, &ref);
+
     m_obstacles.push_back(ref);
-    return &m_obstacles.back();
+
+    result->ref = &m_obstacles.back();
+
+    return *result;
 }
 
-void TileCache::removeObstacle(dtObstacleRef *obstacle)
+dtStatus TileCache::removeObstacle(dtObstacleRef *obstacle)
 {
     if (!m_tileCache || !obstacle || *obstacle == -1)
     {
-        return;
+        return DT_FAILURE;
     }
 
-    m_tileCache->removeObstacle(*obstacle);
+    dtStatus status = m_tileCache->removeObstacle(*obstacle);
+
     auto iter = std::find(m_obstacles.begin(), m_obstacles.end(), *obstacle);
     if (iter != m_obstacles.end())
     {
         m_obstacles.erase(iter);
     }
+
+    return status;
 }
 
 void TileCache::destroy()

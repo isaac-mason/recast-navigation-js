@@ -22,6 +22,21 @@ export type CylinderObstacle = {
   height: number;
 };
 
+export type AddObstacleResult<T> = {
+  success: true;
+  status: number;
+  obstacle: T;
+} | {
+  success: false;
+  status: number;
+  obstacle?: T;
+};
+
+export type RemoveObstacleResult = {
+  success: boolean;
+  status: number;
+};
+
 export type Obstacle = BoxObstacle | CylinderObstacle;
 
 export type TileCacheParamsType = {
@@ -128,12 +143,21 @@ export class TileCache {
     position: Vector3,
     radius: number,
     height: number
-  ): CylinderObstacle {
-    const ref = this.raw.addCylinderObstacle(
+  ): AddObstacleResult<CylinderObstacle> {
+    const result = this.raw.addCylinderObstacle(
       vec3.toRaw(position),
       radius,
       height
     );
+
+    if (result.status !== Raw.Detour.SUCCESS) {
+      return {
+        success: false,
+        status: result.status,
+      };
+    }
+
+    const ref = result.ref;
 
     const obstacle: CylinderObstacle = {
       type: 'cylinder',
@@ -145,7 +169,11 @@ export class TileCache {
 
     this.obstacles.set(ref, obstacle);
 
-    return obstacle;
+    return {
+      success: true,
+      status: result.status,
+      obstacle,
+    };
   }
 
   /**
@@ -155,12 +183,21 @@ export class TileCache {
     position: Vector3,
     extent: Vector3,
     angle: number
-  ): BoxObstacle {
-    const ref = this.raw.addBoxObstacle(
+  ): AddObstacleResult<BoxObstacle> {
+    const result = this.raw.addBoxObstacle(
       vec3.toRaw(position),
       vec3.toRaw(extent),
       angle
     );
+
+    if (result.status !== Raw.Detour.SUCCESS) {
+      return {
+        success: false,
+        status: result.status,
+      };
+    }
+
+    const ref = result.ref;
 
     const obstacle: BoxObstacle = {
       type: 'box',
@@ -172,13 +209,17 @@ export class TileCache {
 
     this.obstacles.set(ref, obstacle);
 
-    return obstacle;
+    return {
+      success: true,
+      status: result.status,
+      obstacle,
+    };
   }
 
   /**
    * Removes an obstacle from the navigation mesh.
    */
-  removeObstacle(obstacle: Obstacle | ObstacleRef): void {
+  removeObstacle(obstacle: Obstacle | ObstacleRef): RemoveObstacleResult {
     let ref: ObstacleRef;
 
     if (typeof obstacle === 'object') {
@@ -188,7 +229,13 @@ export class TileCache {
     }
 
     this.obstacles.delete(ref);
-    this.raw.removeObstacle(ref);
+
+    const status = this.raw.removeObstacle(ref);
+
+    return {
+      success: Raw.Detour.statusSucceed(status),
+      status,
+    };
   }
 
   addTile(

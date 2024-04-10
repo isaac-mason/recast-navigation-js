@@ -131,6 +131,8 @@ export const CrowdExample = () => {
 
       crowd.destroy();
       navMesh.destroy();
+      tileCache.destroy();
+      navMeshQuery.destroy();
     };
   }, [group]);
 
@@ -139,23 +141,33 @@ export const CrowdExample = () => {
 
     if (boxObstacle.current) {
       tileCache.removeObstacle(boxObstacle.current);
+      boxObstacle.current = undefined;
     }
 
     if (cylinderObstacle.current) {
       tileCache.removeObstacle(cylinderObstacle.current);
+      cylinderObstacle.current = undefined;
     }
 
-    boxObstacle.current = tileCache.addBoxObstacle(
+    const boxObstacleResult = tileCache.addBoxObstacle(
       boxObstacleTarget.current!.getWorldPosition(new Vector3()),
       { x: 1, y: 1, z: 1 },
       0.2
     );
 
-    cylinderObstacle.current = tileCache.addCylinderObstacle(
+    if (boxObstacleResult.success) {
+      boxObstacle.current = boxObstacleResult.obstacle;
+    }
+
+    const cylinderObstacleResult =  tileCache.addCylinderObstacle(
       cylinderObstacleTarget.current!.getWorldPosition(new Vector3()),
       1,
       0.5
     );
+
+    if (cylinderObstacleResult.success) {
+      cylinderObstacle.current = cylinderObstacleResult.obstacle;
+    }
 
     let upToDate = false;
     while (!upToDate) {

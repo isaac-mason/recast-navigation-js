@@ -142,6 +142,12 @@ struct TileCacheUpdateResult
     bool upToDate;
 };
 
+struct TileCacheAddObstacleResult
+{
+    unsigned int status;
+    dtObstacleRef *ref;
+};
+
 class TileCache
 {
 public:
@@ -162,11 +168,11 @@ public:
 
     TileCacheUpdateResult update(NavMesh *navMesh);
 
-    dtObstacleRef *addCylinderObstacle(const Vec3 &position, float radius, float height);
+    TileCacheAddObstacleResult addCylinderObstacle(const Vec3 &position, float radius, float height);
 
-    dtObstacleRef *addBoxObstacle(const Vec3 &position, const Vec3 &extent, float angle);
+    TileCacheAddObstacleResult addBoxObstacle(const Vec3 &position, const Vec3 &extent, float angle);
 
-    void removeObstacle(dtObstacleRef *obstacle);
+    dtStatus removeObstacle(dtObstacleRef *obstacle);
 
     void destroy();
 

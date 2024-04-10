@@ -79,21 +79,33 @@ export const PathExample = () => {
       setTileCache(undefined);
 
       navMesh.destroy();
+      tileCache.destroy();
+      navMeshQuery.destroy();
     };
   }, [group]);
 
   const update = () => {
     if (!navMesh || !tileCache || !navMeshQuery) return;
 
+    console.log('box', boxObstacle.current)
     if (boxObstacle.current) {
-      tileCache.removeObstacle(boxObstacle.current);
+      console.log('removeObstacle')
+      const status = tileCache.removeObstacle(boxObstacle.current);
+
+      console.log(status);
+
+      boxObstacle.current = undefined;
     }
 
-    boxObstacle.current = tileCache.addBoxObstacle(
+    const addObstacleResult = tileCache.addBoxObstacle(
       boxObstacleTarget.current!.getWorldPosition(new Vector3()),
       { x: 1, y: 1, z: 1 },
       0.2
     );
+
+    if (addObstacleResult.success) {
+      boxObstacle.current = addObstacleResult.obstacle;
+    }
 
     let upToDate = false;
     while (!upToDate) {

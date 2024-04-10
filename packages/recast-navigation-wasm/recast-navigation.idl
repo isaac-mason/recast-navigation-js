@@ -506,6 +506,11 @@ interface TileCacheUpdateResult {
     attribute boolean upToDate;
 };
 
+interface TileCacheAddObstacleResult {
+    attribute unsigned long status;
+    attribute dtObstacleRef ref;
+};
+
 interface dtTileCacheCompressor {
 };
 
@@ -541,9 +546,9 @@ interface TileCache {
     unsigned long buildNavMeshTile([Const] dtCompressedTileRef ref, NavMesh navMesh);
     unsigned long buildNavMeshTilesAt([Const] long tx, [Const] long ty, NavMesh navMesh);
     [Value] TileCacheUpdateResult update(NavMesh navMesh);
-    dtObstacleRef addCylinderObstacle([Const, Ref] Vec3 position, float radius, float height);
-    dtObstacleRef addBoxObstacle([Const, Ref] Vec3 position, [Const, Ref] Vec3 extent, float angle);
-    void removeObstacle(dtObstacleRef obstacle);
+    [Value] TileCacheAddObstacleResult addCylinderObstacle([Const, Ref] Vec3 position, float radius, float height);
+    [Value] TileCacheAddObstacleResult addBoxObstacle([Const, Ref] Vec3 position, [Const, Ref] Vec3 extent, float angle);
+    unsigned long removeObstacle(dtObstacleRef obstacle);
     void destroy();
 };
 

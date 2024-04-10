@@ -264,7 +264,7 @@ After adding or removing obstacles you can call `tileCache.update(navMesh)` to r
 
 Adding or removing an obstacle will internally create an "obstacle request". TileCache supports queuing up to 64 obstacle requests.
 
-The `tileCache.update` method returns `upToDate`, whether the tile cache is fully up to date with obstacle requests and tile rebuilds. Each update call processes up to 64 tiles touched by added or removed obstacles. If the tile cache isn't up to date another call will continue processing obstacle requests and tile rebuilds; otherwise it will have no effect.
+The `tileCache.update` method returns `upToDate`, whether the tile cache is fully up to date with obstacle requests and tile rebuilds. If the tile cache isn't up to date another call will continue processing obstacle requests and tile rebuilds; otherwise it will have no effect.
 
 If not many obstacle requests occur between updates, an easy pattern is to call `tileCache.update` periodically, such as every game update.
 
@@ -275,20 +275,22 @@ If many obstacle requests have been made and you need to avoid reaching the 64 o
 const position = { x: 0, y: 0, z: 0 };
 const extent = { x: 1, y: 1, z: 1 };
 const angle = 0;
-const boxObstacle = tileCache.addBoxObstacle(position, extent, angle);
+const addBoxObstacleResult = tileCache.addBoxObstacle(position, extent, angle);
+const boxObstacle = addBoxObstacleResult.obstacle;
 
 /* add a Cylinder obstacle to the NavMesh */
 const radius = 1;
 const height = 1;
-const cylinderObstacle = tileCache.addCylinderObstacle(
+const addCylinderObstacleResult = tileCache.addCylinderObstacle(
   position,
   radius,
   height,
   angle
 );
+const cylinderObstacle = addCylinderObstacleResult.obstacle;
 
 /* remove the obstacles from the NavMesh */
-tileCache.removeObstacle(boxObstacle);
+const removeObstacleResult = tileCache.removeObstacle(boxObstacle);
 
 /* update to reflect obstacle changes */
 // if few obstacles are added/removed between updates, you could call tileCache.update every game update
@@ -368,6 +370,8 @@ const { success, navMesh, tileCache } = generateTileCache(
 
 ### Debugging
 
+#### Debug Nav Mesh
+
 You can use `getDebugNavMesh` to get a debug representation of the NavMesh.
 
 ```ts
@@ -379,6 +383,33 @@ const { positions, indices } = debugNavMesh;
 If you are using three.js, you can use `NavMeshHelper` and `CrowdHelper` to visualize NavMeshes, Crowds, and NavMesh generation intermediates.
 
 See the [`@recast-navigation/three` package README](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-three/README.md) for usage information.
+
+#### Detour Status Codes
+
+Many Detour APIs return a `status` property. This is a `dtStatus` enum, which is a number representing the status of the operation.
+
+You can use the `dtStatusToReadableString` function to convert a `dtStatus` to a human-readable string.
+
+```ts
+import { dtStatusToReadableString } from 'recast-navigation';
+
+console.log(dtStatusToReadableString(status));
+```
+
+If you need to check for particular status codes, you can use `Raw.Detour`:
+
+```ts
+import { Raw } from 'recast-navigation';
+
+// Raw.Detour.WRONG_MAGIC;
+// Raw.Detour.WRONG_VERSION;
+// Raw.Detour.OUT_OF_MEMORY;
+// Raw.Detour.INVALID_PARAM;
+// Raw.Detour.BUFFER_TOO_SMALL;
+// Raw.Detour.OUT_OF_NODES;
+// Raw.Detour.PARTIAL_RESULT;
+// Raw.Detour.ALREADY_OCCUPIED;
+```
 
 ### Importing and Exporting
 
