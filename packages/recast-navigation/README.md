@@ -7,7 +7,7 @@
 
 # recast-navigation-js
 
-### [Try the NavMesh Generator Website!](https://navmesh.isaacmason.com/)
+### [Examples](recast-navigation-js.isaacmason.com) | [NavMesh Generator Website](https://navmesh.isaacmason.com/)
 
 - 📐 ‎ NavMesh generation
 - 🧭 ‎ Pathfinding
@@ -262,7 +262,7 @@ You can use `addCylinderObstacle`, `addBoxObstacle`, and `removeObstacle` to add
 
 After adding or removing obstacles you can call `tileCache.update(navMesh)` to rebuild navmesh tiles.
 
-Adding or removing an obstacle will internally create an "obstacle request". TileCache supports queuing up to 64 obstacle requests.
+Adding or removing an obstacle will internally create an "obstacle request". TileCache supports queuing up to 64 obstacle requests. If the requests queue is full, calls to `addCylinderObstacle` and `addBoxObstacle` will fail and return a `dtStatus` status code `DT_BUFFER_TOO_SMALL`.
 
 The `tileCache.update` method returns `upToDate`, whether the tile cache is fully up to date with obstacle requests and tile rebuilds. If the tile cache isn't up to date another call will continue processing obstacle requests and tile rebuilds; otherwise it will have no effect.
 
