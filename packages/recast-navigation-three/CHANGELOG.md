@@ -1,5 +1,13 @@
 # @recast-navigation/three
 
+## 0.19.0
+
+### Patch Changes
+
+- Updated dependencies [d490a5c]
+  - @recast-navigation/core@0.19.0
+  - @recast-navigation/generators@0.19.0
+
 ## 0.18.2
 
 ### Patch Changes
