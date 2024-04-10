@@ -7,7 +7,7 @@
 
 # recast-navigation-js
 
-### [Examples](recast-navigation-js.isaacmason.com) | [NavMesh Generator Website](https://navmesh.isaacmason.com/)
+### [Examples](https://recast-navigation-js.isaacmason.com) | [NavMesh Generator Website](https://navmesh.isaacmason.com/)
 
 - 📐 ‎ NavMesh generation
 - 🧭 ‎ Pathfinding
