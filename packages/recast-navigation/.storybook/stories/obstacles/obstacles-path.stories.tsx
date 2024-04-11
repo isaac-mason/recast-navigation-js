@@ -87,12 +87,8 @@ export const PathExample = () => {
   const update = () => {
     if (!navMesh || !tileCache || !navMeshQuery) return;
 
-    console.log('box', boxObstacle.current)
     if (boxObstacle.current) {
-      console.log('removeObstacle')
       const status = tileCache.removeObstacle(boxObstacle.current);
-
-      console.log(status);
 
       boxObstacle.current = undefined;
     }
