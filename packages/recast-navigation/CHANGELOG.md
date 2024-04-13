@@ -1,5 +1,20 @@
 # recast-navigation
 
+## 0.20.0
+
+### Minor Changes
+
+- 56f1855: feat: add detour status helpers statusSucceed, statusFailed, statusInProgress, statusDetail
+- 56f1855: feat: rename dtStatusToReadableString to statusToReadableString
+
+### Patch Changes
+
+- Updated dependencies [56f1855]
+- Updated dependencies [56f1855]
+  - @recast-navigation/core@0.20.0
+  - @recast-navigation/generators@0.20.0
+  - @recast-navigation/three@0.20.0
+
 ## 0.19.0
 
 ### Minor Changes
