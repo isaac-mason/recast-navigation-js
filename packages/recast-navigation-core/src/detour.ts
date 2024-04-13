@@ -3,7 +3,23 @@ import type R from './raw-module';
 import { RecastPolyMesh, RecastPolyMeshDetail } from './recast';
 import { Vector3, Vector3Tuple, array, vec3 } from './utils';
 
-export const dtStatusToReadableString = (status: number): string => {
+export const statusSucceed = (status: number): boolean => {
+  return Raw.Detour.statusSucceed(status);
+}
+
+export const statusFailed = (status: number): boolean => {
+  return Raw.Detour.statusFailed(status);
+}
+
+export const statusInProgress = (status: number): boolean => {
+  return Raw.Detour.statusInProgress(status);
+}
+
+export const statusDetail = (status: number, detail: number): boolean => {
+  return Raw.Detour.statusDetail(status, detail);
+}
+
+export const statusToReadableString = (status: number): string => {
   if (Raw.Detour.statusSucceed(status)) {
     return 'success';
   }

@@ -388,30 +388,30 @@ See the [`@recast-navigation/three` package README](https://github.com/isaac-mas
 
 Many Detour APIs return a `status` property. This is a `dtStatus` enum, which is a number representing the status of the operation.
 
-You can use the `dtStatusToReadableString` function to convert a `dtStatus` to a human-readable string.
+You can use the `statusToReadableString` function to convert a `dtStatus` to a human-readable string.
 
 ```ts
-import { dtStatusToReadableString } from 'recast-navigation';
+import { statusToReadableString } from 'recast-navigation';
 
-console.log(dtStatusToReadableString(status));
+console.log(statusToReadableString(status));
 ```
 
 If you need to work with status codes programmatically, you can use these utilities:
 
 ```ts
-import { Raw } from 'recast-navigation';
+import { statusSucceed, statusInProgress, statusFailed, statusDetail } from 'recast-navigation';
 
 // returns true if the status is a success
-Raw.Detour.statusSucceed(status);
+const succeeded = statusSucceed(status);
 
 // returns true if the status is in progress
-Raw.Detour.statusInProgress(status);
+const inProgress = statusInProgress(status);
 
 // returns true if the status is a failure
-Raw.Detour.statusFailed(status);
+const failed = statusFailed(status);
 
 // get the detail of the status
-const detail = Raw.Detour.statusDetail(status);
+const detail = statusDetail(status);
 
 // Raw.Detour.WRONG_MAGIC;
 // Raw.Detour.WRONG_VERSION;

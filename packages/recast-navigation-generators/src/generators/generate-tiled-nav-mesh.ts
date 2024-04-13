@@ -28,7 +28,7 @@ import {
   createHeightfield,
   createNavMeshData,
   createRcConfig,
-  dtStatusToReadableString,
+  statusToReadableString,
   erodeWalkableArea,
   filterLedgeSpans,
   filterLowHangingWalkableObstacles,
@@ -618,7 +618,7 @@ export const generateTiledNavMesh = (
             `Failed to add tile to nav mesh` +
               '\n\t' +
               `tx: ${x}, ty: ${y},` +
-              `status: ${dtStatusToReadableString(addTileResult.status)} (${
+              `status: ${statusToReadableString(addTileResult.status)} (${
                 addTileResult.status
               })`
           );

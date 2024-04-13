@@ -1,20 +1,15 @@
-import { Line, OrbitControls, PivotControls } from '@react-three/drei';
+import { Line, OrbitControls } from '@react-three/drei';
 import {
-  BoxObstacle,
   NavMesh,
   NavMeshQuery,
+  Raw,
   TileCache,
+  statusDetail,
+  statusToReadableString,
 } from '@recast-navigation/core';
 import { threeToTileCache } from '@recast-navigation/three';
-import React, { useEffect, useRef, useState } from 'react';
-import {
-  Group,
-  Mesh,
-  MeshBasicMaterial,
-  Object3D,
-  Vector3,
-  Vector3Tuple,
-} from 'three';
+import React, { useEffect, useState } from 'react';
+import { Group, Mesh, MeshBasicMaterial, Vector3, Vector3Tuple } from 'three';
 import { Debug } from '../../common/debug';
 import { decorators } from '../../decorators';
 import { parameters } from '../../parameters';
@@ -35,18 +30,13 @@ const obstaclesMaterial = new MeshBasicMaterial({
   wireframe: true,
 });
 
-export const PathExample = () => {
+export const ManyObstaclesExample = () => {
   const [group, setGroup] = useState<Group | null>(null);
 
   const [navMesh, setNavMesh] = useState<NavMesh | undefined>();
-  const [navMeshQuery, setNavMeshQuery] = useState<NavMeshQuery | undefined>();
   const [tileCache, setTileCache] = useState<TileCache | undefined>();
 
   const [path, setPath] = useState<Vector3Tuple[]>();
-
-  const boxObstacle = useRef<BoxObstacle | undefined>();
-
-  const boxObstacleTarget = useRef<Object3D | null>(null!);
 
   useEffect(() => {
     if (!group) return;
@@ -69,13 +59,80 @@ export const PathExample = () => {
 
     const navMeshQuery = new NavMeshQuery({ navMesh });
 
+    const boxObstacleSize = new Vector3(0.3, 1, 0.3);
+    const addCylinderObstacleRadius = 0.3;
+
+    const fullTileCacheUpdate = () => {
+      let upToDate = false;
+      while (!upToDate) {
+        const result = tileCache.update(navMesh);
+        upToDate = result.upToDate;
+
+        console.log(
+          'tileCache.update status:',
+          statusToReadableString(result.status)
+        );
+      }
+    };
+
+    let obstacles = 0;
+    for (let x = -10; x < 10; x += 2) {
+      for (let z = -10; z < 10; z += 2) {
+        obstacles += 1;
+
+        const obstaclePosition = new Vector3(x, 0, z);
+
+        const createObstacle = () => {
+          if (obstacles % 2 === 0) {
+            return tileCache.addBoxObstacle(
+              obstaclePosition,
+              boxObstacleSize,
+              0.2
+            );
+          } else {
+            return tileCache.addCylinderObstacle(
+              obstaclePosition,
+              addCylinderObstacleRadius,
+              1
+            );
+          }
+        };
+
+        const result = createObstacle();
+
+        if (
+          !result.success &&
+          statusDetail(result.status, Raw.Detour.BUFFER_TOO_SMALL)
+        ) {
+          fullTileCacheUpdate();
+
+          createObstacle();
+        }
+      }
+    }
+
+    fullTileCacheUpdate();
+
+    const path = navMeshQuery.computePath(
+      navMeshQuery.getClosestPoint({
+        x: -8,
+        y: 0,
+        z: 10,
+      }),
+      navMeshQuery.getClosestPoint({
+        x: 8,
+        y: 0,
+        z: -10,
+      })
+    );
+
+    setPath(path ? path.map((v) => [v.x, v.y, v.z]) : undefined);
+
     setNavMesh(navMesh);
-    setNavMeshQuery(navMeshQuery);
     setTileCache(tileCache);
 
     return () => {
       setNavMesh(undefined);
-      setNavMeshQuery(undefined);
       setTileCache(undefined);
 
       navMesh.destroy();
@@ -84,74 +141,16 @@ export const PathExample = () => {
     };
   }, [group]);
 
-  const update = () => {
-    if (!navMesh || !tileCache || !navMeshQuery) return;
-
-    if (boxObstacle.current) {
-      const { success } = tileCache.removeObstacle(boxObstacle.current);
-
-      if (success) {
-        boxObstacle.current = undefined;
-      }
-    }
-
-    if (!boxObstacle.current) {
-      const addObstacleResult = tileCache.addBoxObstacle(
-        boxObstacleTarget.current!.getWorldPosition(new Vector3()),
-        { x: 1, y: 1, z: 1 },
-        0.2
-      );
-  
-      if (addObstacleResult.success) {
-        boxObstacle.current = addObstacleResult.obstacle;
-      }
-    } 
-
-    let upToDate = false;
-    while (!upToDate) {
-      const result = tileCache.update(navMesh);
-      upToDate = result.upToDate;
-    }
-
-    const path = navMeshQuery.computePath(
-      navMeshQuery.getClosestPoint({
-        x: -8,
-        y: 0,
-        z: 8,
-      }),
-      navMeshQuery.getClosestPoint({
-        x: 8,
-        y: 0,
-        z: -8,
-      })
-    );
-
-    setPath(path ? path.map((v) => [v.x, v.y, v.z]) : undefined);
-  };
-
-  useEffect(() => {
-    update();
-  }, [navMesh]);
-
   return (
     <>
       <group ref={setGroup}>
         <mesh rotation-x={-Math.PI / 2}>
-          <planeGeometry args={[20, 20]} />
+          <planeGeometry args={[25, 25]} />
           <meshStandardMaterial color="#ccc" />
         </mesh>
       </group>
 
       {path && <Line points={path} color={'orange'} lineWidth={10} />}
-
-      <PivotControls
-        offset={[-2, 1, 1]}
-        disableRotations
-        activeAxes={[true, false, true]}
-        onDrag={update}
-      >
-        <object3D ref={boxObstacleTarget} position={[-2, 1, 1]} />
-      </PivotControls>
 
       <Debug
         autoUpdate
