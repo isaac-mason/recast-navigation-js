@@ -71,7 +71,7 @@
     "@recast-navigation/three": "0.20.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.23.9",
+    "@babel/core": "^7.24.4",
     "@isaac-mason/eslint-config-typescript": "^0.0.5",
     "@mdx-js/react": "^2.3.0",
     "@pmndrs/assets": "^1.6.0",
