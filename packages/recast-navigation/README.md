@@ -25,17 +25,25 @@ This library provides high level APIs that make it easy to get started creating 
 
 > **Warning** This library is still in early development. Versions in the 0.x.x range may have breaking changes.
 
+## Examples
+
+Go to the [examples website](https://recast-navigation-js.isaacmason.com) to see the project in action:
+- live: [https://recast-navigation-js.isaacmason.com](https://recast-navigation-js.isaacmason.com).
+- examples source code: [./packages/recast-navigation/.storybook/stories](./packages/recast-navigation/.storybook/stories).
+
+Demonstrations of how to use the library in different environments (such as NodeJS, CommonJS) can be found in the [examples](./examples) directory.
+
 ## Installation
 
 This package ships as both ECMAScript modules and CJS, and is compatible with Node.js and browser environments.
 
-### NPM
+**NPM**
 
 ```sh
 npm install recast-navigation
 ```
 
-### Unpkg
+**Unpkg**
 
 ```html
 <script type="importmap">
@@ -458,12 +466,6 @@ const { navMesh, tileCache } = importNavMesh(
   tileCacheMeshProcess
 );
 ```
-
-## Examples
-
-Some demonstrations of how to use the library in different environments can be found in the [examples](./examples) directory.
-
-There are also storybooks that demonstrate the library in action: [https://recast-navigation-js.isaacmason.com](https://recast-navigation-js.isaacmason.com). The source code for the storybooks can be found in [./packages/recast-navigation/.storybook/stories](./packages/recast-navigation/.storybook/stories).
 
 ## Packages
 
