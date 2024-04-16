@@ -62,7 +62,7 @@ npm install recast-navigation
 </script>
 ```
 
-### Usage with bundlers
+**Usage with bundlers**
 
 If you are using Vite, you may need to opt `recast-navigation` out of pre-bundling:
 
