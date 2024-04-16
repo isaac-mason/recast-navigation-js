@@ -49,9 +49,9 @@ npm install recast-navigation
 <script type="importmap">
   {
     "imports": {
-      "@recast-navigation/core": "https://unpkg.com/@recast-navigation/core@0.17.0/dist/index.mjs",
-      "@recast-navigation/generators": "https://unpkg.com/@recast-navigation/generators@0.17.0/dist/index.mjs",
-      "@recast-navigation/three": "https://unpkg.com/@recast-navigation/three@0.17.0/dist/index.mjs"
+      "@recast-navigation/core": "https://unpkg.com/@recast-navigation/core@0.20.0/dist/index.mjs",
+      "@recast-navigation/generators": "https://unpkg.com/@recast-navigation/generators@0.20.0/dist/index.mjs",
+      "@recast-navigation/three": "https://unpkg.com/@recast-navigation/three@0.20.0/dist/index.mjs"
     }
   }
 </script>
@@ -150,7 +150,9 @@ See the docs for more information on generator options: https://docs.recast-navi
 
 This library provides low-level APIs that aim to match the recast and detour c++ api, allowing you to create custom navigation mesh generators based on your specific needs. You can use the NavMesh generators provided by `@recast-navigation/generators` as a basis: https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-generators/src/generators
 
-Please note that this functionality is experimental, and not all everything is exposed. Familiarity with the recast and detour C++ libraries is required. If you require unexposed functionality, please submit an issue or a pull request.
+An example of a custom NavMesh generator with custom areas can be found here: https://recast-navigation-js.isaacmason.com/?path=/story/advanced-custom-areas--compute-path
+
+Please note that not all recast and detour functionality is exposed yet. If you require unexposed functionality, please submit an issue or a pull request.
 
 ### Querying a NavMesh
 
