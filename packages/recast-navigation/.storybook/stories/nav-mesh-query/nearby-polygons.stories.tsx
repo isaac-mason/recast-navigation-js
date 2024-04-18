@@ -11,15 +11,7 @@ import { Debug } from '../../common/debug';
 
 export function ClickNearbyPolygons() {
 
-  const [state, setState] = React.useState({ selectType: 'cube' } as {
-    group: THREE.Group;
-    navMesh: NavMesh;
-    navMeshQuery: NavMeshQuery;
-    selectType: 'cube' | 'circle';
-    touchGeom?: THREE.BufferGeometry;
-    downAt?: number;
-    clickedPosition?: THREE.Vector3;
-  });
+  const [state, setState] = React.useState({ selectType: 'cube', touchedPolyIds: {} } as State);
 
   React.useEffect(() => {
     if (state.group) {
@@ -36,6 +28,23 @@ export function ClickNearbyPolygons() {
       }
     }
   }, [state.group]);
+
+  function onClickPolyLink(polyId: number, e: React.MouseEvent) {
+    e.preventDefault();
+
+    state.touchedPolyIds[polyId] = !state.touchedPolyIds[polyId];
+    const enabledPolyIds = Object.keys(state.touchedPolyIds).map(Number).filter(polyId => state.touchedPolyIds[polyId]);
+    const currPolyRefs = enabledPolyIds.map(polyId => {
+      const salt = state.navMesh.getTile(0).salt();
+      return state.navMesh.encodePolyId(salt, 0, polyId);
+    });
+    console.info('encoded enabled polyIds', currPolyRefs);
+
+    setState(s => ({
+      ...s,
+      touchGeom: polyRefsToGeom(currPolyRefs, state.navMesh),
+    }));
+  }
 
   return (
     <>
@@ -62,7 +71,6 @@ export function ClickNearbyPolygons() {
             const queryPolygonsResult = query.queryPolygons(clickedPosition, halfExtents, undefined, maxPolys);
             console.info('queryPolygons', queryPolygonsResult);
             
-            // 🚧
             const polyRefs = state.selectType === 'circle' ? findPolysAroundCircleResult.resultRefs : queryPolygonsResult.polyRefs;
             const decodedPolyRefs = polyRefs.map(polyRef => state.navMesh.decodePolyId(polyRef));
             console.info('decodedPolyRefs', decodedPolyRefs);
@@ -71,6 +79,7 @@ export function ClickNearbyPolygons() {
               ...s,
               clickedPosition,
               touchGeom: polyRefsToGeom(polyRefs, state.navMesh),
+              touchedPolyIds: decodedPolyRefs.reduce((agg, { ipRef }) => ({ ...agg, [ipRef]: true }), {}),
             }));
           }}
         />
@@ -93,28 +102,53 @@ export function ClickNearbyPolygons() {
 
       <OrbitControls zoomToCursor />
 
-    <tunnelRat.In>
-      <div style={{
-        position: 'absolute',
-        top: 0,
-        color: 'white',
-        padding: 24,
-      }}>
-        <h2>Click to select triangles</h2>
-        <select
-          defaultValue="foo"
-          style={{ fontSize: 16, padding: 12 }}
-          onChange={({ currentTarget }) => {
-            setState(x => ({ ...x, selectType: currentTarget.value as 'cube' | 'circle' }))
-          }}
-        >
-          <option value="cube">triangles touching 1x1x1 cube</option>
-          <option value="circle">triangles touching circle radius 1</option>
-        </select>
-      </div>
-    </tunnelRat.In>
+      <tunnelRat.In>
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          color: 'white',
+          padding: 24,
+          userSelect: 'none',
+        }}>
+          <h2>Click to select triangles</h2>
+          <select
+            defaultValue="foo"
+            style={{ fontSize: 16, padding: 12 }}
+            onChange={({ currentTarget: { value } }) => {
+              setState(s => ({ ...s, selectType: value as State['selectType'] }))
+            }}
+          >
+            <option value="cube">triangles touching 1x1x1 cube</option>
+            <option value="circle">triangles touching circle with radius 1</option>
+          </select>
+          <div style={{ display: 'flex', flexWrap: 'wrap', maxWidth: 200 }}>
+            {Object.entries(state.touchedPolyIds).map(([polyIdStr, enabled]) =>
+              <button
+                key={polyIdStr}
+                onClick={onClickPolyLink.bind(null, Number(polyIdStr))}
+                {...!enabled && { style: { filter: 'brightness(40%)' } }}
+              >
+                {polyIdStr}
+              </button>
+            )}
+          </div>
+          
+        </div>
+      </tunnelRat.In>
     </>
   );
+}
+
+interface State {
+  group: THREE.Group;
+  navMesh: NavMesh;
+  navMeshQuery: NavMeshQuery;
+  selectType: 'cube' | 'circle';
+  downAt?: number;
+  clickedPosition?: THREE.Vector3;
+  touchGeom?: THREE.BufferGeometry;
+  /** Only one tile in `threeToSoloNavMesh` */
+  touchedPolyIds: { [tilePolyId: number]: boolean };
 }
 
 function polyRefsToGeom(polyRefs: number[], navMesh: NavMesh): THREE.BufferGeometry {
