@@ -49,20 +49,22 @@ export function ClickNearbyPolygons() {
 
             const query = new NavMeshQuery({ navMesh: state.navMesh });
             const center = e.point;
+            const clickedPosition = center.clone();
+            state.selectType === 'cube' && clickedPosition.setY(center.y + 0.5);
             
-            const { nearestRef: startRef } = query.findNearestPoly(center);
+            const { nearestRef: startRef } = query.findNearestPoly(clickedPosition);
             console.info('findNearestPoly', startRef);
 
-            const findPolysAroundCircleResult = query.findPolysAroundCircle(startRef, center, 0.5, undefined, maxPolys);
+            const findPolysAroundCircleResult = query.findPolysAroundCircle(startRef, clickedPosition, 1, undefined, maxPolys);
             console.info('findPolysAroundCircle', findPolysAroundCircleResult);
 
             const halfExtents = { x: .5, y: .5, z: .5 };
-            const queryPolygonsResult = query.queryPolygons(center, halfExtents, undefined, maxPolys);
+            const queryPolygonsResult = query.queryPolygons(clickedPosition, halfExtents, undefined, maxPolys);
             console.info('queryPolygons', queryPolygonsResult);
 
             setState(s => ({
               ...s,
-              clickedPosition: center,
+              clickedPosition,
               touchGeom: polyRefsToGeom(
                 state.selectType === 'circle' ? findPolysAroundCircleResult.resultRefs : queryPolygonsResult.polyRefs,
                 state.navMesh,
@@ -76,7 +78,7 @@ export function ClickNearbyPolygons() {
       
       {state.clickedPosition && <>
         {state.selectType === 'cube' && <mesh position={state.clickedPosition}>
-          <meshStandardMaterial color="green" transparent opacity={0.3} side={THREE.DoubleSide} />
+          <meshStandardMaterial color="green" transparent opacity={0.3} side={THREE.DoubleSide} depthTest={false} />
           <boxGeometry args={[1, 1, 1]} />
         </mesh>}
         {state.selectType === 'circle' && <mesh rotation={[-Math.PI/2, 0, 0]} position={state.clickedPosition} >
