@@ -61,14 +61,16 @@ export function ClickNearbyPolygons() {
             const halfExtents = { x: .5, y: .5, z: .5 };
             const queryPolygonsResult = query.queryPolygons(clickedPosition, halfExtents, undefined, maxPolys);
             console.info('queryPolygons', queryPolygonsResult);
+            
+            // 🚧
+            const polyRefs = state.selectType === 'circle' ? findPolysAroundCircleResult.resultRefs : queryPolygonsResult.polyRefs;
+            const decodedPolyRefs = polyRefs.map(polyRef => state.navMesh.decodePolyId(polyRef));
+            console.info('decodedPolyRefs', decodedPolyRefs);
 
             setState(s => ({
               ...s,
               clickedPosition,
-              touchGeom: polyRefsToGeom(
-                state.selectType === 'circle' ? findPolysAroundCircleResult.resultRefs : queryPolygonsResult.polyRefs,
-                state.navMesh,
-              ),
+              touchGeom: polyRefsToGeom(polyRefs, state.navMesh),
             }));
           }}
         />
@@ -128,8 +130,8 @@ function polyRefsToGeom(polyRefs: number[], navMesh: NavMesh): THREE.BufferGeome
     const vertexIds = range(poly.vertCount()).map(i => poly.verts(i));
     
     const tile = result.tile();
-    allVertices ??= range((tile.header()!.vertCount() * 3) + 1).reduce((agg, i) => 
-      i && (i % 3 === 0) ? agg.concat([[tile.verts(i - 3), tile.verts(i - 2), tile.verts(i - 1)]]) : agg,
+    allVertices ??= range(tile.header()!.vertCount() * 3).reduce((agg, i) => 
+      (i % 3 === 2) ? agg.concat([[tile.verts(i - 2), tile.verts(i - 1), tile.verts(i)]]) : agg,
       [] as THREE.Vector3Tuple[],
     );
 
