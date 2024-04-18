@@ -71,6 +71,10 @@ public:
 
     NavMeshCalcTileLocResult calcTileLoc(const float *pos) const;
 
+    void decodePolyId(dtPolyRef ref, unsigned int & salt, unsigned int & it, unsigned int & ip);
+
+    dtPolyRef encodePolyId(unsigned int salt, unsigned int it, unsigned ip);
+
     const dtMeshTile *getTileAt(const int tx, const int ty, const int tlayer) const;
 
     NavMeshGetTilesAtResult getTilesAt(const int x, const int y, const int maxTiles) const;
