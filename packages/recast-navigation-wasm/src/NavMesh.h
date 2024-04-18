@@ -71,7 +71,7 @@ public:
 
     NavMeshCalcTileLocResult calcTileLoc(const float *pos) const;
 
-    void decodePolyId(dtPolyRef ref, unsigned int & salt, unsigned int & it, unsigned int & ip);
+    void decodePolyId(dtPolyRef ref, UnsignedIntRef *salt, UnsignedIntRef *it, UnsignedIntRef *ip);
 
     dtPolyRef encodePolyId(unsigned int salt, unsigned int it, unsigned ip);
 

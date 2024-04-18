@@ -389,7 +389,7 @@ interface NavMesh {
     boolean initSolo(UnsignedCharArray navMeshData);    
     boolean initTiled([Const] dtNavMeshParams params);
     unsigned long addTile(UnsignedCharArray navMeshData, long flags, unsigned long lastRef, UnsignedIntRef tileRef);
-    void decodePolyId(unsigned long polyRef, unsigned long salt, unsigned long it, unsigned long ip);
+    void decodePolyId(unsigned long polyRef, UnsignedIntRef salt, UnsignedIntRef it, UnsignedIntRef ip);
     unsigned long encodePolyId(unsigned long salt, unsigned long it, unsigned long ip);
     [Value] NavMeshRemoveTileResult removeTile(unsigned long ref);
     dtNavMesh getNavMesh();
