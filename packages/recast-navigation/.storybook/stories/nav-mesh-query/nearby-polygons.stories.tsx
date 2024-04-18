@@ -4,19 +4,21 @@ import { OrbitControls } from '@react-three/drei';
 import { NavMesh, NavMeshQuery, range } from '@recast-navigation/core';
 import { threeToSoloNavMesh } from '@recast-navigation/three';
 
-import { decorators } from '../../decorators';
+import { decorators, tunnelRat } from '../../decorators';
 import { parameters } from '../../parameters';
 import { NavTestEnvironment } from '../../common/nav-test-environment';
 import { Debug } from '../../common/debug';
 
 export function ClickNearbyPolygons() {
 
-  const [state, setState] = React.useState({} as {
+  const [state, setState] = React.useState({ selectType: 'cube' } as {
     group: THREE.Group;
     navMesh: NavMesh;
     navMeshQuery: NavMeshQuery;
-    nearbyPolys?: THREE.BufferGeometry;
+    selectType: 'cube' | 'circle';
+    touchGeom?: THREE.BufferGeometry;
     downAt?: number;
+    clickedPosition?: THREE.Vector3;
   });
 
   React.useEffect(() => {
@@ -47,28 +49,66 @@ export function ClickNearbyPolygons() {
 
             const query = new NavMeshQuery({ navMesh: state.navMesh });
             const center = e.point;
-            const maxPolys = 100;
             
             const { nearestRef: startRef } = query.findNearestPoly(center);
             console.info('findNearestPoly', startRef);
+
             const findPolysAroundCircleResult = query.findPolysAroundCircle(startRef, center, 0.5, undefined, maxPolys);
             console.info('findPolysAroundCircle', findPolysAroundCircleResult);
 
             const halfExtents = { x: .5, y: .5, z: .5 };
             const queryPolygonsResult = query.queryPolygons(center, halfExtents, undefined, maxPolys);
             console.info('queryPolygons', queryPolygonsResult);
-            const geom = polyRefsToGeom(queryPolygonsResult.polyRefs, state.navMesh);
 
-            setState(s => ({ ...s, nearbyPolys: geom }));
+            setState(s => ({
+              ...s,
+              clickedPosition: center,
+              touchGeom: polyRefsToGeom(
+                state.selectType === 'circle' ? findPolysAroundCircleResult.resultRefs : queryPolygonsResult.polyRefs,
+                state.navMesh,
+              ),
+            }));
           }}
         />
       </group>
 
-      <mesh args={[state.nearbyPolys, nearbyPolyMaterial]} />
+      <mesh args={[state.touchGeom, touchMaterial]} />
+      
+      {state.clickedPosition && <>
+        {state.selectType === 'cube' && <mesh position={state.clickedPosition}>
+          <meshStandardMaterial color="green" transparent opacity={0.3} side={THREE.DoubleSide} />
+          <boxGeometry args={[1, 1, 1]} />
+        </mesh>}
+        {state.selectType === 'circle' && <mesh rotation={[-Math.PI/2, 0, 0]} position={state.clickedPosition} >
+          <meshStandardMaterial color="green" transparent opacity={0.3} side={THREE.DoubleSide} depthTest={false} />
+          <circleGeometry args={[1, 24]} />
+        </mesh>}
+      </>}
 
       <Debug navMesh={state.navMesh} navMeshMaterial={navMeshMaterial} />
 
-      <OrbitControls />
+      <OrbitControls zoomToCursor />
+
+    <tunnelRat.In>
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        color: 'white',
+        padding: 24,
+      }}>
+        <h2>Click to select triangles</h2>
+        <select
+          defaultValue="foo"
+          style={{ fontSize: 16, padding: 12 }}
+          onChange={({ currentTarget }) => {
+            setState(x => ({ ...x, selectType: currentTarget.value as 'cube' | 'circle' }))
+          }}
+        >
+          <option value="cube">triangles touching 1x1x1 cube</option>
+          <option value="circle">triangles touching circle radius 1</option>
+        </select>
+      </div>
+    </tunnelRat.In>
     </>
   );
 }
@@ -101,10 +141,12 @@ function polyRefsToGeom(polyRefs: number[], navMesh: NavMesh): THREE.BufferGeome
 }
 
 const navMeshMaterial = new THREE.MeshBasicMaterial({ wireframe: true, color: 'red' });
-const nearbyPolyMaterial = new THREE.MeshBasicMaterial({ color: 'blue', transparent: true, opacity: 0.3 });
+const touchMaterial = new THREE.MeshBasicMaterial({ color: 'blue', transparent: true, opacity: 0.3 });
+const maxPolys = 100;
+
 
 export default {
-  title: 'NavMeshQuery / ClickNearbyPolygons',
+  title: 'NavMeshQuery / Click Nearby Polygons',
   decorators,
   parameters,
 };

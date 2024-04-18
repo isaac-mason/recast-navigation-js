@@ -4,6 +4,9 @@ import * as RecastNavigation from '@recast-navigation/core';
 import { Leva } from 'leva';
 import React, { Suspense } from 'react';
 import { suspend } from 'suspend-react';
+import tunnel from 'tunnel-rat'
+
+export const tunnelRat = tunnel();
 
 const city = import('@pmndrs/assets/hdri/city.exr');
 
@@ -13,7 +16,7 @@ type SetupProps = {
 
 const Setup = ({ children }: SetupProps) => {
   return (
-    <>
+    <div style={{ position: 'relative' }}>
       <Canvas
         camera={{ position: [0, 10, 10], fov: 50 }}
         style={{
@@ -27,7 +30,8 @@ const Setup = ({ children }: SetupProps) => {
         <Environment files={(suspend(city) as any).default} />
       </Canvas>
       <Loader />
-    </>
+      <tunnelRat.Out />
+    </div>
   );
 };
 
