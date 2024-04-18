@@ -171,6 +171,31 @@ export class NavMesh {
     };
   }
 
+  decodePolyId(polyRef: number) {
+    const saltRef = new Raw.UnsignedIntRef();
+    const itRef = new Raw.UnsignedIntRef();
+    const ipRef = new Raw.UnsignedIntRef();
+
+    const status = this.raw.decodePolyId(polyRef, saltRef, itRef, ipRef);
+
+    return {
+      status,
+      saltRef: saltRef.value,
+      itRef: itRef.value,
+      ipRef: ipRef.value,
+    };
+  }
+
+  /**
+   * @param salt Tile salt
+   * @param it Tile index
+   * @param ip Tile poly index
+   * @returns polyRef
+   */
+  encodePolyId(salt: number, it: number, ip: number) {
+    return this.raw.encodePolyId(salt, it, ip);;
+  }
+
   /**
    * Removes a tile from the NavMesh
    * @param ref the tile ref
