@@ -30,15 +30,16 @@ type NearbyPolygonsState = {
   polyVisuals?: PolyVisual[];
 };
 
-type NearbyPolygonsStore = NearbyPolygonsState & {
-  set: (state: Partial<NearbyPolygonsState>) => void;
-}
-
 const defaultState: NearbyPolygonsState = {
-  selectType: 'cube', touchedPolyIds: {}
-}
+  selectType: 'cube',
+  touchedPolyIds: {},
+};
 
-const useNearbyPolygonsStore = create<NearbyPolygonsStore>((set) => ({
+const useNearbyPolygonsStore = create<
+  NearbyPolygonsState & {
+    set: (state: Partial<NearbyPolygonsState>) => void;
+  }
+>((set) => ({
   ...defaultState,
   set,
 }));
@@ -57,12 +58,12 @@ export function ClickNearbyPolygons() {
   const [group, setGroup] = useState<THREE.Group | null>(null);
 
   const downAt = useRef(0);
-  
+
   useEffect(() => {
     if (!group) return;
 
     const meshes = [] as THREE.Mesh[];
-    group.traverse(x => x instanceof THREE.Mesh && meshes.push(x));
+    group.traverse((x) => x instanceof THREE.Mesh && meshes.push(x));
 
     const { success, navMesh } = threeToSoloNavMesh(meshes, {
       cs: 0.05,
@@ -83,8 +84,7 @@ export function ClickNearbyPolygons() {
 
       navMeshQuery?.destroy();
       navMesh.destroy();
-    }
-    
+    };
   }, [group]);
 
   /* toggle whether a poly is selected */
@@ -105,7 +105,9 @@ export function ClickNearbyPolygons() {
   useEffect(() => {
     if (!navMesh || !touchedPolyIds) return;
 
-    const enabledPolyIds = Object.keys(touchedPolyIds).map(Number).filter(polyId => touchedPolyIds[polyId]);
+    const enabledPolyIds = Object.keys(touchedPolyIds)
+      .map(Number)
+      .filter((polyId) => touchedPolyIds[polyId]);
 
     const polyVisuals: PolyVisual[] = enabledPolyIds.map((polyId) => {
       const salt = navMesh.getTile(0).salt();
@@ -264,7 +266,7 @@ export function ClickNearbyPolygons() {
             defaultValue="foo"
             style={{ fontSize: 16, padding: 12 }}
             onChange={({ currentTarget: { value } }) => {
-              set({ selectType: value as State['selectType'] });
+              set({ selectType: value as NearbyPolygonsState['selectType'] });
             }}
           >
             <option value="cube">triangles touching 1x1x1 cube</option>
@@ -274,17 +276,19 @@ export function ClickNearbyPolygons() {
           </select>
 
           <div style={{ display: 'flex', flexWrap: 'wrap', maxWidth: 200 }}>
-            {Object.entries(touchedPolyIds).sort((a, b) => Number(b) - Number(a)).map(([polyIdString, enabled]) => (
-              <button
-                key={polyIdString}
-                onPointerDown={(e) =>
-                  togglePolySelected(Number(polyIdString), e)
-                }
-                {...(!enabled && { style: { filter: 'brightness(40%)' } })}
-              >
-                {polyIdString}
-              </button>
-            ))}
+            {Object.entries(touchedPolyIds)
+              .sort((a, b) => Number(b) - Number(a))
+              .map(([polyIdString, enabled]) => (
+                <button
+                  key={polyIdString}
+                  onPointerDown={(e) =>
+                    togglePolySelected(Number(polyIdString), e)
+                  }
+                  {...(!enabled && { style: { filter: 'brightness(40%)' } })}
+                >
+                  {polyIdString}
+                </button>
+              ))}
           </div>
         </div>
       </tunnelRat.In>
@@ -292,37 +296,52 @@ export function ClickNearbyPolygons() {
   );
 }
 
-function polyRefToGeom(polyRef: number, navMesh: NavMesh): THREE.BufferGeometry {
+function polyRefToGeom(
+  polyRef: number,
+  navMesh: NavMesh
+): THREE.BufferGeometry {
   const geom = new THREE.BufferGeometry();
   const vertices = [] as THREE.Vector3Tuple[];
   const triangles = [] as number[][];
 
   // Only one tile because we use `threeToSoloNavMesh`
   let allVertices: undefined | THREE.Vector3Tuple[] = undefined;
-  
+
   const result = navMesh.getTileAndPolyByRef(polyRef);
   const poly = result.poly();
-  const vertexIds = range(poly.vertCount()).map(i => poly.verts(i));
-  
+  const vertexIds = range(poly.vertCount()).map((i) => poly.verts(i));
+
   const tile = result.tile();
-  allVertices ??= range(tile.header()!.vertCount() * 3).reduce((agg, i) => 
-    (i % 3 === 2) ? agg.concat([[tile.verts(i - 2), tile.verts(i - 1), tile.verts(i)]]) : agg,
-    [] as THREE.Vector3Tuple[],
+  allVertices ??= range(tile.header()!.vertCount() * 3).reduce(
+    (agg, i) =>
+      i % 3 === 2
+        ? agg.concat([[tile.verts(i - 2), tile.verts(i - 1), tile.verts(i)]])
+        : agg,
+    [] as THREE.Vector3Tuple[]
   );
 
-  triangles.push(range(vertexIds.length).map(x => x + vertices.length));
-  vertices.push(...vertexIds.map(id => allVertices![id]));
+  triangles.push(range(vertexIds.length).map((x) => x + vertices.length));
+  vertices.push(...vertexIds.map((id) => allVertices![id]));
 
-  geom.setAttribute("position", new THREE.BufferAttribute(new Float32Array(vertices.flatMap(v => v)), 3));
-  geom.setIndex(triangles.flatMap(r => r));
+  geom.setAttribute(
+    'position',
+    new THREE.BufferAttribute(new Float32Array(vertices.flatMap((v) => v)), 3)
+  );
+  geom.setIndex(triangles.flatMap((r) => r));
 
   return geom;
 }
 
-const navMeshMaterial = new THREE.MeshBasicMaterial({ wireframe: true, color: 'red' });
-const touchMaterial = new THREE.MeshBasicMaterial({ color: 'blue', transparent: true, opacity: 0.3 });
+const navMeshMaterial = new THREE.MeshBasicMaterial({
+  wireframe: true,
+  color: 'red',
+});
+const touchMaterial = new THREE.MeshBasicMaterial({
+  color: 'blue',
+  transparent: true,
+  opacity: 0.3,
+});
 const maxPolys = 100;
-
 
 export default {
   title: 'NavMeshQuery / Click Nearby Polygons',
