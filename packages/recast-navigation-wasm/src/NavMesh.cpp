@@ -37,6 +37,14 @@ NavMeshCalcTileLocResult NavMesh::calcTileLoc(const float *pos) const
     return *result;
 }
 
+void NavMesh::decodePolyId(dtPolyRef ref, UnsignedIntRef *salt, UnsignedIntRef *it, UnsignedIntRef *ip) {
+    return m_navMesh->decodePolyId(ref, salt->value, it->value, ip->value);
+}
+
+dtPolyRef NavMesh::encodePolyId(unsigned int salt, unsigned int it, unsigned ip) {
+    return m_navMesh->encodePolyId(salt, it, ip);
+}
+
 const dtMeshTile *NavMesh::getTileAt(const int x, const int y, const int tlayer) const
 {
     return m_navMesh->getTileAt(x, y, tlayer);

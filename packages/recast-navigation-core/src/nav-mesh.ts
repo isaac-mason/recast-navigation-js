@@ -87,6 +87,23 @@ export class NavMeshStoreTileStateResult {
   }
 }
 
+export type NavMeshDecodePolyIdResult = {
+  /**
+   * The tile's salt value.
+   */
+  tileSalt: number;
+
+  /**
+   * The index of the tile. `it` in the C++ api.
+   */
+  tileIndex: number;
+
+  /**
+   * The index of the polygon within the tile. `ip` in the C++ api.
+   */
+  tilePolygonIndex: number;
+};
+
 export type NavMeshParamsType = {
   orig: Vector3;
   tileWidth: number;
@@ -169,6 +186,40 @@ export class NavMesh {
       status,
       tileRef: tileRef.value,
     };
+  }
+
+  /**
+   * Decodes a standard polygon reference.
+   * @param polyRef The polygon reference to decode
+   * @returns the decoded polygon reference
+   */
+  decodePolyId(polyRef: number): NavMeshDecodePolyIdResult {
+    const saltRef = new Raw.UnsignedIntRef();
+    const itRef = new Raw.UnsignedIntRef();
+    const ipRef = new Raw.UnsignedIntRef();
+
+    this.raw.decodePolyId(polyRef, saltRef, itRef, ipRef);
+
+    return {
+      tileSalt: saltRef.value,
+      tileIndex: itRef.value,
+      tilePolygonIndex: ipRef.value,
+    };
+  }
+
+  /**
+   * Derives a standard polygon reference.
+   * @param salt The tile's salt value.
+   * @param tileIndex The index of the tile. `it` in the C++ api.
+   * @param tilePolygonIndex The index of the polygon within the tile. `ip` in the C++ api.
+   * @returns the derived polygon reference
+   */
+  encodePolyId(
+    salt: number,
+    tileIndex: number,
+    tilePolygonIndex: number
+  ): number {
+    return this.raw.encodePolyId(salt, tileIndex, tilePolygonIndex);
   }
 
   /**
