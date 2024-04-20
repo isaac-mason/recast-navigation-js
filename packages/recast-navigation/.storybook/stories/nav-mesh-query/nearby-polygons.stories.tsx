@@ -175,8 +175,8 @@ export function ClickNearbyPolygons() {
     console.info('decodedPolyRefs', decodedPolyRefs);
 
     const touchedPolyIds = {};
-    for (const { ip } of decodedPolyRefs) {
-      touchedPolyIds[ip] = true;
+    for (const { tilePolygonIndex } of decodedPolyRefs) {
+      touchedPolyIds[tilePolygonIndex] = true;
     }
 
     set({
