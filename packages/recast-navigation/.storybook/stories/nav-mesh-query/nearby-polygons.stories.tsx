@@ -127,7 +127,7 @@ export function ClickNearbyPolygons() {
     set({ polyVisuals });
   }, [navMesh, touchedPolyIds]);
 
-  /* place a cube or circle at the clicked position */
+  /* set clicked position and find touched polys */
   const onPointerUp = (e: ThreeEvent<PointerEvent>) => {
     // ignore camera manipulation
     if (Date.now() - downAt.current > 300) {
