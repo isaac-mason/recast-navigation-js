@@ -191,7 +191,7 @@ export class NavMesh {
   /**
    * Decodes a standard polygon reference.
    * @param polyRef The polygon reference to decode
-   * @returns
+   * @returns the decoded polygon reference
    */
   decodePolyId(polyRef: number): NavMeshDecodePolyIdResult {
     const saltRef = new Raw.UnsignedIntRef();
@@ -212,7 +212,7 @@ export class NavMesh {
    * @param salt The tile's salt value.
    * @param tileIndex The index of the tile. `it` in the C++ api.
    * @param tilePolygonIndex The index of the polygon within the tile. `ip` in the C++ api.
-   * @returns polyRef
+   * @returns the derived polygon reference
    */
   encodePolyId(
     salt: number,
