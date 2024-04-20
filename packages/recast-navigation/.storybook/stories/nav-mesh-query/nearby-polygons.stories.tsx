@@ -30,17 +30,13 @@ type NearbyPolygonsState = {
   polyVisuals?: PolyVisual[];
 };
 
-const defaultState: NearbyPolygonsState = {
-  selectType: 'cube',
-  touchedPolyIds: {},
-};
-
 const useNearbyPolygonsStore = create<
   NearbyPolygonsState & {
     set: (state: Partial<NearbyPolygonsState>) => void;
   }
 >((set) => ({
-  ...defaultState,
+  selectType: 'cube',
+  touchedPolyIds: {},
   set,
 }));
 
