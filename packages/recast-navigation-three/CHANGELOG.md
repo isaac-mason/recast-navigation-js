@@ -1,5 +1,14 @@
 # @recast-navigation/three
 
+## 0.22.0
+
+### Patch Changes
+
+- Updated dependencies [cb6290c]
+- Updated dependencies [cb6290c]
+  - @recast-navigation/core@0.22.0
+  - @recast-navigation/generators@0.22.0
+
 ## 0.21.0
 
 ### Patch Changes
