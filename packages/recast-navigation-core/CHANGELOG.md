@@ -1,5 +1,16 @@
 # @recast-navigation/core
 
+## 0.22.0
+
+### Minor Changes
+
+- cb6290c: feat(NavMeshQuery): rename computePath maxPolyPathLength option to maxPathPolys
+- cb6290c: feat(NavMeshQuery): add maxStraightPathPoints option to computePath
+
+### Patch Changes
+
+- @recast-navigation/wasm@0.22.0
+
 ## 0.21.0
 
 ### Minor Changes
