@@ -18,7 +18,6 @@ const Setup = ({ children }: SetupProps) => {
   return (
     <div style={{ position: 'relative' }}>
       <Canvas
-        frameloop='demand'
         camera={{ position: [0, 10, 10], fov: 50 }}
         style={{
           width: '100%',
