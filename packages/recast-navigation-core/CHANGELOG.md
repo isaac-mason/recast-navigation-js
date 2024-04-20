@@ -1,5 +1,16 @@
 # @recast-navigation/core
 
+## 0.21.0
+
+### Minor Changes
+
+- d8a6280: feat: expose dtNavMesh `decodePolyId` and `encodePolyId`
+
+### Patch Changes
+
+- Updated dependencies [d8a6280]
+  - @recast-navigation/wasm@0.21.0
+
 ## 0.20.0
 
 ### Minor Changes

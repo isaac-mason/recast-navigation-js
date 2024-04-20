@@ -1,5 +1,11 @@
 # @recast-navigation/wasm
 
+## 0.21.0
+
+### Minor Changes
+
+- d8a6280: feat: expose dtNavMesh `decodePolyId` and `encodePolyId`
+
 ## 0.20.0
 
 ## 0.19.0
