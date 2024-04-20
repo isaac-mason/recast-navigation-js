@@ -69,7 +69,17 @@ export class NavMeshQuery {
    */
   findNearestPoly(
     position: Vector3,
-    options?: { filter?: QueryFilter; halfExtents?: Vector3 }
+    options?: {
+      /**
+       * The polygon filter to apply to the query.
+       */
+      filter?: QueryFilter;
+      
+      /**
+       * The search distance along each axis. [(x, y, z)]
+       */
+      halfExtents?: Vector3;
+    }
   ) {
     const nearestRef = new Raw.UnsignedIntRef();
     const nearestPoint = new Raw.Vec3();
@@ -203,7 +213,17 @@ export class NavMeshQuery {
    */
   getClosestPoint(
     position: Vector3,
-    options?: { filter?: QueryFilter; halfExtents?: Vector3 }
+    options?: {
+      /**
+       * The polygon filter to apply to the query.
+       */
+      filter?: QueryFilter;
+      
+      /**
+       * The search distance along each axis. [(x, y, z)]
+       */
+      halfExtents?: Vector3;
+    }
   ): Vector3 {
     const closestPointRaw = this.raw.getClosestPoint(
       vec3.toArray(position),
@@ -221,7 +241,14 @@ export class NavMeshQuery {
     position: Vector3,
     radius: number,
     options?: {
+      /**
+       * The polygon filter to apply to the query.
+       */
       filter?: QueryFilter;
+      
+      /**
+       * The search distance along each axis. [(x, y, z)]
+       */
       halfExtents?: Vector3;
     }
   ): Vector3 {
@@ -243,7 +270,14 @@ export class NavMeshQuery {
     startPosition: Vector3,
     endPosition: Vector3,
     options?: {
+      /**
+       * The polygon filter to apply to the query.
+       */
       filter?: QueryFilter;
+
+      /**
+       * The maximum number of polygons the output visited array can hold.
+       */
       maxVisitedSize?: number;
     }
   ) {
@@ -297,8 +331,20 @@ export class NavMeshQuery {
     start: Vector3,
     end: Vector3,
     options?: {
+      /**
+       * The polygon filter to apply to the query.
+       */
       filter?: QueryFilter;
-      maxPolyPathLength?: number;
+
+      /**
+       * The maximum number of polygons the @p path array can hold. [Limit: >= 1]
+       */
+      maxPathPolys?: number;
+
+      /**
+       * The maximum number of points the straight path arrays can hold.  [Limit: > 0]
+       */
+      maxStraightPathPoints?: number;
     }
   ): Vector3[] {
     const filter = options?.filter ?? this.defaultFilter;
@@ -309,7 +355,7 @@ export class NavMeshQuery {
     const { nearestRef: startRef } = this.findNearestPoly(start, { filter });
     const { nearestRef: endRef } = this.findNearestPoly(end, { filter });
 
-    const maxPolyPathLength = options?.maxPolyPathLength ?? 256;
+    const maxPathPolys = options?.maxPathPolys ?? 256;
 
     const polys = new Arrays.UnsignedIntArray();
 
@@ -320,7 +366,7 @@ export class NavMeshQuery {
       endArray,
       filter.raw,
       polys,
-      maxPolyPathLength
+      maxPathPolys
     );
 
     if (polys.size <= 0) {
@@ -335,16 +381,16 @@ export class NavMeshQuery {
       closestEnd = closestPoint;
     }
 
-    const maxStraightPathPolys = 256;
+    const maxStraightPathPoints = options?.maxStraightPathPoints ?? 256;
 
     const straightPath = new Arrays.FloatArray();
-    straightPath.resize(maxStraightPathPolys * 3);
+    straightPath.resize(maxStraightPathPoints * 3);
 
     const straightPathFlags = new Arrays.UnsignedCharArray();
-    straightPathFlags.resize(maxStraightPathPolys);
+    straightPathFlags.resize(maxStraightPathPoints);
 
     const straightPathRefs = new Arrays.UnsignedIntArray();
-    straightPathRefs.resize(maxStraightPathPolys);
+    straightPathRefs.resize(maxStraightPathPoints);
 
     const straightPathCount = new Raw.IntRef();
     const straightPathOptions = 0;
@@ -357,7 +403,7 @@ export class NavMeshQuery {
       straightPathFlags,
       straightPathRefs,
       straightPathCount,
-      maxStraightPathPolys,
+      maxStraightPathPoints,
       straightPathOptions
     );
 
