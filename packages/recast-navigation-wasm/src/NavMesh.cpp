@@ -45,7 +45,6 @@ dtPolyRef NavMesh::encodePolyId(unsigned int salt, unsigned int it, unsigned ip)
     return m_navMesh->encodePolyId(salt, it, ip);
 }
 
-
 const dtMeshTile *NavMesh::getTileAt(const int x, const int y, const int tlayer) const
 {
     return m_navMesh->getTileAt(x, y, tlayer);
