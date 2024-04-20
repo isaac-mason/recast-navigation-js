@@ -209,7 +209,7 @@ export function ClickNearbyPolygons() {
               userSelect: 'none',
             }}
           >
-            {polyId}
+            <div>{polyId}</div>
           </Html>
         </Fragment>
       ))}
