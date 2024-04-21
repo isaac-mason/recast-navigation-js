@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Group, Mesh, MeshBasicMaterial, Vector3Tuple } from 'three';
 import { Debug } from '../../common/debug';
 import { NavTestEnvironment } from '../../common/nav-test-environment';
-import { decorators, tunnelRat } from '../../decorators';
+import { decorators, htmlTunnel } from '../../decorators';
 import { parameters } from '../../parameters';
 import { OrbitControls } from '@react-three/drei';
 
@@ -89,7 +89,7 @@ export const FindRandomPoint = () => {
 
       <OrbitControls makeDefault />
 
-      <tunnelRat.In>
+      <htmlTunnel.In>
         <div
           style={{
             position: 'absolute',
@@ -102,7 +102,7 @@ export const FindRandomPoint = () => {
             New Random Point
           </button>
         </div>
-      </tunnelRat.In>
+      </htmlTunnel.In>
     </>
   );
 };

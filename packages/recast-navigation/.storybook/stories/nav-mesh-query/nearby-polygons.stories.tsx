@@ -8,7 +8,7 @@ import { create } from 'zustand';
 
 import { Debug } from '../../common/debug';
 import { NavTestEnvironment } from '../../common/nav-test-environment';
-import { decorators, tunnelRat } from '../../decorators';
+import { decorators, htmlTunnel } from '../../decorators';
 import { parameters } from '../../parameters';
 
 type PolyVisual = {
@@ -245,7 +245,7 @@ export function ClickNearbyPolygons() {
 
       <OrbitControls makeDefault zoomToCursor />
 
-      <tunnelRat.In>
+      <htmlTunnel.In>
         <div
           style={{
             position: 'absolute',
@@ -285,7 +285,7 @@ export function ClickNearbyPolygons() {
               ))}
           </div>
         </div>
-      </tunnelRat.In>
+      </htmlTunnel.In>
     </>
   );
 }

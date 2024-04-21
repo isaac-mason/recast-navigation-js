@@ -81,7 +81,7 @@ export class NavMeshQuery {
        * @default this.defaultFilter
        */
       filter?: QueryFilter;
-      
+
       /**
        * The search distance along each axis. [(x, y, z)]
        * @default this.defaultQueryHalfExtents
@@ -140,7 +140,7 @@ export class NavMeshQuery {
     const maxPolys = options?.maxPolys ?? 256;
 
     const resultRef = new Arrays.UnsignedIntArray();
-    const resultParent = new Arrays.UnsignedIntArray();;
+    const resultParent = new Arrays.UnsignedIntArray();
     resultRef.resize(maxPolys);
     resultParent.resize(maxPolys);
     const resultCostRef = new Raw.FloatRef();
@@ -155,7 +155,7 @@ export class NavMeshQuery {
       resultParent,
       resultCostRef,
       resultCountRef,
-      maxPolys,
+      maxPolys
     );
 
     const resultCost = resultCostRef.value;
@@ -200,14 +200,14 @@ export class NavMeshQuery {
     const polysRef = new Arrays.UnsignedIntArray();
     polysRef.resize(maxPolys);
     const polyCountRef = new Raw.IntRef();
-      
+
     const status = this.raw.queryPolygons(
       vec3.toArray(center),
       vec3.toArray(halfExtents),
       filter.raw,
       polysRef,
       polyCountRef,
-      maxPolys,
+      maxPolys
     );
 
     const polyCount = polyCountRef.value;
@@ -222,7 +222,7 @@ export class NavMeshQuery {
 
   /**
    * Returns the closest point on the given polygon to the given position.
-   * 
+   *
    * @param polyRef The reference of the polygon
    * @param position The position to find the closest point to
    */
@@ -256,7 +256,7 @@ export class NavMeshQuery {
        * @default this.defaultFilter
        */
       filter?: QueryFilter;
-      
+
       /**
        * The search distance along each axis. [(x, y, z)]
        * @default this.defaultQueryHalfExtents
@@ -285,7 +285,7 @@ export class NavMeshQuery {
        * @default this.defaultFilter
        */
       filter?: QueryFilter;
-      
+
       /**
        * The search distance along each axis. [(x, y, z)]
        * @default this.defaultQueryHalfExtents
@@ -305,11 +305,11 @@ export class NavMeshQuery {
 
   /**
    * Moves from the start to the end position constrained to the navigation mesh.
-   * 
+   *
    * @param startRef The reference id of the start polygon.
    * @param startPosition A position of the mover within the start polygon.
    * @param endPosition The desired end position of the mover.
-   * 
+   *
    * @returns The result of the move along surface operation.
    */
   moveAlongSurface(
@@ -330,7 +330,7 @@ export class NavMeshQuery {
       maxVisitedSize?: number;
     }
   ) {
-    const maxVisitedSize = options?.maxVisitedSize ?? 256
+    const maxVisitedSize = options?.maxVisitedSize ?? 256;
 
     const resultPosition = new Raw.Vec3();
     const visited = new Arrays.UnsignedIntArray();
@@ -384,10 +384,9 @@ export class NavMeshQuery {
     };
   }
 
-
   /**
    * Gets the height of the polygon at the provided position using the height detail.
-   * 
+   *
    * @param polyRef The reference id of the polygon.
    * @param position A position within the xz-bounds of the polygon.
    */
@@ -411,7 +410,7 @@ export class NavMeshQuery {
    *
    * @param start The start position.
    * @param end The end position.
-   * 
+   *
    * @returns an array of Vector3 positions that make up the path, or an empty array if no path was found.
    */
   computePath(
@@ -441,7 +440,7 @@ export class NavMeshQuery {
      * Whether a path was successfully computed.
      */
     success: boolean;
-    
+
     /**
      * Error information if the path computation failed.
      */
@@ -449,18 +448,18 @@ export class NavMeshQuery {
       /**
        * Description of the error.
        */
-      name: string,
+      name: string;
 
       /**
        * A dtStatus status code if relevant.
        */
       status?: number;
-    }
+    };
 
     /**
      * The result path.
      */
-    path: Vector3[]
+    path: Vector3[];
   } {
     const filter = options?.filter ?? this.defaultFilter;
 
@@ -475,7 +474,7 @@ export class NavMeshQuery {
           status: startNearestPolyResult.status,
         },
         path: [],
-      }
+      };
     }
 
     const endNearestPolyResult = this.findNearestPoly(end, { filter });
@@ -488,7 +487,7 @@ export class NavMeshQuery {
           status: endNearestPolyResult.status,
         },
         path: [],
-      }
+      };
     }
 
     const startRef = startNearestPolyResult.nearestRef;
@@ -497,7 +496,10 @@ export class NavMeshQuery {
     // find polygon path
     const maxPathPolys = options?.maxPathPolys ?? 256;
 
-    const findPathResult = this.findPath(startRef, endRef, start, end, { filter, maxPathPolys });
+    const findPathResult = this.findPath(startRef, endRef, start, end, {
+      filter,
+      maxPathPolys,
+    });
 
     if (!findPathResult.success) {
       return {
@@ -507,7 +509,7 @@ export class NavMeshQuery {
           status: findPathResult.status,
         },
         path: [],
-      }
+      };
     }
 
     if (findPathResult.polys.size <= 0) {
@@ -517,7 +519,7 @@ export class NavMeshQuery {
           name: 'no polygon path found',
         },
         path: [],
-      }
+      };
     }
 
     const lastPoly = findPathResult.polys.get(findPathResult.polys.size - 1);
@@ -535,7 +537,7 @@ export class NavMeshQuery {
             status: lastPolyClosestPointResult.status,
           },
           path: [],
-        }
+        };
       }
 
       closestEnd = lastPolyClosestPointResult.closestPoint;
@@ -544,7 +546,12 @@ export class NavMeshQuery {
     // find straight path
     const maxStraightPathPoints = options?.maxStraightPathPoints;
 
-    const findStraightPathResult = this.findStraightPath(start, closestEnd, findPathResult.polys, { maxStraightPathPoints });
+    const findStraightPathResult = this.findStraightPath(
+      start,
+      closestEnd,
+      findPathResult.polys,
+      { maxStraightPathPoints }
+    );
 
     if (!findStraightPathResult.success) {
       return {
@@ -554,7 +561,7 @@ export class NavMeshQuery {
           status: findStraightPathResult.status,
         },
         path: [],
-      }
+      };
     }
 
     const { straightPath, straightPathCount } = findStraightPathResult;
@@ -573,7 +580,7 @@ export class NavMeshQuery {
     return {
       success: true,
       path: points,
-    }
+    };
   }
 
   /**
@@ -583,7 +590,7 @@ export class NavMeshQuery {
    * @param startPosition position within the start polygon.
    * @param endPosition position within the end polygon.
    * @param options additional options
-   * @returns 
+   * @returns
    */
   findPath(
     startRef: number,
@@ -631,18 +638,18 @@ export class NavMeshQuery {
    * Finds the straight path from the start to the end position within the polygon corridor.
    *
    * This method peforms what is often called 'string pulling'.
-   * 
+   *
    * The start position is clamped to the first polygon in the path, and the
-   * end position is clamped to the last. So the start and end positions should 
+   * end position is clamped to the last. So the start and end positions should
    * normally be within or very near the first and last polygons respectively.
    *
-   * The returned polygon references represent the reference id of the polygon 
-   * that is entered at the associated path position. The reference id associated 
-   * with the end point will always be zero.  This allows, for example, matching 
+   * The returned polygon references represent the reference id of the polygon
+   * that is entered at the associated path position. The reference id associated
+   * with the end point will always be zero.  This allows, for example, matching
    * off-mesh link points to their representative polygons.
-   * 
-   * If the provided result arrays are too small for the entire result set, 
-   * they will be filled as far as possible from the start toward the end 
+   *
+   * If the provided result arrays are too small for the entire result set,
+   * they will be filled as far as possible from the start toward the end
    * position.
    *
    * @param start path start position
@@ -669,13 +676,40 @@ export class NavMeshQuery {
        * DT_STRAIGHTPATH_AREA_CROSSINGS = 1
        *
        * Add a vertex at every polygon edge crossing.
-	     * DT_STRAIGHTPATH_ALL_CROSSINGS = 2
+       * DT_STRAIGHTPATH_ALL_CROSSINGS = 2
        *
        * @default 0
        */
-      straightPathOptions?: number
+      straightPathOptions?: number;
     }
-  ) {
+  ): {
+    success: boolean;
+    status: number;
+
+    /**
+     * The straight path points.
+     */
+    straightPath: R.FloatArray;
+
+    /**
+     * The straight path flags.
+     */
+    straightPathFlags: R.UnsignedCharArray;
+
+    /**
+     * The reference ids of the visited polygons.
+     *
+     * Raw.Module.DT_STRAIGHTPATH_START
+     * Raw.Module.DT_STRAIGHTPATH_END
+     * Raw.Module.DT_STRAIGHTPATH_OFFMESH_CONNECTION
+     */
+    straightPathRefs: R.UnsignedIntArray;
+
+    /**
+     * The number of points in the straight path.
+     */
+    straightPathCount: number;
+  } {
     const maxStraightPathPoints = options?.maxStraightPathPoints ?? 256;
     const straightPathOptions = options?.straightPathOptions ?? 0;
 
@@ -709,6 +743,142 @@ export class NavMeshQuery {
       straightPathFlags,
       straightPathRefs,
       straightPathCount: straightPathCount.value,
+    };
+  }
+
+  /**
+   * Casts a 'walkability' ray along the surface of the navigation mesh from the start position toward the end position.
+   * 
+   * This method is meant to be used for quick, short distance checks.
+   * 
+   * If the path array is too small to hold the result, it will be filled as far as possible from the start postion toward the end position.
+   * 
+   * The raycast ignores the y-value of the end position. (2D check.) This places significant limits on how it can be used.
+   * 
+   * <b>Using the Hit Parameter (t)</b>
+   * 
+   * If the hit parameter is a very high value, then the ray has hit 
+   * the end position. In this case the path represents a valid corridor to the 
+   * end position and the value of hitNormal is undefined.
+   * 
+   * If the hit parameter is zero, then the start position is on the wall that 
+   * was hit and the value of hitNormal is undefined.
+   * 
+   * If 0 < t < 1.0 then the following applies:
+   * 
+   * ```
+   * distanceToHitBorder = distanceToEndPosition * t
+   * hitPoint = startPos + (endPos - startPos) * t
+   * ```
+   *
+   * <b>Use Case Restriction</b>
+   *
+   * Consider a scene where there is a main floor with a second floor balcony that hangs over the main floor.
+   * So the first floor mesh extends below the balcony mesh.
+   * The start position is somewhere on the first floor.
+   * The end position is on the balcony.
+   * 
+   * The raycast will search toward the end position along the first floor mesh. 
+   * If it reaches the end position's xz-coordinates it will indicate FLT_MAX,(no wall hit), meaning it reached the end position.
+   * This is one example of why this method is meant for short distance checks.
+   * 
+   * @param startRef the reference id of the start polygon.
+   * @param startPosition a position within the start polygon representing the start of the ray
+   * @param endPosition the position to cast the ray toward.
+   * @param options additional options
+   */
+  raycast(
+    startRef: number,
+    startPosition: Vector3,
+    endPosition: Vector3,
+    options?: {
+      /**
+       * The polygon filter to apply to the query.
+       * @default this.defaultFilter
+       */
+      filter?: QueryFilter;
+
+      /**
+       * Determines how the raycast behaves.
+       *
+       * // Raycast should calculate movement cost along the ray and fill RaycastHit::cost
+       * DT_RAYCAST_USE_COSTS = 1
+       *
+       * @default 0
+       */
+      raycastOptions?: number;
+
+      /**
+       * Optional parent of start ref. Used during for cost calculation.
+       */
+      prevRef?: number;
+    }
+  ): {
+    /**
+     * Whether the raycast was successful.
+     */
+    success: boolean;
+
+    /**
+     * The status of the raycast.
+     */
+    status: number;
+
+    /**
+     * The hit parameter.
+     */
+    t: number;
+
+    /**
+     * The normal of the nearest wall hit.
+     */
+    hitNormal: Vector3;
+
+    /**
+     * The index of the edge on the final polygon where the wall was hit.
+     */
+    hitEdgeIndex: number;
+
+    /**
+     * The reference ids of the visited polygons.
+     */
+    path: number[];
+
+    /**
+     * The maximum number of polygons the path can contain.
+     */
+    maxPath: number;
+
+    /**
+     * The cost of the path until hit.
+     */
+    pathCost: number;
+  } {
+    const raycastHit = new Raw.Module.dtRaycastHit();
+
+    const raycastOptions = options?.raycastOptions ?? 0;
+    const prevRef = options?.prevRef ?? 0;
+    const queryFilter = options?.filter?.raw ?? this.defaultFilter.raw;
+
+    const status = this.raw.raycast(
+      startRef,
+      vec3.toArray(startPosition),
+      vec3.toArray(endPosition),
+      queryFilter,
+      raycastOptions,
+      raycastHit,
+      prevRef
+    );
+
+    return {
+      success: Raw.Detour.statusSucceed(status),
+      status,
+      t: raycastHit.t,
+      hitNormal: vec3.fromArray(array((i) => raycastHit.get_hitNormal(i), 3)),
+      hitEdgeIndex: raycastHit.hitEdgeIndex,
+      path: array((i) => raycastHit.get_path(i), raycastHit.pathCount),
+      maxPath: raycastHit.maxPath,
+      pathCost: raycastHit.pathCost,
     };
   }
 

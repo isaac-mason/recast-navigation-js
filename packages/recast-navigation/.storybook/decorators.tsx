@@ -6,7 +6,7 @@ import React, { Suspense } from 'react';
 import { suspend } from 'suspend-react';
 import tunnel from 'tunnel-rat'
 
-export const tunnelRat = tunnel();
+export const htmlTunnel = tunnel();
 
 const city = import('@pmndrs/assets/hdri/city.exr');
 
@@ -30,7 +30,7 @@ const Setup = ({ children }: SetupProps) => {
         <Environment files={(suspend(city) as any).default} />
       </Canvas>
       <Loader />
-      <tunnelRat.Out />
+      <htmlTunnel.Out />
     </div>
   );
 };

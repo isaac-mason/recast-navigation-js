@@ -9,12 +9,6 @@
 #include "./Vec.h"
 #include "./NavMesh.h"
 
-struct NavMeshQueryRaycastResult
-{
-    dtStatus status;
-    dtRaycastHit *raycastHit;
-};
-
 class NavMeshQuery
 {
 public:
