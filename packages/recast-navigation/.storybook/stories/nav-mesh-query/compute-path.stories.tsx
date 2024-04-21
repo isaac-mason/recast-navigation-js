@@ -45,7 +45,7 @@ export const ComputePath = () => {
 
     const navMeshQuery = new NavMeshQuery({ navMesh });
 
-    const path = navMeshQuery.computePath(
+    const { path } = navMeshQuery.computePath(
       navMeshQuery.getClosestPoint({
         x: -4.128927083678903,
         y: 0.2664172349988201,

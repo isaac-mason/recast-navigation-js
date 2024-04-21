@@ -113,7 +113,7 @@ export const PathExample = () => {
       upToDate = result.upToDate;
     }
 
-    const path = navMeshQuery.computePath(
+    const { path } = navMeshQuery.computePath(
       navMeshQuery.getClosestPoint({
         x: -8,
         y: 0,

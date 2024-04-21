@@ -436,20 +436,88 @@ export class NavMeshQuery {
        */
       maxStraightPathPoints?: number;
     }
-  ): Vector3[] {
+  ): {
+    /**
+     * Whether a path was successfully computed.
+     */
+    success: boolean;
+    
+    /**
+     * Error information if the path computation failed.
+     */
+    error?: {
+      /**
+       * Description of the error.
+       */
+      name: string,
+
+      /**
+       * A dtStatus status code if relevant.
+       */
+      status?: number;
+    }
+
+    /**
+     * The result path.
+     */
+    path: Vector3[]
+  } {
     const filter = options?.filter ?? this.defaultFilter;
 
     // find nearest polygons for start and end positions
-    const { nearestRef: startRef } = this.findNearestPoly(start, { filter });
-    const { nearestRef: endRef } = this.findNearestPoly(end, { filter });
+    const startNearestPolyResult = this.findNearestPoly(start, { filter });
 
-    const maxPathPolys = options?.maxPathPolys ?? 256;
+    if (!startNearestPolyResult.success) {
+      return {
+        success: false,
+        error: {
+          name: 'findNearestPoly for start position failed',
+          status: startNearestPolyResult.status,
+        },
+        path: [],
+      }
+    }
+
+    const endNearestPolyResult = this.findNearestPoly(end, { filter });
+
+    if (!endNearestPolyResult.success) {
+      return {
+        success: false,
+        error: {
+          name: 'findNearestPoly for end position failed',
+          status: endNearestPolyResult.status,
+        },
+        path: [],
+      }
+    }
+
+    const startRef = startNearestPolyResult.nearestRef;
+    const endRef = endNearestPolyResult.nearestRef;
 
     // find polygon path
+    const maxPathPolys = options?.maxPathPolys ?? 256;
+
     const findPathResult = this.findPath(startRef, endRef, start, end, { filter, maxPathPolys });
 
+    if (!findPathResult.success) {
+      return {
+        success: false,
+        error: {
+          name: 'findPath unsuccessful',
+          status: findPathResult.status,
+        },
+        path: [],
+      }
+    }
+
     if (findPathResult.polys.size <= 0) {
-      return [];
+      return {
+        success: false,
+        error: {
+          name: 'no polygon path found',
+        },
+        path: [],
+      }
     }
 
     const lastPoly = findPathResult.polys.get(findPathResult.polys.size - 1);
@@ -457,8 +525,20 @@ export class NavMeshQuery {
     let closestEnd = { x: end.x, y: end.y, z: end.z };
 
     if (lastPoly !== endRef) {
-      const { closestPoint } = this.closestPointOnPoly(lastPoly, end);
-      closestEnd = closestPoint;
+      const lastPolyClosestPointResult = this.closestPointOnPoly(lastPoly, end);
+
+      if (!lastPolyClosestPointResult.success) {
+        return {
+          success: false,
+          error: {
+            name: 'no closest point on last polygon found',
+            status: lastPolyClosestPointResult.status,
+          },
+          path: [],
+        }
+      }
+
+      closestEnd = lastPolyClosestPointResult.closestPoint;
     }
 
     // find straight path
@@ -476,7 +556,7 @@ export class NavMeshQuery {
     const straightPathCount = new Raw.IntRef();
     const straightPathOptions = 0;
 
-    this.raw.findStraightPath(
+    const findStraightPathStatus = this.raw.findStraightPath(
       vec3.toArray(start),
       vec3.toArray(closestEnd),
       findPathResult.polys,
@@ -487,6 +567,17 @@ export class NavMeshQuery {
       maxStraightPathPoints,
       straightPathOptions
     );
+
+    if (!Raw.Detour.statusSucceed(findStraightPathStatus)) {
+      return {
+        success: false,
+        error: {
+          name: 'findStraightPath unsuccessful',
+          status: findStraightPathStatus,
+        },
+        path: [],
+      }
+    }
 
     // format output
     const points: Vector3[] = [];
@@ -499,7 +590,10 @@ export class NavMeshQuery {
       });
     }
 
-    return points;
+    return {
+      success: true,
+      path: points,
+    }
   }
 
   /**

@@ -51,7 +51,7 @@ const App = () => {
 
     scene.add(navMeshHelper);
 
-    const path = navMeshQuery.computePath(
+    const { path } = navMeshQuery.computePath(
       navMeshQuery.getClosestPoint(new Vector3(2, 1, 2)),
       navMeshQuery.getClosestPoint(new Vector3(-2, 1, -2))
     );

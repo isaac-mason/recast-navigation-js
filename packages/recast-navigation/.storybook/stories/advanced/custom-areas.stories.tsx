@@ -178,7 +178,7 @@ export const ComputePath = () => {
     const filter = new QueryFilter();
     filter.includeFlags = includeFlags;
 
-    const path = navMeshQuery.computePath(
+    const { path } = navMeshQuery.computePath(
       navMeshQuery.getClosestPoint({
         x: -4,
         y: 0,

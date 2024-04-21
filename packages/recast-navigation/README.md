@@ -170,10 +170,17 @@ const radius = 0.5;
 navMeshQuery.getRandomPointAround(position, radius);
 
 /* compute a straight path between two points */
-const path: Vector3[] = navMeshQuery.computePath(
+const computePathResult = navMeshQuery.computePath(
   { x: 0, y: 0, z: 0 }, // start position
   { x: 2, y: 0, z: 0 } // end position
 );
+
+if (!computePathResult.success) {
+  console.log(computePathResult.error);
+}
+
+const path = computePathResult.path; // { x: number, y: number, z: number }[]
+
 ```
 
 ### Crowds and Agents
