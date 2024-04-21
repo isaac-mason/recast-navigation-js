@@ -28,6 +28,7 @@ This library provides high level APIs that make it easy to get started creating 
 ## Examples
 
 Go to the [examples website](https://recast-navigation-js.isaacmason.com) to see the project in action:
+
 - live: [https://recast-navigation-js.isaacmason.com](https://recast-navigation-js.isaacmason.com).
 - examples source code: [./packages/recast-navigation/.storybook/stories](./packages/recast-navigation/.storybook/stories).
 
@@ -167,7 +168,13 @@ navMeshQuery.getClosestPoint(position);
 
 /* get a random point around the given position */
 const radius = 0.5;
-navMeshQuery.getRandomPointAround(position, radius);
+const {
+  success,
+  status,
+  randomPolyRef,
+  randomPoint: initialAgentPosition,
+} = navMeshQuery.findRandomPointAroundCircle(position, radius);
+
 
 /* compute a straight path between two points */
 const computePathResult = navMeshQuery.computePath(
@@ -180,7 +187,6 @@ if (!computePathResult.success) {
 }
 
 const path = computePathResult.path; // { x: number, y: number, z: number }[]
-
 ```
 
 ### Crowds and Agents
@@ -199,10 +205,15 @@ const crowd = new Crowd({ maxAgents, maxAgentRadius, navMesh });
 Next, create and interface with agents in the crowd.
 
 ```ts
-const initialAgentPosition = navMeshQuery.getRandomPointAround(
-  { x: 0, y: 0, z: 0 }, // position
-  2 // radius
-);
+const position = { x: 0, y: 0, z: 0 };
+const radius = 2;
+
+const {
+  success,
+  status,
+  randomPolyRef,
+  randomPoint: initialAgentPosition,
+} = navMeshQuery.findRandomPointAroundCircle(position, radius);
 
 const agent = crowd.addAgent(initialAgentPosition, {
   radius: 0.5,
@@ -275,7 +286,7 @@ const { success, navMesh, tileCache } = generateTileCache(positions, indices, {
 });
 ```
 
-You can use `addCylinderObstacle`, `addBoxObstacle`, and `removeObstacle` to add and remove obstacles from the TileCache. 
+You can use `addCylinderObstacle`, `addBoxObstacle`, and `removeObstacle` to add and remove obstacles from the TileCache.
 
 After adding or removing obstacles you can call `tileCache.update(navMesh)` to rebuild navmesh tiles.
 
@@ -314,7 +325,7 @@ const removeObstacleResult = tileCache.removeObstacle(boxObstacle);
 tileCache.update(navMesh);
 
 // if your obstacle requests affect many tiles, you may need to call update multiple times
-const maxTileCacheUpdates = 5
+const maxTileCacheUpdates = 5;
 for (let i = 0; i < maxTileCacheUpdates; i++) {
   const { upToDate } = tileCache.update(navMesh);
   if (upToDate) break;
@@ -416,7 +427,12 @@ console.log(statusToReadableString(status));
 If you need to work with status codes programmatically, you can use these utilities:
 
 ```ts
-import { statusSucceed, statusInProgress, statusFailed, statusDetail } from 'recast-navigation';
+import {
+  statusSucceed,
+  statusInProgress,
+  statusFailed,
+  statusDetail,
+} from 'recast-navigation';
 
 // returns true if the status is a success
 const succeeded = statusSucceed(status);

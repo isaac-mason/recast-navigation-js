@@ -275,11 +275,21 @@ export class NavMeshQuery {
 
   /**
    * Returns a random point on the NavMesh within the given radius of the given position.
+   *
+   * @param position the center of the search circle
+   * @param radius the radius of the search circle
+   * @param options additional options
    */
-  getRandomPointAround(
+  findRandomPointAroundCircle(
     position: Vector3,
     radius: number,
     options?: {
+      /**
+       * The reference id of the polygon to start the search from.
+       * If not provided, the nearest polygon to the position will be used.
+       */
+      startRef?: number;
+
       /**
        * The polygon filter to apply to the query.
        * @default this.defaultFilter
@@ -292,23 +302,63 @@ export class NavMeshQuery {
        */
       halfExtents?: Vector3;
     }
-  ): Vector3 {
-    const randomPointRaw = this.raw.getRandomPointAround(
+  ): {
+    success: boolean;
+    status: number;
+    randomPolyRef: number;
+    randomPoint: Vector3;
+  } {
+    const randomPolyRef = new Raw.UnsignedIntRef();
+    const randomPoint = new Raw.Vec3();
+
+    const filter = options?.filter ?? this.defaultFilter;
+    const halfExtents = options?.halfExtents ?? this.defaultQueryHalfExtents;
+
+    let startRef: number;
+
+    if (options?.startRef) {
+      startRef = options.startRef;
+    } else {
+      const nearestPoly = this.findNearestPoly(position, {
+        filter,
+        halfExtents,
+      });
+
+      if (!nearestPoly.success) {
+        return {
+          success: false,
+          status: nearestPoly.status,
+          randomPolyRef: 0,
+          randomPoint: { x: 0, y: 0, z: 0 },
+        };
+      }
+
+      startRef = nearestPoly.nearestRef;
+    }
+
+    const status = this.raw.findRandomPointAroundCircle(
+      startRef,
       vec3.toArray(position),
       radius,
-      vec3.toArray(options?.halfExtents ?? this.defaultQueryHalfExtents),
-      options?.filter?.raw ?? this.defaultFilter.raw
+      filter.raw,
+      randomPolyRef,
+      randomPoint
     );
 
-    return vec3.fromRaw(randomPointRaw);
+    return {
+      success: Raw.Detour.statusSucceed(status),
+      status,
+      randomPolyRef: randomPolyRef.value,
+      randomPoint: vec3.fromRaw(randomPoint),
+    };
   }
 
   /**
    * Moves from the start to the end position constrained to the navigation mesh.
    *
-   * @param startRef The reference id of the start polygon.
-   * @param startPosition A position of the mover within the start polygon.
-   * @param endPosition The desired end position of the mover.
+   * @param startRef the reference id of the start polygon.
+   * @param startPosition a position of the mover within the start polygon.
+   * @param endPosition the desired end position of the mover.
    *
    * @returns The result of the move along surface operation.
    */
@@ -387,8 +437,8 @@ export class NavMeshQuery {
   /**
    * Gets the height of the polygon at the provided position using the height detail.
    *
-   * @param polyRef The reference id of the polygon.
-   * @param position A position within the xz-bounds of the polygon.
+   * @param polyRef the reference id of the polygon.
+   * @param position a position within the xz-bounds of the polygon.
    */
   getPolyHeight(polyRef: number, position: Vector3) {
     const floatRef = new Raw.FloatRef();
@@ -408,8 +458,9 @@ export class NavMeshQuery {
   /**
    * Finds a straight path from the start position to the end position.
    *
-   * @param start The start position.
-   * @param end The end position.
+   * @param start the start position
+   * @param end the end position
+   * @param options additional options
    *
    * @returns an array of Vector3 positions that make up the path, or an empty array if no path was found.
    */
@@ -748,24 +799,24 @@ export class NavMeshQuery {
 
   /**
    * Casts a 'walkability' ray along the surface of the navigation mesh from the start position toward the end position.
-   * 
+   *
    * This method is meant to be used for quick, short distance checks.
-   * 
+   *
    * If the path array is too small to hold the result, it will be filled as far as possible from the start postion toward the end position.
-   * 
+   *
    * The raycast ignores the y-value of the end position. (2D check.) This places significant limits on how it can be used.
-   * 
+   *
    * <b>Using the Hit Parameter (t)</b>
-   * 
-   * If the hit parameter is a very high value, then the ray has hit 
-   * the end position. In this case the path represents a valid corridor to the 
+   *
+   * If the hit parameter is a very high value, then the ray has hit
+   * the end position. In this case the path represents a valid corridor to the
    * end position and the value of hitNormal is undefined.
-   * 
-   * If the hit parameter is zero, then the start position is on the wall that 
+   *
+   * If the hit parameter is zero, then the start position is on the wall that
    * was hit and the value of hitNormal is undefined.
-   * 
+   *
    * If 0 < t < 1.0 then the following applies:
-   * 
+   *
    * ```
    * distanceToHitBorder = distanceToEndPosition * t
    * hitPoint = startPos + (endPos - startPos) * t
@@ -777,11 +828,11 @@ export class NavMeshQuery {
    * So the first floor mesh extends below the balcony mesh.
    * The start position is somewhere on the first floor.
    * The end position is on the balcony.
-   * 
-   * The raycast will search toward the end position along the first floor mesh. 
+   *
+   * The raycast will search toward the end position along the first floor mesh.
    * If it reaches the end position's xz-coordinates it will indicate FLT_MAX,(no wall hit), meaning it reached the end position.
    * This is one example of why this method is meant for short distance checks.
-   * 
+   *
    * @param startRef the reference id of the start polygon.
    * @param startPosition a position within the start polygon representing the start of the ray
    * @param endPosition the position to cast the ray toward.

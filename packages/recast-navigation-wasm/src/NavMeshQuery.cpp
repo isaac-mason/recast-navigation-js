@@ -95,23 +95,18 @@ Vec3 NavMeshQuery::getClosestPoint(const float *position, const float *halfExten
     return Vec3(resDetour.x, resDetour.y, resDetour.z);
 }
 
-Vec3 NavMeshQuery::getRandomPointAround(const float *position, float maxRadius, const float *halfExtents, const dtQueryFilter *filter)
+dtStatus NavMeshQuery::findRandomPointAroundCircle(dtPolyRef startRef, const float *centerPos, const float radius, const dtQueryFilter *filter, UnsignedIntRef *resultRandomRef, Vec3 *resultRandomPoint)
 {
-    dtPolyRef polyRef;
-
-    m_navQuery->findNearestPoly(position, halfExtents, filter, &polyRef, 0);
-
     dtPolyRef randomRef;
     Vec3 resDetour;
-    dtStatus status = m_navQuery->findRandomPointAroundCircle(polyRef, position, maxRadius,
-                                                              filter, r01,
-                                                              &randomRef, &resDetour.x);
-    if (dtStatusFailed(status))
-    {
-        return Vec3(0.f, 0.f, 0.f);
-    }
+    dtStatus status = m_navQuery->findRandomPointAroundCircle(startRef, centerPos, radius, filter, r01, &randomRef, &resDetour.x);
 
-    return Vec3(resDetour.x, resDetour.y, resDetour.z);
+    resultRandomRef->value = randomRef;
+    resultRandomPoint->x = resDetour.x;
+    resultRandomPoint->y = resDetour.y;
+    resultRandomPoint->z = resDetour.z;
+
+    return status;
 }
 
 dtStatus NavMeshQuery::moveAlongSurface(dtPolyRef startRef, const float *startPos, const float *endPos, const dtQueryFilter *filter, Vec3 *resultPos, UnsignedIntArray *visited, int maxVisitedSize)

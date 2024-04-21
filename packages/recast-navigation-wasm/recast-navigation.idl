@@ -473,7 +473,7 @@ interface NavMeshQuery {
 
     [Value] Vec3 getClosestPoint(float[] position, float[] halfExtents, [Const] dtQueryFilter filter);
 
-    [Value] Vec3 getRandomPointAround(float[] position, float maxRadius, float[] halfExtents, [Const] dtQueryFilter filter);
+    unsigned long findRandomPointAroundCircle(unsigned long startRef, [Const] float[] centerPos, float radius, [Const] dtQueryFilter filter, UnsignedIntRef resultRandomRef, Vec3 resultRandomPoint);
 
     unsigned long moveAlongSurface(unsigned long startRef, float[] startPos, float[] endPos, [Const] dtQueryFilter filter, Vec3 resultPos, UnsignedIntArray visited, long maxVisitedSize);
 

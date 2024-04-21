@@ -168,16 +168,16 @@ export const MultipleAgents = () => {
     });
 
     for (let i = 0; i < 10; i++) {
-      crowd.addAgent(
-        navMeshQuery.getRandomPointAround({ x: -2, y: 0, z: 3 }, 1),
-        {
-          radius: 0.1 + Math.random() * 0.05,
-          height: 0.5,
-          maxAcceleration: 4.0,
-          maxSpeed: 1.0,
-          separationWeight: 1.0,
-        }
-      );
+      const { randomPoint: position } =
+        navMeshQuery.findRandomPointAroundCircle({ x: -2, y: 0, z: 3 }, 1);
+
+      crowd.addAgent(position, {
+        radius: 0.1 + Math.random() * 0.05,
+        height: 0.5,
+        maxAcceleration: 4.0,
+        maxSpeed: 1.0,
+        separationWeight: 1.0,
+      });
     }
 
     setNavMesh(navMesh);
