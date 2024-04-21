@@ -23,8 +23,6 @@
 
 This library provides high level APIs that make it easy to get started creating navigation meshes, querying them, and simulating crowds. It also provides lower-level APIs that give you fine-grained control over the navmesh generation process.
 
-> **Warning** This library is still in early development. Versions in the 0.x.x range may have breaking changes.
-
 ## Examples
 
 Go to the [examples website](https://recast-navigation-js.isaacmason.com) to see the project in action:
@@ -80,6 +78,8 @@ export default defineConfig(() => ({
 API Documentation can be found at [https://docs.recast-navigation-js.isaacmason.com](https://docs.recast-navigation-js.isaacmason.com).
 
 <!-- REMOVE-FROM-DOCS-END -->
+
+For information on changes between versions, see [CHANGELOG.md](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation/CHANGELOG.md)
 
 To get the most out of this library, you should have some familiarity with the Recast and Detour libraries. These are some good resources to get started:
 
