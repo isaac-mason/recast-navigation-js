@@ -1,5 +1,46 @@
 # recast-navigation
 
+## 0.23.0
+
+### Minor Changes
+
+- 46e6fb2: feat(NavMeshQuery): expose success and error information for computePath
+
+  previous usage:
+
+  ```ts
+  const path = navMeshQuery.computePath(
+    { x: 0, y: 0, z: 0 }, // start position
+    { x: 2, y: 0, z: 0 }, // end position
+  );
+  ```
+
+  updated usage:
+
+  ```ts
+  const { success, error, path } = navMeshQuery.computePath(
+    { x: 0, y: 0, z: 0 }, // start position
+    { x: 2, y: 0, z: 0 }, // end position
+  );
+  ```
+
+- a594296: feat(NavMeshQuery): expose findStraightPath
+- 9841a9c: feat(NavMeshQuery): change queryPolygons to take an 'options' object for optional parameters
+- 72d99b1: feat(NavMeshQuery): expose raycast
+- 9841a9c: feat(NavMeshQuery): change findPolysAroundCircle to take an 'options' object for optional parameters
+
+### Patch Changes
+
+- Updated dependencies [46e6fb2]
+- Updated dependencies [5cb17a1]
+- Updated dependencies [a594296]
+- Updated dependencies [9841a9c]
+- Updated dependencies [72d99b1]
+- Updated dependencies [9841a9c]
+  - @recast-navigation/core@0.23.0
+  - @recast-navigation/generators@0.23.0
+  - @recast-navigation/three@0.23.0
+
 ## 0.22.0
 
 ### Patch Changes
