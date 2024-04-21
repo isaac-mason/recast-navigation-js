@@ -43,8 +43,10 @@ import type R from '@recast-navigation/wasm';
 import { Pretty } from '../types';
 import { dtIlog2, dtNextPow2, getBoundingBox } from './common';
 
+type TileCacheRecastConfig = Omit<RecastConfig, 'minRegionArea' | 'maxEdgeLen'>;
+
 export type TileCacheGeneratorConfig = Pretty<
-  RecastConfig & {
+  TileCacheRecastConfig & {
     /**
      * How many layers (or "floors") each navmesh tile is expected to have.
      */
