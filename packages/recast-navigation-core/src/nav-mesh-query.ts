@@ -542,47 +542,27 @@ export class NavMeshQuery {
     }
 
     // find straight path
-    const maxStraightPathPoints = options?.maxStraightPathPoints ?? 256;
+    const maxStraightPathPoints = options?.maxStraightPathPoints;
 
-    const straightPath = new Arrays.FloatArray();
-    straightPath.resize(maxStraightPathPoints * 3);
+    const findStraightPathResult = this.findStraightPath(start, closestEnd, findPathResult.polys, { maxStraightPathPoints });
 
-    const straightPathFlags = new Arrays.UnsignedCharArray();
-    straightPathFlags.resize(maxStraightPathPoints);
-
-    const straightPathRefs = new Arrays.UnsignedIntArray();
-    straightPathRefs.resize(maxStraightPathPoints);
-
-    const straightPathCount = new Raw.IntRef();
-    const straightPathOptions = 0;
-
-    const findStraightPathStatus = this.raw.findStraightPath(
-      vec3.toArray(start),
-      vec3.toArray(closestEnd),
-      findPathResult.polys,
-      straightPath,
-      straightPathFlags,
-      straightPathRefs,
-      straightPathCount,
-      maxStraightPathPoints,
-      straightPathOptions
-    );
-
-    if (!Raw.Detour.statusSucceed(findStraightPathStatus)) {
+    if (!findStraightPathResult.success) {
       return {
         success: false,
         error: {
           name: 'findStraightPath unsuccessful',
-          status: findStraightPathStatus,
+          status: findStraightPathResult.status,
         },
         path: [],
       }
     }
 
+    const { straightPath, straightPathCount } = findStraightPathResult;
+
     // format output
     const points: Vector3[] = [];
 
-    for (let i = 0; i < straightPathCount.value; i++) {
+    for (let i = 0; i < straightPathCount; i++) {
       points.push({
         x: straightPath.get(i * 3),
         y: straightPath.get(i * 3 + 1),
@@ -644,6 +624,91 @@ export class NavMeshQuery {
       success: Raw.Detour.statusSucceed(status),
       status,
       polys,
+    };
+  }
+
+  /**
+   * Finds the straight path from the start to the end position within the polygon corridor.
+   *
+   * This method peforms what is often called 'string pulling'.
+   * 
+   * The start position is clamped to the first polygon in the path, and the
+   * end position is clamped to the last. So the start and end positions should 
+   * normally be within or very near the first and last polygons respectively.
+   *
+   * The returned polygon references represent the reference id of the polygon 
+   * that is entered at the associated path position. The reference id associated 
+   * with the end point will always be zero.  This allows, for example, matching 
+   * off-mesh link points to their representative polygons.
+   * 
+   * If the provided result arrays are too small for the entire result set, 
+   * they will be filled as far as possible from the start toward the end 
+   * position.
+   *
+   * @param start path start position
+   * @param end path end position
+   * @param path an array of polygon references that represent the path corridor
+   * @param options additional options
+   * @returns the straight path result
+   */
+  findStraightPath(
+    start: Vector3,
+    end: Vector3,
+    path: R.UnsignedIntArray,
+    options?: {
+      /**
+       * The maximum number of points the straight path arrays can hold. [Limit: > 0]
+       * @default 256
+       */
+      maxStraightPathPoints?: number;
+
+      /**
+       * Options for dtNavMeshQuery::findStraightPath
+       *
+       * Add a vertex at every polygon edge crossing where area changes.
+       * DT_STRAIGHTPATH_AREA_CROSSINGS = 1
+       *
+       * Add a vertex at every polygon edge crossing.
+	     * DT_STRAIGHTPATH_ALL_CROSSINGS = 2
+       *
+       * @default 0
+       */
+      straightPathOptions?: number
+    }
+  ) {
+    const maxStraightPathPoints = options?.maxStraightPathPoints ?? 256;
+    const straightPathOptions = options?.straightPathOptions ?? 0;
+
+    const straightPath = new Arrays.FloatArray();
+    straightPath.resize(maxStraightPathPoints * 3);
+
+    const straightPathFlags = new Arrays.UnsignedCharArray();
+    straightPathFlags.resize(maxStraightPathPoints);
+
+    const straightPathRefs = new Arrays.UnsignedIntArray();
+    straightPathRefs.resize(maxStraightPathPoints);
+
+    const straightPathCount = new Raw.IntRef();
+
+    const status = this.raw.findStraightPath(
+      vec3.toArray(start),
+      vec3.toArray(end),
+      path,
+      straightPath,
+      straightPathFlags,
+      straightPathRefs,
+      straightPathCount,
+      maxStraightPathPoints,
+      straightPathOptions
+    );
+
+    return {
+      success: Raw.Detour.statusSucceed(status),
+      status,
+      straightPath,
+      straightPathFlags,
+      straightPathRefs,
+      straightPathCount: straightPathCount.value,
     };
   }
 
