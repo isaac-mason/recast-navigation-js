@@ -1,5 +1,14 @@
 # @recast-navigation/generators
 
+## 0.24.0
+
+### Patch Changes
+
+- Updated dependencies [a4636e1]
+- Updated dependencies [4b1fcf8]
+  - @recast-navigation/core@0.24.0
+  - @recast-navigation/wasm@0.24.0
+
 ## 0.23.0
 
 ### Patch Changes
