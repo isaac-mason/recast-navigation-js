@@ -78,21 +78,25 @@ dtStatus NavMeshQuery::raycast(dtPolyRef startRef, const float *startPos, const 
     return m_navQuery->raycast(startRef, startPos, endPos, filter, options, hit, prevRef);
 }
 
-Vec3 NavMeshQuery::getClosestPoint(const float *position, const float *halfExtents, const dtQueryFilter *filter)
+dtStatus NavMeshQuery::findClosestPoint(const float *position, const float *halfExtents, const dtQueryFilter *filter, UnsignedIntRef *resultPolyRef, Vec3 *resultPoint, BoolRef *resultPosOverPoly)
 {
     dtPolyRef polyRef;
-
-    m_navQuery->findNearestPoly(position, halfExtents, filter, &polyRef, 0);
-
-    bool posOverlay;
     Vec3 resDetour;
-    dtStatus status = m_navQuery->closestPointOnPoly(polyRef, position, &resDetour.x, &posOverlay);
+    dtStatus status = m_navQuery->findNearestPoly(position, halfExtents, filter, &polyRef, 0);
 
     if (dtStatusFailed(status))
     {
-        return Vec3(0.f, 0.f, 0.f);
+        return status;
     }
-    return Vec3(resDetour.x, resDetour.y, resDetour.z);
+
+    status = m_navQuery->closestPointOnPoly(polyRef, position, &resDetour.x, &resultPosOverPoly->value);
+
+    resultPolyRef->value = polyRef;
+    resultPoint->x = resDetour.x;
+    resultPoint->y = resDetour.y;
+    resultPoint->z = resDetour.z;
+
+    return status;
 }
 
 dtStatus NavMeshQuery::findRandomPointAroundCircle(dtPolyRef startRef, const float *centerPos, const float radius, const dtQueryFilter *filter, UnsignedIntRef *resultRandomRef, Vec3 *resultRandomPoint)

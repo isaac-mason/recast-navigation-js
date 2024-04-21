@@ -36,6 +36,6 @@ const { navMesh } = generateSoloNavMesh(positions, indices, config);
 
 const navMeshQuery = new NavMeshQuery({ navMesh });
 
-const closestPoint = navMeshQuery.getClosestPoint({ x: 2, y: 1, z: 2 });
+const { point: closestPoint } = navMeshQuery.findClosestPoint({ x: 2, y: 1, z: 2 });
 
 console.log(closestPoint.x, closestPoint.y, closestPoint.z);

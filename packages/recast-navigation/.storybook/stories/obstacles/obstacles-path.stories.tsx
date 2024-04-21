@@ -101,11 +101,11 @@ export const PathExample = () => {
         { x: 1, y: 1, z: 1 },
         0.2
       );
-  
+
       if (addObstacleResult.success) {
         boxObstacle.current = addObstacleResult.obstacle;
       }
-    } 
+    }
 
     let upToDate = false;
     while (!upToDate) {
@@ -113,18 +113,19 @@ export const PathExample = () => {
       upToDate = result.upToDate;
     }
 
-    const { path } = navMeshQuery.computePath(
-      navMeshQuery.getClosestPoint({
-        x: -8,
-        y: 0,
-        z: 8,
-      }),
-      navMeshQuery.getClosestPoint({
-        x: 8,
-        y: 0,
-        z: -8,
-      })
-    );
+    const { point: start } = navMeshQuery.findClosestPoint({
+      x: -8,
+      y: 0,
+      z: 8,
+    });
+
+    const { point: end } = navMeshQuery.findClosestPoint({
+      x: 8,
+      y: 0,
+      z: -8,
+    });
+
+    const { path } = navMeshQuery.computePath(start, end);
 
     setPath(path ? path.map((v) => [v.x, v.y, v.z]) : undefined);
   };

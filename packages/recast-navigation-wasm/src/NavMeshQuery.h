@@ -24,6 +24,8 @@ public:
 
     dtStatus closestPointOnPoly(dtPolyRef ref, const float *pos, Vec3 *closest, BoolRef *posOverPoly);
 
+    dtStatus findClosestPoint(const float *position, const float *halfExtents, const dtQueryFilter *filter, UnsignedIntRef *resultPolyRef, Vec3 *resultPoint, BoolRef *resultPosOverPoly);
+
     dtStatus findStraightPath(
         const float *startPos,
         const float *endPos,
@@ -42,8 +44,6 @@ public:
     dtStatus queryPolygons(const float *center, const float *halfExtents, const dtQueryFilter *filter, UnsignedIntArray *polys, IntRef *polyCount, const int maxPolys);
 
     dtStatus raycast(dtPolyRef startRef, const float *startPos, const float *endPos, const dtQueryFilter *filter, const unsigned int options, dtRaycastHit *hit, dtPolyRef prevRef);
-
-    Vec3 getClosestPoint(const float *position, const float *halfExtents, const dtQueryFilter *filter);
 
     dtStatus findRandomPointAroundCircle(dtPolyRef startRef, const float *centerPos, const float radius, const dtQueryFilter *filter, UnsignedIntRef *resultRandomRef, Vec3 *resultRandomPoint);
 

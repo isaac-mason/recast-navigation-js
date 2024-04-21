@@ -178,21 +178,21 @@ export const ComputePath = () => {
     const filter = new QueryFilter();
     filter.includeFlags = includeFlags;
 
-    const { path } = navMeshQuery.computePath(
-      navMeshQuery.getClosestPoint({
-        x: -4,
-        y: 0,
-        z: -4,
-      }),
-      navMeshQuery.getClosestPoint({
-        x: 4,
-        y: 0,
-        z: 4,
-      }),
-      {
-        filter,
-      }
-    );
+    const { point: start } = navMeshQuery.findClosestPoint({
+      x: -4,
+      y: 0,
+      z: -4,
+    });
+
+    const { point: end } = navMeshQuery.findClosestPoint({
+      x: 4,
+      y: 0,
+      z: 4,
+    });
+
+    const { path } = navMeshQuery.computePath(start, end, {
+      filter,
+    });
 
     setPath(path ? path.map((v) => [v.x, v.y, v.z]) : undefined);
 
@@ -218,7 +218,7 @@ export const ComputePath = () => {
   );
 };
 
-export const GetClosestPoint = () => {
+export const FindClosestPoint = () => {
   const { canSwim } = useControls({
     canSwim: false,
   });
@@ -260,7 +260,7 @@ export const GetClosestPoint = () => {
       z: 10,
     };
 
-    const nearest = navMeshQuery.getClosestPoint(point, {
+    const { point: nearest } = navMeshQuery.findClosestPoint(point, {
       filter: queryFilter,
       halfExtents,
     });
@@ -331,8 +331,10 @@ export const SingleAgent = () => {
     crowd.navMeshQuery.defaultQueryHalfExtents.x = 5;
     crowd.navMeshQuery.defaultQueryHalfExtents.z = 5;
 
+    const { point: agentPosition } = navMeshQuery.findClosestPoint({ x: 4, y: 0, z: 4 });
+
     const agent = crowd.addAgent(
-      navMeshQuery.getClosestPoint({ x: 4, y: 0, z: 4 }),
+      agentPosition,
       {
         height: 1,
         radius: 0.5,
@@ -379,7 +381,7 @@ export const SingleAgent = () => {
 
     e.stopPropagation();
 
-    const target = navMeshQuery.getClosestPoint(e.point);
+    const { point: target } = navMeshQuery.findClosestPoint(e.point);
 
     if (e.button === 2) {
       agent.teleport(target);

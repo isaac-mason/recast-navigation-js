@@ -37,7 +37,7 @@ const App = () => {
       detailSampleMaxError: 1,
     });
 
-    if (!success) return
+    if (!success) return;
 
     const navMeshQuery = new NavMeshQuery({ navMesh });
 
@@ -51,10 +51,14 @@ const App = () => {
 
     scene.add(navMeshHelper);
 
-    const { path } = navMeshQuery.computePath(
-      navMeshQuery.getClosestPoint(new Vector3(2, 1, 2)),
-      navMeshQuery.getClosestPoint(new Vector3(-2, 1, -2))
+    const { point: start } = navMeshQuery.findClosestPoint(
+      new Vector3(2, 1, 2)
     );
+    const { point: end } = navMeshQuery.findClosestPoint(
+      new Vector3(-2, 1, -2)
+    );
+
+    const { path } = navMeshQuery.computePath(start, end);
     console.log(path);
 
     const lineGeometry = new LineGeometry();

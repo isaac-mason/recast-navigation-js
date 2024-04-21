@@ -40,7 +40,7 @@ export const RecastAgent = forwardRef<RecastAgentRef, RecastAgentProps>(
         goto: (position: Vector3) => {
           if (!navMeshQuery || !crowd || !agent) return;
 
-          const target = navMeshQuery.getClosestPoint(position);
+          const { point: target } = navMeshQuery.findClosestPoint(position);
           agent.goto(target);
 
           setAgentTarget(new Vector3().copy(target as Vector3));
@@ -48,7 +48,7 @@ export const RecastAgent = forwardRef<RecastAgentRef, RecastAgentProps>(
         teleport: (position: Vector3) => {
           if (!navMeshQuery || !crowd || !agent) return;
 
-          const target = navMeshQuery.getClosestPoint(position);
+          const { point: target } = navMeshQuery.findClosestPoint(position);
           agent.teleport(target);
 
           setAgentTarget(undefined);
@@ -70,8 +70,10 @@ export const RecastAgent = forwardRef<RecastAgentRef, RecastAgentProps>(
         maxAgentRadius: agentRadius,
       });
 
+      const { point: agentPosition } = navMeshQuery.findClosestPoint({ x: 0, y: 0, z: 0 });
+
       const agent = crowd.addAgent(
-        navMeshQuery.getClosestPoint({ x: 0, y: 0, z: 0 }),
+        agentPosition,
         {
           radius: agentRadius,
           height: agentHeight,

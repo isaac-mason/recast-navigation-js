@@ -35,7 +35,7 @@ Recast.init().then(() => {
 
   const navMeshQuery = new Recast.NavMeshQuery({ navMesh });
 
-  const closestPoint = navMeshQuery.getClosestPoint({ x: 2, y: 1, z: 2 });
+  const { point: closestPoint } = navMeshQuery.findClosestPoint({ x: 2, y: 1, z: 2 });
 
   console.log(closestPoint.x, closestPoint.y, closestPoint.z);
 });

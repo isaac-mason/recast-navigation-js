@@ -162,9 +162,10 @@ import { NavMeshQuery } from 'recast-navigation';
 
 const navMeshQuery = new NavMeshQuery({ navMesh });
 
-/* get the closest point on the NavMesh to the given position */
+/* find the closest point on the NavMesh to the given position */
 const position = { x: 0, y: 0, z: 0 };
-navMeshQuery.getClosestPoint(position);
+const { success, status, point, polyRef, isPointOverPoly } =
+  navMeshQuery.findClosestPoint(position);
 
 /* get a random point around the given position */
 const radius = 0.5;
@@ -175,18 +176,10 @@ const {
   randomPoint: initialAgentPosition,
 } = navMeshQuery.findRandomPointAroundCircle(position, radius);
 
-
 /* compute a straight path between two points */
-const computePathResult = navMeshQuery.computePath(
-  { x: 0, y: 0, z: 0 }, // start position
-  { x: 2, y: 0, z: 0 } // end position
-);
-
-if (!computePathResult.success) {
-  console.log(computePathResult.error);
-}
-
-const path = computePathResult.path; // { x: number, y: number, z: number }[]
+const start = { x: 0, y: 0, z: 0 };
+const end = { x: 2, y: 0, z: 0 };
+const { success, error, path } = navMeshQuery.computePath(start, end);
 ```
 
 ### Crowds and Agents

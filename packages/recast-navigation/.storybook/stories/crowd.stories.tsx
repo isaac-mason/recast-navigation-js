@@ -61,17 +61,20 @@ export const SingleAgent = () => {
 
     const crowd = new Crowd({ navMesh, maxAgents: 1, maxAgentRadius: 0.2 });
 
-    const agent = crowd.addAgent(
-      navMeshQuery.getClosestPoint({ x: -2.9, y: 2.366, z: 0.9 }),
-      {
-        radius: agentRadius,
-        height: 0.5,
-        maxAcceleration: 4.0,
-        maxSpeed: 1.0,
-        collisionQueryRange: 0.5,
-        pathOptimizationRange: 0.0,
-      }
-    );
+    const { point: agentPosition } = navMeshQuery.findClosestPoint({
+      x: -2.9,
+      y: 2.366,
+      z: 0.9,
+    });
+
+    const agent = crowd.addAgent(agentPosition, {
+      radius: agentRadius,
+      height: 0.5,
+      maxAcceleration: 4.0,
+      maxSpeed: 1.0,
+      collisionQueryRange: 0.5,
+      pathOptimizationRange: 0.0,
+    });
 
     setNavMesh(navMesh);
     setNavMeshQuery(navMeshQuery);
@@ -101,7 +104,7 @@ export const SingleAgent = () => {
 
     e.stopPropagation();
 
-    const target = navMeshQuery.getClosestPoint(e.point);
+    const { point: target } = navMeshQuery.findClosestPoint(e.point);
 
     if (e.button === 2) {
       agent.teleport(target);
@@ -203,7 +206,7 @@ export const MultipleAgents = () => {
   const onClick = (e: ThreeEvent<MouseEvent>) => {
     if (!navMesh || !navMeshQuery || !crowd) return;
 
-    const target = navMeshQuery.getClosestPoint(e.point);
+    const { point: target } = navMeshQuery.findClosestPoint(e.point);
 
     for (const agent of crowd.getAgents()) {
       agent.goto(target);

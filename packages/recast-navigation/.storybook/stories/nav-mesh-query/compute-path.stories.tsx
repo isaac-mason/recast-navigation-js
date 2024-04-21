@@ -45,18 +45,19 @@ export const ComputePath = () => {
 
     const navMeshQuery = new NavMeshQuery({ navMesh });
 
-    const { path } = navMeshQuery.computePath(
-      navMeshQuery.getClosestPoint({
-        x: -4.128927083678903,
-        y: 0.2664172349988201,
-        z: 4.8521110263641685,
-      }),
-      navMeshQuery.getClosestPoint({
-        x: 2.0756323479723005,
-        y: 2.38756142461898,
-        z: -1.9437325288048717,
-      })
-    );
+    const { point: start } = navMeshQuery.findClosestPoint({
+      x: -4.128927083678903,
+      y: 0.2664172349988201,
+      z: 4.8521110263641685,
+    });
+
+    const { point: end } = navMeshQuery.findClosestPoint({
+      x: 2.0756323479723005,
+      y: 2.38756142461898,
+      z: -1.9437325288048717,
+    });
+
+    const { path } = navMeshQuery.computePath(start, end);
 
     setNavMesh(navMesh);
     setPath(path ? path.map((v) => [v.x, v.y, v.z]) : undefined);

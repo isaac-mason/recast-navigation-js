@@ -106,18 +106,17 @@ export const SoloNavMeshOffMeshConnection = () => {
       maxAgentRadius: 0.1,
     });
 
-    crowd.addAgent(
-      navMeshQuery.getClosestPoint({
-        x: 0,
-        y: 3.9,
-        z: 2.5,
-      }),
-      {
-        radius: 0.1,
-        height: 0.5,
-        maxSpeed: 2,
-      }
-    );
+    const { point: agentPosition } = navMeshQuery.findClosestPoint({
+      x: 0,
+      y: 3.9,
+      z: 2.5,
+    });
+
+    crowd.addAgent(agentPosition, {
+      radius: 0.1,
+      height: 0.5,
+      maxSpeed: 2,
+    });
 
     setNavMeshQuery(navMeshQuery);
     setCrowd(crowd);
@@ -145,7 +144,7 @@ export const SoloNavMeshOffMeshConnection = () => {
     const agent = crowd.getAgent(0);
     if (!agent) return;
 
-    const nearest = navMeshQuery.getClosestPoint({ x, y, z });
+    const { point: nearest } = navMeshQuery.findClosestPoint({ x, y, z });
 
     agent.goto(nearest);
   };

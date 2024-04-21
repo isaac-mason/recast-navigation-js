@@ -103,18 +103,21 @@ export const CrowdExample = () => {
       maxAgentRadius: 0.2,
     });
 
-    const agent = crowd.addAgent(
-      navMeshQuery.getClosestPoint({ x: 0, y: 0, z: 0 }),
-      {
-        radius: 0.2,
-        height: 1,
-        maxAcceleration: agentMaxAcceleration,
-        maxSpeed: agentMaxSpeed,
-        collisionQueryRange: 0.5,
-        pathOptimizationRange: 0.0,
-        separationWeight: 1.0,
-      }
-    );
+    const { point: agentPosition } = navMeshQuery.findClosestPoint({
+      x: 0,
+      y: 0,
+      z: 0,
+    });
+
+    const agent = crowd.addAgent(agentPosition, {
+      radius: 0.2,
+      height: 1,
+      maxAcceleration: agentMaxAcceleration,
+      maxSpeed: agentMaxSpeed,
+      collisionQueryRange: 0.5,
+      pathOptimizationRange: 0.0,
+      separationWeight: 1.0,
+    });
 
     setNavMesh(navMesh);
     setNavMeshQuery(navMeshQuery);
@@ -159,7 +162,7 @@ export const CrowdExample = () => {
       boxObstacle.current = boxObstacleResult.obstacle;
     }
 
-    const cylinderObstacleResult =  tileCache.addCylinderObstacle(
+    const cylinderObstacleResult = tileCache.addCylinderObstacle(
       cylinderObstacleTarget.current!.getWorldPosition(new Vector3()),
       1,
       0.5

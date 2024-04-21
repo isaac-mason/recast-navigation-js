@@ -113,18 +113,19 @@ export const ManyObstaclesExample = () => {
 
     fullTileCacheUpdate();
 
-    const { path } = navMeshQuery.computePath(
-      navMeshQuery.getClosestPoint({
-        x: -8,
-        y: 0,
-        z: 10,
-      }),
-      navMeshQuery.getClosestPoint({
-        x: 8,
-        y: 0,
-        z: -10,
-      })
-    );
+    const { point: start } = navMeshQuery.findClosestPoint({
+      x: -8,
+      y: 0,
+      z: 10,
+    });
+
+    const { point: end } = navMeshQuery.findClosestPoint({
+      x: 8,
+      y: 0,
+      z: -10,
+    });
+
+    const { path } = navMeshQuery.computePath(start, end);
 
     setPath(path ? path.map((v) => [v.x, v.y, v.z]) : undefined);
 

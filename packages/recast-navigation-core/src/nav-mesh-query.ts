@@ -246,9 +246,12 @@ export class NavMeshQuery {
   }
 
   /**
-   * Returns the closest point on the NavMesh to the given position.
+   * Finds the closest point on the NavMesh to the given position.
+   * @param position the position to find the closest point to
+   * @param options additional options
+   * @returns the result of the find closest point operation
    */
-  getClosestPoint(
+  findClosestPoint(
     position: Vector3,
     options?: {
       /**
@@ -263,14 +266,30 @@ export class NavMeshQuery {
        */
       halfExtents?: Vector3;
     }
-  ): Vector3 {
-    const closestPointRaw = this.raw.getClosestPoint(
+  ) {
+    const filter = options?.filter ?? this.defaultFilter;
+    const halfExtents = options?.halfExtents ?? this.defaultQueryHalfExtents;
+
+    const resultPolyRef = new Raw.UnsignedIntRef();
+    const resultPoint = new Raw.Vec3();
+    const resultPointOverPoly = new Raw.BoolRef();
+
+    const status = this.raw.findClosestPoint(
       vec3.toArray(position),
-      vec3.toArray(options?.halfExtents ?? this.defaultQueryHalfExtents),
-      options?.filter?.raw ?? this.defaultFilter.raw
+      vec3.toArray(halfExtents),
+      filter.raw,
+      resultPolyRef,
+      resultPoint,
+      resultPointOverPoly
     );
 
-    return vec3.fromRaw(closestPointRaw);
+    return {
+      success: Raw.Detour.statusSucceed(status),
+      status,
+      polyRef: resultPolyRef.value,
+      point: vec3.fromRaw(resultPoint),
+      isPointOverPoly: resultPointOverPoly.value,
+    };
   }
 
   /**
