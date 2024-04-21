@@ -8,7 +8,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { Group, Mesh, MeshBasicMaterial } from 'three';
 import { Debug } from '../../common/debug';
-import { DungeonEnvirionment } from '../../common/dungeon-environment';
+import { DungeonEnvironment } from '../../common/dungeon-environment';
 import { NavTestEnvironment } from '../../common/nav-test-environment';
 import { decorators } from '../../decorators';
 import { parameters } from '../../parameters';
@@ -26,7 +26,7 @@ const navMeshMaterial = new MeshBasicMaterial({
 
 const Levels = {
   Dungeon: {
-    Environment: DungeonEnvirionment,
+    Environment: DungeonEnvironment,
     camera: {
       position: [-100, 75, -75] as const,
       lookAt: [15, 15, -51] as const,

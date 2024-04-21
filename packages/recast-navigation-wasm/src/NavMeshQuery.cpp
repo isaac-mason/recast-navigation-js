@@ -126,6 +126,20 @@ dtStatus NavMeshQuery::moveAlongSurface(dtPolyRef startRef, const float *startPo
     return status;
 }
 
+dtStatus NavMeshQuery::findRandomPoint(const dtQueryFilter *filter, UnsignedIntRef *resultRandomRef, Vec3 *resultRandomPoint)
+{
+    dtPolyRef randomRef;
+    Vec3 resDetour;
+    dtStatus status = m_navQuery->findRandomPoint(filter, r01, &randomRef, &resDetour.x);
+
+    resultRandomRef->value = randomRef;
+    resultRandomPoint->x = resDetour.x;
+    resultRandomPoint->y = resDetour.y;
+    resultRandomPoint->z = resDetour.z;
+
+    return status;
+}
+
 dtStatus NavMeshQuery::getPolyHeight(dtPolyRef ref, const float *pos, FloatRef *height)
 {
     return m_navQuery->getPolyHeight(ref, pos, &height->value);

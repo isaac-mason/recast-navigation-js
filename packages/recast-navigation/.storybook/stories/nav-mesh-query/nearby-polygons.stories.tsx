@@ -150,8 +150,7 @@ export function ClickNearbyPolygons() {
       startRef,
       clickedPosition,
       1,
-      undefined,
-      maxPolys
+      { maxPolys }
     );
     console.info('findPolysAroundCircle', findPolysAroundCircleResult);
 
@@ -159,8 +158,7 @@ export function ClickNearbyPolygons() {
     const queryPolygonsResult = navMeshQuery.queryPolygons(
       clickedPosition,
       halfExtents,
-      undefined,
-      maxPolys
+      { maxPolys }
     );
     console.info('queryPolygons', queryPolygonsResult);
 

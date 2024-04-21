@@ -477,6 +477,8 @@ interface NavMeshQuery {
 
     unsigned long moveAlongSurface(unsigned long startRef, float[] startPos, float[] endPos, [Const] dtQueryFilter filter, Vec3 resultPos, UnsignedIntArray visited, long maxVisitedSize);
 
+    unsigned long findRandomPoint([Const] dtQueryFilter filter, UnsignedIntRef resultRandomRef, Vec3 resultRandomPoint);
+
     unsigned long getPolyHeight(unsigned long ref, float[] pos, FloatRef height);
 
     void destroy();

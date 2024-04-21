@@ -133,16 +133,16 @@ export class NavMeshQuery {
        * The maximum number of polygons the result arrays can hold.
        * @default 256
        */
-      maxResult?: number;
+      maxPolys?: number;
     }
   ) {
     const filter = options?.filter ?? this.defaultFilter;
-    const maxResult = options?.maxResult ?? 256;
+    const maxPolys = options?.maxPolys ?? 256;
 
     const resultRef = new Arrays.UnsignedIntArray();
     const resultParent = new Arrays.UnsignedIntArray();;
-    resultRef.resize(maxResult);
-    resultParent.resize(maxResult);
+    resultRef.resize(maxPolys);
+    resultParent.resize(maxPolys);
     const resultCostRef = new Raw.FloatRef();
     const resultCountRef = new Raw.IntRef();
 
@@ -155,7 +155,7 @@ export class NavMeshQuery {
       resultParent,
       resultCostRef,
       resultCountRef,
-      maxResult,
+      maxPolys,
     );
 
     const resultCost = resultCostRef.value;
@@ -259,6 +259,7 @@ export class NavMeshQuery {
       
       /**
        * The search distance along each axis. [(x, y, z)]
+       * @default this.defaultQueryHalfExtents
        */
       halfExtents?: Vector3;
     }
@@ -353,6 +354,36 @@ export class NavMeshQuery {
       visited: array((i) => visited.get(i), visited.size),
     };
   }
+
+  /**
+   * Returns a random point on the navmesh.
+   * @param options additional options
+   * @returns a random point on the navmesh
+   */
+  findRandomPoint(options?: {
+    /**
+     * The polygon filter to apply to the query.
+     * @default this.defaultFilter
+     */
+    filter?: QueryFilter;
+  }) {
+    const randomPolyRef = new Raw.UnsignedIntRef();
+    const randomPoint = new Raw.Vec3();
+
+    const status = this.raw.findRandomPoint(
+      options?.filter?.raw ?? this.defaultFilter.raw,
+      randomPolyRef,
+      randomPoint
+    );
+
+    return {
+      success: Raw.Detour.statusSucceed(status),
+      status,
+      randomPolyRef: randomPolyRef.value,
+      randomPoint: vec3.fromRaw(randomPoint),
+    };
+  }
+
 
   /**
    * Gets the height of the polygon at the provided position using the height detail.

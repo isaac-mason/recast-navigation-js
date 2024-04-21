@@ -4,7 +4,7 @@ import { GLTF } from 'three-stdlib';
 
 const assetUrl = 'dungeon.gltf';
 
-export const DungeonEnvirionment = () => {
+export const DungeonEnvironment = () => {
   const gltf = useGLTF(assetUrl) as GLTF;
 
   return <primitive object={gltf.scene} />;

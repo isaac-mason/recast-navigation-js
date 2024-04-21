@@ -55,6 +55,8 @@ public:
 
     dtStatus moveAlongSurface(dtPolyRef startRef, const float *startPos, const float *endPos, const dtQueryFilter *filter, Vec3 *resultPos, UnsignedIntArray *visited, int maxVisitedSize);
 
+    dtStatus findRandomPoint(const dtQueryFilter *filter, UnsignedIntRef *resultRandomRef, Vec3 *resultRandomPoint);
+
     dtStatus getPolyHeight(dtPolyRef ref, const float *pos, FloatRef *height);
 
     void destroy();
