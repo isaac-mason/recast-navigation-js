@@ -12,7 +12,6 @@
     "node-cjs-example",
     "node-esm-example",
     "parcel-example",
-    "react-scripts-example",
     "vite-example"
   ],
   "___experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH": {
