@@ -1,5 +1,12 @@
 # @recast-navigation/generators
 
+## 0.24.1
+
+### Patch Changes
+
+- @recast-navigation/core@0.24.1
+- @recast-navigation/wasm@0.24.1
+
 ## 0.24.0
 
 ### Patch Changes
