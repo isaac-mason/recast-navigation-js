@@ -47,8 +47,14 @@ export type NavMeshQueryParams = {
 export class NavMeshQuery {
   raw: R.NavMeshQuery;
 
+  /**
+   * Default query filter.
+   */
   defaultFilter: QueryFilter;
 
+  /**
+   * Default search distance along each axis.
+   */
   defaultQueryHalfExtents = { x: 1, y: 1, z: 1 };
 
   constructor(value: R.NavMeshQuery | NavMeshQueryParams) {
@@ -72,11 +78,13 @@ export class NavMeshQuery {
     options?: {
       /**
        * The polygon filter to apply to the query.
+       * @default this.defaultFilter
        */
       filter?: QueryFilter;
       
       /**
        * The search distance along each axis. [(x, y, z)]
+       * @default this.defaultQueryHalfExtents
        */
       halfExtents?: Vector3;
     }
@@ -108,16 +116,29 @@ export class NavMeshQuery {
    * @param startRef Reference of polygon to start search from
    * @param centerPos Center of circle
    * @param radius Radius of circle
-   * @param filter The polygon filter to apply to the query
-   * @param maxResult The maximum number of polygons the result arrays can hold
+   * @param options
    */
   findPolysAroundCircle(
     startRef: number,
     centerPos: Vector3,
     radius: number,
-    filter = this.defaultFilter,
-    maxResult = 256,
+    options?: {
+      /**
+       * The polygon filter to apply to the query.
+       * @default this.defaultFilter
+       */
+      filter?: QueryFilter;
+
+      /**
+       * The maximum number of polygons the result arrays can hold.
+       * @default 256
+       */
+      maxResult?: number;
+    }
   ) {
+    const filter = options?.filter ?? this.defaultFilter;
+    const maxResult = options?.maxResult ?? 256;
+
     const resultRef = new Arrays.UnsignedIntArray();
     const resultParent = new Arrays.UnsignedIntArray();;
     resultRef.resize(maxResult);
@@ -154,15 +175,28 @@ export class NavMeshQuery {
    * Finds polygons that overlap the search box.
    * @param center The center of the search box
    * @param halfExtents The search distance along each axis
-   * @param filter The polygon filter to apply to the query
-   * @param maxPolys The maximum number of polygons the search result can hold
+   * @param options
    */
   queryPolygons(
     center: Vector3,
     halfExtents: Vector3,
-    filter = this.defaultFilter,
-    maxPolys = 256,
-  ){
+    options?: {
+      /**
+       * The polygon filter to apply to the query.
+       * @default this.defaultFilter
+       */
+      filter?: QueryFilter;
+
+      /**
+       * The maximum number of polygons the search result can hold.
+       * @default 256
+       */
+      maxPolys?: number;
+    }
+  ) {
+    const filter = options?.filter ?? this.defaultFilter;
+    const maxPolys = options?.maxPolys ?? 256;
+
     const polysRef = new Arrays.UnsignedIntArray();
     polysRef.resize(maxPolys);
     const polyCountRef = new Raw.IntRef();
@@ -188,6 +222,9 @@ export class NavMeshQuery {
 
   /**
    * Returns the closest point on the given polygon to the given position.
+   * 
+   * @param polyRef The reference of the polygon
+   * @param position The position to find the closest point to
    */
   closestPointOnPoly(polyRef: number, position: Vector3) {
     const closestPoint = new Raw.Vec3();
@@ -216,6 +253,7 @@ export class NavMeshQuery {
     options?: {
       /**
        * The polygon filter to apply to the query.
+       * @default this.defaultFilter
        */
       filter?: QueryFilter;
       
@@ -243,11 +281,13 @@ export class NavMeshQuery {
     options?: {
       /**
        * The polygon filter to apply to the query.
+       * @default this.defaultFilter
        */
       filter?: QueryFilter;
       
       /**
        * The search distance along each axis. [(x, y, z)]
+       * @default this.defaultQueryHalfExtents
        */
       halfExtents?: Vector3;
     }
@@ -264,6 +304,12 @@ export class NavMeshQuery {
 
   /**
    * Moves from the start to the end position constrained to the navigation mesh.
+   * 
+   * @param startRef The reference id of the start polygon.
+   * @param startPosition A position of the mover within the start polygon.
+   * @param endPosition The desired end position of the mover.
+   * 
+   * @returns The result of the move along surface operation.
    */
   moveAlongSurface(
     startRef: number,
@@ -272,15 +318,19 @@ export class NavMeshQuery {
     options?: {
       /**
        * The polygon filter to apply to the query.
+       * @default this.defaultFilter
        */
       filter?: QueryFilter;
 
       /**
        * The maximum number of polygons the output visited array can hold.
+       * @default 256
        */
       maxVisitedSize?: number;
     }
   ) {
+    const maxVisitedSize = options?.maxVisitedSize ?? 256
+
     const resultPosition = new Raw.Vec3();
     const visited = new Arrays.UnsignedIntArray();
 
@@ -293,7 +343,7 @@ export class NavMeshQuery {
       filter,
       resultPosition,
       visited,
-      options?.maxVisitedSize ?? 256
+      maxVisitedSize
     );
 
     return {
@@ -305,7 +355,10 @@ export class NavMeshQuery {
   }
 
   /**
-   * Gets the height of the polygon at the provided position using the height detail
+   * Gets the height of the polygon at the provided position using the height detail.
+   * 
+   * @param polyRef The reference id of the polygon.
+   * @param position A position within the xz-bounds of the polygon.
    */
   getPolyHeight(polyRef: number, position: Vector3) {
     const floatRef = new Raw.FloatRef();
@@ -325,6 +378,9 @@ export class NavMeshQuery {
   /**
    * Finds a straight path from the start position to the end position.
    *
+   * @param start The start position.
+   * @param end The end position.
+   * 
    * @returns an array of Vector3 positions that make up the path, or an empty array if no path was found.
    */
   computePath(
@@ -333,16 +389,19 @@ export class NavMeshQuery {
     options?: {
       /**
        * The polygon filter to apply to the query.
+       * @default this.defaultFilter
        */
       filter?: QueryFilter;
 
       /**
-       * The maximum number of polygons the @p path array can hold. [Limit: >= 1]
+       * The maximum number of polygons the path array can hold. [Limit: >= 1]
+       * @default 256
        */
       maxPathPolys?: number;
 
       /**
-       * The maximum number of points the straight path arrays can hold.  [Limit: > 0]
+       * The maximum number of points the straight path arrays can hold. [Limit: > 0]
+       * @default 256
        */
       maxStraightPathPoints?: number;
     }
