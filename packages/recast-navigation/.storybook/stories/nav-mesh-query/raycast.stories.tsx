@@ -1,4 +1,5 @@
 import { Line, OrbitControls } from '@react-three/drei';
+import { ThreeEvent } from '@react-three/fiber';
 import { NavMesh, NavMeshQuery } from '@recast-navigation/core';
 import { threeToSoloNavMesh } from '@recast-navigation/three';
 import React, { useEffect, useState } from 'react';
@@ -7,7 +8,6 @@ import { Debug } from '../../common/debug';
 import { NavTestEnvironment } from '../../common/nav-test-environment';
 import { decorators, htmlTunnel } from '../../decorators';
 import { parameters } from '../../parameters';
-import { ThreeEvent } from '@react-three/fiber';
 
 export default {
   title: 'NavMeshQuery / Raycast',
@@ -93,13 +93,13 @@ export const Raycast = () => {
 
       const direction = end.clone().sub(start).normalize();
 
-      const hitPosition = start
+      const hitPoint = start
         .clone()
         .add(direction.clone().multiplyScalar(distanceToHitBorder));
 
       setRaycastResult({
         hit: true,
-        hitPoint: hitPosition,
+        hitPoint,
       });
     }
   }, [navMeshQuery, start, end]);
@@ -120,43 +120,55 @@ export const Raycast = () => {
         <NavTestEnvironment />
       </group>
 
-      <mesh position={start}>
-        <sphereGeometry args={[0.1, 32, 32]} />
-        <meshBasicMaterial color="blue" />
-      </mesh>
+      <group position={[0, 0.05, 0]}>
+        <mesh position={start}>
+          <sphereGeometry args={[0.1, 32, 32]} />
+          <meshBasicMaterial color="blue" />
+        </mesh>
 
-      <mesh position={end}>
-        <sphereGeometry args={[0.1, 32, 32]} />
-        <meshBasicMaterial color="green" />
-      </mesh>
+        <mesh position={end}>
+          <sphereGeometry args={[0.1, 32, 32]} />
+          <meshBasicMaterial color="green" />
+        </mesh>
 
-      {raycastResult?.hitPoint ? (
-        <>
-          <mesh position={raycastResult.hitPoint.toArray()}>
-            <sphereGeometry args={[0.1, 32, 32]} />
-            <meshBasicMaterial color="orange" />
-          </mesh>
+        {raycastResult?.hitPoint ? (
+          <>
+            <mesh position={raycastResult.hitPoint.toArray()}>
+              <sphereGeometry args={[0.1, 32, 32]} />
+              <meshBasicMaterial color="orange" />
+            </mesh>
 
+            <Line
+              points={[start.toArray(), raycastResult.hitPoint.toArray()]}
+              color="orange"
+              lineWidth={10}
+            />
+          </>
+        ) : (
           <Line
-            points={[start.toArray(), raycastResult.hitPoint.toArray()]}
+            points={[start.toArray(), end.toArray()]}
             color="orange"
             lineWidth={10}
           />
-        </>
-      ) : (
-        <Line
-          points={[start.toArray(), end.toArray()]}
-          color="orange"
-          lineWidth={10}
-        />
-      )}
+        )}
+      </group>
 
       <Debug navMesh={navMesh} navMeshMaterial={navMeshMaterial} />
 
       <OrbitControls />
 
       <htmlTunnel.In>
-        <p>left click to set start point, right click to set end point</p>
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            margin: '2em',
+            color: '#fff',
+          }}
+        >
+          left click to set start point, right click to set end point
+        </div>
       </htmlTunnel.In>
     </>
   );
