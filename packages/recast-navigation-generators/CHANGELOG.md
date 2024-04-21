@@ -1,5 +1,18 @@
 # @recast-navigation/generators
 
+## 0.23.0
+
+### Patch Changes
+
+- 5cb17a1: feat: omit minRegionArea and maxEdgeLen from TileCacheGeneratorConfig type
+- Updated dependencies [46e6fb2]
+- Updated dependencies [a594296]
+- Updated dependencies [9841a9c]
+- Updated dependencies [72d99b1]
+- Updated dependencies [9841a9c]
+  - @recast-navigation/core@0.23.0
+  - @recast-navigation/wasm@0.23.0
+
 ## 0.22.0
 
 ### Patch Changes
