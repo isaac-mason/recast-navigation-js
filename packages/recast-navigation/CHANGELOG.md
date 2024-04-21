@@ -1,5 +1,14 @@
 # recast-navigation
 
+## 0.24.1
+
+### Patch Changes
+
+- 2e487e0: fix: include sourcemaps in package.json "files"
+  - @recast-navigation/core@0.24.1
+  - @recast-navigation/generators@0.24.1
+  - @recast-navigation/three@0.24.1
+
 ## 0.24.0
 
 ### Minor Changes
