@@ -61,6 +61,7 @@
 - 9841a9c: feat(NavMeshQuery): change queryPolygons to take an 'options' object for optional parameters
 - 72d99b1: feat(NavMeshQuery): expose raycast
 - 9841a9c: feat(NavMeshQuery): change findPolysAroundCircle to take an 'options' object for optional parameters
+- 5cb17a1: feat: omit minRegionArea and maxEdgeLen from TileCacheGeneratorConfig type
 
 ### Patch Changes
 
