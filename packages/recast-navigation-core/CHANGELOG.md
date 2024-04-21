@@ -1,5 +1,26 @@
 # @recast-navigation/core
 
+## 0.24.0
+
+### Minor Changes
+
+- a4636e1: feat: replace getRandomPointAround with improved findRandomPointAroundCircle
+
+  Renamed `getRandomPointAround` to `findRandomPointAroundCircle` to align the naming with the c++ api and other methods.
+
+  `findRandomPointAroundCircle` now returns a `success` and `status` property. Previously if the operation was unsuccessful, a zero vector was returned. Now, the `success` property will be `false` and the `status` property will contain a dtStatus describing the reason for failure.
+
+- 4b1fcf8: feat(NavMeshQuery): replace getClosestPoint with improved findClosestPoint
+
+  Renamed `getClosestPoint` to `findClosestPoint` to align naming with other methods.
+
+  `findClosestPoint` now returns a `success` and `status` property Previously if the operation was unsuccessful, a zero vector was returned. Now, the `success` property will be `false` and the `status` property will contain a dtStatus describing the reason for failure.
+
+### Patch Changes
+
+- Updated dependencies [4b1fcf8]
+  - @recast-navigation/wasm@0.24.0
+
 ## 0.23.0
 
 ### Minor Changes
