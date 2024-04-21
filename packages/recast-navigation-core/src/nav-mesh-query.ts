@@ -439,31 +439,21 @@ export class NavMeshQuery {
   ): Vector3[] {
     const filter = options?.filter ?? this.defaultFilter;
 
-    const startArray = vec3.toArray(start);
-    const endArray = vec3.toArray(end);
-
+    // find nearest polygons for start and end positions
     const { nearestRef: startRef } = this.findNearestPoly(start, { filter });
     const { nearestRef: endRef } = this.findNearestPoly(end, { filter });
 
     const maxPathPolys = options?.maxPathPolys ?? 256;
 
-    const polys = new Arrays.UnsignedIntArray();
+    // find polygon path
+    const findPathResult = this.findPath(startRef, endRef, start, end, { filter, maxPathPolys });
 
-    this.raw.findPath(
-      startRef,
-      endRef,
-      startArray,
-      endArray,
-      filter.raw,
-      polys,
-      maxPathPolys
-    );
-
-    if (polys.size <= 0) {
+    if (findPathResult.polys.size <= 0) {
       return [];
     }
 
-    const lastPoly = polys.get(polys.size - 1);
+    const lastPoly = findPathResult.polys.get(findPathResult.polys.size - 1);
+
     let closestEnd = { x: end.x, y: end.y, z: end.z };
 
     if (lastPoly !== endRef) {
@@ -471,6 +461,7 @@ export class NavMeshQuery {
       closestEnd = closestPoint;
     }
 
+    // find straight path
     const maxStraightPathPoints = options?.maxStraightPathPoints ?? 256;
 
     const straightPath = new Arrays.FloatArray();
@@ -486,9 +477,9 @@ export class NavMeshQuery {
     const straightPathOptions = 0;
 
     this.raw.findStraightPath(
-      startArray,
+      vec3.toArray(start),
       vec3.toArray(closestEnd),
-      polys,
+      findPathResult.polys,
       straightPath,
       straightPathFlags,
       straightPathRefs,
@@ -497,6 +488,7 @@ export class NavMeshQuery {
       straightPathOptions
     );
 
+    // format output
     const points: Vector3[] = [];
 
     for (let i = 0; i < straightPathCount.value; i++) {
@@ -508,6 +500,57 @@ export class NavMeshQuery {
     }
 
     return points;
+  }
+
+  /**
+   * Finds a path from the start polygon to the end polygon.
+   * @param startRef the reference id of the start polygon.
+   * @param endRef the reference id of the end polygon.
+   * @param startPosition position within the start polygon.
+   * @param endPosition position within the end polygon.
+   * @param options additional options
+   * @returns 
+   */
+  findPath(
+    startRef: number,
+    endRef: number,
+    startPosition: Vector3,
+    endPosition: Vector3,
+    options?: {
+      /**
+       * The polygon filter to apply to the query.
+       * @default this.defaultFilter
+       */
+      filter?: QueryFilter;
+
+      /**
+       * The maximum number of polygons the path array can hold. [Limit: >= 1]
+       * @default 256
+       */
+      maxPathPolys?: number;
+    }
+  ) {
+    const filter = options?.filter ?? this.defaultFilter;
+    const maxPathPolys = options?.maxPathPolys ?? 256;
+
+    const polys = new Arrays.UnsignedIntArray();
+    polys.resize(maxPathPolys);
+
+    const status = this.raw.findPath(
+      startRef,
+      endRef,
+      vec3.toArray(startPosition),
+      vec3.toArray(endPosition),
+      filter.raw,
+      polys,
+      maxPathPolys
+    );
+
+    return {
+      success: Raw.Detour.statusSucceed(status),
+      status,
+      polys,
+    };
   }
 
   /**
