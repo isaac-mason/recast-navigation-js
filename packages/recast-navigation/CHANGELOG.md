@@ -1,5 +1,24 @@
 # recast-navigation
 
+## 0.25.0
+
+### Minor Changes
+
+- db8f331: feat: expose and correctly cleanup polyMesh and polyMeshDetail
+- 2b38988: feat: expose CrowdAgent requestMoveVelocity
+- 2b38988: feat: rename CrowdAgent goto to requestMoveTarget, aligned with c++ api
+- db8f331: feat: expose duDebugDraw recast and detour debug drawing utilities
+
+### Patch Changes
+
+- Updated dependencies [db8f331]
+- Updated dependencies [2b38988]
+- Updated dependencies [2b38988]
+- Updated dependencies [db8f331]
+  - @recast-navigation/generators@0.25.0
+  - @recast-navigation/core@0.25.0
+  - @recast-navigation/three@0.25.0
+
 ## 0.24.1
 
 ### Patch Changes

@@ -1,5 +1,19 @@
 # @recast-navigation/generators
 
+## 0.25.0
+
+### Minor Changes
+
+- db8f331: feat: expose and correctly cleanup polyMesh and polyMeshDetail
+
+### Patch Changes
+
+- Updated dependencies [2b38988]
+- Updated dependencies [2b38988]
+- Updated dependencies [db8f331]
+  - @recast-navigation/core@0.25.0
+  - @recast-navigation/wasm@0.25.0
+
 ## 0.24.1
 
 ### Patch Changes
