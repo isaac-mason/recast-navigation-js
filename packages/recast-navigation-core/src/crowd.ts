@@ -195,7 +195,7 @@ export class CrowdAgent implements CrowdAgentParams {
    * @param position The new target position.
    * @returns True if the request was successful.
    */
-  goto(position: Vector3): boolean {
+  requestMoveTarget(position: Vector3): boolean {
     const { nearestPoint, nearestRef } =
       this.crowd.navMeshQuery.findNearestPoly(position, {
         halfExtents: this.crowd.navMeshQuery.defaultQueryHalfExtents,
@@ -206,6 +206,18 @@ export class CrowdAgent implements CrowdAgentParams {
       this.agentIndex,
       nearestRef,
       vec3.toArray(nearestPoint)
+    );
+  }
+
+  /**
+   * Submits a new move request for the specified agent.
+   * @param velocity The desired velocity of the agent.
+   * @returns True if the request was successful.
+   */
+  requestMoveVelocity(velocity: Vector3): boolean {
+    return this.crowd.raw.requestMoveVelocity(
+      this.agentIndex,
+      vec3.toArray(velocity)
     );
   }
 

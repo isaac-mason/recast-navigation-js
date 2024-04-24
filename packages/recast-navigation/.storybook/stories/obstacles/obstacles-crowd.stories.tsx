@@ -189,7 +189,7 @@ export const CrowdExample = () => {
     if (e.button === 2) {
       agent.teleport(e.point);
     } else {
-      agent.goto(e.point);
+      agent.requestMoveTarget(e.point);
     }
   };
 

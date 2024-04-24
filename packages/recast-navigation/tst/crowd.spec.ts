@@ -46,7 +46,7 @@ describe('Crowd', () => {
 
     expectVectorToBeCloseTo(agent.position(), { x: 0, y: 0, z: 0 }, 0.3);
 
-    agent.goto({ x: 2, y: 0, z: 2 });
+    agent.requestMoveTarget({ x: 2, y: 0, z: 2 });
 
     crowd.update(5);
 

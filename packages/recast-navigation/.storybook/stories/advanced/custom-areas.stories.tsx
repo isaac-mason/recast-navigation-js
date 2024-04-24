@@ -366,7 +366,7 @@ export const SingleAgent = () => {
     filter.includeFlags = includeFlags;
 
     if (agentTarget) {
-      agent.goto(agentTarget);
+      agent.requestMoveTarget(agentTarget);
     }
   }, [crowd, agent, canSwim]);
 
@@ -388,7 +388,7 @@ export const SingleAgent = () => {
 
       setAgentTarget(undefined);
     } else {
-      agent.goto(target);
+      agent.requestMoveTarget(target);
 
       setAgentTarget(new THREE.Vector3().copy(target as THREE.Vector3));
     }

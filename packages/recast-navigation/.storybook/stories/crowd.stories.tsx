@@ -111,7 +111,7 @@ export const SingleAgent = () => {
 
       setAgentTarget(undefined);
     } else {
-      agent.goto(target);
+      agent.requestMoveTarget(target);
 
       setAgentTarget(new Vector3().copy(target as Vector3));
     }
@@ -209,7 +209,7 @@ export const MultipleAgents = () => {
     const { point: target } = navMeshQuery.findClosestPoint(e.point);
 
     for (const agent of crowd.getAgents()) {
-      agent.goto(target);
+      agent.requestMoveTarget(target);
     }
   };
 

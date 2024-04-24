@@ -6,7 +6,7 @@ import { CrowdHelper } from 'recast-navigation/three';
 import { MeshStandardMaterial, Vector3, Vector3Tuple } from 'three';
 
 export type RecastAgentRef = {
-  goto: (target: Vector3) => void;
+  requestMoveTarget: (target: Vector3) => void;
   teleport: (position: Vector3) => void;
 };
 
@@ -37,11 +37,11 @@ export const RecastAgent = forwardRef<RecastAgentRef, RecastAgentProps>(
     useImperativeHandle(
       ref,
       () => ({
-        goto: (position: Vector3) => {
+        requestMoveTarget: (position: Vector3) => {
           if (!navMeshQuery || !crowd || !agent) return;
 
           const { point: target } = navMeshQuery.findClosestPoint(position);
-          agent.goto(target);
+          agent.requestMoveTarget(target);
 
           setAgentTarget(new Vector3().copy(target as Vector3));
         },

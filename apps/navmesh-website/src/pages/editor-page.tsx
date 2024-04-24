@@ -163,7 +163,7 @@ const Editor = () => {
       if (e.button === 2) {
         recastAgent.current.teleport(e.point);
       } else {
-        recastAgent.current.goto(e.point);
+        recastAgent.current.requestMoveTarget(e.point);
       }
     },
     [navMesh]

@@ -146,7 +146,7 @@ export const SoloNavMeshOffMeshConnection = () => {
 
     const { point: nearest } = navMeshQuery.findClosestPoint({ x, y, z });
 
-    agent.goto(nearest);
+    agent.requestMoveTarget(nearest);
   };
 
   return (

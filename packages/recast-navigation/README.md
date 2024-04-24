@@ -228,7 +228,11 @@ const agentParameters = agent.parameters();
 
 /* tell the agent to move to a target position */
 const targetPosition = { x: 0, y: 0, z: 0 };
-agent.goto(targetPosition);
+agent.requestMoveTarget(targetPosition);
+
+/* tell the agent to move in a direction */
+const targetVelocity = { x: 0, y: 0, z: 0 };
+agent.requestMoveVelocity(targetVelocity);
 
 /* reset the agents target */
 agent.resetMoveTarget();
