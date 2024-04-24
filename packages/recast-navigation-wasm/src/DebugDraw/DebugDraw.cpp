@@ -15,7 +15,7 @@ void DebugDraw::begin(duDebugDrawPrimitives prim, float size)
     handleBegin(prim, size);
 }
 
-void DebugDraw::vertex(const float* pos, unsigned int color)
+void DebugDraw::vertex(const float *pos, unsigned int color)
 {
     handleVertexWithColor(pos[0], pos[1], pos[2], color);
 }
@@ -25,7 +25,7 @@ void DebugDraw::vertex(const float x, const float y, const float z, unsigned int
     handleVertexWithColor(x, y, z, color);
 }
 
-void DebugDraw::vertex(const float* pos, unsigned int color, const float* uv)
+void DebugDraw::vertex(const float *pos, unsigned int color, const float *uv)
 {
     handleVertexWithColorAndUV(pos[0], pos[1], pos[2], color, uv[0], uv[1]);
 }
