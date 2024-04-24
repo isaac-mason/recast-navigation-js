@@ -8,6 +8,8 @@ import {
   RecastConfig,
   RecastContourSet,
   RecastHeightfield,
+  RecastPolyMesh,
+  RecastPolyMeshDetail,
   allocCompactHeightfield,
   allocContourSet,
   allocHeightfield,
@@ -30,6 +32,8 @@ import {
   freeCompactHeightfield,
   freeContourSet,
   freeHeightfield,
+  freePolyMesh,
+  freePolyMeshDetail,
   markWalkableTriangles,
   rasterizeTriangles,
   recastConfigDefaults,
@@ -51,6 +55,8 @@ export type SoloNavMeshGeneratorIntermediates = {
   heightfield?: RecastHeightfield;
   compactHeightfield?: RecastCompactHeightfield;
   contourSet?: RecastContourSet;
+  polyMesh?: RecastPolyMesh;
+  polyMeshDetail?: RecastPolyMeshDetail;
 };
 
 type SoloNavMeshGeneratorSuccessResult = {
@@ -99,13 +105,25 @@ export const generateSoloNavMesh = (
       freeHeightfield(intermediates.heightfield);
       intermediates.heightfield = undefined;
     }
+
     if (intermediates.compactHeightfield) {
       freeCompactHeightfield(intermediates.compactHeightfield);
       intermediates.compactHeightfield = undefined;
     }
+
     if (intermediates.contourSet) {
       freeContourSet(intermediates.contourSet);
       intermediates.contourSet = undefined;
+    }
+
+    if (intermediates.polyMesh) {
+      freePolyMesh(intermediates.polyMesh);
+      intermediates.polyMesh = undefined;
+    }
+
+    if (intermediates.polyMeshDetail) {
+      freePolyMeshDetail(intermediates.polyMeshDetail);
+      intermediates.polyMeshDetail = undefined;
     }
   };
 
@@ -307,6 +325,7 @@ export const generateSoloNavMesh = (
   // Step 6. Build polygons mesh from contours.
   //
   const polyMesh = allocPolyMesh();
+  intermediates.polyMesh = polyMesh;
   if (
     !buildPolyMesh(buildContext, contourSet, config.maxVertsPerPoly, polyMesh)
   ) {
@@ -317,6 +336,7 @@ export const generateSoloNavMesh = (
   // Step 7. Create detail mesh which allows to access approximate height on each polygon.
   //
   const polyMeshDetail = allocPolyMeshDetail();
+  intermediates.polyMeshDetail = polyMeshDetail;
   if (
     !buildPolyMeshDetail(
       buildContext,

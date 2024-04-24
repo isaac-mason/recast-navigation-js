@@ -12,3 +12,6 @@
 #include "./Recast.h"
 #include "./Detour.h"
 #include "./ChunkyTriMesh.h"
+#include "./DebugDraw/DebugDraw.h"
+#include "./DebugDraw/RecastDebugDraw.h"
+#include "./DebugDraw/DetourDebugDraw.h"
