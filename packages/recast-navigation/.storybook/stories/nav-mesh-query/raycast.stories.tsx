@@ -78,11 +78,8 @@ export const Raycast = () => {
       end
     );
 
-    console.log({ start, end });
-
     const hit = 0 < raycastResult.t && raycastResult.t < 1.0;
 
-    console.log(hit);
     if (!hit) {
       setRaycastResult({
         hit: false,
@@ -105,7 +102,6 @@ export const Raycast = () => {
   }, [navMeshQuery, start, end]);
 
   const setRaycastPoint = ({ point, button }: ThreeEvent<PointerEvent>) => {
-    console.log(button);
     if (button === 0) {
       // left click
       setStart(new Vector3(point.x, point.y, point.z));
