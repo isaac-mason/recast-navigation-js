@@ -23,12 +23,13 @@ file(GLOB_RECURSE SRC_FILES
 )
 
 file(GLOB_RECURSE RECASTDETOUR_FILES
-    ${CMAKE_SOURCE_DIR}/recastnavigation/Detour/*
-    ${CMAKE_SOURCE_DIR}/recastnavigation/DetourCrowd/*
-    ${CMAKE_SOURCE_DIR}/recastnavigation/DetourTileCache/*
-    ${CMAKE_SOURCE_DIR}/recastnavigation/Recast/*
-    ${CMAKE_SOURCE_DIR}/recastnavigation/RecastDemo/Source/ChunkyTriMesh.cpp
-    ${CMAKE_SOURCE_DIR}/recastnavigation/RecastDemo/Contrib/fastlz/fastlz.c
+  ${CMAKE_SOURCE_DIR}/recastnavigation/Detour/*
+  ${CMAKE_SOURCE_DIR}/recastnavigation/DetourCrowd/*
+  ${CMAKE_SOURCE_DIR}/recastnavigation/DetourTileCache/*
+  ${CMAKE_SOURCE_DIR}/recastnavigation/Recast/*
+  ${CMAKE_SOURCE_DIR}/recastnavigation/DebugUtils/*
+  ${CMAKE_SOURCE_DIR}/recastnavigation/RecastDemo/Source/ChunkyTriMesh.cpp
+  ${CMAKE_SOURCE_DIR}/recastnavigation/RecastDemo/Contrib/fastlz/fastlz.c
 )
 
 include_directories(

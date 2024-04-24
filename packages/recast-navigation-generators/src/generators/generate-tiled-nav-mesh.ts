@@ -40,6 +40,10 @@ import {
   rasterizeTriangles,
   recastConfigDefaults,
   vec3,
+  RecastPolyMesh,
+  RecastPolyMeshDetail,
+  freePolyMesh,
+  freePolyMeshDetail,
 } from '@recast-navigation/core';
 import type R from '@recast-navigation/wasm';
 import { Pretty } from '../types';
@@ -59,17 +63,21 @@ export const tiledNavMeshGeneratorConfigDefaults: TiledNavMeshGeneratorConfig =
     ...recastConfigDefaults,
   };
 
+type TileIntermediates = {
+  tileX: number;
+  tileY: number;
+  heightfield?: RecastHeightfield;
+  compactHeightfield?: RecastCompactHeightfield;
+  contourSet?: RecastContourSet;
+  polyMesh?: RecastPolyMesh;
+  polyMeshDetail?: RecastPolyMeshDetail;
+};
+
 export type TiledNavMeshGeneratorIntermediates = {
   type: 'tiled';
   buildContext: RecastBuildContext;
   chunkyTriMesh?: RecastChunkyTriMesh;
-  tileIntermediates: {
-    tileX: number;
-    tileY: number;
-    heightfield?: RecastHeightfield;
-    compactHeightfield?: RecastCompactHeightfield;
-    contourSet?: RecastContourSet;
-  }[];
+  tileIntermediates: TileIntermediates[];
 };
 
 type TiledNavMeshGeneratorSuccessResult = {
@@ -129,6 +137,14 @@ export const generateTiledNavMesh = (
 
       if (tileIntermediate.contourSet) {
         freeContourSet(tileIntermediate.contourSet);
+      }
+
+      if (tileIntermediate.polyMesh) {
+        freePolyMesh(tileIntermediate.polyMesh);
+      }
+
+      if (tileIntermediate.polyMeshDetail) {
+        freePolyMeshDetail(tileIntermediate.polyMeshDetail);
       }
     }
 
@@ -244,13 +260,7 @@ export const generateTiledNavMesh = (
       return { success: false as const, error };
     };
 
-    const tileIntermediate: {
-      tileX: number;
-      tileY: number;
-      heightfield?: RecastHeightfield;
-      compactHeightfield?: RecastCompactHeightfield;
-      contourSet?: RecastContourSet;
-    } = { tileX, tileY };
+    const tileIntermediate: TileIntermediates = { tileX, tileY };
 
     intermediates.tileIntermediates.push(tileIntermediate);
 
@@ -503,6 +513,7 @@ export const generateTiledNavMesh = (
     // Build polygons mesh from contours.
     //
     const polyMesh = allocPolyMesh();
+    tileIntermediate.polyMesh = polyMesh;
     if (
       !buildPolyMesh(
         buildContext,
@@ -518,6 +529,7 @@ export const generateTiledNavMesh = (
     // Create detail mesh which allows to access approximate height on each polygon.
     //
     const polyMeshDetail = allocPolyMeshDetail();
+    tileIntermediate.polyMeshDetail = polyMeshDetail;
     if (
       !buildPolyMeshDetail(
         buildContext,

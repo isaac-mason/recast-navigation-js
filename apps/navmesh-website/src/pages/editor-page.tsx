@@ -22,9 +22,8 @@ import {
 import { download } from '../features/download';
 import { ErrorBoundary, ErrorMessage } from '../features/error-handling';
 import {
-  HeightfieldHelper,
   NavMeshGeneratorInputHelper,
-  NavMeshHelper,
+  NavMeshDebugDrawer,
   RecastAgent,
   RecastAgentRef,
   navMeshToGLTF,
@@ -183,15 +182,12 @@ const Editor = () => {
 
   const {
     displayModel,
-    heightfieldHelperEnabled,
     navMeshGeneratorInputDebugColor,
     displayNavMeshGenerationInput,
     navMeshGeneratorInputWireframe,
     navMeshGeneratorInputOpacity,
-    navMeshHelperDebugColor,
-    navMeshDebugOpacity,
-    navMeshDebugWireframe,
-    displayNavMeshHelper,
+    navMeshDebugDraw,
+    navMeshDebugDrawOption,
   } = useDisplayOptionsControls();
 
   const {
@@ -212,12 +208,11 @@ const Editor = () => {
             </Bounds>
           </group>
         )}
-        <NavMeshHelper
-          enabled={displayNavMeshHelper}
+        <NavMeshDebugDrawer
+          enabled={navMeshDebugDraw}
           navMesh={navMesh}
-          navMeshHelperDebugColor={navMeshHelperDebugColor}
-          navMeshDebugOpacity={navMeshDebugOpacity}
-          navMeshDebugWireframe={navMeshDebugWireframe}
+          intermediates={generatorIntermediates}
+          option={navMeshDebugDrawOption}
         />
       </group>
 
@@ -227,12 +222,6 @@ const Editor = () => {
         navMeshGeneratorInputDebugColor={navMeshGeneratorInputDebugColor}
         navMeshGeneratorInputWireframe={navMeshGeneratorInputWireframe}
         navMeshGeneratorInputOpacity={navMeshGeneratorInputOpacity}
-      />
-
-      <HeightfieldHelper
-        enabled={heightfieldHelperEnabled}
-        navMesh={navMesh}
-        generatorIntermediates={generatorIntermediates}
       />
 
       {navMesh && agentEnabled && (

@@ -12,6 +12,8 @@ const instances = [
   'NavMeshExporter',
   'CrowdUtils',
   'ChunkyTriMeshUtils',
+  'RecastDebugDraw',
+  'DetourDebugDraw',
 ] as const satisfies readonly ModuleKey[];
 
 const classes = [
@@ -32,6 +34,7 @@ const classes = [
   'UnsignedCharRef',
   'UnsignedShortRef',
   'FloatRef',
+  
 ] as const satisfies readonly ModuleKey[];
 
 const arrays = [

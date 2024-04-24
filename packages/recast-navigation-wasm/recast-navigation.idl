@@ -386,6 +386,8 @@ interface NavMesh {
     void NavMesh();
     void NavMesh(dtNavMesh navMesh);
 
+    attribute dtNavMesh m_navMesh;
+
     boolean initSolo(UnsignedCharArray navMeshData);    
     boolean initTiled([Const] dtNavMeshParams params);
     unsigned long addTile(UnsignedCharArray navMeshData, long flags, unsigned long lastRef, UnsignedIntRef tileRef);
@@ -983,6 +985,15 @@ interface DetourNavMeshBuilder {
     CreateNavMeshDataResult createNavMeshData([Ref] dtNavMeshCreateParams params);
 };
 
+interface dtTileCacheLayer {
+};
+
+interface dtTileCacheContourSet {
+};
+
+interface dtTileCachePolyMesh {
+};
+
 interface dtTileCacheLayerHeader {
     void dtTileCacheLayerHeader();
 
@@ -1172,4 +1183,68 @@ interface NavMeshExporter {
 
     [Value] NavMeshExport exportNavMesh(NavMesh navMesh, TileCache tileCache);
     void freeNavMeshExport(NavMeshExport navMeshExport);
+};
+
+enum duDebugDrawPrimitives {
+    "duDebugDrawPrimitives::DU_DRAW_POINTS",
+    "duDebugDrawPrimitives::DU_DRAW_LINES",
+    "duDebugDrawPrimitives::DU_DRAW_TRIS",
+    "duDebugDrawPrimitives::DU_DRAW_QUADS"
+};
+
+interface duDebugDraw {
+};
+
+interface DebugDraw {
+};
+DebugDraw implements duDebugDraw;
+
+[JSImplementation="DebugDraw"]
+interface DebugDrawImpl {
+    void DebugDrawImpl();
+
+    void handleDepthMask(boolean state);
+    void handleTexture(boolean state);
+    void handleBegin([Const] duDebugDrawPrimitives prim, float size);
+    void handleVertexWithColor([Const] float x, [Const] float y, [Const] float z, [Const] unsigned long color);
+    void handleVertexWithColorAndUV([Const] float x, [Const] float y, [Const] float z, [Const] unsigned long color, [Const] float u, [Const] float v);
+    void handleEnd();
+};
+
+interface RecastDebugDraw {
+    void RecastDebugDraw();
+
+    void debugDrawHeightfieldSolid(duDebugDraw dd, [Const, Ref] rcHeightfield hf);
+    void debugDrawHeightfieldWalkable(duDebugDraw dd, [Const, Ref] rcHeightfield hf);
+
+    void debugDrawCompactHeightfieldSolid(duDebugDraw dd, [Const, Ref] rcCompactHeightfield chf);
+    void debugDrawCompactHeightfieldRegions(duDebugDraw dd, [Const, Ref] rcCompactHeightfield chf);
+    void debugDrawCompactHeightfieldDistance(duDebugDraw dd, [Const, Ref] rcCompactHeightfield chf);
+
+    void debugDrawHeightfieldLayer(duDebugDraw dd, [Const, Ref] rcHeightfieldLayer layer, long idx);
+    void debugDrawHeightfieldLayers(duDebugDraw dd, [Const, Ref] rcHeightfieldLayerSet lset);
+
+    void debugDrawRegionConnections(duDebugDraw dd, [Const, Ref] rcContourSet cset, float alpha);
+    void debugDrawRawContours(duDebugDraw dd, [Const, Ref] rcContourSet cset, float alpha);
+    void debugDrawContours(duDebugDraw dd, [Const, Ref] rcContourSet cset, float alpha);
+
+    void debugDrawPolyMesh(duDebugDraw dd, [Const, Ref] rcPolyMesh mesh);
+    void debugDrawPolyMeshDetail(duDebugDraw dd, [Const, Ref] rcPolyMeshDetail dmesh);
+};
+
+interface DetourDebugDraw {
+    void DetourDebugDraw();
+
+    void debugDrawNavMesh(duDebugDraw dd, [Const, Ref] dtNavMesh mesh, [Const] unsigned long flags);
+    void debugDrawNavMeshWithClosedList(duDebugDraw dd, [Const, Ref] dtNavMesh mesh, [Const, Ref] dtNavMeshQuery query, [Const] unsigned long flags);
+    void debugDrawNavMeshNodes(duDebugDraw dd, [Const, Ref] dtNavMeshQuery query);
+    void debugDrawNavMeshBVTree(duDebugDraw dd, [Const, Ref] dtNavMesh mesh);
+    void debugDrawNavMeshPortals(duDebugDraw dd, [Const, Ref] dtNavMesh mesh);
+    void debugDrawNavMeshPolysWithFlags(duDebugDraw dd, [Const, Ref] dtNavMesh mesh, [Const] unsigned short flags, [Const] unsigned long col);
+    void debugDrawNavMeshPoly(duDebugDraw dd, [Const, Ref] dtNavMesh mesh, unsigned long ref, unsigned long col);
+
+    void debugDrawTileCacheLayerAreas(duDebugDraw dd, [Const, Ref] dtTileCacheLayer layer, [Const] float cs, [Const] float ch);
+    void debugDrawTileCacheLayerRegions(duDebugDraw dd, [Const, Ref] dtTileCacheLayer layer, [Const] float cs, [Const] float ch);
+    void debugDrawTileCacheContours(duDebugDraw dd, [Const, Ref] dtTileCacheContourSet lcset, [Const] float[] orig, [Const] float cs, [Const] float ch);
+    void debugDrawTileCachePolyMesh(duDebugDraw dd, [Const, Ref] dtTileCachePolyMesh pmesh, [Const] float[] orig, [Const] float cs, [Const] float ch);
 };
