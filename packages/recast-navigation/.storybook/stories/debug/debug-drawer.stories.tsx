@@ -1,6 +1,6 @@
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { threeToSoloNavMesh } from '@recast-navigation/three';
-import { DebugDrawer } from '@recast-navigation/three/src/debug-drawer';
+import { DebugDrawer } from '@recast-navigation/three';
 import React, { useEffect, useState } from 'react';
 import { Group, Mesh } from 'three';
 import { NavTestEnvironment } from '../../common/nav-test-environment';
