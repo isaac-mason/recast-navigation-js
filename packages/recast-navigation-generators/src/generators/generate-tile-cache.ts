@@ -1,5 +1,5 @@
 import {
-  Arrays,
+  ChunkIdsArray,
   DetourTileCacheParams,
   NavMesh,
   NavMeshParams,
@@ -11,9 +11,14 @@ import {
   RecastHeightfield,
   RecastHeightfieldLayerSet,
   TileCache,
+  TileCacheData,
   TileCacheMeshProcess,
+  TriAreasArray,
+  TrisArray,
+  UnsignedCharArray,
   Vector2Tuple,
   Vector3Tuple,
+  VertsArray,
   allocCompactHeightfield,
   allocHeightfield,
   allocHeightfieldLayerSet,
@@ -39,7 +44,6 @@ import {
   recastConfigDefaults,
   vec3,
 } from '@recast-navigation/core';
-import type R from '@recast-navigation/wasm';
 import { Pretty } from '../types';
 import { dtIlog2, dtNextPow2, getBoundingBox } from './common';
 
@@ -141,7 +145,27 @@ export const generateTileCache = (
   const tileCache = new TileCache();
   const navMesh = new NavMesh();
 
+  const verts = positions as number[];
+  const nVerts = indices.length;
+  const vertsArray = new VertsArray();
+  vertsArray.copy(verts);
+
+  const tris = indices as number[];
+  const nTris = indices.length / 3;
+  const trisArray = new TrisArray();
+  trisArray.copy(tris);
+
+  const { bbMin, bbMax } = getBoundingBox(positions, indices);
+
+  const { expectedLayersPerTile, maxObstacles, ...recastConfig } = {
+    ...tileCacheGeneratorConfigDefaults,
+    ...navMeshGeneratorConfig,
+  };
+
   const cleanup = () => {
+    vertsArray.free();
+    trisArray.free();
+
     if (!keepIntermediates) {
       for (let i = 0; i < intermediates.tileIntermediates.length; i++) {
         const tileIntermediate = intermediates.tileIntermediates[i];
@@ -177,23 +201,6 @@ export const generateTileCache = (
       intermediates,
       error,
     };
-  };
-
-  const verts = positions as number[];
-  const nVerts = indices.length;
-  const vertsArray = new Arrays.VertsArray();
-  vertsArray.copy(verts, verts.length);
-
-  const tris = indices as number[];
-  const nTris = indices.length / 3;
-  const trisArray = new Arrays.TrisArray();
-  trisArray.copy(tris, tris.length);
-
-  const { bbMin, bbMax } = getBoundingBox(positions, indices);
-
-  const { expectedLayersPerTile, maxObstacles, ...recastConfig } = {
-    ...tileCacheGeneratorConfigDefaults,
-    ...navMeshGeneratorConfig,
   };
 
   //
@@ -351,7 +358,7 @@ export const generateTileCache = (
 
     // TODO: Make grow when returning too many items.
     const maxChunkIds = 512;
-    const chunkIdsArray = new Arrays.ChunkIdsArray();
+    const chunkIdsArray = new ChunkIdsArray();
     chunkIdsArray.resize(maxChunkIds);
 
     const nChunksOverlapping = chunkyTriMesh.getChunksOverlappingRect(
@@ -366,13 +373,13 @@ export const generateTileCache = (
     }
 
     for (let i = 0; i < nChunksOverlapping; ++i) {
-      const nodeId = chunkIdsArray.get_data(i);
+      const nodeId = chunkIdsArray.get(i);
       const node = chunkyTriMesh.nodes(nodeId);
       const nNodeTris = node.n;
 
       const nodeTrisArray = chunkyTriMesh.getNodeTris(nodeId);
 
-      const triAreasArray = new Arrays.TriAreasArray();
+      const triAreasArray = new TriAreasArray();
       triAreasArray.resize(nNodeTris);
 
       // Find triangles which are walkable based on their slope and rasterize them.
@@ -473,10 +480,10 @@ export const generateTileCache = (
       tileIntermediates.compactHeightfield = undefined;
     }
 
-    const tiles: R.UnsignedCharArray[] = [];
+    const tiles: UnsignedCharArray[] = [];
 
     for (let i = 0; i < heightfieldLayerSet.nlayers(); i++) {
-      const tile = new Arrays.TileCacheData();
+      const tile = new TileCacheData();
       const heightfieldLayer = heightfieldLayerSet.layers(i);
 
       // Store header

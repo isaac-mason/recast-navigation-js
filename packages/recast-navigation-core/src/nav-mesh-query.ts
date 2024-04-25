@@ -1,5 +1,6 @@
+import { FloatArray, UnsignedCharArray, UnsignedIntArray } from './arrays';
 import { NavMesh } from './nav-mesh';
-import { Arrays, Raw } from './raw';
+import { Raw } from './raw';
 import type R from './raw-module';
 import { array, vec3, Vector3 } from './utils';
 
@@ -139,10 +140,10 @@ export class NavMeshQuery {
     const filter = options?.filter ?? this.defaultFilter;
     const maxPolys = options?.maxPolys ?? 256;
 
-    const resultRef = new Arrays.UnsignedIntArray();
-    const resultParent = new Arrays.UnsignedIntArray();
-    resultRef.resize(maxPolys);
-    resultParent.resize(maxPolys);
+    const resultRefArray = new UnsignedIntArray();
+    const resultParentArray = new UnsignedIntArray();
+    resultRefArray.resize(maxPolys);
+    resultParentArray.resize(maxPolys);
     const resultCostRef = new Raw.FloatRef();
     const resultCountRef = new Raw.IntRef();
 
@@ -151,8 +152,8 @@ export class NavMeshQuery {
       vec3.toArray(centerPos),
       radius,
       filter.raw,
-      resultRef,
-      resultParent,
+      resultRefArray.raw,
+      resultParentArray.raw,
       resultCostRef,
       resultCountRef,
       maxPolys
@@ -161,11 +162,17 @@ export class NavMeshQuery {
     const resultCost = resultCostRef.value;
     const resultCount = resultCountRef.value;
 
+    const resultRefs = [...resultRefArray.getTypedArrayView()];
+    const resultParents = [...resultParentArray.getTypedArrayView()];
+
+    resultRefArray.free();
+    resultParentArray.free();
+
     return {
       success: Raw.Detour.statusSucceed(status),
       status,
-      resultRefs: array((i) => resultRef.get(i), resultCount),
-      resultParents: array((i) => resultParent.get(i), resultCount),
+      resultRefs,
+      resultParents,
       resultCost,
       resultCount,
     };
@@ -197,25 +204,29 @@ export class NavMeshQuery {
     const filter = options?.filter ?? this.defaultFilter;
     const maxPolys = options?.maxPolys ?? 256;
 
-    const polysRef = new Arrays.UnsignedIntArray();
-    polysRef.resize(maxPolys);
+    const polysRefsArray = new UnsignedIntArray();
+    polysRefsArray.resize(maxPolys);
+
     const polyCountRef = new Raw.IntRef();
 
     const status = this.raw.queryPolygons(
       vec3.toArray(center),
       vec3.toArray(halfExtents),
       filter.raw,
-      polysRef,
+      polysRefsArray.raw,
       polyCountRef,
       maxPolys
     );
 
     const polyCount = polyCountRef.value;
+    
+    const polyRefs = [...polysRefsArray.getTypedArrayView()]
+    polysRefsArray.free()
 
     return {
       success: Raw.Detour.statusSucceed(status),
       status,
-      polyRefs: array((i) => polysRef.get(i), polyCount),
+      polyRefs,
       polyCount,
     };
   }
@@ -402,7 +413,7 @@ export class NavMeshQuery {
     const maxVisitedSize = options?.maxVisitedSize ?? 256;
 
     const resultPosition = new Raw.Vec3();
-    const visited = new Arrays.UnsignedIntArray();
+    const visitedArray = new UnsignedIntArray();
 
     const filter = options?.filter?.raw ?? this.defaultFilter.raw;
 
@@ -412,15 +423,18 @@ export class NavMeshQuery {
       vec3.toArray(endPosition),
       filter,
       resultPosition,
-      visited,
+      visitedArray.raw,
       maxVisitedSize
     );
+
+    const visited = [...visitedArray.getTypedArrayView()];
+    visitedArray.free()
 
     return {
       success: Raw.Detour.statusSucceed(status),
       status,
       resultPosition: vec3.fromRaw(resultPosition),
-      visited: array((i) => visited.get(i), visited.size),
+      visited,
     };
   }
 
@@ -647,6 +661,11 @@ export class NavMeshQuery {
       });
     }
 
+    findPathResult.polys.free();
+    findStraightPathResult.straightPath.free();
+    findStraightPathResult.straightPathFlags.free();
+    findStraightPathResult.straightPathRefs.free();
+
     return {
       success: true,
       path: points,
@@ -684,7 +703,7 @@ export class NavMeshQuery {
     const filter = options?.filter ?? this.defaultFilter;
     const maxPathPolys = options?.maxPathPolys ?? 256;
 
-    const polys = new Arrays.UnsignedIntArray();
+    const polys = new UnsignedIntArray();
     polys.resize(maxPathPolys);
 
     const status = this.raw.findPath(
@@ -693,7 +712,7 @@ export class NavMeshQuery {
       vec3.toArray(startPosition),
       vec3.toArray(endPosition),
       filter.raw,
-      polys,
+      polys.raw,
       maxPathPolys
     );
 
@@ -731,7 +750,7 @@ export class NavMeshQuery {
   findStraightPath(
     start: Vector3,
     end: Vector3,
-    path: R.UnsignedIntArray,
+    path: UnsignedIntArray,
     options?: {
       /**
        * The maximum number of points the straight path arrays can hold. [Limit: > 0]
@@ -759,12 +778,12 @@ export class NavMeshQuery {
     /**
      * The straight path points.
      */
-    straightPath: R.FloatArray;
+    straightPath: FloatArray;
 
     /**
      * The straight path flags.
      */
-    straightPathFlags: R.UnsignedCharArray;
+    straightPathFlags: UnsignedCharArray;
 
     /**
      * The reference ids of the visited polygons.
@@ -773,7 +792,7 @@ export class NavMeshQuery {
      * Raw.Module.DT_STRAIGHTPATH_END
      * Raw.Module.DT_STRAIGHTPATH_OFFMESH_CONNECTION
      */
-    straightPathRefs: R.UnsignedIntArray;
+    straightPathRefs: UnsignedIntArray;
 
     /**
      * The number of points in the straight path.
@@ -783,13 +802,13 @@ export class NavMeshQuery {
     const maxStraightPathPoints = options?.maxStraightPathPoints ?? 256;
     const straightPathOptions = options?.straightPathOptions ?? 0;
 
-    const straightPath = new Arrays.FloatArray();
+    const straightPath = new FloatArray();
     straightPath.resize(maxStraightPathPoints * 3);
 
-    const straightPathFlags = new Arrays.UnsignedCharArray();
+    const straightPathFlags = new UnsignedCharArray();
     straightPathFlags.resize(maxStraightPathPoints);
 
-    const straightPathRefs = new Arrays.UnsignedIntArray();
+    const straightPathRefs = new UnsignedIntArray();
     straightPathRefs.resize(maxStraightPathPoints);
 
     const straightPathCount = new Raw.IntRef();
@@ -797,10 +816,10 @@ export class NavMeshQuery {
     const status = this.raw.findStraightPath(
       vec3.toArray(start),
       vec3.toArray(end),
-      path,
-      straightPath,
-      straightPathFlags,
-      straightPathRefs,
+      path.raw,
+      straightPath.raw,
+      straightPathFlags.raw,
+      straightPathRefs.raw,
       straightPathCount,
       maxStraightPathPoints,
       straightPathOptions

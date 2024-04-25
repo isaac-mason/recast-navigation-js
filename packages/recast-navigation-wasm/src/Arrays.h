@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string.h>
+#include <algorithm>
 
 template <typename T>
 struct ArrayWrapperTemplate
@@ -17,7 +18,7 @@ struct ArrayWrapperTemplate
         }
 
         size = 0;
-        this->data = 0;
+        this->data = nullptr;
     }
 
     void copy(const T *data, int size)
@@ -53,6 +54,11 @@ struct ArrayWrapperTemplate
     void set(int index, T value)
     {
         data[index] = value;
+    }
+
+    T* getDataPointer() const
+    {
+        return data;
     }
 };
 

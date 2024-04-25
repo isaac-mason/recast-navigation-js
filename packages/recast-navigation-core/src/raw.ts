@@ -34,24 +34,12 @@ const classes = [
   'UnsignedCharRef',
   'UnsignedShortRef',
   'FloatRef',
-  
-] as const satisfies readonly ModuleKey[];
-
-const arrays = [
   'IntArray',
   'UnsignedIntArray',
   'UnsignedCharArray',
   'UnsignedShortArray',
   'FloatArray',
 ] as const satisfies readonly ModuleKey[];
-
-const arrayAliases = {
-  VertsArray: 'FloatArray',
-  TrisArray: 'IntArray',
-  TriAreasArray: 'UnsignedCharArray',
-  ChunkIdsArray: 'IntArray',
-  TileCacheData: 'UnsignedCharArray',
-} satisfies Record<string, (typeof arrays)[number]>;
 
 type RawApi = Pretty<
   {
@@ -63,18 +51,6 @@ type RawApi = Pretty<
     [K in (typeof classes)[number]]: (typeof RawModule)[K];
   }
 >;
-
-type Arrays = {
-  [K in (typeof arrays)[number]]: (typeof RawModule)[K];
-};
-
-type ArrayAliases = {
-  [K in keyof typeof arrayAliases]: (typeof RawModule)[(typeof arrayAliases)[K]];
-};
-
-type ArraysApi = Pretty<Arrays & ArrayAliases>;
-
-export const Arrays = {} as ArraysApi;
 
 /**
  * Lower level bindings for the Recast and Detour libraries.
@@ -100,14 +76,5 @@ export const init = async () => {
 
   for (const clazz of classes) {
     (Raw as any)[clazz] = Raw.Module[clazz];
-  }
-
-  for (const array of arrays) {
-    Arrays[array] = Raw.Module[array];
-  }
-
-  for (const [arrayAlias, target] of Object.entries(arrayAliases)) {
-    Arrays[arrayAlias as keyof ArrayAliases] =
-      Raw.Module[target as keyof Arrays];
   }
 };

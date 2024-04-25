@@ -8,7 +8,7 @@ import filesize from 'rollup-plugin-filesize';
 export default [
   {
     input: `./src/index.ts`,
-    external: ['@recast-navigation/core', 'three'],
+    external: ['@recast-navigation/core', '@recast-navigation/generators', 'three'],
     output: [
       {
         file: `dist/index.mjs`,
