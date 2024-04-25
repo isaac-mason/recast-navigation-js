@@ -1,5 +1,11 @@
 # @recast-navigation/wasm
 
+## 0.25.0
+
+### Minor Changes
+
+- db8f331: feat: expose duDebugDraw recast and detour debug drawing utilities
+
 ## 0.24.1
 
 ## 0.24.0
