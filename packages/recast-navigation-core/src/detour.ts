@@ -1,3 +1,4 @@
+import { UnsignedCharArray } from './arrays';
 import { Raw } from './raw';
 import type R from './raw-module';
 import { RecastPolyMesh, RecastPolyMeshDetail } from './recast';
@@ -366,7 +367,12 @@ export class DetourMeshTile {
 }
 
 export const createNavMeshData = (navMeshCreateParams: NavMeshCreateParams) => {
-  return Raw.DetourNavMeshBuilder.createNavMeshData(navMeshCreateParams.raw);
+  const result = Raw.DetourNavMeshBuilder.createNavMeshData(navMeshCreateParams.raw);
+
+  return {
+    success: result.success,
+    navMeshData: UnsignedCharArray.fromRaw(result.navMeshData),
+  };
 };
 
 export type OffMeshConnectionParams = {

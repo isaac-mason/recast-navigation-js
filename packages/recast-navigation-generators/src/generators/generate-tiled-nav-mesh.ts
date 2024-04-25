@@ -1,5 +1,5 @@
 import {
-  Arrays,
+  ChunkIdsArray,
   NavMesh,
   NavMeshCreateParams,
   NavMeshParams,
@@ -10,8 +10,14 @@ import {
   RecastConfig,
   RecastContourSet,
   RecastHeightfield,
+  RecastPolyMesh,
+  RecastPolyMeshDetail,
+  TriAreasArray,
+  TrisArray,
+  UnsignedCharArray,
   Vector2Tuple,
   Vector3Tuple,
+  VertsArray,
   allocCompactHeightfield,
   allocContourSet,
   allocHeightfield,
@@ -28,7 +34,6 @@ import {
   createHeightfield,
   createNavMeshData,
   createRcConfig,
-  statusToReadableString,
   erodeWalkableArea,
   filterLedgeSpans,
   filterLowHangingWalkableObstacles,
@@ -36,16 +41,14 @@ import {
   freeCompactHeightfield,
   freeContourSet,
   freeHeightfield,
+  freePolyMesh,
+  freePolyMeshDetail,
   markWalkableTriangles,
   rasterizeTriangles,
   recastConfigDefaults,
+  statusToReadableString,
   vec3,
-  RecastPolyMesh,
-  RecastPolyMeshDetail,
-  freePolyMesh,
-  freePolyMeshDetail,
 } from '@recast-navigation/core';
-import type R from '@recast-navigation/wasm';
 import { Pretty } from '../types';
 import {
   OffMeshConnectionGeneratorParams,
@@ -119,9 +122,24 @@ export const generateTiledNavMesh = (
     tileIntermediates: [],
   };
 
+  /* verts */
+  const verts = positions as number[];
+  const nVerts = indices.length;
+  const vertsArray = new VertsArray();
+  vertsArray.copy(verts);
+
+  /* tris */
+  const tris = indices as number[];
+  const nTris = indices.length / 3;
+  const trisArray = new TrisArray();
+  trisArray.copy(tris);
+
   const navMesh = new NavMesh();
 
   const cleanup = () => {
+    vertsArray.free();
+    trisArray.free();
+
     if (keepIntermediates) return;
 
     for (let i = 0; i < intermediates.tileIntermediates.length; i++) {
@@ -198,18 +216,6 @@ export const generateTiledNavMesh = (
   const tileHeight = Math.floor((gridSize.height + tileSize - 1) / tileSize);
   const tcs = config.tileSize * config.cs;
 
-  /* verts */
-  const verts = positions as number[];
-  const nVerts = indices.length;
-  const vertsArray = new Arrays.VertsArray();
-  vertsArray.copy(verts, verts.length);
-
-  /* tris */
-  const tris = indices as number[];
-  const nTris = indices.length / 3;
-  const trisArray = new Arrays.TrisArray();
-  trisArray.copy(tris, tris.length);
-
   /* Create dtNavMeshParams, initialise nav mesh for tiled use */
   const orig = vec3.fromArray(bbMin);
 
@@ -252,7 +258,7 @@ export const generateTiledNavMesh = (
     tileBoundsMin: Vector3Tuple,
     tileBoundsMax: Vector3Tuple
   ):
-    | { success: true; data?: R.UnsignedCharArray }
+    | { success: true; data?: UnsignedCharArray }
     | { success: false; error: string } => {
     const failTileMesh = (error: string) => {
       buildContext.log(Raw.Module.RC_LOG_ERROR, error);
@@ -346,7 +352,7 @@ export const generateTiledNavMesh = (
     // Allocate array that can hold triangle flags.
     // If you have multiple meshes you need to process, allocate
     // and array which can hold the max number of triangles you need to process.
-    const triAreas = new Arrays.TriAreasArray();
+    const triAreas = new TriAreasArray();
     triAreas.resize(chunkyTriMesh.maxTrisPerChunk());
 
     const tbmin: Vector2Tuple = [
@@ -360,7 +366,7 @@ export const generateTiledNavMesh = (
 
     // TODO: Make grow when returning too many items.
     const maxChunkIds = 512;
-    const chunkIdsArray = new Arrays.ChunkIdsArray();
+    const chunkIdsArray = new ChunkIdsArray();
     chunkIdsArray.resize(maxChunkIds);
 
     const nChunksOverlapping = chunkyTriMesh.getChunksOverlappingRect(
@@ -375,13 +381,13 @@ export const generateTiledNavMesh = (
     }
 
     for (let i = 0; i < nChunksOverlapping; ++i) {
-      const nodeId = chunkIdsArray.get_data(i);
+      const nodeId = chunkIdsArray.get(i);
       const node = chunkyTriMesh.nodes(nodeId);
       const nNodeTris = node.n;
 
       const nodeTrisArray = chunkyTriMesh.getNodeTris(nodeId);
 
-      const triAreasArray = new Arrays.TriAreasArray();
+      const triAreasArray = new TriAreasArray();
       triAreasArray.resize(nNodeTris);
 
       // Find triangles which are walkable based on their slope and rasterize them.

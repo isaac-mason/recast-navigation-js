@@ -2,6 +2,7 @@ import { Vector3Tuple } from 'three';
 import { Raw } from './raw';
 import type R from './raw-module';
 import { Vector2Tuple, Vector3, array, vec3 } from './utils';
+import { FloatArray, IntArray, UnsignedCharArray } from './arrays';
 
 export type RecastConfig = {
   /**
@@ -289,15 +290,10 @@ export class RecastChunkyTriMesh {
     this.raw = raw ?? new Raw.rcChunkyTriMesh();
   }
 
-  init(
-    verts: R.FloatArray,
-    tris: R.IntArray,
-    ntris: number,
-    trisPerChunk: number
-  ) {
+  init(verts: FloatArray, tris: IntArray, ntris: number, trisPerChunk: number) {
     return Raw.ChunkyTriMeshUtils.createChunkyTriMesh(
-      verts,
-      tris,
+      verts.raw,
+      tris.raw,
       ntris,
       trisPerChunk,
       this.raw
@@ -307,20 +303,22 @@ export class RecastChunkyTriMesh {
   getChunksOverlappingRect(
     boundsMin: Vector2Tuple,
     boundsMax: Vector2Tuple,
-    chunks: R.IntArray,
+    chunks: IntArray,
     maxChunks: number
   ): number {
     return Raw.ChunkyTriMeshUtils.getChunksOverlappingRect(
       this.raw,
       boundsMin,
       boundsMax,
-      chunks,
+      chunks.raw,
       maxChunks
     );
   }
 
-  getNodeTris(nodeId: number): R.IntArray {
-    return Raw.ChunkyTriMeshUtils.getChunkyTriMeshNodeTris(this.raw, nodeId);
+  getNodeTris(nodeId: number): IntArray {
+    return IntArray.fromRaw(
+      Raw.ChunkyTriMeshUtils.getChunkyTriMeshNodeTris(this.raw, nodeId)
+    );
   }
 
   nodes(index: number): R.rcChunkyTriMeshNode {
@@ -802,8 +800,8 @@ export class RecastPolyMeshDetail {
   }
 }
 
-export const calcBounds = (verts: R.FloatArray, nv: number) => {
-  return Raw.Recast.calcBounds(verts, nv);
+export const calcBounds = (verts: FloatArray, nv: number) => {
+  return Raw.Recast.calcBounds(verts.raw, nv);
 };
 
 export const calcGridSize = (
@@ -839,59 +837,59 @@ export const createHeightfield = (
 export const markWalkableTriangles = (
   buildContext: RecastBuildContext,
   walkableSlopeAngle: number,
-  verts: R.FloatArray,
+  verts: FloatArray,
   nv: number,
-  tris: R.IntArray,
+  tris: IntArray,
   nt: number,
-  areas: R.UnsignedCharArray
+  areas: UnsignedCharArray
 ) => {
   return Raw.Recast.markWalkableTriangles(
     buildContext.raw,
     walkableSlopeAngle,
-    verts,
+    verts.raw,
     nv,
-    tris,
+    tris.raw,
     nt,
-    areas
+    areas.raw
   );
 };
 
 export const clearUnwalkableTriangles = (
   buildContext: RecastBuildContext,
   walkableSlopeAngle: number,
-  verts: R.FloatArray,
+  verts: FloatArray,
   nv: number,
-  tris: R.IntArray,
+  tris: IntArray,
   nt: number,
-  areas: R.UnsignedCharArray
+  areas: UnsignedCharArray
 ) => {
   return Raw.Recast.clearUnwalkableTriangles(
     buildContext.raw,
     walkableSlopeAngle,
-    verts,
+    verts.raw,
     nv,
-    tris,
+    tris.raw,
     nt,
-    areas
+    areas.raw
   );
 };
 
 export const rasterizeTriangles = (
   buildContext: RecastBuildContext,
-  verts: R.FloatArray,
+  verts: FloatArray,
   nv: number,
-  tris: R.IntArray,
-  areas: R.UnsignedCharArray,
+  tris: IntArray,
+  areas: UnsignedCharArray,
   nt: number,
   heightfield: RecastHeightfield,
   flagMergeThreshold = 1
 ) => {
   return Raw.Recast.rasterizeTriangles(
     buildContext.raw,
-    verts,
+    verts.raw,
     nv,
-    tris,
-    areas,
+    tris.raw,
+    areas.raw,
     nt,
     heightfield.raw,
     flagMergeThreshold
@@ -999,7 +997,7 @@ export const markBoxArea = (
 
 export const markConvexPolyArea = (
   buildContext: RecastBuildContext,
-  verts: R.FloatArray,
+  verts: FloatArray,
   nverts: number,
   hmin: number,
   hmax: number,
@@ -1008,7 +1006,7 @@ export const markConvexPolyArea = (
 ) => {
   return Raw.Recast.markConvexPolyArea(
     buildContext.raw,
-    verts,
+    verts.raw,
     nverts,
     hmin,
     hmax,
@@ -1217,20 +1215,26 @@ export const mergePolyMeshDetails = (
 
 export const getHeightfieldLayerHeights = (
   heightfieldLayer: RecastHeightfieldLayer
-) => {
-  return Raw.Recast.getHeightfieldLayerHeights(heightfieldLayer.raw);
+): UnsignedCharArray => {
+  return UnsignedCharArray.fromRaw(
+    Raw.Recast.getHeightfieldLayerHeights(heightfieldLayer.raw)
+  );
 };
 
 export const getHeightfieldLayerAreas = (
   heightfieldLayer: RecastHeightfieldLayer
-) => {
-  return Raw.Recast.getHeightfieldLayerAreas(heightfieldLayer.raw);
+): UnsignedCharArray => {
+  return UnsignedCharArray.fromRaw(
+    Raw.Recast.getHeightfieldLayerAreas(heightfieldLayer.raw)
+  );
 };
 
 export const getHeightfieldLayerCons = (
   heightfieldLayer: RecastHeightfieldLayer
-) => {
-  return Raw.Recast.getHeightfieldLayerCons(heightfieldLayer.raw);
+): UnsignedCharArray => {
+  return UnsignedCharArray.fromRaw(
+    Raw.Recast.getHeightfieldLayerCons(heightfieldLayer.raw)
+  );
 };
 
 export const allocHeightfield = () => {

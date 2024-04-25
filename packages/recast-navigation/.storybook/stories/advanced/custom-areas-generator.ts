@@ -1,5 +1,4 @@
 import {
-  Arrays,
   NavMesh,
   NavMeshCreateParams,
   Raw,
@@ -8,7 +7,10 @@ import {
   RecastConfig,
   RecastContourSet,
   RecastHeightfield,
+  TriAreasArray,
+  TrisArray,
   Vector3Tuple,
+  VertsArray,
   allocCompactHeightfield,
   allocContourSet,
   allocHeightfield,
@@ -138,13 +140,13 @@ export const generateNavMesh = (
 
   const verts = positions as number[];
   const nVerts = indices.length;
-  const vertsArray = new Arrays.VertsArray();
-  vertsArray.copy(verts, verts.length);
+  const vertsArray = new VertsArray();
+  vertsArray.copy(verts);
 
   const tris = indices as number[];
   const nTris = indices.length / 3;
-  const trisArray = new Arrays.TrisArray();
-  trisArray.copy(tris, tris.length);
+  const trisArray = new TrisArray();
+  trisArray.copy(tris);
 
   const { bbMin, bbMax } = getBoundingBox(positions, indices);
 
@@ -187,7 +189,7 @@ export const generateNavMesh = (
     return fail('Could not create heightfield');
   }
 
-  const triAreasArray = new Arrays.TriAreasArray();
+  const triAreasArray = new TriAreasArray();
   triAreasArray.resize(nTris);
 
   markWalkableTriangles(
@@ -216,6 +218,8 @@ export const generateNavMesh = (
   }
 
   triAreasArray.free();
+  vertsArray.free();
+  trisArray.free();
 
   //
   // Step 3. Filter walkables surfaces.

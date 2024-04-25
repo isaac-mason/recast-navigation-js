@@ -1,3 +1,4 @@
+import { UnsignedCharArray } from './arrays';
 import { DetourMeshTile, DetourOffMeshConnection, DetourPoly } from './detour';
 import { Raw } from './raw';
 import type R from './raw-module';
@@ -157,8 +158,8 @@ export class NavMesh {
    * @param navMeshData the nav mesh data
    * @returns the status of the operation
    */
-  initSolo(navMeshData: R.UnsignedCharArray): boolean {
-    return this.raw.initSolo(navMeshData);
+  initSolo(navMeshData: UnsignedCharArray): boolean {
+    return this.raw.initSolo(navMeshData.raw);
   }
 
   /**
@@ -177,10 +178,10 @@ export class NavMesh {
    * @param lastRef
    * @returns the status of the operation and the reference of the added tile
    */
-  addTile(navMeshData: R.UnsignedCharArray, flags: number, lastRef: number) {
+  addTile(navMeshData: UnsignedCharArray, flags: number, lastRef: number) {
     const tileRef = new Raw.UnsignedIntRef();
 
-    const status = this.raw.addTile(navMeshData, flags, lastRef, tileRef);
+    const status = this.raw.addTile(navMeshData.raw, flags, lastRef, tileRef);
 
     return {
       status,

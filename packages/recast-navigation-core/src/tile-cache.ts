@@ -1,3 +1,4 @@
+import { UnsignedCharArray, UnsignedShortArray } from './arrays';
 import { NavMeshCreateParams } from './detour';
 import { NavMesh } from './nav-mesh';
 import { Raw } from './raw';
@@ -22,15 +23,17 @@ export type CylinderObstacle = {
   height: number;
 };
 
-export type AddObstacleResult<T> = {
-  success: true;
-  status: number;
-  obstacle: T;
-} | {
-  success: false;
-  status: number;
-  obstacle?: T;
-};
+export type AddObstacleResult<T> =
+  | {
+      success: true;
+      status: number;
+      obstacle: T;
+    }
+  | {
+      success: false;
+      status: number;
+      obstacle?: T;
+    };
 
 export type RemoveObstacleResult = {
   success: boolean;
@@ -120,7 +123,7 @@ export class TileCache {
    *
    * If not many obstacle requests occur between updates, an easy pattern is to call `tileCache.update` periodically, such as every game update.
    * If many obstacle requests have been made and you need to avoid reaching the 64 obstacle request limit, you can call `tileCache.update` multiple times, bailing out when `upToDate` is true or after a maximum number of updates.
-   * 
+   *
    * @example
    * ```ts
    * const { success, status, upToDate } = tileCache.update(navMesh);
@@ -239,10 +242,10 @@ export class TileCache {
   }
 
   addTile(
-    data: R.UnsignedCharArray,
+    data: UnsignedCharArray,
     flags: number = Raw.Module.DT_COMPRESSEDTILE_FREE_DATA
   ): R.TileCacheAddTileResult {
-    return this.raw.addTile(data, flags);
+    return this.raw.addTile(data.raw, flags);
   }
 
   buildNavMeshTile(ref: R.dtCompressedTileRef, navMesh: NavMesh) {
@@ -264,8 +267,8 @@ export class TileCacheMeshProcess {
   constructor(
     process: (
       navMeshCreateParams: NavMeshCreateParams,
-      polyAreasArray: R.UnsignedCharArray,
-      polyFlagsArray: R.UnsignedShortArray
+      polyAreasArray: UnsignedCharArray,
+      polyFlagsArray: UnsignedShortArray
     ) => void
   ) {
     this.raw = new Raw.Module.TileCacheMeshProcess();
@@ -289,7 +292,11 @@ export class TileCacheMeshProcess {
         Raw.Module.UnsignedShortArray
       );
 
-      process(params, polyAreasArray, polyFlagsArray);
+      process(
+        params,
+        UnsignedCharArray.fromRaw(polyAreasArray),
+        UnsignedShortArray.fromRaw(polyFlagsArray)
+      );
     };
   }
 }
@@ -297,17 +304,17 @@ export class TileCacheMeshProcess {
 export const buildTileCacheLayer = (
   comp: R.RecastFastLZCompressor,
   header: R.dtTileCacheLayerHeader,
-  heights: R.UnsignedCharArray,
-  areas: R.UnsignedCharArray,
-  cons: R.UnsignedCharArray,
-  tileCacheData: R.UnsignedCharArray
+  heights: UnsignedCharArray,
+  areas: UnsignedCharArray,
+  cons: UnsignedCharArray,
+  tileCacheData: UnsignedCharArray
 ): number => {
   return Raw.DetourTileCacheBuilder.buildTileCacheLayer(
     comp,
     header,
-    heights,
-    areas,
-    cons,
-    tileCacheData
+    heights.raw,
+    areas.raw,
+    cons.raw,
+    tileCacheData.raw
   );
 };

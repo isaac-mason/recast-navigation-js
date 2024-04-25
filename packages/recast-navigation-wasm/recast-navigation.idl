@@ -1083,6 +1083,7 @@ interface FloatRef {
     attribute float value;
 };
 
+
 interface IntArray {
     void IntArray();
 
@@ -1096,6 +1097,8 @@ interface IntArray {
 
     long get(long i);
     void set(long i, long value);
+
+    any getDataPointer();
 };
 
 interface UnsignedIntArray {
@@ -1111,6 +1114,8 @@ interface UnsignedIntArray {
 
     unsigned long get(long i);
     void set(long i, unsigned long value);
+
+    any getDataPointer();
 };
 
 interface UnsignedCharArray {
@@ -1126,6 +1131,8 @@ interface UnsignedCharArray {
 
     octet get(long i);
     void set(long i, octet value);
+
+    any getDataPointer();
 };
 
 interface UnsignedShortArray {
@@ -1141,6 +1148,8 @@ interface UnsignedShortArray {
 
     unsigned short get(long i);
     void set(long i, unsigned short value);
+
+    any getDataPointer();
 };
 
 interface FloatArray {
@@ -1156,6 +1165,8 @@ interface FloatArray {
 
     float get(long i);
     void set(long i, float value);
+
+    any getDataPointer();
 };
 
 interface NavMeshImporterResult {
