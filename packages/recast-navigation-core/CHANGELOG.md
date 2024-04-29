@@ -1,5 +1,41 @@
 # @recast-navigation/core
 
+## 0.26.0
+
+### Minor Changes
+
+- 6161d8b: feat: remove 'Arrays' export, add wrapped array classes
+
+  usage changed from:
+
+  ```ts
+  import { Arrays } from "@recast-navigation/core";
+
+  Arrays.VertsArray;
+  Arrays.TrisArray;
+  Arrays.TriAreasArray;
+  Arrays.ChunkIdsArray;
+  Arrays.TileCacheData;
+  ```
+
+  to:
+
+  ```ts
+  import {
+    VerticesArray,
+    TrianglesArray,
+    TringleAreasArray,
+    ChunkIdsArray,
+    TileCacheData,
+  } from "@recast-navigation/core";
+  ```
+
+  The `.copy` method now directly copies the data from the source array to the emscripten heap. This should improve performance when copying large arrays.
+
+### Patch Changes
+
+- @recast-navigation/wasm@0.26.0
+
 ## 0.25.0
 
 ### Minor Changes
