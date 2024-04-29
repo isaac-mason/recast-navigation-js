@@ -20,7 +20,7 @@ export const DebugDrawerOption = {
   COMPACT_HEIGHTFIELD_SOLID: 'compact heightfield solid',
   COMPACT_HEIGHTFIELD_REGIONS: 'compact heightfield regions',
   COMPACT_HEIGHTFIELD_DISTANCE: 'compact heightfield distance',
-  RAW_CONTOURS: 'raw countours',
+  RAW_CONTOURS: 'raw contours',
   CONTOURS: 'contours',
   POLY_MESH: 'poly mesh',
   POLY_MESH_DETAIL: 'poly mesh detail',
