@@ -12,12 +12,12 @@ import {
   RecastHeightfield,
   RecastPolyMesh,
   RecastPolyMeshDetail,
-  TriAreasArray,
-  TrisArray,
+  TriangleAreasArray,
+  TrianglesArray,
   UnsignedCharArray,
   Vector2Tuple,
   Vector3Tuple,
-  VertsArray,
+  VerticesArray,
   allocCompactHeightfield,
   allocContourSet,
   allocHeightfield,
@@ -125,20 +125,20 @@ export const generateTiledNavMesh = (
   /* verts */
   const verts = positions as number[];
   const nVerts = indices.length;
-  const vertsArray = new VertsArray();
-  vertsArray.copy(verts);
+  const verticesArray = new VerticesArray();
+  verticesArray.copy(verts);
 
   /* tris */
   const tris = indices as number[];
   const nTris = indices.length / 3;
-  const trisArray = new TrisArray();
-  trisArray.copy(tris);
+  const trianglesArray = new TrianglesArray();
+  trianglesArray.copy(tris);
 
   const navMesh = new NavMesh();
 
   const cleanup = () => {
-    vertsArray.free();
-    trisArray.free();
+    verticesArray.free();
+    trianglesArray.free();
 
     if (keepIntermediates) return;
 
@@ -247,7 +247,7 @@ export const generateTiledNavMesh = (
   const chunkyTriMesh = new RecastChunkyTriMesh();
   intermediates.chunkyTriMesh = chunkyTriMesh;
 
-  if (!chunkyTriMesh.init(vertsArray, trisArray, nTris, 256)) {
+  if (!chunkyTriMesh.init(verticesArray, trianglesArray, nTris, 256)) {
     return fail('Failed to build chunky triangle mesh');
   }
 
@@ -352,7 +352,7 @@ export const generateTiledNavMesh = (
     // Allocate array that can hold triangle flags.
     // If you have multiple meshes you need to process, allocate
     // and array which can hold the max number of triangles you need to process.
-    const triAreas = new TriAreasArray();
+    const triAreas = new TriangleAreasArray();
     triAreas.resize(chunkyTriMesh.maxTrisPerChunk());
 
     const tbmin: Vector2Tuple = [
@@ -385,10 +385,10 @@ export const generateTiledNavMesh = (
       const node = chunkyTriMesh.nodes(nodeId);
       const nNodeTris = node.n;
 
-      const nodeTrisArray = chunkyTriMesh.getNodeTris(nodeId);
+      const nodeTrianglesArray = chunkyTriMesh.getNodeTris(nodeId);
 
-      const triAreasArray = new TriAreasArray();
-      triAreasArray.resize(nNodeTris);
+      const triangleAreasArray = new TriangleAreasArray();
+      triangleAreasArray.resize(nNodeTris);
 
       // Find triangles which are walkable based on their slope and rasterize them.
       // If your input data is multiple meshes, you can transform them here, calculate
@@ -396,25 +396,25 @@ export const generateTiledNavMesh = (
       markWalkableTriangles(
         buildContext,
         tileConfig.walkableSlopeAngle,
-        vertsArray,
+        verticesArray,
         nVerts,
-        nodeTrisArray,
+        nodeTrianglesArray,
         nNodeTris,
-        triAreasArray
+        triangleAreasArray
       );
 
       const success = rasterizeTriangles(
         buildContext,
-        vertsArray,
+        verticesArray,
         nVerts,
-        nodeTrisArray,
-        triAreasArray,
+        nodeTrianglesArray,
+        triangleAreasArray,
         nNodeTris,
         heightfield,
         tileConfig.walkableClimb
       );
 
-      triAreasArray.free();
+      triangleAreasArray.free();
 
       if (!success) {
         return failTileMesh('Could not rasterize triangles');

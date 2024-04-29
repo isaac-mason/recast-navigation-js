@@ -13,12 +13,12 @@ import {
   TileCache,
   TileCacheData,
   TileCacheMeshProcess,
-  TriAreasArray,
-  TrisArray,
+  TriangleAreasArray,
+  TrianglesArray,
   UnsignedCharArray,
   Vector2Tuple,
   Vector3Tuple,
-  VertsArray,
+  VerticesArray,
   allocCompactHeightfield,
   allocHeightfield,
   allocHeightfieldLayerSet,
@@ -147,13 +147,13 @@ export const generateTileCache = (
 
   const verts = positions as number[];
   const nVerts = indices.length;
-  const vertsArray = new VertsArray();
-  vertsArray.copy(verts);
+  const verticesArray = new VerticesArray();
+  verticesArray.copy(verts);
 
   const tris = indices as number[];
   const nTris = indices.length / 3;
-  const trisArray = new TrisArray();
-  trisArray.copy(tris);
+  const trianglesArray = new TrianglesArray();
+  trianglesArray.copy(tris);
 
   const { bbMin, bbMax } = getBoundingBox(positions, indices);
 
@@ -163,8 +163,8 @@ export const generateTileCache = (
   };
 
   const cleanup = () => {
-    vertsArray.free();
-    trisArray.free();
+    verticesArray.free();
+    trianglesArray.free();
 
     if (!keepIntermediates) {
       for (let i = 0; i < intermediates.tileIntermediates.length; i++) {
@@ -293,7 +293,7 @@ export const generateTileCache = (
   const chunkyTriMesh = new RecastChunkyTriMesh();
   intermediates.chunkyTriMesh = chunkyTriMesh;
 
-  if (!chunkyTriMesh.init(vertsArray, trisArray, nTris, 256)) {
+  if (!chunkyTriMesh.init(verticesArray, trianglesArray, nTris, 256)) {
     return fail('Failed to build chunky triangle mesh');
   }
 
@@ -377,10 +377,10 @@ export const generateTileCache = (
       const node = chunkyTriMesh.nodes(nodeId);
       const nNodeTris = node.n;
 
-      const nodeTrisArray = chunkyTriMesh.getNodeTris(nodeId);
+      const nodeTrianglesArray = chunkyTriMesh.getNodeTris(nodeId);
 
-      const triAreasArray = new TriAreasArray();
-      triAreasArray.resize(nNodeTris);
+      const triangleAreasArray = new TriangleAreasArray();
+      triangleAreasArray.resize(nNodeTris);
 
       // Find triangles which are walkable based on their slope and rasterize them.
       // If your input data is multiple meshes, you can transform them here, calculate
@@ -388,25 +388,25 @@ export const generateTileCache = (
       markWalkableTriangles(
         buildContext,
         tileConfig.walkableSlopeAngle,
-        vertsArray,
+        verticesArray,
         nVerts,
-        nodeTrisArray,
+        nodeTrianglesArray,
         nNodeTris,
-        triAreasArray
+        triangleAreasArray
       );
 
       const success = rasterizeTriangles(
         buildContext,
-        vertsArray,
+        verticesArray,
         nVerts,
-        nodeTrisArray,
-        triAreasArray,
+        nodeTrianglesArray,
+        triangleAreasArray,
         nNodeTris,
         heightfield,
         tileConfig.walkableClimb
       );
 
-      triAreasArray.free();
+      triangleAreasArray.free();
 
       if (!success) {
         return { n: 0 };

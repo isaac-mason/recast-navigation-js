@@ -162,8 +162,8 @@ export class NavMeshQuery {
     const resultCost = resultCostRef.value;
     const resultCount = resultCountRef.value;
 
-    const resultRefs = [...resultRefArray.getTypedArrayView()];
-    const resultParents = [...resultParentArray.getTypedArrayView()];
+    const resultRefs = [...resultRefArray.getHeapView()];
+    const resultParents = [...resultParentArray.getHeapView()];
 
     resultRefArray.free();
     resultParentArray.free();
@@ -220,7 +220,7 @@ export class NavMeshQuery {
 
     const polyCount = polyCountRef.value;
     
-    const polyRefs = [...polysRefsArray.getTypedArrayView()]
+    const polyRefs = [...polysRefsArray.getHeapView()]
     polysRefsArray.free()
 
     return {
@@ -427,7 +427,7 @@ export class NavMeshQuery {
       maxVisitedSize
     );
 
-    const visited = [...visitedArray.getTypedArrayView()];
+    const visited = [...visitedArray.getHeapView()];
     visitedArray.free()
 
     return {

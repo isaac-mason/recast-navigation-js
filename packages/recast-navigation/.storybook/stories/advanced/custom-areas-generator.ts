@@ -7,10 +7,10 @@ import {
   RecastConfig,
   RecastContourSet,
   RecastHeightfield,
-  TriAreasArray,
-  TrisArray,
+  TriangleAreasArray,
+  TrianglesArray,
   Vector3Tuple,
-  VertsArray,
+  VerticesArray,
   allocCompactHeightfield,
   allocContourSet,
   allocHeightfield,
@@ -140,13 +140,13 @@ export const generateNavMesh = (
 
   const verts = positions as number[];
   const nVerts = indices.length;
-  const vertsArray = new VertsArray();
-  vertsArray.copy(verts);
+  const verticesArray = new VerticesArray();
+  verticesArray.copy(verts);
 
   const tris = indices as number[];
   const nTris = indices.length / 3;
-  const trisArray = new TrisArray();
-  trisArray.copy(tris);
+  const trianglesArray = new TrianglesArray();
+  trianglesArray.copy(tris);
 
   const { bbMin, bbMax } = getBoundingBox(positions, indices);
 
@@ -189,26 +189,26 @@ export const generateNavMesh = (
     return fail('Could not create heightfield');
   }
 
-  const triAreasArray = new TriAreasArray();
-  triAreasArray.resize(nTris);
+  const triangleAreasArray = new TriangleAreasArray();
+  triangleAreasArray.resize(nTris);
 
   markWalkableTriangles(
     buildContext,
     config.walkableSlopeAngle,
-    vertsArray,
+    verticesArray,
     nVerts,
-    trisArray,
+    trianglesArray,
     nTris,
-    triAreasArray
+    triangleAreasArray
   );
 
   if (
     !rasterizeTriangles(
       buildContext,
-      vertsArray,
+      verticesArray,
       nVerts,
-      trisArray,
-      triAreasArray,
+      trianglesArray,
+      triangleAreasArray,
       nTris,
       heightfield,
       config.walkableClimb
@@ -217,9 +217,9 @@ export const generateNavMesh = (
     return fail('Could not rasterize triangles');
   }
 
-  triAreasArray.free();
-  vertsArray.free();
-  trisArray.free();
+  triangleAreasArray.free();
+  verticesArray.free();
+  trianglesArray.free();
 
   //
   // Step 3. Filter walkables surfaces.

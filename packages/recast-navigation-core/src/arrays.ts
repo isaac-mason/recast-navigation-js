@@ -23,7 +23,7 @@ abstract class BaseArray<
     return this.raw.size;
   }
 
-  abstract TypedArray: T;
+  protected abstract typedArrayClass: T;
 
   constructor(raw: RawType) {
     this.raw = raw;
@@ -41,37 +41,22 @@ abstract class BaseArray<
     this.raw.resize(size);
   }
 
+  copy(data: InstanceType<T> | number[]): void {
+    this.raw.resize(data.length);
+
+    const view = this.getHeapView();
+
+    view.set(data);
+  }
+
   free() {
     this.raw.free();
   }
 
-  protected abstract getHeap(): InstanceType<T>;
-
-  copy(data: InstanceType<T> | number[]): void {
-    if ('buffer' in data) {
-      this.raw.resize(data.length);
-
-      const heap = this.getHeap();
-
-      const dataPointer = this.raw.getDataPointer();
-      const nDataBytes = data.length * data.BYTES_PER_ELEMENT;
-
-      const dataHeap = new this.TypedArray(
-        heap.buffer,
-        dataPointer,
-        nDataBytes
-      );
-
-      dataHeap.set(data);
-    } else {
-      this.raw.copy(data, data.length);
-    }
-  }
-
-  getTypedArrayView(): InstanceType<T> {
+  getHeapView(): InstanceType<T> {
     const heap = this.getHeap();
 
-    const dataHeap = new this.TypedArray(
+    const dataHeap = new this.typedArrayClass(
       heap.buffer,
       this.raw.getDataPointer(),
       this.size
@@ -81,17 +66,19 @@ abstract class BaseArray<
   }
 
   toTypedArray(): InstanceType<T> {
-    const view = this.getTypedArrayView();
+    const view = this.getHeapView();
 
-    const data = new this.TypedArray(this.size);
+    const data = new this.typedArrayClass(this.size);
     data.set(view);
 
     return data as InstanceType<T>;
   }
+
+  protected abstract getHeap(): InstanceType<T>;
 }
 
 export class IntArray extends BaseArray<RawModule.IntArray, typeof Int32Array> {
-  TypedArray = Int32Array;
+  typedArrayClass = Int32Array;
 
   constructor(raw?: RawModule.IntArray) {
     super(raw ?? new Raw.Module.IntArray());
@@ -110,7 +97,7 @@ export class UnsignedIntArray extends BaseArray<
   RawModule.UnsignedIntArray,
   typeof Uint32Array
 > {
-  TypedArray = Uint32Array;
+  typedArrayClass = Uint32Array;
 
   constructor(raw?: RawModule.UnsignedIntArray) {
     super(raw ?? new Raw.Module.UnsignedIntArray());
@@ -129,7 +116,7 @@ export class UnsignedCharArray extends BaseArray<
   RawModule.UnsignedCharArray,
   typeof Uint8Array
 > {
-  TypedArray = Uint8Array;
+  typedArrayClass = Uint8Array;
 
   constructor(raw?: RawModule.UnsignedCharArray) {
     super(raw ?? new Raw.Module.UnsignedCharArray());
@@ -148,7 +135,7 @@ export class UnsignedShortArray extends BaseArray<
   RawModule.UnsignedShortArray,
   typeof Uint16Array
 > {
-  TypedArray = Uint16Array;
+  typedArrayClass = Uint16Array;
 
   constructor(raw?: RawModule.UnsignedShortArray) {
     super(raw ?? new Raw.Module.UnsignedShortArray());
@@ -167,7 +154,7 @@ export class FloatArray extends BaseArray<
   RawModule.FloatArray,
   typeof Float32Array
 > {
-  TypedArray = Float32Array;
+  typedArrayClass = Float32Array;
 
   constructor(raw?: RawModule.FloatArray) {
     super(raw ?? new Raw.Module.FloatArray());
@@ -182,8 +169,8 @@ export class FloatArray extends BaseArray<
   }
 }
 
-export const VertsArray = FloatArray;
-export const TrisArray = IntArray;
-export const TriAreasArray = UnsignedCharArray;
+export const VerticesArray = FloatArray;
+export const TrianglesArray = IntArray;
+export const TriangleAreasArray = UnsignedCharArray;
 export const ChunkIdsArray = IntArray;
 export const TileCacheData = UnsignedCharArray;
