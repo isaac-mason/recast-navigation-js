@@ -4952,11 +4952,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-links@npm:^8.0.1":
-  version: 8.0.1
-  resolution: "@storybook/addon-links@npm:8.0.1"
+"@storybook/addon-links@npm:^8.0.9":
+  version: 8.0.9
+  resolution: "@storybook/addon-links@npm:8.0.9"
   dependencies:
-    "@storybook/csf": "npm:^0.1.2"
+    "@storybook/csf": "npm:^0.1.4"
     "@storybook/global": "npm:^5.0.0"
     ts-dedent: "npm:^2.0.0"
   peerDependencies:
@@ -4964,7 +4964,7 @@ __metadata:
   peerDependenciesMeta:
     react:
       optional: true
-  checksum: cf76ec916915173af3058a6e094c7f3e39c08f18a4ec84a3d0a896b08bb3bd8c02408f5081a78484b84fce55af717002e8fca504cb7835a92a7bfc257d89f036
+  checksum: dece0807fb3488fa4722ac4c66d5c0892f771e8c1c56627eb2f5787518780127132d64e3b03a3946f495eaaee823e1707f39b11f88ef3fb6c8dec4e8e77acf94
   languageName: node
   linkType: hard
 
@@ -5355,6 +5355,15 @@ __metadata:
   dependencies:
     type-fest: "npm:^2.19.0"
   checksum: 11168df65e7b6bd0e5d31e7e805c8ba80397fc190cb33424e043b72bbd85d8f826dba082503992d7f606b72484337ab9d091eca947550613e241fbef57780d4c
+  languageName: node
+  linkType: hard
+
+"@storybook/csf@npm:^0.1.4":
+  version: 0.1.5
+  resolution: "@storybook/csf@npm:0.1.5"
+  dependencies:
+    type-fest: "npm:^2.19.0"
+  checksum: f610d67ab41fd203318daa98f124e2b40dd1854f3ebdfaf0adabbaed1e9228544380257f0988a501f310ef6a6ae5362d6e15f483a09dabe757ec6cdc77f3dc57
   languageName: node
   linkType: hard
 
@@ -15780,7 +15789,7 @@ __metadata:
     "@storybook/addon-actions": "npm:^8.0.1"
     "@storybook/addon-essentials": "npm:^8.0.1"
     "@storybook/addon-interactions": "npm:^8.0.1"
-    "@storybook/addon-links": "npm:^8.0.1"
+    "@storybook/addon-links": "npm:^8.0.9"
     "@storybook/addon-mdx-gfm": "npm:^8.0.1"
     "@storybook/react": "npm:^8.0.1"
     "@storybook/react-vite": "npm:^8.0.1"
