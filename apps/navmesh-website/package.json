@@ -12,7 +12,7 @@
     "@react-three/drei": "^9.105.4",
     "@react-three/fiber": "^8.15.12",
     "leva": "^0.9.35",
-    "react": "^18.2.0",
+    "react": "^18.3.1",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
     "react-router-dom": "^6.22.1",
@@ -24,7 +24,7 @@
     "zustand": "^4.3.8"
   },
   "devDependencies": {
-    "@types/react": "^18.2.73",
+    "@types/react": "^18.3.1",
     "@types/react-dom": "^18.2.8",
     "@types/three": "^0.163.0",
     "@vitejs/plugin-react": "^4.2.0",
