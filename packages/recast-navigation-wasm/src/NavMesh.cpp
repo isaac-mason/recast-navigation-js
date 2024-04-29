@@ -89,7 +89,7 @@ NavMeshGetTileAndPolyByRefResult NavMesh::getTileAndPolyByRef(dtPolyRef ref) con
     const dtMeshTile *tile;
     const dtPoly *poly;
 
-    m_navMesh->getTileAndPolyByRef(ref, &tile, &poly);
+    result->status = m_navMesh->getTileAndPolyByRef(ref, &tile, &poly);
 
     result->tile = tile;
     result->poly = poly;

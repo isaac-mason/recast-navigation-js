@@ -110,6 +110,7 @@ export const Raycast = () => {
       setEnd(new Vector3(point.x, point.y, point.z));
     }
   };
+
   return (
     <>
       <group ref={setGroup} onPointerDown={setRaycastPoint}>

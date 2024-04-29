@@ -301,11 +301,9 @@ function polyRefToGeom(
   // Only one tile because we use `threeToSoloNavMesh`
   let allVertices: undefined | THREE.Vector3Tuple[] = undefined;
 
-  const result = navMesh.getTileAndPolyByRef(polyRef);
-  const poly = result.poly();
-  const vertexIds = range(poly.vertCount()).map((i) => poly.verts(i));
+  const { poly, tile } = navMesh.getTileAndPolyByRef(polyRef);
 
-  const tile = result.tile();
+  const vertexIds = range(poly.vertCount()).map((i) => poly.verts(i));
   allVertices ??= range(tile.header()!.vertCount() * 3).reduce(
     (agg, i) =>
       i % 3 === 2

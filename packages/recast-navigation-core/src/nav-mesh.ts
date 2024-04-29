@@ -1,5 +1,10 @@
 import { UnsignedCharArray } from './arrays';
-import { DetourMeshTile, DetourOffMeshConnection, DetourPoly } from './detour';
+import {
+  DetourMeshTile,
+  DetourOffMeshConnection,
+  DetourPoly,
+  statusSucceed,
+} from './detour';
 import { Raw } from './raw';
 import type R from './raw-module';
 import { Vector3, array, vec3 } from './utils';
@@ -49,26 +54,6 @@ export class NavMeshCalcTileLocResult {
 
   tileY(): number {
     return this.raw.tileY;
-  }
-}
-
-export class NavMeshGetTileAndPolyByRefResult {
-  raw: R.NavMeshGetTileAndPolyByRefResult;
-
-  constructor(raw: R.NavMeshGetTileAndPolyByRefResult) {
-    this.raw = raw;
-  }
-
-  tile(): DetourMeshTile {
-    return new DetourMeshTile(this.raw.tile);
-  }
-
-  poly(): DetourPoly {
-    return new DetourPoly(this.raw.poly);
-  }
-
-  status(): number {
-    return this.raw.status;
   }
 }
 
@@ -318,10 +303,18 @@ export class NavMesh {
    * @param ref The reference for the a polygon.
    * @returns
    */
-  getTileAndPolyByRef(ref: number): NavMeshGetTileAndPolyByRefResult {
-    return new NavMeshGetTileAndPolyByRefResult(
-      this.raw.getTileAndPolyByRef(ref)
-    );
+  getTileAndPolyByRef(ref: number) {
+    const result = this.raw.getTileAndPolyByRef(ref);
+
+    const tile = new DetourMeshTile(result.tile);
+    const poly = new DetourPoly(result.poly);
+
+    return {
+      success: statusSucceed(result.status),
+      status: result.status,
+      tile,
+      poly,
+    };
   }
 
   /**
@@ -329,10 +322,16 @@ export class NavMesh {
    * @param ref A known valid reference for a polygon.
    * @returns
    */
-  getTileAndPolyByRefUnsafe(ref: number): NavMeshGetTileAndPolyByRefResult {
-    return new NavMeshGetTileAndPolyByRefResult(
-      this.raw.getTileAndPolyByRefUnsafe(ref)
-    );
+  getTileAndPolyByRefUnsafe(ref: number) {
+    const result = this.raw.getTileAndPolyByRef(ref);
+
+    const tile = new DetourMeshTile(result.tile);
+    const poly = new DetourPoly(result.poly);
+
+    return {
+      tile,
+      poly,
+    };
   }
 
   /**
