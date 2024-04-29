@@ -9,9 +9,9 @@ import {
   RecastHeightfield,
   RecastPolyMesh,
   RecastPolyMeshDetail,
-  TriAreasArray,
-  TrisArray,
-  VertsArray,
+  TriangleAreasArray,
+  TrianglesArray,
+  VerticesArray,
   allocCompactHeightfield,
   allocContourSet,
   allocHeightfield,
@@ -144,13 +144,13 @@ export const generateSoloNavMesh = (
 
   const verts = positions as number[];
   const nVerts = indices.length;
-  const vertsArray = new VertsArray();
-  vertsArray.copy(verts);
+  const verticesArray = new VerticesArray();
+  verticesArray.copy(verts);
 
   const tris = indices as number[];
   const nTris = indices.length / 3;
-  const trisArray = new TrisArray();
-  trisArray.copy(tris);
+  const trianglesArray = new TrianglesArray();
+  trianglesArray.copy(tris);
 
   const { bbMin, bbMax } = getBoundingBox(positions, indices);
 
@@ -197,26 +197,26 @@ export const generateSoloNavMesh = (
   // Find triangles which are walkable based on their slope and rasterize them.
   // If your input data is multiple meshes, you can transform them here, calculate
   // the are type for each of the meshes and rasterize them.
-  const triAreasArray = new TriAreasArray();
-  triAreasArray.resize(nTris);
+  const triangleAreasArray = new TriangleAreasArray();
+  triangleAreasArray.resize(nTris);
 
   markWalkableTriangles(
     buildContext,
     config.walkableSlopeAngle,
-    vertsArray,
+    verticesArray,
     nVerts,
-    trisArray,
+    trianglesArray,
     nTris,
-    triAreasArray
+    triangleAreasArray
   );
 
   if (
     !rasterizeTriangles(
       buildContext,
-      vertsArray,
+      verticesArray,
       nVerts,
-      trisArray,
-      triAreasArray,
+      trianglesArray,
+      triangleAreasArray,
       nTris,
       heightfield,
       config.walkableClimb
@@ -225,9 +225,9 @@ export const generateSoloNavMesh = (
     return fail('Could not rasterize triangles');
   }
 
-  triAreasArray.free();
-  vertsArray.free();
-  trisArray.free();
+  triangleAreasArray.free();
+  verticesArray.free();
+  trianglesArray.free();
 
   //
   // Step 3. Filter walkables surfaces.
