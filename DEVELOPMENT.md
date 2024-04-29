@@ -32,7 +32,7 @@ https://github.com/pyenv/pyenv
 
 ### Emscripten Installation
 
-**This project uses Emsdk v3.1.44.**
+**This project uses Emsdk v3.1.58.**
 
 On mac / linux, you can install emscripten with the following instructions.
 
@@ -47,10 +47,10 @@ git clone https://github.com/emscripten-core/emsdk.git
 cd emsdk
 
 # Download and install recast-navigation's required version of emscripten
-./emsdk install 3.1.44
+./emsdk install 3.1.58
 
 # Activate the emsdk version you just installed
-./emsdk activate 3.1.44
+./emsdk activate 3.1.58
 
 # Activate PATH and other environment variables in the current terminal
 source ./emsdk_env.sh
