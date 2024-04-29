@@ -125,39 +125,39 @@ export class DebugDrawer extends THREE.Group {
     };
   }
 
-  debugDrawHeightfieldSolid(hf: RecastHeightfield): void {
+  drawHeightfieldSolid(hf: RecastHeightfield): void {
     Raw.RecastDebugDraw.debugDrawHeightfieldSolid(this.debugDrawImpl, hf.raw);
   }
 
-  debugDrawHeightfieldWalkable(hf: RecastHeightfield): void {
+  drawHeightfieldWalkable(hf: RecastHeightfield): void {
     Raw.RecastDebugDraw.debugDrawHeightfieldWalkable(
       this.debugDrawImpl,
       hf.raw
     );
   }
 
-  debugDrawCompactHeightfieldSolid(chf: RecastCompactHeightfield): void {
+  drawCompactHeightfieldSolid(chf: RecastCompactHeightfield): void {
     Raw.RecastDebugDraw.debugDrawCompactHeightfieldSolid(
       this.debugDrawImpl,
       chf.raw
     );
   }
 
-  debugDrawCompactHeightfieldRegions(chf: RecastCompactHeightfield): void {
+  drawCompactHeightfieldRegions(chf: RecastCompactHeightfield): void {
     Raw.RecastDebugDraw.debugDrawCompactHeightfieldRegions(
       this.debugDrawImpl,
       chf.raw
     );
   }
 
-  debugDrawCompactHeightfieldDistance(chf: RecastCompactHeightfield): void {
+  drawCompactHeightfieldDistance(chf: RecastCompactHeightfield): void {
     Raw.RecastDebugDraw.debugDrawCompactHeightfieldDistance(
       this.debugDrawImpl,
       chf.raw
     );
   }
 
-  debugDrawHeightfieldLayer(layer: RecastHeightfieldLayer, idx: number): void {
+  drawHeightfieldLayer(layer: RecastHeightfieldLayer, idx: number): void {
     Raw.RecastDebugDraw.debugDrawHeightfieldLayer(
       this.debugDrawImpl,
       layer.raw,
@@ -165,14 +165,14 @@ export class DebugDrawer extends THREE.Group {
     );
   }
 
-  debugDrawHeightfieldLayers(lset: RecastHeightfieldLayerSet): void {
+  drawHeightfieldLayers(lset: RecastHeightfieldLayerSet): void {
     Raw.RecastDebugDraw.debugDrawHeightfieldLayers(
       this.debugDrawImpl,
       lset.raw
     );
   }
 
-  debugDrawRegionConnections(cset: RecastContourSet, alpha: number): void {
+  drawRegionConnections(cset: RecastContourSet, alpha: number): void {
     Raw.RecastDebugDraw.debugDrawRegionConnections(
       this.debugDrawImpl,
       cset.raw,
@@ -180,7 +180,7 @@ export class DebugDrawer extends THREE.Group {
     );
   }
 
-  debugDrawRawContours(cset: RecastContourSet, alpha: number): void {
+  drawRawContours(cset: RecastContourSet, alpha: number): void {
     Raw.RecastDebugDraw.debugDrawRawContours(
       this.debugDrawImpl,
       cset.raw,
@@ -188,19 +188,19 @@ export class DebugDrawer extends THREE.Group {
     );
   }
 
-  debugDrawContours(cset: RecastContourSet, alpha: number): void {
+  drawContours(cset: RecastContourSet, alpha: number): void {
     Raw.RecastDebugDraw.debugDrawContours(this.debugDrawImpl, cset.raw, alpha);
   }
 
-  debugDrawPolyMesh(mesh: RecastPolyMesh): void {
+  drawPolyMesh(mesh: RecastPolyMesh): void {
     Raw.RecastDebugDraw.debugDrawPolyMesh(this.debugDrawImpl, mesh.raw);
   }
 
-  debugDrawPolyMeshDetail(dmesh: RecastPolyMeshDetail): void {
+  drawPolyMeshDetail(dmesh: RecastPolyMeshDetail): void {
     Raw.RecastDebugDraw.debugDrawPolyMeshDetail(this.debugDrawImpl, dmesh.raw);
   }
 
-  debugDrawNavMesh(mesh: NavMesh, flags: number): void {
+  drawNavMesh(mesh: NavMesh, flags: number = 0): void {
     Raw.DetourDebugDraw.debugDrawNavMesh(
       this.debugDrawImpl,
       mesh.raw.getNavMesh(),
@@ -208,10 +208,10 @@ export class DebugDrawer extends THREE.Group {
     );
   }
 
-  debugDrawNavMeshWithClosedList(
+  drawNavMeshWithClosedList(
     mesh: NavMesh,
     query: NavMeshQuery,
-    flags: number
+    flags: number = 0
   ): void {
     Raw.DetourDebugDraw.debugDrawNavMeshWithClosedList(
       this.debugDrawImpl,
@@ -221,32 +221,28 @@ export class DebugDrawer extends THREE.Group {
     );
   }
 
-  debugDrawNavMeshNodes(query: NavMeshQuery): void {
+  drawNavMeshNodes(query: NavMeshQuery): void {
     Raw.DetourDebugDraw.debugDrawNavMeshNodes(
       this.debugDrawImpl,
       query.raw.m_navQuery
     );
   }
 
-  debugDrawNavMeshBVTree(mesh: NavMesh): void {
+  drawNavMeshBVTree(mesh: NavMesh): void {
     Raw.DetourDebugDraw.debugDrawNavMeshBVTree(
       this.debugDrawImpl,
       mesh.raw.m_navMesh
     );
   }
 
-  debugDrawNavMeshPortals(mesh: NavMesh): void {
+  drawNavMeshPortals(mesh: NavMesh): void {
     Raw.DetourDebugDraw.debugDrawNavMeshPortals(
       this.debugDrawImpl,
       mesh.raw.m_navMesh
     );
   }
 
-  debugDrawNavMeshPolysWithFlags(
-    mesh: NavMesh,
-    flags: number,
-    col: number
-  ): void {
+  drawNavMeshPolysWithFlags(mesh: NavMesh, flags: number, col: number): void {
     Raw.DetourDebugDraw.debugDrawNavMeshPolysWithFlags(
       this.debugDrawImpl,
       mesh.raw.m_navMesh,
@@ -255,7 +251,7 @@ export class DebugDrawer extends THREE.Group {
     );
   }
 
-  debugDrawNavMeshPoly(mesh: NavMesh, ref: number, col: number): void {
+  drawNavMeshPoly(mesh: NavMesh, ref: number, col: number): void {
     Raw.DetourDebugDraw.debugDrawNavMeshPoly(
       this.debugDrawImpl,
       mesh.raw.m_navMesh,
@@ -265,10 +261,10 @@ export class DebugDrawer extends THREE.Group {
   }
 
   // todo:
-  // - debugDrawTileCacheLayerAreas
-  // - debugDrawTileCacheLayerRegions
-  // - debugDrawTileCacheContours
-  // - debugDrawTileCachePolyMesh
+  // - drawTileCacheLayerAreas
+  // - drawTileCacheLayerRegions
+  // - drawTileCacheContours
+  // - drawTileCachePolyMesh
 
   resize(width: number, height: number): void {
     this.lineMaterial.resolution.set(width, height);

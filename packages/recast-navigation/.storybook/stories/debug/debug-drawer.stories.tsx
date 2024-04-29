@@ -1,12 +1,10 @@
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
-import { threeToSoloNavMesh } from '@recast-navigation/three';
-import { DebugDrawer } from '@recast-navigation/three';
+import { DebugDrawer, threeToSoloNavMesh } from '@recast-navigation/three';
 import React, { useEffect, useState } from 'react';
 import { Group, Mesh } from 'three';
 import { NavTestEnvironment } from '../../common/nav-test-environment';
 import { decorators } from '../../decorators';
 import { parameters } from '../../parameters';
-import { NavMeshQuery } from '@recast-navigation/core';
 
 export default {
   title: 'Debug / Three Debug Drawer',
@@ -70,33 +68,33 @@ const DebugDraw = ({ example, showModel = false }: DebugDrawProps) => {
     debugDrawer.resize(window.innerWidth, window.innerHeight);
 
     if (example === DebugDrawExample.HEIGHTFIELD_SOLID) {
-      debugDrawer.debugDrawHeightfieldSolid(intermediates.heightfield!);
+      debugDrawer.drawHeightfieldSolid(intermediates.heightfield!);
     } else if (example === DebugDrawExample.HEIGHTFIELD_WALKABLE) {
-      debugDrawer.debugDrawHeightfieldWalkable(intermediates.heightfield!);
+      debugDrawer.drawHeightfieldWalkable(intermediates.heightfield!);
     } else if (example === DebugDrawExample.COMPACT_HEIGHTFIELD_SOLID) {
-      debugDrawer.debugDrawCompactHeightfieldSolid(
+      debugDrawer.drawCompactHeightfieldSolid(
         intermediates.compactHeightfield!
       );
     } else if (example === DebugDrawExample.COMPACT_HEIGHTFIELD_REGIONS) {
-      debugDrawer.debugDrawCompactHeightfieldRegions(
+      debugDrawer.drawCompactHeightfieldRegions(
         intermediates.compactHeightfield!
       );
     } else if (example === DebugDrawExample.COMPACT_HEIGHTFIELD_DISTANCE) {
-      debugDrawer.debugDrawCompactHeightfieldDistance(
+      debugDrawer.drawCompactHeightfieldDistance(
         intermediates.compactHeightfield!
       );
     } else if (example === DebugDrawExample.RAW_CONTOURS) {
-      debugDrawer.debugDrawRawContours(intermediates.contourSet!, 1);
+      debugDrawer.drawRawContours(intermediates.contourSet!, 1);
     } else if (example === DebugDrawExample.CONTOURS) {
-      debugDrawer.debugDrawContours(intermediates.contourSet!, 1);
+      debugDrawer.drawContours(intermediates.contourSet!, 1);
     } else if (example === DebugDrawExample.POLY_MESH) {
-      debugDrawer.debugDrawPolyMesh(intermediates.polyMesh!);
+      debugDrawer.drawPolyMesh(intermediates.polyMesh!);
     } else if (example === DebugDrawExample.POLY_MESH_DETAIL) {
-      debugDrawer.debugDrawPolyMeshDetail(intermediates.polyMeshDetail!);
+      debugDrawer.drawPolyMeshDetail(intermediates.polyMeshDetail!);
     } else if (example === DebugDrawExample.NAVMESH) {
-      debugDrawer.debugDrawNavMesh(navMesh, 0);
+      debugDrawer.drawNavMesh(navMesh, 0);
     } else if (example === DebugDrawExample.NAVMESH_BV_TREE) {
-      debugDrawer.debugDrawNavMeshBVTree(navMesh);
+      debugDrawer.drawNavMeshBVTree(navMesh);
     }
 
     setDebugDrawer(debugDrawer);

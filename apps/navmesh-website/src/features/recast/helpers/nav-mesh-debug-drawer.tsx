@@ -1,5 +1,10 @@
 import { useEffect, useMemo } from 'react';
-import { NavMesh, RecastHeightfield, RecastPolyMesh, RecastPolyMeshDetail } from 'recast-navigation';
+import {
+  NavMesh,
+  RecastHeightfield,
+  RecastPolyMesh,
+  RecastPolyMeshDetail,
+} from 'recast-navigation';
 import {
   SoloNavMeshGeneratorIntermediates,
   TiledNavMeshGeneratorIntermediates,
@@ -59,7 +64,9 @@ export const NavMeshDebugDrawer = ({
     const polyMeshDetailList: RecastPolyMeshDetail[] = [];
 
     if (intermediates) {
-      const intermediatesList = Array.isArray(intermediates) ? intermediates : [intermediates];
+      const intermediatesList = Array.isArray(intermediates)
+        ? intermediates
+        : [intermediates];
 
       for (const intermediate of intermediatesList) {
         if (intermediate.heightfield) {
@@ -77,18 +84,18 @@ export const NavMeshDebugDrawer = ({
     }
 
     if (option === DebugDrawerOption.NAVMESH) {
-      debug.debugDrawNavMesh(navMesh, 0);
+      debug.drawNavMesh(navMesh, 0);
     } else if (option === DebugDrawerOption.HEIGHTFIELD) {
       for (const heightfield of heightfieldList) {
-        debug.debugDrawHeightfieldWalkable(heightfield);
+        debug.drawHeightfieldWalkable(heightfield);
       }
     } else if (option === DebugDrawerOption.POLY_MESH) {
       for (const polyMesh of polyMeshList) {
-        debug.debugDrawPolyMesh(polyMesh);
+        debug.drawPolyMesh(polyMesh);
       }
     } else if (option === DebugDrawerOption.POLY_MESH_DETAIL) {
       for (const polyMeshDetail of polyMeshDetailList) {
-        debug.debugDrawPolyMeshDetail(polyMeshDetail);
+        debug.drawPolyMeshDetail(polyMeshDetail);
       }
     }
   }, [navMesh, option]);
