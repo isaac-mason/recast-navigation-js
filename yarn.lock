@@ -6306,13 +6306,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^18.2.73":
-  version: 18.2.73
-  resolution: "@types/react@npm:18.2.73"
+"@types/react@npm:^18.3.1":
+  version: 18.3.1
+  resolution: "@types/react@npm:18.3.1"
   dependencies:
     "@types/prop-types": "npm:*"
     csstype: "npm:^3.0.2"
-  checksum: 799e30e73464dff40e04f4eb7499ebc31f99b1711a69263b9af340af738e35c9cdf53084e3dacc3b21c031aaa0cba1b51f4ba60490204b7abb75f115b841583f
+  checksum: baa6b8a75c471c89ebf3477b4feab57102ced25f0c1e553dd04ef6a1f0def28d5e0172fa626a631f22e223f840b5aaa2403b2d4bb671c83c5a9d6c7ae39c7a05
   languageName: node
   linkType: hard
 
@@ -13933,12 +13933,12 @@ __metadata:
     "@pmndrs/assets": "npm:^1.6.0"
     "@react-three/drei": "npm:^9.105.4"
     "@react-three/fiber": "npm:^8.15.12"
-    "@types/react": "npm:^18.2.73"
+    "@types/react": "npm:^18.3.1"
     "@types/react-dom": "npm:^18.2.8"
     "@types/three": "npm:^0.163.0"
     "@vitejs/plugin-react": "npm:^4.2.0"
     leva: "npm:^0.9.35"
-    react: "npm:^18.2.0"
+    react: "npm:^18.3.1"
     react-dom: "npm:^18.2.0"
     react-dropzone: "npm:^14.2.3"
     react-router-dom: "npm:^6.22.1"
@@ -14731,7 +14731,7 @@ __metadata:
     "@react-three/drei": "npm:^9.105.4"
     "@react-three/fiber": "npm:^8.15.12"
     parcel: "npm:^2.11.0"
-    react: "npm:18.2.0"
+    react: "npm:18.3.1"
     recast-navigation: "workspace:^"
     three: "npm:^0.163.0"
   languageName: unknown
@@ -15640,7 +15640,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:18.2.0, react@npm:^16.8.0 || ^17.0.0 || ^18.0.0, react@npm:^18.2.0":
+"react@npm:18.3.1, react@npm:^18.3.1":
+  version: 18.3.1
+  resolution: "react@npm:18.3.1"
+  dependencies:
+    loose-envify: "npm:^1.1.0"
+  checksum: 261137d3f3993eaa2368a83110466fc0e558bc2c7f7ae7ca52d94f03aac945f45146bd85e5f481044db1758a1dbb57879e2fcdd33924e2dde1bdc550ce73f7bf
+  languageName: node
+  linkType: hard
+
+"react@npm:^16.8.0 || ^17.0.0 || ^18.0.0":
   version: 18.2.0
   resolution: "react@npm:18.2.0"
   dependencies:
@@ -15784,12 +15793,12 @@ __metadata:
     "@storybook/addon-mdx-gfm": "npm:^8.0.1"
     "@storybook/react": "npm:^8.0.1"
     "@storybook/react-vite": "npm:^8.0.1"
-    "@types/react": "npm:^18.2.73"
+    "@types/react": "npm:^18.3.1"
     "@types/react-dom": "npm:^18.2.8"
     "@types/three": "npm:^0.163.0"
     eslint: "npm:^8.56.0"
     leva: "npm:^0.9.35"
-    react: "npm:^18.2.0"
+    react: "npm:^18.3.1"
     react-dom: "npm:^18.2.0"
     rollup: "npm:^4.14.0"
     rollup-plugin-copy: "npm:^3.4.0"
@@ -18319,11 +18328,11 @@ __metadata:
   dependencies:
     "@react-three/drei": "npm:^9.105.4"
     "@react-three/fiber": "npm:^8.15.12"
-    "@types/react": "npm:^18.2.73"
+    "@types/react": "npm:^18.3.1"
     "@types/react-dom": "npm:^18.2.8"
     "@types/three": "npm:^0.163.0"
     "@vitejs/plugin-react": "npm:^4.2.0"
-    react: "npm:^18.2.0"
+    react: "npm:^18.3.1"
     react-dom: "npm:^18.2.0"
     recast-navigation: "npm:0.25.0"
     suspend-react: "npm:^0.1.3"
