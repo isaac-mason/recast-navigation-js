@@ -248,8 +248,8 @@ const Editor = () => {
           hidden={!model}
           theme={{
             sizes: {
-              rootWidth: '350px',
-              controlWidth: '100px',
+              rootWidth: '400px',
+              controlWidth: '150px',
             },
           }}
         />

@@ -180,7 +180,7 @@ export const useDisplayOptionsControls = () => {
       },
       navMeshDebugDrawOption: {
         label: 'Display',
-        value: 'navmesh',
+        value: DebugDrawerOption.NAVMESH,
         options: Object.values(DebugDrawerOption),
       },
     }
