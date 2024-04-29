@@ -122,19 +122,18 @@ export const generateTiledNavMesh = (
     tileIntermediates: [],
   };
 
-  /* verts */
-  const verts = positions as number[];
-  const nVerts = indices.length;
-  const verticesArray = new VerticesArray();
-  verticesArray.copy(verts);
-
-  /* tris */
-  const tris = indices as number[];
-  const nTris = indices.length / 3;
-  const trianglesArray = new TrianglesArray();
-  trianglesArray.copy(tris);
-
   const navMesh = new NavMesh();
+
+  /* input geometry */
+  const vertices = positions as number[];
+  const numVertices = indices.length;
+  const verticesArray = new VerticesArray();
+  verticesArray.copy(vertices);
+
+  const triangles = indices as number[];
+  const numTriangles = indices.length / 3;
+  const trianglesArray = new TrianglesArray();
+  trianglesArray.copy(triangles);
 
   const cleanup = () => {
     verticesArray.free();
@@ -247,7 +246,7 @@ export const generateTiledNavMesh = (
   const chunkyTriMesh = new RecastChunkyTriMesh();
   intermediates.chunkyTriMesh = chunkyTriMesh;
 
-  if (!chunkyTriMesh.init(verticesArray, trianglesArray, nTris, 256)) {
+  if (!chunkyTriMesh.init(verticesArray, trianglesArray, numTriangles, 256)) {
     return fail('Failed to build chunky triangle mesh');
   }
 
@@ -327,7 +326,7 @@ export const generateTiledNavMesh = (
     );
     buildContext.log(
       Raw.Module.RC_LOG_PROGRESS,
-      ` - ${nVerts / 1000}fK verts, ${nTris / 1000}K tris`
+      ` - ${numVertices / 1000}fK verts, ${numTriangles / 1000}K tris`
     );
 
     // Allocate voxel heightfield where we rasterize our input data to.
@@ -397,7 +396,7 @@ export const generateTiledNavMesh = (
         buildContext,
         tileConfig.walkableSlopeAngle,
         verticesArray,
-        nVerts,
+        numVertices,
         nodeTrianglesArray,
         nNodeTris,
         triangleAreasArray
@@ -406,7 +405,7 @@ export const generateTiledNavMesh = (
       const success = rasterizeTriangles(
         buildContext,
         verticesArray,
-        nVerts,
+        numVertices,
         nodeTrianglesArray,
         triangleAreasArray,
         nNodeTris,

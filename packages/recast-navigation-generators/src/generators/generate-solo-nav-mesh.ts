@@ -141,16 +141,17 @@ export const generateSoloNavMesh = (
       error,
     };
   };
-
-  const verts = positions as number[];
-  const nVerts = indices.length;
+  
+  /* input geometry */
+  const vertices = positions as number[];
+  const numVertices = indices.length;
   const verticesArray = new VerticesArray();
-  verticesArray.copy(verts);
+  verticesArray.copy(vertices);
 
-  const tris = indices as number[];
-  const nTris = indices.length / 3;
+  const triangles = indices as number[];
+  const numTriangles = indices.length / 3;
   const trianglesArray = new TrianglesArray();
-  trianglesArray.copy(tris);
+  trianglesArray.copy(triangles);
 
   const { bbMin, bbMax } = getBoundingBox(positions, indices);
 
@@ -198,15 +199,15 @@ export const generateSoloNavMesh = (
   // If your input data is multiple meshes, you can transform them here, calculate
   // the are type for each of the meshes and rasterize them.
   const triangleAreasArray = new TriangleAreasArray();
-  triangleAreasArray.resize(nTris);
+  triangleAreasArray.resize(numTriangles);
 
   markWalkableTriangles(
     buildContext,
     config.walkableSlopeAngle,
     verticesArray,
-    nVerts,
+    numVertices,
     trianglesArray,
-    nTris,
+    numTriangles,
     triangleAreasArray
   );
 
@@ -214,10 +215,10 @@ export const generateSoloNavMesh = (
     !rasterizeTriangles(
       buildContext,
       verticesArray,
-      nVerts,
+      numVertices,
       trianglesArray,
       triangleAreasArray,
-      nTris,
+      numTriangles,
       heightfield,
       config.walkableClimb
     )

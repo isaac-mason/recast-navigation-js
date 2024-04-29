@@ -145,15 +145,16 @@ export const generateTileCache = (
   const tileCache = new TileCache();
   const navMesh = new NavMesh();
 
-  const verts = positions as number[];
-  const nVerts = indices.length;
+  /* input geometry */
+  const vertices = positions as number[];
+  const numVertices = indices.length;
   const verticesArray = new VerticesArray();
-  verticesArray.copy(verts);
+  verticesArray.copy(vertices);
 
-  const tris = indices as number[];
-  const nTris = indices.length / 3;
+  const triangles = indices as number[];
+  const numTriangles = indices.length / 3;
   const trianglesArray = new TrianglesArray();
-  trianglesArray.copy(tris);
+  trianglesArray.copy(triangles);
 
   const { bbMin, bbMax } = getBoundingBox(positions, indices);
 
@@ -293,7 +294,7 @@ export const generateTileCache = (
   const chunkyTriMesh = new RecastChunkyTriMesh();
   intermediates.chunkyTriMesh = chunkyTriMesh;
 
-  if (!chunkyTriMesh.init(verticesArray, trianglesArray, nTris, 256)) {
+  if (!chunkyTriMesh.init(verticesArray, trianglesArray, numTriangles, 256)) {
     return fail('Failed to build chunky triangle mesh');
   }
 
@@ -389,7 +390,7 @@ export const generateTileCache = (
         buildContext,
         tileConfig.walkableSlopeAngle,
         verticesArray,
-        nVerts,
+        numVertices,
         nodeTrianglesArray,
         nNodeTris,
         triangleAreasArray
@@ -398,7 +399,7 @@ export const generateTileCache = (
       const success = rasterizeTriangles(
         buildContext,
         verticesArray,
-        nVerts,
+        numVertices,
         nodeTrianglesArray,
         triangleAreasArray,
         nNodeTris,
