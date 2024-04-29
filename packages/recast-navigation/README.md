@@ -48,9 +48,9 @@ npm install recast-navigation
 <script type="importmap">
   {
     "imports": {
-      "@recast-navigation/core": "https://unpkg.com/@recast-navigation/core@0.24.1/dist/index.mjs",
-      "@recast-navigation/generators": "https://unpkg.com/@recast-navigation/generators@0.24.1/dist/index.mjs",
-      "@recast-navigation/three": "https://unpkg.com/@recast-navigation/three@0.24.1/dist/index.mjs"
+      "@recast-navigation/core": "https://unpkg.com/@recast-navigation/core@0.27.0/dist/index.mjs",
+      "@recast-navigation/generators": "https://unpkg.com/@recast-navigation/generators@0.27.0/dist/index.mjs",
+      "@recast-navigation/three": "https://unpkg.com/@recast-navigation/three@0.27.0/dist/index.mjs"
     }
   }
 </script>
