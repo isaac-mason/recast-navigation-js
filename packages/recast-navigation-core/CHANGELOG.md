@@ -1,5 +1,31 @@
 # @recast-navigation/core
 
+## 0.27.0
+
+### Minor Changes
+
+- b67a423: feat: simplify return type of NavMesh getTileAndPolyByRef, getTileAndPolyByRefUnsafe
+
+  usage change from:
+
+  ```ts
+  const result = navMesh.getTileAndPolyByRef(ref);
+  const status = result.status();
+  const tile = result.tile();
+  const poly = result.poly();
+  ```
+
+  to:
+
+  ```ts
+  const { success, status, tile, poly } = navMesh.getTileAndPolyByRef(ref);
+  ```
+
+### Patch Changes
+
+- Updated dependencies [3e73069]
+  - @recast-navigation/wasm@0.27.0
+
 ## 0.26.0
 
 ### Minor Changes

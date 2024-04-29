@@ -1,5 +1,11 @@
 # @recast-navigation/wasm
 
+## 0.27.0
+
+### Patch Changes
+
+- 3e73069: feat: bump emsdk from 3.1.44 to 3.1.58
+
 ## 0.26.0
 
 ## 0.25.0
