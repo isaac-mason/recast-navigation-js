@@ -1,5 +1,19 @@
 # @recast-navigation/three
 
+## 0.26.0
+
+### Minor Changes
+
+- 7c1b9f9: feat(three): rename DebugDrawer methods from 'debugDraw*' to 'draw*'
+
+### Patch Changes
+
+- 6161d8b: fix: @recast-navigation/generators should not be included in @recast-navigation/three bundle
+- Updated dependencies [6161d8b]
+- Updated dependencies [6161d8b]
+  - @recast-navigation/generators@0.26.0
+  - @recast-navigation/core@0.26.0
+
 ## 0.25.0
 
 ### Minor Changes

@@ -1,5 +1,48 @@
 # recast-navigation
 
+## 0.26.0
+
+### Minor Changes
+
+- 7c1b9f9: feat(three): rename DebugDrawer methods from 'debugDraw*' to 'draw*'
+- 6161d8b: feat: remove 'Arrays' export, add wrapped array classes
+
+  usage changed from:
+
+  ```ts
+  import { Arrays } from "@recast-navigation/core";
+
+  Arrays.VertsArray;
+  Arrays.TrisArray;
+  Arrays.TriAreasArray;
+  Arrays.ChunkIdsArray;
+  Arrays.TileCacheData;
+  ```
+
+  to:
+
+  ```ts
+  import {
+    VerticesArray,
+    TrianglesArray,
+    TringleAreasArray,
+    ChunkIdsArray,
+    TileCacheData,
+  } from "@recast-navigation/core";
+  ```
+
+  The `.copy` method now directly copies the data from the source array to the emscripten heap. This should improve performance when copying large arrays.
+
+### Patch Changes
+
+- 6161d8b: fix: @recast-navigation/generators should not be included in @recast-navigation/three bundle
+- Updated dependencies [7c1b9f9]
+- Updated dependencies [6161d8b]
+- Updated dependencies [6161d8b]
+  - @recast-navigation/three@0.26.0
+  - @recast-navigation/generators@0.26.0
+  - @recast-navigation/core@0.26.0
+
 ## 0.25.0
 
 ### Minor Changes
