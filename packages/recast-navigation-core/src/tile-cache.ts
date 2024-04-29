@@ -3,7 +3,7 @@ import { NavMeshCreateParams } from './detour';
 import { NavMesh } from './nav-mesh';
 import { Raw } from './raw';
 import type R from './raw-module';
-import { vec3, Vector3 } from './utils';
+import { Vector3, vec3 } from './utils';
 
 export type ObstacleRef = R.dtObstacleRef;
 

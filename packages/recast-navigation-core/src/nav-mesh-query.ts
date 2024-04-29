@@ -2,7 +2,7 @@ import { FloatArray, UnsignedCharArray, UnsignedIntArray } from './arrays';
 import { NavMesh } from './nav-mesh';
 import { Raw } from './raw';
 import type R from './raw-module';
-import { array, vec3, Vector3 } from './utils';
+import { Vector3, array, vec3 } from './utils';
 
 export class QueryFilter {
   raw: R.dtQueryFilter;
@@ -219,9 +219,9 @@ export class NavMeshQuery {
     );
 
     const polyCount = polyCountRef.value;
-    
-    const polyRefs = [...polysRefsArray.getHeapView()]
-    polysRefsArray.free()
+
+    const polyRefs = [...polysRefsArray.getHeapView()];
+    polysRefsArray.free();
 
     return {
       success: Raw.Detour.statusSucceed(status),
@@ -428,7 +428,7 @@ export class NavMeshQuery {
     );
 
     const visited = [...visitedArray.getHeapView()];
-    visitedArray.free()
+    visitedArray.free();
 
     return {
       success: Raw.Detour.statusSucceed(status),

@@ -1,8 +1,8 @@
 import { Vector3Tuple } from 'three';
+import { FloatArray, IntArray, UnsignedCharArray } from './arrays';
 import { Raw } from './raw';
 import type R from './raw-module';
 import { Vector2Tuple, Vector3, array, vec3 } from './utils';
-import { FloatArray, IntArray, UnsignedCharArray } from './arrays';
 
 export type RecastConfig = {
   /**
