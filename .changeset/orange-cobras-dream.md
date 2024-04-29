@@ -22,4 +22,6 @@ to:
 
 ```ts
 import { VerticesArray, TrianglesArray, TringleAreasArray, ChunkIdsArray, TileCacheData } from '@recast-navigation/core';
-`
+```
+
+The `.copy` method now directly copies the data from the source array to the emscripten heap. This should improve performance when copying large arrays.
