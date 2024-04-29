@@ -172,7 +172,7 @@ export class DebugDrawer extends THREE.Group {
     );
   }
 
-  drawRegionConnections(cset: RecastContourSet, alpha: number): void {
+  drawRegionConnections(cset: RecastContourSet, alpha: number = 1): void {
     Raw.RecastDebugDraw.debugDrawRegionConnections(
       this.debugDrawImpl,
       cset.raw,
@@ -180,7 +180,7 @@ export class DebugDrawer extends THREE.Group {
     );
   }
 
-  drawRawContours(cset: RecastContourSet, alpha: number): void {
+  drawRawContours(cset: RecastContourSet, alpha: number = 1): void {
     Raw.RecastDebugDraw.debugDrawRawContours(
       this.debugDrawImpl,
       cset.raw,
@@ -188,7 +188,7 @@ export class DebugDrawer extends THREE.Group {
     );
   }
 
-  drawContours(cset: RecastContourSet, alpha: number): void {
+  drawContours(cset: RecastContourSet, alpha: number = 1): void {
     Raw.RecastDebugDraw.debugDrawContours(this.debugDrawImpl, cset.raw, alpha);
   }
 
