@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { Group, Mesh } from 'three';
 import { NavTestEnvironment } from '../../common/nav-test-environment';
-import { decorators } from '../../decorators';
+import { decorators, htmlTunnel } from '../../decorators';
 import { parameters } from '../../parameters';
 
 export default {
@@ -139,6 +139,21 @@ export const FloodFillPruning = () => {
       {debug && <primitive object={debug} />}
 
       <OrbitControls makeDefault />
+
+      <htmlTunnel.In>
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            color: 'white',
+            padding: 24,
+            userSelect: 'none',
+            fontFamily: 'monospace',
+          }}
+        >
+          click to set flood fill start point
+        </div>
+      </htmlTunnel.In>
     </>
   );
 };
