@@ -12,7 +12,8 @@
   "bugs": {
     "url": "https://github.com/isaac-mason/recast-navigation-js/issues"
   },
-  "main": "./dist/index.cjs",
+  "type": "module",
+  "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "files": [
@@ -29,8 +30,11 @@
     "@recast-navigation/wasm": "0.27.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.24.4",
+    "@babel/core": "^7.24.5",
+    "@babel/preset-env": "^7.24.5",
+    "@babel/preset-typescript": "^7.24.1",
     "@isaac-mason/eslint-config-typescript": "^0.0.5",
+    "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@rollup/plugin-terser": "^0.4.3",

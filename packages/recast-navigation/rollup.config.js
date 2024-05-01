@@ -1,24 +1,38 @@
+import babel from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
-import { nodeResolve } from '@rollup/plugin-node-resolve';
+import resolve from '@rollup/plugin-node-resolve';
 import terser from '@rollup/plugin-terser';
 import typescript from '@rollup/plugin-typescript';
 import path from 'path';
 import filesize from 'rollup-plugin-filesize';
 
-const commonOutput = {
-  sourcemap: true,
-  exports: 'named',
+const babelOptions = {
+  babelrc: false,
+  extensions: ['.ts'],
+  exclude: '**/node_modules/**',
+  babelHelpers: 'bundled',
+  presets: [
+    [
+      '@babel/preset-env',
+      {
+        loose: true,
+        modules: false,
+        targets: '>1%, not dead, not ie 11, not op_mini all',
+      },
+    ],
+    '@babel/preset-typescript',
+  ],
 };
 
 const plugins = [
   terser(),
-  nodeResolve(),
+  resolve(),
   commonjs(),
   typescript({
     tsconfig: path.resolve(__dirname, `tsconfig.json`),
-    sourceMap: true,
-    inlineSources: true,
+    emitDeclarationOnly: true,
   }),
+  babel(babelOptions),
   filesize(),
 ];
 
@@ -29,12 +43,8 @@ const entrypoint = ({ name, external }) => ({
     {
       file: `./${name}.mjs`,
       format: 'es',
-      ...commonOutput,
-    },
-    {
-      file: `./${name}.cjs`,
-      format: 'cjs',
-      ...commonOutput,
+      sourcemap: true,
+      exports: 'named',
     },
   ],
   plugins,
@@ -42,7 +52,10 @@ const entrypoint = ({ name, external }) => ({
 
 export default [
   entrypoint({ name: 'index', external: ['@recast-navigation/core'] }),
-  entrypoint({ name: 'generators', external: ['@recast-navigation/core'] }),
+  entrypoint({
+    name: 'generators',
+    external: ['@recast-navigation/core', '@recast-navigation/generators'],
+  }),
   entrypoint({
     name: 'three',
     external: ['@recast-navigation/core', '@recast-navigation/three', 'three'],

@@ -34,7 +34,7 @@ Demonstrations of how to use the library in different environments (such as Node
 
 ## Installation
 
-This package ships as both ECMAScript modules and CJS, and is compatible with Node.js and browser environments.
+`recast-navigation-js` ships as ECMAScript modules, and is compatible with Node.js and browser environments.
 
 **NPM**
 
