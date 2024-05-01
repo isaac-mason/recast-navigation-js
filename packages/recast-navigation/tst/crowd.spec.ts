@@ -1,19 +1,21 @@
-import { Crowd, NavMesh, NavMeshQuery, init } from 'recast-navigation';
+import { Crowd, NavMesh, NavMeshQuery, Raw, init } from 'recast-navigation';
 import { generateSoloNavMesh } from 'recast-navigation/generators';
 import { BoxGeometry, BufferAttribute, Mesh } from 'three';
 import { beforeAll, beforeEach, describe, expect, test } from 'vitest';
 import { expectVectorToBeCloseTo } from './utils';
 
 describe('Crowd', () => {
-  beforeAll(async () => {
-    await init();
-  });
+  // beforeAll(async () => {
+  //   await init();
+  // });
 
   let navMesh: NavMesh;
   let navMeshQuery: NavMeshQuery;
   let crowd: Crowd;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    await init();
+
     const mesh = new Mesh(new BoxGeometry(5, 0.1, 5));
 
     const positions = (

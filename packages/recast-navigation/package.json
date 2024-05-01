@@ -24,24 +24,25 @@
   "bugs": {
     "url": "https://github.com/isaac-mason/recast-navigation-js/issues"
   },
-  "main": "./index.cjs",
+  "type": "module",
+  "main": "./index.mjs",
   "module": "./index.mjs",
   "types": "./index.d.ts",
   "exports": {
     ".": {
       "types": "./index.d.ts",
       "import": "./index.mjs",
-      "require": "./index.cjs"
+      "default": "./index.mjs"
     },
     "./generators": {
       "types": "./generators.d.ts",
       "import": "./generators.mjs",
-      "require": "./generators.cjs"
+      "default": "./generators.mjs"
     },
     "./three": {
       "types": "./three.d.ts",
       "import": "./three.mjs",
-      "require": "./index.cjs"
+      "default": "./three.mjs"
     }
   },
   "files": [
@@ -77,12 +78,15 @@
     "@recast-navigation/three": "0.27.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.24.4",
+    "@babel/core": "^7.24.5",
+    "@babel/preset-env": "^7.24.5",
+    "@babel/preset-typescript": "^7.24.1",
     "@isaac-mason/eslint-config-typescript": "^0.0.5",
     "@mdx-js/react": "^2.3.0",
     "@pmndrs/assets": "^1.6.0",
     "@react-three/drei": "^9.105.4",
     "@react-three/fiber": "^8.15.12",
+    "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@rollup/plugin-terser": "^0.4.3",

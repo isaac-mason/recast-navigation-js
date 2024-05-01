@@ -6,7 +6,7 @@ The `recast-navigation-js` repository is structured as a yarn monorepo. You will
 
 ### Node Installation
 
-**This project uses node 18.**
+**This project uses node 22.**
 
 If you don't already use a node version manager. Give nvm a try if you don't already have one.
 
