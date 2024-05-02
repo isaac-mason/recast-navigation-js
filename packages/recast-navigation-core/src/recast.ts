@@ -286,6 +286,16 @@ export class RecastBuildContext {
 export class RecastChunkyTriMesh {
   raw: R.rcChunkyTriMesh;
 
+  /**
+   * Creates a new RecastChunkyTriMesh.
+   */
+  constructor()
+
+  /**
+   * Creates a wrapper around an existing raw RecastChunkyTriMesh object.
+   */
+  constructor(raw: R.rcChunkyTriMesh)
+
   constructor(raw?: R.rcChunkyTriMesh) {
     this.raw = raw ?? new Raw.rcChunkyTriMesh();
   }

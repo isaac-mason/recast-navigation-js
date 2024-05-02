@@ -134,6 +134,17 @@ export class NavMeshParams {
 export class NavMesh {
   raw: R.NavMesh;
 
+  /**
+   * Constructs a new NavMesh
+   */
+  constructor()
+
+  /**
+   * Creates a wrapper around a raw NavMesh object
+   * @param raw raw object
+   */
+  constructor(raw: R.NavMesh)
+
   constructor(raw?: R.NavMesh) {
     this.raw = raw ?? new Raw.Module.NavMesh();
   }
