@@ -92,6 +92,17 @@ export class TileCache {
 
   obstacles: Map<ObstacleRef, Obstacle> = new Map();
 
+  /**
+   * Constructs a new TileCache
+   */
+  constructor()
+
+  /**
+   * Creates a wrapper around a raw TileCache object
+   * @param raw raw object
+   */
+  constructor(raw: R.TileCache)
+
   constructor(raw?: R.TileCache) {
     this.raw = raw ?? new Raw.Module.TileCache();
   }

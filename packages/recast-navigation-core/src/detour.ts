@@ -396,6 +396,16 @@ export type OffMeshConnectionParams = {
 export class NavMeshCreateParams {
   raw: R.dtNavMeshCreateParams;
 
+  /**
+   * Creates a new NavMeshCreateParams object.
+   */
+  constructor()
+
+  /**
+   * Creates a wrapper around an existing raw NavMeshCreateParams object.
+   */
+  constructor(raw: R.dtNavMeshCreateParams)
+
   constructor(raw?: R.dtNavMeshCreateParams) {
     this.raw = raw ?? new Raw.Module.dtNavMeshCreateParams();
   }

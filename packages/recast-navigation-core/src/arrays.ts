@@ -80,6 +80,16 @@ abstract class BaseArray<
 export class IntArray extends BaseArray<RawModule.IntArray, typeof Int32Array> {
   typedArrayClass = Int32Array;
 
+  /**
+   * Creates a new IntArray.
+   */
+  constructor();
+
+  /**
+   * Creates a wrapper around an existing raw IntArray object.
+   */
+  constructor(raw: RawModule.IntArray);
+
   constructor(raw?: RawModule.IntArray) {
     super(raw ?? new Raw.Module.IntArray());
   }
@@ -88,7 +98,7 @@ export class IntArray extends BaseArray<RawModule.IntArray, typeof Int32Array> {
     return Raw.Module.HEAP32;
   }
 
-  static fromRaw(raw?: RawModule.IntArray) {
+  static fromRaw(raw: RawModule.IntArray) {
     return new this(raw);
   }
 }
@@ -99,6 +109,16 @@ export class UnsignedIntArray extends BaseArray<
 > {
   typedArrayClass = Uint32Array;
 
+  /**
+   * Creates a new UnsignedIntArray.
+   */
+  constructor();
+
+  /**
+   * Creates a wrapper around an existing raw UnsignedIntArray object.
+   */
+  constructor(raw: RawModule.UnsignedIntArray);
+
   constructor(raw?: RawModule.UnsignedIntArray) {
     super(raw ?? new Raw.Module.UnsignedIntArray());
   }
@@ -107,7 +127,7 @@ export class UnsignedIntArray extends BaseArray<
     return Raw.Module.HEAPU32;
   }
 
-  static fromRaw(raw?: RawModule.UnsignedIntArray) {
+  static fromRaw(raw: RawModule.UnsignedIntArray) {
     return new this(raw);
   }
 }
@@ -118,6 +138,16 @@ export class UnsignedCharArray extends BaseArray<
 > {
   typedArrayClass = Uint8Array;
 
+  /**
+   * Creates a new UnsignedCharArray.
+   */
+  constructor();
+
+  /**
+   * Creates a wrapper around an existing raw UnsignedCharArray object.
+   */
+  constructor(raw: RawModule.UnsignedCharArray);
+
   constructor(raw?: RawModule.UnsignedCharArray) {
     super(raw ?? new Raw.Module.UnsignedCharArray());
   }
@@ -126,7 +156,7 @@ export class UnsignedCharArray extends BaseArray<
     return Raw.Module.HEAPU8;
   }
 
-  static fromRaw(raw?: RawModule.UnsignedCharArray) {
+  static fromRaw(raw: RawModule.UnsignedCharArray) {
     return new this(raw);
   }
 }
@@ -137,6 +167,16 @@ export class UnsignedShortArray extends BaseArray<
 > {
   typedArrayClass = Uint16Array;
 
+  /**
+   * Creates a new UnsignedShortArray.
+   */
+  constructor();
+
+  /**
+   * Creates a wrapper around an existing raw UnsignedShortArray object.
+   */
+  constructor(raw: RawModule.UnsignedShortArray);
+
   constructor(raw?: RawModule.UnsignedShortArray) {
     super(raw ?? new Raw.Module.UnsignedShortArray());
   }
@@ -145,7 +185,7 @@ export class UnsignedShortArray extends BaseArray<
     return Raw.Module.HEAPU16;
   }
 
-  static fromRaw(raw?: RawModule.UnsignedShortArray) {
+  static fromRaw(raw: RawModule.UnsignedShortArray) {
     return new this(raw);
   }
 }
@@ -156,6 +196,16 @@ export class FloatArray extends BaseArray<
 > {
   typedArrayClass = Float32Array;
 
+  /**
+   * Creates a new FloatArray.
+   */
+  constructor();
+
+  /**
+   * Creates a wrapper around an existing raw FloatArray object.
+   */
+  constructor(raw: RawModule.FloatArray);
+
   constructor(raw?: RawModule.FloatArray) {
     super(raw ?? new Raw.Module.FloatArray());
   }
@@ -164,7 +214,7 @@ export class FloatArray extends BaseArray<
     return Raw.Module.HEAPF32;
   }
 
-  static fromRaw(raw?: RawModule.FloatArray) {
+  static fromRaw(raw: RawModule.FloatArray) {
     return new this(raw);
   }
 }

@@ -23,6 +23,17 @@ export class QueryFilter {
     this.raw.setExcludeFlags(flags);
   }
 
+  /**
+   * Constructs a new query filter object.
+   */
+  constructor();
+
+  /**
+   * Constructs a query filter wrapper for a raw dtQueryFilter object.
+   * @param raw
+   */
+  constructor(raw: R.dtQueryFilter);
+
   constructor(raw?: R.dtQueryFilter) {
     this.raw = raw ?? new Raw.Module.dtQueryFilter();
   }
@@ -37,12 +48,23 @@ export class QueryFilter {
 }
 
 export type NavMeshQueryParams = {
-  navMesh: NavMesh;
-
   /**
    * @default 2048
    */
   maxNodes?: number;
+
+  /**
+   * Default query filter.
+   *
+   * If omitted, the default filter will include all flags and exclude none.
+   *
+   * ```ts
+   * this.defaultFilter = new QueryFilter();
+   * this.defaultFilter.includeFlags = 0xffff;
+   * this.defaultFilter.excludeFlags = 0;
+   * ```
+   */
+  defaultQueryFilter?: QueryFilter;
 };
 
 export class NavMeshQuery {
@@ -58,17 +80,44 @@ export class NavMeshQuery {
    */
   defaultQueryHalfExtents = { x: 1, y: 1, z: 1 };
 
-  constructor(value: R.NavMeshQuery | NavMeshQueryParams) {
+  /**
+   * Constructs a new navigation mesh query object.
+   * @param navMesh the navigation mesh to use for the query
+   * @param params optional additional parameters
+   *
+   * @example
+   * ```ts
+   * const query = new NavMeshQuery(navMesh);
+   * ```
+   *
+   * @example
+   * ```ts
+   * const query = new NavMeshQuery(navMesh, { maxNodes: 2048 });
+   * ```
+   */
+  constructor(navMesh: NavMesh, params?: NavMeshQueryParams);
+
+  /**
+   * Constructs a navigation mesh query object from a raw object.
+   * @param raw
+   */
+  constructor(raw: R.NavMeshQuery);
+
+  constructor(value: R.NavMeshQuery | NavMesh, params?: NavMeshQueryParams) {
     if (value instanceof Raw.Module.NavMeshQuery) {
       this.raw = value;
     } else {
       this.raw = new Raw.Module.NavMeshQuery();
-      this.raw.init(value.navMesh.raw, value.maxNodes ?? 2048);
+      this.raw.init(value.raw, params?.maxNodes ?? 2048);
     }
 
-    this.defaultFilter = new QueryFilter();
-    this.defaultFilter.includeFlags = 0xffff;
-    this.defaultFilter.excludeFlags = 0;
+    if (params?.defaultQueryFilter) {
+      this.defaultFilter = params.defaultQueryFilter;
+    } else {
+      this.defaultFilter = new QueryFilter();
+      this.defaultFilter.includeFlags = 0xffff;
+      this.defaultFilter.excludeFlags = 0;
+    }
   }
 
   /**

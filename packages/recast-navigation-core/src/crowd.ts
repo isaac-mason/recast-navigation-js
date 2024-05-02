@@ -384,11 +384,6 @@ export type CrowdParams = {
    * [Limit: > 0]
    */
   maxAgentRadius: number;
-
-  /**
-   * The navigation mesh to use for planning.
-   */
-  navMesh: NavMesh;
 };
 
 export class Crowd {
@@ -426,7 +421,20 @@ export class Crowd {
    */
   navMeshQuery: NavMeshQuery;
 
-  constructor({ maxAgents, maxAgentRadius, navMesh }: CrowdParams) {
+  /**
+   * 
+   * @param navMesh the navmesh the crowd will use for planning
+   * @param param1 the crowd parameters
+   * 
+   * @example
+   * ```ts
+   * const crowd = new Crowd(navMesh, {
+   *   maxAgents: 100,
+   *   maxAgentRadius: 1,
+   * });
+   * ```
+   */
+  constructor(navMesh: NavMesh, { maxAgents, maxAgentRadius }: CrowdParams) {
     this.navMesh = navMesh;
     this.raw = Raw.Detour.allocCrowd();
     this.raw.init(maxAgents, maxAgentRadius, navMesh.raw.getNavMesh());
