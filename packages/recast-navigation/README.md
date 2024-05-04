@@ -299,7 +299,6 @@ agent.setParameters({
 crowd.removeAgent(agent);
 ```
 
-
 ### Temporary Obstacles
 
 Recast Navigation supports temporary Box and Cylinder obstacles via a `TileCache`.
@@ -456,6 +455,7 @@ If you need to work with status codes programmatically, you can use these utilit
 
 ```ts
 import {
+  Raw,
   statusSucceed,
   statusInProgress,
   statusFailed,
@@ -472,8 +472,7 @@ const inProgress = statusInProgress(status);
 const failed = statusFailed(status);
 
 // get the detail of the status
-const detail = statusDetail(status);
-
+const detail = Raw.Detour.BUFFER_TOO_SMALL;
 // Raw.Detour.WRONG_MAGIC;
 // Raw.Detour.WRONG_VERSION;
 // Raw.Detour.OUT_OF_MEMORY;
@@ -482,6 +481,8 @@ const detail = statusDetail(status);
 // Raw.Detour.OUT_OF_NODES;
 // Raw.Detour.PARTIAL_RESULT;
 // Raw.Detour.ALREADY_OCCUPIED;
+
+const detail = statusDetail(status, detail);
 ```
 
 ### Importing and Exporting
