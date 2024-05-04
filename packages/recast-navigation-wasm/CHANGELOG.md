@@ -1,5 +1,11 @@
 # @recast-navigation/wasm
 
+## 0.28.0
+
+### Minor Changes
+
+- 365e0aa: fix: change findPolysAroundCircle resultCost to be a FloatArray, not a FloatRef
+
 ## 0.27.0
 
 ### Patch Changes

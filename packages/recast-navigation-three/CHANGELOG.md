@@ -1,5 +1,18 @@
 # @recast-navigation/three
 
+## 0.28.0
+
+### Patch Changes
+
+- Updated dependencies [a86d2c3]
+- Updated dependencies [365e0aa]
+- Updated dependencies [365e0aa]
+- Updated dependencies [f986fad]
+- Updated dependencies [365e0aa]
+- Updated dependencies [365e0aa]
+  - @recast-navigation/core@0.28.0
+  - @recast-navigation/generators@0.28.0
+
 ## 0.27.0
 
 ### Patch Changes

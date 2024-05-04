@@ -1,5 +1,80 @@
 # @recast-navigation/core
 
+## 0.28.0
+
+### Minor Changes
+
+- a86d2c3: feat: change Crowd and NavMeshQuery constructors to take NavMesh as first arg, and options as second
+
+  old usage:
+
+  ```ts
+  import { NavMesh, Crowd, NavMeshQuery } from "recast-navigation";
+
+  const navMesh = new NavMesh();
+
+  const crowd = new Crowd({
+    navMesh,
+    maxAgents: 100,
+    maxAgentRadius: 0.6,
+  });
+
+  const navMeshQuery = new NavMeshQuery({ navMesh });
+  ```
+
+  new usage:
+
+  ```ts
+  import { NavMesh, Crowd, NavMeshQuery } from "recast-navigation";
+
+  const navMesh = new NavMesh();
+
+  const crowd = new Crowd(navMesh, {
+    maxAgents: 100,
+    maxAgentRadius: 0.6,
+  });
+
+  const navMeshQuery = new NavMeshQuery(navMesh);
+  ```
+
+- 365e0aa: fix: change findPolysAroundCircle resultCost to be a FloatArray, not a FloatRef
+- 365e0aa: feat(NavMeshQuery): rename closestPointOnPoly posOverPoly return to isPointOverPoly
+- f986fad: feat: support separate wasm file as well as inlined wasm file
+
+  Progresses https://github.com/isaac-mason/recast-navigation-js/issues/164
+
+  Now `init` can be optionally passed a default import of one of the `@recast-navigation/wasm` packages.
+
+  The `@recast-navigation/wasm` package is no longer included in the `@recast-navigation/core` package. If nothing is passed to `init`, the inlined wasm-compat flavor is dynamically imported.
+
+  Note that the other `wasm` flavor currently does not support node.js environments.
+
+  ```ts
+  import { init } from "recast-navigation";
+
+  // import the 'wasm' flavor - has a separate wasm file, not inlined
+  import RecastWasm from "@recast-navigation/wasm/wasm";
+
+  await init(RecastWasm);
+  ```
+
+  It's still possible to use the inlined wasm flavor by not passing anything to `init` as before.
+
+  ```ts
+  import { init } from "recast-navigation";
+
+  // internally dynamically imports `@recast-navigation/wasm`
+  await init();
+  ```
+
+- 365e0aa: feat(Arrays): rename 'free' to 'destroy' for consistency with other methods
+- 365e0aa: fix: missing cleanup for Raw Vec3 and \*Ref classes
+
+### Patch Changes
+
+- Updated dependencies [365e0aa]
+  - @recast-navigation/wasm@0.28.0
+
 ## 0.27.0
 
 ### Minor Changes
