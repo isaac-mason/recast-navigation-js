@@ -42,9 +42,17 @@ Demonstrations of how to use the library in different environments (such as Node
 npm install recast-navigation
 ```
 
+If you are using Vite, you may need to opt `recast-navigation` out of pre-bundling:
+
+```js
+export default defineConfig(() => ({
+  optimizeDeps: { exclude: ['recast-navigation'] }
+)}
+```
+
 **Usage without bundlers**
 
-You can use import maps to load the library in the browser without a bundler:
+You can use import maps to use the library without a bundler:
 
 ```html
 <script type="importmap">
@@ -65,16 +73,6 @@ You can use import maps to load the library in the browser without a bundler:
 ```
 
 A full example can be found here: https://github.com/isaac-mason/recast-navigation-js/tree/main/examples/no-bundler/index.html
-
-**Usage with bundlers**
-
-If you are using Vite, you may need to opt `recast-navigation` out of pre-bundling:
-
-```js
-export default defineConfig(() => ({
-  optimizeDeps: { exclude: ['recast-navigation'] }
-)}
-```
 
 ## Documentation
 
