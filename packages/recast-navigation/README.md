@@ -148,7 +148,17 @@ const { success, navMesh } = generateSoloNavMesh(
 
 See the docs for more information on generator options: https://docs.recast-navigation-js.isaacmason.com/modules/generators.html
 
-#### Advanced Usage
+#### Builing a NavMesh in a Web Worker
+
+It's possible to build a NavMesh in a Web Worker. This can be useful for offloading heavy computation from the main thread.
+
+The library doesn't include a web worker, but it's straightforward to create your own. An example of solo nav mesh generation in a web worker can be found here: https://github.com/isaac-mason/recast-navigation-js/tree/next/examples/vite-worker-example
+
+The example uses `importNavMesh` and `exportNavMesh` to serialize and deserialize a NavMesh for transfer between the main thread and the web worker. 
+
+For more advanced scenarios such as dynamic navmesh regeneration, you can generate nav mesh tiles in a web worker, and transfer the Uint8Array result of the `createNavMeshData` function to the main thread. This allows you to build individual tiles within a web worker, while the main thread continues to manage the nav mesh.
+
+#### Customizing the NavMesh Generation Process
 
 This library provides low-level APIs that aim to match the recast and detour c++ api, allowing you to create custom navigation mesh generators based on your specific needs. You can use the NavMesh generators provided by `@recast-navigation/generators` as a basis: https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-generators/src/generators
 
