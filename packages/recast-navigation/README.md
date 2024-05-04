@@ -42,7 +42,9 @@ Demonstrations of how to use the library in different environments (such as Node
 npm install recast-navigation
 ```
 
-**Unpkg**
+**Usage without bundlers**
+
+You can use import maps to load the library in the browser without a bundler:
 
 ```html
 <script type="importmap">
@@ -61,6 +63,8 @@ npm install recast-navigation
   await init();
 </script>
 ```
+
+A full example can be found here: https://github.com/isaac-mason/recast-navigation-js/tree/main/examples/no-bundler/index.html
 
 **Usage with bundlers**
 
@@ -154,7 +158,7 @@ It's possible to build a NavMesh in a Web Worker. This can be useful for offload
 
 The library doesn't include a web worker, but it's straightforward to create your own. An example of solo nav mesh generation in a web worker can be found here: https://github.com/isaac-mason/recast-navigation-js/tree/next/examples/vite-worker-example
 
-The example uses `importNavMesh` and `exportNavMesh` to serialize and deserialize a NavMesh for transfer between the main thread and the web worker. 
+The example uses `importNavMesh` and `exportNavMesh` to serialize and deserialize a NavMesh for transfer between the main thread and the web worker.
 
 For more advanced scenarios such as dynamic navmesh regeneration, you can generate nav mesh tiles in a web worker, and transfer the Uint8Array result of the `createNavMeshData` function to the main thread. This allows you to build individual tiles within a web worker, while the main thread continues to manage the nav mesh.
 
