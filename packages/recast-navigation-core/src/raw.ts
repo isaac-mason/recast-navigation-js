@@ -1,5 +1,10 @@
-import RawModule from './raw-module';
+import type {
+  default as Module,
+  default as RawModule,
+} from '@recast-navigation/wasm';
 import type { Pretty } from './types';
+
+export type { RawModule };
 
 type ModuleKey = (keyof typeof RawModule)[][number];
 
@@ -66,12 +71,17 @@ export const Raw = {
   },
 } satisfies Partial<RawApi> as RawApi;
 
-export const init = async () => {
+export const init = async (impl?: typeof Module) => {
   if (Raw.Module !== undefined) {
     return;
   }
 
-  Raw.Module = await RawModule();
+  if (impl) {
+    Raw.Module = await impl();
+  } else {
+    const defaultExport = (await import('@recast-navigation/wasm')).default;
+    Raw.Module = await defaultExport();
+  }
 
   for (const instance of instances) {
     (Raw as any)[instance] = new Raw.Module[instance]();

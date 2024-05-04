@@ -1,6 +1,5 @@
 import { UnsignedCharArray } from './arrays';
-import { Raw } from './raw';
-import type R from './raw-module';
+import { Raw, type RawModule } from './raw';
 import { RecastPolyMesh, RecastPolyMeshDetail } from './recast';
 import { Vector3, Vector3Tuple, array, vec3 } from './utils';
 
@@ -61,9 +60,9 @@ export const statusToReadableString = (status: number): string => {
 };
 
 export class DetourPolyDetail {
-  raw: R.dtPolyDetail;
+  raw: RawModule.dtPolyDetail;
 
-  constructor(raw: R.dtPolyDetail) {
+  constructor(raw: RawModule.dtPolyDetail) {
     this.raw = raw;
   }
 
@@ -85,9 +84,9 @@ export class DetourPolyDetail {
 }
 
 export class DetourLink {
-  raw: R.dtLink;
+  raw: RawModule.dtLink;
 
-  constructor(raw: R.dtLink) {
+  constructor(raw: RawModule.dtLink) {
     this.raw = raw;
   }
 
@@ -117,9 +116,9 @@ export class DetourLink {
 }
 
 export class DetourBVNode {
-  raw: R.dtBVNode;
+  raw: RawModule.dtBVNode;
 
-  constructor(raw: R.dtBVNode) {
+  constructor(raw: RawModule.dtBVNode) {
     this.raw = raw;
   }
 
@@ -137,9 +136,9 @@ export class DetourBVNode {
 }
 
 export class DetourOffMeshConnection {
-  raw: R.dtOffMeshConnection;
+  raw: RawModule.dtOffMeshConnection;
 
-  constructor(raw: R.dtOffMeshConnection) {
+  constructor(raw: RawModule.dtOffMeshConnection) {
     this.raw = raw;
   }
 
@@ -169,9 +168,9 @@ export class DetourOffMeshConnection {
 }
 
 export class DetourMeshHeader {
-  raw: R.dtMeshHeader;
+  raw: RawModule.dtMeshHeader;
 
-  constructor(raw: R.dtMeshHeader) {
+  constructor(raw: RawModule.dtMeshHeader) {
     this.raw = raw;
   }
 
@@ -261,9 +260,9 @@ export class DetourMeshHeader {
 }
 
 export class DetourPoly {
-  raw: R.dtPoly;
+  raw: RawModule.dtPoly;
 
-  constructor(raw: R.dtPoly) {
+  constructor(raw: RawModule.dtPoly) {
     this.raw = raw;
   }
 
@@ -297,9 +296,9 @@ export class DetourPoly {
 }
 
 export class DetourMeshTile {
-  raw: R.dtMeshTile;
+  raw: RawModule.dtMeshTile;
 
-  constructor(raw: R.dtMeshTile) {
+  constructor(raw: RawModule.dtMeshTile) {
     this.raw = raw;
   }
 
@@ -394,7 +393,7 @@ export type OffMeshConnectionParams = {
 };
 
 export class NavMeshCreateParams {
-  raw: R.dtNavMeshCreateParams;
+  raw: RawModule.dtNavMeshCreateParams;
 
   /**
    * Creates a new NavMeshCreateParams object.
@@ -404,9 +403,9 @@ export class NavMeshCreateParams {
   /**
    * Creates a wrapper around an existing raw NavMeshCreateParams object.
    */
-  constructor(raw: R.dtNavMeshCreateParams)
+  constructor(raw: RawModule.dtNavMeshCreateParams)
 
-  constructor(raw?: R.dtNavMeshCreateParams) {
+  constructor(raw?: RawModule.dtNavMeshCreateParams) {
     this.raw = raw ?? new Raw.Module.dtNavMeshCreateParams();
   }
 

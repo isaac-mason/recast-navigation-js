@@ -18,15 +18,18 @@
   "exports": {
     ".": {
       "types": "./dist/recast-navigation.d.ts",
-      "import": "./dist/recast-navigation.wasm-compat.js"
+      "import": "./dist/recast-navigation.wasm-compat.js",
+      "default": "./dist/recast-navigation.wasm-compat.js"
     },
     "./wasm": {
       "types": "./dist/recast-navigation.d.ts",
-      "import": "./dist/recast-navigation.wasm.js"
+      "import": "./dist/recast-navigation.wasm.js",
+      "default": "./dist/recast-navigation.wasm.js"
     },
     "./wasm-compat": {
       "types": "./dist/recast-navigation.d.ts",
-      "import": "./dist/recast-navigation.wasm-compat.js"
+      "import": "./dist/recast-navigation.wasm-compat.js",
+      "default": "./dist/recast-navigation.wasm-compat.js"
     }
   },
   "files": [

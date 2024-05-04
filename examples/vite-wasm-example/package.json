@@ -1,5 +1,5 @@
 {
-  "name": "vite-example",
+  "name": "vite-wasm-example",
   "private": true,
   "type": "module",
   "scripts": {

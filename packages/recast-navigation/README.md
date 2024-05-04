@@ -49,6 +49,7 @@ npm install recast-navigation
   {
     "imports": {
       "@recast-navigation/core": "https://unpkg.com/@recast-navigation/core@0.27.0/dist/index.mjs",
+      "@recast-navigation/wasm": "https://unpkg.com/@recast-navigation/wasm@0.27.0/dist/recast-navigation.wasm-compat.js",
       "@recast-navigation/generators": "https://unpkg.com/@recast-navigation/generators@0.27.0/dist/index.mjs",
       "@recast-navigation/three": "https://unpkg.com/@recast-navigation/three@0.27.0/dist/index.mjs"
     }
