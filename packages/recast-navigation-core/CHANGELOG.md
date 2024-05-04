@@ -4,6 +4,8 @@
 
 ### Minor Changes
 
+- remove cjs build - https://github.com/isaac-mason/recast-navigation-js/issues/351
+
 - a86d2c3: feat: change Crowd and NavMeshQuery constructors to take NavMesh as first arg, and options as second
 
   old usage:

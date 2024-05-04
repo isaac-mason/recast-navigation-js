@@ -2,6 +2,10 @@
 
 ## 0.28.0
 
+### Minor Changes
+
+- remove cjs build - https://github.com/isaac-mason/recast-navigation-js/issues/351
+
 ### Patch Changes
 
 - Updated dependencies [a86d2c3]
