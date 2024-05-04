@@ -17,7 +17,7 @@
     "test": "concurrently --kill-others-on-fail \"yarn test:packages\" \"yarn test:node-smoke-test\" \"yarn test:bundlers-smoke-test\" \"yarn lint\"",
     "test:packages": "yarn workspaces foreach -A -t --include recast-navigation --include @recast-navigation/core --include @recast-navigation/three --include @recast-navigation/generators run test",
     "test:node-smoke-test": "(cd ./examples/node-cjs-example && yarn start) && (cd ./examples/node-esm-example && yarn start)",
-    "test:bundlers-smoke-test": "concurrently --kill-others-on-fail \"(cd ./examples/parcel-example && yarn build)\" \"(cd ./examples/vite-example && yarn build)\"",
+    "test:bundlers-smoke-test": "concurrently --kill-others-on-fail \"(cd ./examples/parcel-example && yarn build)\" \"(cd ./examples/vite-wasm-example && yarn build)\"",
     "lint": "yarn workspaces foreach -A -t run lint",
     "change": "yarn changeset",
     "release": "yarn build && yarn test",
