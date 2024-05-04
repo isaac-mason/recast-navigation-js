@@ -57,9 +57,9 @@ export const SingleAgent = () => {
 
     if (!success) return;
 
-    const navMeshQuery = new NavMeshQuery({ navMesh });
+    const navMeshQuery = new NavMeshQuery(navMesh);
 
-    const crowd = new Crowd({ navMesh, maxAgents: 1, maxAgentRadius: 0.2 });
+    const crowd = new Crowd(navMesh, { maxAgents: 1, maxAgentRadius: 0.2 });
 
     const { point: agentPosition } = navMeshQuery.findClosestPoint({
       x: -2.9,
@@ -162,10 +162,9 @@ export const MultipleAgents = () => {
 
     if (!success) return;
 
-    const navMeshQuery = new NavMeshQuery({ navMesh });
+    const navMeshQuery = new NavMeshQuery(navMesh);
 
-    const crowd = new Crowd({
-      navMesh,
+    const crowd = new Crowd(navMesh, {
       maxAgents: 10,
       maxAgentRadius,
     });

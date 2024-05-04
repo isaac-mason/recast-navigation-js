@@ -136,8 +136,8 @@ export const generateTiledNavMesh = (
   trianglesArray.copy(triangles);
 
   const cleanup = () => {
-    verticesArray.free();
-    trianglesArray.free();
+    verticesArray.destroy();
+    trianglesArray.destroy();
 
     if (keepIntermediates) return;
 
@@ -413,7 +413,7 @@ export const generateTiledNavMesh = (
         tileConfig.walkableClimb
       );
 
-      triangleAreasArray.free();
+      triangleAreasArray.destroy();
 
       if (!success) {
         return failTileMesh('Could not rasterize triangles');
@@ -640,7 +640,7 @@ export const generateTiledNavMesh = (
               })`
           );
 
-          result.data.free();
+          result.data.destroy();
         }
       }
     }

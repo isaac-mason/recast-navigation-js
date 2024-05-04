@@ -34,7 +34,7 @@ const indices = groundMesh.geometry.index.array;
 
 const { navMesh } = generateSoloNavMesh(positions, indices, config);
 
-const navMeshQuery = new NavMeshQuery({ navMesh });
+const navMeshQuery = new NavMeshQuery(navMesh);
 
 const { point: closestPoint } = navMeshQuery.findClosestPoint({ x: 2, y: 1, z: 2 });
 

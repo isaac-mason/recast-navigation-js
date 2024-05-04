@@ -70,7 +70,8 @@ if ("${CMAKE_BUILD_TYPE}" STREQUAL "debug")
 	set(EMCC_ARGS 
 		${EMCC_ARGS} 
 		-g
-		-s ASSERTIONS)
+    -s SAFE_HEAP=1
+		-s ASSERTIONS=1)
 else()
 	set(EMCC_ARGS 
 		${EMCC_ARGS} 

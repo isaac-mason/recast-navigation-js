@@ -39,7 +39,7 @@ const App = () => {
 
     if (!success) return;
 
-    const navMeshQuery = new NavMeshQuery({ navMesh });
+    const navMeshQuery = new NavMeshQuery(navMesh);
 
     const navMeshHelper = new NavMeshHelper({
       navMesh,

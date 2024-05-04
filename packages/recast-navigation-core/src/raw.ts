@@ -27,7 +27,6 @@ const classes = [
   'dtTileCacheParams',
   'dtTileCacheLayerHeader',
   'Vec3',
-  'Vec2',
   'BoolRef',
   'IntRef',
   'UnsignedIntRef',
@@ -45,6 +44,7 @@ type RawApi = Pretty<
   {
     Module: typeof RawModule;
     isNull: (obj: unknown) => boolean;
+    destroy: (obj: unknown) => void;
   } & {
     [K in (typeof instances)[number]]: InstanceType<(typeof RawModule)[K]>;
   } & {
@@ -60,6 +60,9 @@ type RawApi = Pretty<
 export const Raw = {
   isNull: (obj: unknown) => {
     return Raw.Module.getPointer(obj) === 0;
+  },
+  destroy: (obj: unknown) => {
+    Raw.Module.destroy(obj);
   },
 } satisfies Partial<RawApi> as RawApi;
 

@@ -54,17 +54,17 @@ export const FindRandomPoint = () => {
 
     if (!success) return;
 
-    const navMeshQuery = new NavMeshQuery({ navMesh });
+    const navMeshQuery = new NavMeshQuery(navMesh);
 
     setNavMesh(navMesh);
     setNavMeshQuery(navMeshQuery);
 
     return () => {
-      navMesh.destroy();
-      navMeshQuery.destroy();
-
       setNavMesh(undefined);
       setNavMeshQuery(undefined);
+
+      navMeshQuery.destroy();
+      navMesh.destroy();
     };
   }, [group]);
 
@@ -93,12 +93,20 @@ export const FindRandomPoint = () => {
         <div
           style={{
             position: 'absolute',
-            top: '0',
-            left: '0',
-            margin: '2em',
+            top: 0,
+            padding: '25px',
+            userSelect: 'none',
           }}
         >
-          <button onClick={newPoint} style={{ padding: '0.5em' }}>
+          <button
+            onClick={newPoint}
+            style={{
+              padding: '0.5em',
+              fontSize: '1em',
+              fontFamily: 'monospace',
+              fontWeight: 400,
+            }}
+          >
             New Random Point
           </button>
         </div>

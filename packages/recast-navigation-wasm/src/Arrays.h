@@ -4,11 +4,24 @@
 #include <algorithm>
 
 template <typename T>
-struct ArrayWrapperTemplate
+class ArrayWrapperTemplate
 {
+public:
     T *data;
     int size;
     bool isView;
+
+    ArrayWrapperTemplate()
+    {
+        data = nullptr;
+        size = 0;
+        isView = false;
+    }
+
+    ~ArrayWrapperTemplate()
+    {
+        free();
+    }
 
     void free()
     {
@@ -62,22 +75,22 @@ struct ArrayWrapperTemplate
     }
 };
 
-struct IntArray : public ArrayWrapperTemplate<int>
+class IntArray : public ArrayWrapperTemplate<int>
 {
 };
 
-struct UnsignedIntArray : public ArrayWrapperTemplate<unsigned int>
+class UnsignedIntArray : public ArrayWrapperTemplate<unsigned int>
 {
 };
 
-struct UnsignedCharArray : public ArrayWrapperTemplate<unsigned char>
+class UnsignedCharArray : public ArrayWrapperTemplate<unsigned char>
 {
 };
 
-struct UnsignedShortArray : public ArrayWrapperTemplate<unsigned short>
+class UnsignedShortArray : public ArrayWrapperTemplate<unsigned short>
 {
 };
 
-struct FloatArray : public ArrayWrapperTemplate<float>
+class FloatArray : public ArrayWrapperTemplate<float>
 {
 };

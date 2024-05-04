@@ -137,13 +137,13 @@ export class NavMesh {
   /**
    * Constructs a new NavMesh
    */
-  constructor()
+  constructor();
 
   /**
    * Creates a wrapper around a raw NavMesh object
    * @param raw raw object
    */
-  constructor(raw: R.NavMesh)
+  constructor(raw: R.NavMesh);
 
   constructor(raw?: R.NavMesh) {
     this.raw = raw ?? new Raw.Module.NavMesh();
@@ -175,13 +175,21 @@ export class NavMesh {
    * @returns the status of the operation and the reference of the added tile
    */
   addTile(navMeshData: UnsignedCharArray, flags: number, lastRef: number) {
-    const tileRef = new Raw.UnsignedIntRef();
+    const tileRefRaw = new Raw.UnsignedIntRef();
 
-    const status = this.raw.addTile(navMeshData.raw, flags, lastRef, tileRef);
+    const status = this.raw.addTile(
+      navMeshData.raw,
+      flags,
+      lastRef,
+      tileRefRaw
+    );
+
+    const tileRef = tileRefRaw.value;
+    Raw.destroy(tileRefRaw);
 
     return {
       status,
-      tileRef: tileRef.value,
+      tileRef,
     };
   }
 
@@ -197,10 +205,19 @@ export class NavMesh {
 
     this.raw.decodePolyId(polyRef, saltRef, itRef, ipRef);
 
+    const tileSalt = saltRef.value;
+    Raw.destroy(saltRef);
+
+    const tileIndex = itRef.value;
+    Raw.destroy(itRef);
+
+    const tilePolygonIndex = ipRef.value;
+    Raw.destroy(ipRef);
+
     return {
-      tileSalt: saltRef.value,
-      tileIndex: itRef.value,
-      tilePolygonIndex: ipRef.value,
+      tileSalt,
+      tileIndex,
+      tilePolygonIndex,
     };
   }
 
@@ -370,20 +387,26 @@ export class NavMesh {
    * @returns
    */
   getOffMeshConnectionPolyEndPoints(prevRef: number, polyRef: number) {
-    const start = new Raw.Vec3();
-    const end = new Raw.Vec3();
+    const startRaw = new Raw.Vec3();
+    const endRaw = new Raw.Vec3();
 
     const status = this.raw.getOffMeshConnectionPolyEndPoints(
       prevRef,
       polyRef,
-      start,
-      end
+      startRaw,
+      endRaw
     );
+
+    const start = vec3.fromRaw(startRaw);
+    Raw.destroy(startRaw);
+
+    const end = vec3.fromRaw(endRaw);
+    Raw.destroy(endRaw);
 
     return {
       status,
-      start: vec3.fromRaw(start),
-      end: vec3.fromRaw(end),
+      start,
+      end,
     };
   }
 
@@ -411,13 +434,16 @@ export class NavMesh {
    * @returns
    */
   getPolyFlags(ref: number) {
-    const flags = new Raw.UnsignedShortRef();
+    const flagsRaw = new Raw.UnsignedShortRef();
 
-    const status = this.raw.getPolyFlags(ref, flags);
+    const status = this.raw.getPolyFlags(ref, flagsRaw);
+
+    const flags = flagsRaw.value;
+    Raw.destroy(flagsRaw);
 
     return {
       status,
-      flags: flags.value,
+      flags,
     };
   }
 
@@ -436,13 +462,16 @@ export class NavMesh {
    * @returns
    */
   getPolyArea(ref: number) {
-    const area = new Raw.UnsignedCharRef();
+    const areaRaw = new Raw.UnsignedCharRef();
 
-    const status = this.raw.getPolyArea(ref, area);
+    const status = this.raw.getPolyArea(ref, areaRaw);
+
+    const area = areaRaw.value;
+    Raw.destroy(areaRaw);
 
     return {
       status,
-      area: area.value,
+      area,
     };
   }
 

@@ -20,12 +20,8 @@ export const vec3 = {
 
     return new Raw.Module.Vec3(x, y, z);
   },
-  fromRaw: (vec3: R.Vec3, freeRaw?: boolean) => {
+  fromRaw: (vec3: R.Vec3) => {
     const { x, y, z } = vec3;
-
-    if (freeRaw) {
-      Raw.Module.destroy(vec3);
-    }
 
     return { x, y, z };
   },

@@ -164,8 +164,8 @@ export const generateTileCache = (
   };
 
   const cleanup = () => {
-    verticesArray.free();
-    trianglesArray.free();
+    verticesArray.destroy();
+    trianglesArray.destroy();
 
     if (!keepIntermediates) {
       for (let i = 0; i < intermediates.tileIntermediates.length; i++) {
@@ -407,7 +407,7 @@ export const generateTileCache = (
         tileConfig.walkableClimb
       );
 
-      triangleAreasArray.free();
+      triangleAreasArray.destroy();
 
       if (!success) {
         return { n: 0 };

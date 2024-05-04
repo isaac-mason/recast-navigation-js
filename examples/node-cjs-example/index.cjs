@@ -33,7 +33,7 @@ Recast.init().then(() => {
 
   const { navMesh } = RecastGenerators.generateSoloNavMesh(positions, indices, config);
 
-  const navMeshQuery = new Recast.NavMeshQuery({ navMesh });
+  const navMeshQuery = new Recast.NavMeshQuery(navMesh);
 
   const { point: closestPoint } = navMeshQuery.findClosestPoint({ x: 2, y: 1, z: 2 });
 

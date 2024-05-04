@@ -29,10 +29,9 @@ describe('Crowd', () => {
 
     navMesh = result.navMesh;
 
-    navMeshQuery = new NavMeshQuery({ navMesh });
+    navMeshQuery = new NavMeshQuery(navMesh);
 
-    crowd = new Crowd({
-      navMesh,
+    crowd = new Crowd(navMesh, {
       maxAgents: 10,
       maxAgentRadius: 0.5,
     });
