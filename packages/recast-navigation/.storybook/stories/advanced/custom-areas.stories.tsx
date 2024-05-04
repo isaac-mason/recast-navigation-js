@@ -72,7 +72,7 @@ const useNavMesh = (group: RefObject<THREE.Group>) => {
 
     if (!success) return;
 
-    const navMeshQuery = new NavMeshQuery({ navMesh });
+    const navMeshQuery = new NavMeshQuery(navMesh);
 
     setNavMesh(navMesh);
     setNavMeshQuery(navMeshQuery);
@@ -322,10 +322,9 @@ export const SingleAgent = () => {
   useEffect(() => {
     if (!navMesh || !navMeshQuery) return;
 
-    const crowd = new Crowd({
+    const crowd = new Crowd(navMesh, {
       maxAgents: 1,
       maxAgentRadius: 0.6,
-      navMesh,
     });
 
     crowd.navMeshQuery.defaultQueryHalfExtents.x = 5;

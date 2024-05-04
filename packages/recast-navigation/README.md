@@ -157,17 +157,34 @@ Please note that not all recast and detour functionality is exposed yet. If you 
 
 ### Querying a NavMesh
 
+**Creating a NavMeshQuery class**
+
 ```ts
 import { NavMeshQuery } from 'recast-navigation';
 
-const navMeshQuery = new NavMeshQuery({ navMesh });
+const navMeshQuery = new NavMeshQuery(navMesh);
+```
 
-/* find the closest point on the NavMesh to the given position */
+**Compute a straight path between two points**
+
+```ts
+const start = { x: 0, y: 0, z: 0 };
+const end = { x: 2, y: 0, z: 0 };
+const { success, error, path } = navMeshQuery.computePath(start, end);
+```
+
+**Find the closest point on the NavMesh to a given position**
+
+```ts
 const position = { x: 0, y: 0, z: 0 };
+
 const { success, status, point, polyRef, isPointOverPoly } =
   navMeshQuery.findClosestPoint(position);
+```
 
-/* get a random point around the given position */
+**Find a random point on the NavMesh around a given position**
+
+```ts
 const radius = 0.5;
 const {
   success,
@@ -175,16 +192,11 @@ const {
   randomPolyRef,
   randomPoint: initialAgentPosition,
 } = navMeshQuery.findRandomPointAroundCircle(position, radius);
-
-/* compute a straight path between two points */
-const start = { x: 0, y: 0, z: 0 };
-const end = { x: 2, y: 0, z: 0 };
-const { success, error, path } = navMeshQuery.computePath(start, end);
 ```
 
 ### Crowds and Agents
 
-First, create a `Crowd`:
+**Creating a Crowd**
 
 ```ts
 import { Crowd } from 'recast-navigation';
@@ -192,10 +204,10 @@ import { Crowd } from 'recast-navigation';
 const maxAgents = 10;
 const maxAgentRadius = 0.6;
 
-const crowd = new Crowd({ maxAgents, maxAgentRadius, navMesh });
+const crowd = new Crowd(navMesh, { maxAgents, maxAgentRadius });
 ```
 
-Next, create and interface with agents in the crowd.
+**Creating an Agent in a Crowd**
 
 ```ts
 const position = { x: 0, y: 0, z: 0 };
@@ -217,7 +229,36 @@ const agent = crowd.addAgent(initialAgentPosition, {
   pathOptimizationRange: 0.0,
   separationWeight: 1.0,
 });
+```
 
+**Setting an Agent's Target**
+
+```ts
+const targetPosition = { x: 2, y: 0, z: 0 };
+agent.requestMoveTarget(targetPosition);
+```
+
+**Clearing an Agent's Target**
+
+```ts
+agent.resetMoveTarget();
+```
+
+**Updating the Crowd**
+
+To update the crowd, first set a timeStep, then call `update` each frame with the delta time.
+
+```ts
+const dt = 1 / 60;
+crowd.timeStep = dt;
+
+// you should call this every frame
+crowd.update(dt);
+```
+
+**Interacting with Agents**
+
+```ts
 /* get information about the agent */
 const agentPosition = agent.position();
 const agentVelocity = agent.velocity();
@@ -257,15 +298,6 @@ agent.setParameters({
 crowd.removeAgent(agent);
 ```
 
-To update the crowd, first set a timeStep, then call `update` each frame with the delta time.
-
-```ts
-const dt = 1 / 60;
-crowd.timeStep = dt;
-
-// you should call this every frame
-crowd.update(dt);
-```
 
 ### Temporary Obstacles
 
@@ -405,9 +437,7 @@ const debugNavMesh = navMesh.getDebugNavMesh();
 const { positions, indices } = debugNavMesh;
 ```
 
-If you are using three.js, you can use `NavMeshHelper` and `CrowdHelper` to visualize NavMeshes, Crowds, and NavMesh generation intermediates.
-
-See the [`@recast-navigation/three` package README](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-three/README.md) for usage information.
+If you are using three.js, you can use built-in helpers from the [`@recast-navigation/three` package](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-three/README.md).
 
 #### Detour Status Codes
 

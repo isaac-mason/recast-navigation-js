@@ -46,7 +46,7 @@ export const FloodFillPruning = () => {
 
     if (!success) return;
 
-    const navMeshQuery = new NavMeshQuery({ navMesh });
+    const navMeshQuery = new NavMeshQuery(navMesh);
 
     const nearestPolyResult = navMeshQuery.findNearestPoly(point, {
       halfExtents: { x: 2, y: 2, z: 2 },
@@ -145,10 +145,12 @@ export const FloodFillPruning = () => {
           style={{
             position: 'absolute',
             top: 0,
-            color: 'white',
-            padding: 24,
+            padding: '25px',
             userSelect: 'none',
+            fontSize: '1.5em',
             fontFamily: 'monospace',
+            fontWeight: 400,
+            color: 'white',
           }}
         >
           click to set flood fill start point

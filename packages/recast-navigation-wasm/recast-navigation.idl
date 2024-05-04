@@ -346,14 +346,6 @@ interface Vec3 {
     void Vec3(float x, float y, float z);
 };
 
-interface Vec2 {
-    attribute float x;
-    attribute float y;
-
-    void Vec2();
-    void Vec2(float x, float y);
-};
-
 interface NavMeshRemoveTileResult {
     attribute unsigned long status;
     attribute octet[] data;
@@ -469,7 +461,7 @@ interface NavMeshQuery {
 
     unsigned long findNearestPoly([Const] float[] center, [Const] float[] halfExtents, [Const] dtQueryFilter filter, UnsignedIntRef nearestRef, Vec3 nearestPt, BoolRef isOverPoly);
 
-    unsigned long findPolysAroundCircle(unsigned long startRef, [Const] float[] centerPos, [Const] float radius, [Const] dtQueryFilter filter, UnsignedIntArray resultRef, UnsignedIntArray resultParent, FloatRef resultCost, IntRef resultCount, [Const] long maxResult);
+    unsigned long findPolysAroundCircle(unsigned long startRef, [Const] float[] centerPos, [Const] float radius, [Const] dtQueryFilter filter, UnsignedIntArray resultRef, UnsignedIntArray resultParent, FloatArray resultCost, IntRef resultCount, [Const] long maxResult);
 
     unsigned long queryPolygons([Const] float[] center, [Const] float[] halfExtents, [Const] dtQueryFilter filter, UnsignedIntArray polys, IntRef polyCount, [Const] long maxPolys);
 

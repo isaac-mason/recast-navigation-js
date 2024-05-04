@@ -1,31 +1,94 @@
 #pragma once
 
-template <typename T>
-struct PrimitiveRefTemplate
+class BoolRef
 {
-    T value;
+public:
+    bool value;
+
+    BoolRef() {}
+    ~BoolRef() {}
 };
 
-struct BoolRef : public PrimitiveRefTemplate<bool>
+class IntRef
 {
+public:
+    int value;
+
+    IntRef() {}
+    ~IntRef() {}
 };
 
-struct IntRef : public PrimitiveRefTemplate<int>
+class UnsignedIntRef
 {
+public:
+    unsigned int value;
+
+    UnsignedIntRef() {}
+    ~UnsignedIntRef() {}
 };
 
-struct UnsignedIntRef : public PrimitiveRefTemplate<unsigned int>
+class UnsignedCharRef
 {
+public:
+    unsigned char value;
+
+    UnsignedCharRef() {}
+    ~UnsignedCharRef() {}
 };
 
-struct UnsignedCharRef : public PrimitiveRefTemplate<unsigned char>
+class UnsignedShortRef
 {
+public:
+    unsigned short value;
+
+    UnsignedShortRef() {}
+    ~UnsignedShortRef() {}
 };
 
-struct UnsignedShortRef : public PrimitiveRefTemplate<unsigned short>
+struct FloatRef
 {
+    float value;
+
+    FloatRef() {}
+    ~FloatRef() {}
 };
 
-struct FloatRef : public PrimitiveRefTemplate<float>
-{
-};
+
+// template <typename T>
+// class PrimitiveRefTemplate
+// {
+// public:
+//     T value;
+//     PrimitiveRefTemplate() {}
+//     virtual ~PrimitiveRefTemplate() {}
+// };
+
+// class BoolRef : public PrimitiveRefTemplate<bool>
+// {
+//     BoolRef() : PrimitiveRefTemplate() {}
+// };
+
+// class IntRef : public PrimitiveRefTemplate<int>
+// {
+//     IntRef() : PrimitiveRefTemplate() {}
+// };
+
+// class UnsignedIntRef : public PrimitiveRefTemplate<unsigned int>
+// {
+//     UnsignedIntRef() : PrimitiveRefTemplate() {}
+// };
+
+// class UnsignedCharRef : public PrimitiveRefTemplate<unsigned char>
+// {
+//     UnsignedCharRef() : PrimitiveRefTemplate() {}
+// };
+
+// class UnsignedShortRef : public PrimitiveRefTemplate<unsigned short>
+// {
+//     UnsignedShortRef() : PrimitiveRefTemplate() {}
+// };
+
+// class FloatRef : public PrimitiveRefTemplate<float>
+// {
+//     FloatRef() : PrimitiveRefTemplate() {}
+// };

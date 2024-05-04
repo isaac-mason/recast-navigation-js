@@ -1,6 +1,11 @@
 import { Html, OrbitControls } from '@react-three/drei';
 import { ThreeEvent } from '@react-three/fiber';
-import { NavMesh, NavMeshQuery, range } from '@recast-navigation/core';
+import {
+  NavMesh,
+  NavMeshQuery,
+  range,
+  statusToReadableString,
+} from '@recast-navigation/core';
 import { threeToSoloNavMesh } from '@recast-navigation/three';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
@@ -71,14 +76,14 @@ export function ClickNearbyPolygons() {
 
     if (!success) return;
 
-    const navMeshQuery = new NavMeshQuery({ navMesh });
+    const navMeshQuery = new NavMeshQuery(navMesh);
 
     set({ navMesh, navMeshQuery });
 
     return () => {
       set({ navMesh: undefined, navMeshQuery: undefined });
 
-      navMeshQuery?.destroy();
+      navMeshQuery.destroy();
       navMesh.destroy();
     };
   }, [group]);
@@ -146,6 +151,8 @@ export function ClickNearbyPolygons() {
       navMeshQuery.findNearestPoly(clickedPosition);
     console.info('findNearestPoly', startRef);
 
+    const maxPolys = 100;
+
     const findPolysAroundCircleResult = navMeshQuery.findPolysAroundCircle(
       startRef,
       clickedPosition,
@@ -153,6 +160,10 @@ export function ClickNearbyPolygons() {
       { maxPolys }
     );
     console.info('findPolysAroundCircle', findPolysAroundCircleResult);
+    console.info(
+      'findPolysAroundCircle status',
+      statusToReadableString(findPolysAroundCircleResult.status)
+    );
 
     const halfExtents = { x: 0.5, y: 0.5, z: 0.5 };
     const queryPolygonsResult = navMeshQuery.queryPolygons(
@@ -162,10 +173,19 @@ export function ClickNearbyPolygons() {
     );
     console.info('queryPolygons', queryPolygonsResult);
 
-    const polyRefs =
-      selectType === 'circle'
-        ? findPolysAroundCircleResult.resultRefs
-        : queryPolygonsResult.polyRefs;
+    let polyRefs: number[] = [];
+
+    if (selectType === 'circle') {
+      polyRefs = findPolysAroundCircleResult.resultRefs.slice(
+        0,
+        findPolysAroundCircleResult.resultCount
+      );
+    } else {
+      polyRefs = queryPolygonsResult.polyRefs.slice(
+        0,
+        queryPolygonsResult.polyCount
+      );
+    }
 
     const decodedPolyRefs = polyRefs.map((polyRef) =>
       navMesh.decodePolyId(polyRef)
@@ -250,15 +270,21 @@ export function ClickNearbyPolygons() {
           style={{
             position: 'absolute',
             top: 0,
-            color: 'white',
-            padding: 24,
+            padding: '25px',
             userSelect: 'none',
+            fontFamily: 'monospace',
+            fontWeight: 400,
+            color: 'white',
           }}
         >
           <h2>Click to select triangles</h2>
           <select
             defaultValue="foo"
-            style={{ fontSize: 16, padding: 12 }}
+            style={{
+              fontFamily: 'monospace',
+              fontSize: '16px',
+              padding: '12px',
+            }}
             onChange={({ currentTarget: { value } }) => {
               set({ selectType: value as NearbyPolygonsState['selectType'] });
             }}
@@ -333,7 +359,6 @@ const touchMaterial = new THREE.MeshBasicMaterial({
   transparent: true,
   opacity: 0.3,
 });
-const maxPolys = 100;
 
 export default {
   title: 'NavMeshQuery / Click Nearby Polygons',

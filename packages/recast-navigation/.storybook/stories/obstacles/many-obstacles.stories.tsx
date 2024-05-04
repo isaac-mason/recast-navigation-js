@@ -57,7 +57,7 @@ export const ManyObstaclesExample = () => {
 
     if (!success) return;
 
-    const navMeshQuery = new NavMeshQuery({ navMesh });
+    const navMeshQuery = new NavMeshQuery(navMesh);
 
     const boxObstacleSize = new Vector3(0.3, 1, 0.3);
     const addCylinderObstacleRadius = 0.3;

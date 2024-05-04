@@ -62,10 +62,9 @@ export const RecastAgent = forwardRef<RecastAgentRef, RecastAgentProps>(
         return;
       }
 
-      const navMeshQuery = new NavMeshQuery({ navMesh });
+      const navMeshQuery = new NavMeshQuery(navMesh);
 
-      const crowd = new Crowd({
-        navMesh,
+      const crowd = new Crowd(navMesh, {
         maxAgents: 1,
         maxAgentRadius: agentRadius,
       });

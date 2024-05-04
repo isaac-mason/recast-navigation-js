@@ -217,9 +217,9 @@ export const generateNavMesh = (
     return fail('Could not rasterize triangles');
   }
 
-  triangleAreasArray.free();
-  verticesArray.free();
-  trianglesArray.free();
+  triangleAreasArray.destroy();
+  verticesArray.destroy();
+  trianglesArray.destroy();
 
   //
   // Step 3. Filter walkables surfaces.

@@ -49,8 +49,8 @@ abstract class BaseArray<
     view.set(data);
   }
 
-  free() {
-    this.raw.free();
+  destroy() {
+    Raw.destroy(this.raw);
   }
 
   getHeapView(): InstanceType<T> {

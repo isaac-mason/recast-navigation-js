@@ -67,7 +67,7 @@ export const PathExample = () => {
 
     if (!success) return;
 
-    const navMeshQuery = new NavMeshQuery({ navMesh });
+    const navMeshQuery = new NavMeshQuery(navMesh);
 
     setNavMesh(navMesh);
     setNavMeshQuery(navMeshQuery);

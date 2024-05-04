@@ -23,7 +23,7 @@ describe('Smoke tests', () => {
 
     navMesh = result.navMesh;
 
-    navMeshQuery = new NavMeshQuery({ navMesh });
+    navMeshQuery = new NavMeshQuery(navMesh);
   });
 
   test('findClosestPoint', async ({ expect }) => {

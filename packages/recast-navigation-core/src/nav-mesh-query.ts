@@ -139,25 +139,34 @@ export class NavMeshQuery {
       halfExtents?: Vector3;
     }
   ) {
-    const nearestRef = new Raw.UnsignedIntRef();
-    const nearestPoint = new Raw.Vec3();
-    const isOverPoly = new Raw.BoolRef();
+    const nearestRefRaw = new Raw.UnsignedIntRef();
+    const nearestPointRaw = new Raw.Vec3();
+    const isOverPolyRaw = new Raw.BoolRef();
 
     const status = this.raw.findNearestPoly(
       vec3.toArray(position),
       vec3.toArray(options?.halfExtents ?? this.defaultQueryHalfExtents),
       options?.filter?.raw ?? this.defaultFilter.raw,
-      nearestRef,
-      nearestPoint,
-      isOverPoly
+      nearestRefRaw,
+      nearestPointRaw,
+      isOverPolyRaw
     );
+
+    const nearestPoint = vec3.fromRaw(nearestPointRaw);
+    Raw.destroy(nearestPointRaw);
+
+    const nearestRef = nearestRefRaw.value;
+    Raw.destroy(nearestRefRaw);
+
+    const isOverPoly = isOverPolyRaw.value;
+    Raw.destroy(isOverPolyRaw);
 
     return {
       success: Raw.Detour.statusSucceed(status),
       status,
-      nearestRef: nearestRef.value,
-      nearestPoint: vec3.fromRaw(nearestPoint),
-      isOverPoly: isOverPoly.value,
+      nearestRef,
+      nearestPoint,
+      isOverPoly,
     };
   }
 
@@ -191,9 +200,11 @@ export class NavMeshQuery {
 
     const resultRefArray = new UnsignedIntArray();
     const resultParentArray = new UnsignedIntArray();
+    const resultCostArray = new FloatArray();
     resultRefArray.resize(maxPolys);
     resultParentArray.resize(maxPolys);
-    const resultCostRef = new Raw.FloatRef();
+    resultCostArray.resize(maxPolys);
+
     const resultCountRef = new Raw.IntRef();
 
     const status = this.raw.findPolysAroundCircle(
@@ -203,19 +214,27 @@ export class NavMeshQuery {
       filter.raw,
       resultRefArray.raw,
       resultParentArray.raw,
-      resultCostRef,
+      resultCostArray.raw,
       resultCountRef,
       maxPolys
     );
 
-    const resultCost = resultCostRef.value;
-    const resultCount = resultCountRef.value;
-
     const resultRefs = [...resultRefArray.getHeapView()];
-    const resultParents = [...resultParentArray.getHeapView()];
+    resultRefArray.destroy();
 
-    resultRefArray.free();
-    resultParentArray.free();
+    const resultParents = [...resultParentArray.getHeapView()];
+    resultParentArray.destroy();
+
+    const resultCost = [...resultCostArray.getHeapView()];
+    resultCostArray.destroy();
+
+    const resultCount = resultCountRef.value;
+    Raw.destroy(resultCountRef);
+
+    // todo: freeing resultCostRef and resultCountRef intermittently throws
+    // memory related errors.
+    // const resultCost = resultCostRef.value;
+    // const resultCount = resultCountRef.value;
 
     return {
       success: Raw.Detour.statusSucceed(status),
@@ -268,9 +287,10 @@ export class NavMeshQuery {
     );
 
     const polyCount = polyCountRef.value;
+    Raw.destroy(polyCountRef);
 
     const polyRefs = [...polysRefsArray.getHeapView()];
-    polysRefsArray.free();
+    polysRefsArray.destroy();
 
     return {
       success: Raw.Detour.statusSucceed(status),
@@ -287,21 +307,27 @@ export class NavMeshQuery {
    * @param position The position to find the closest point to
    */
   closestPointOnPoly(polyRef: number, position: Vector3) {
-    const closestPoint = new Raw.Vec3();
-    const positionOverPoly = new Raw.BoolRef();
+    const closestPointRaw = new Raw.Vec3();
+    const positionOverPolyRaw = new Raw.BoolRef();
 
     const status = this.raw.closestPointOnPoly(
       polyRef,
       vec3.toArray(position),
-      closestPoint,
-      positionOverPoly
+      closestPointRaw,
+      positionOverPolyRaw
     );
+
+    const closestPoint = vec3.fromRaw(closestPointRaw);
+    Raw.destroy(closestPointRaw);
+
+    const isPointOverPoly = positionOverPolyRaw.value;
+    Raw.destroy(positionOverPolyRaw);
 
     return {
       success: Raw.Detour.statusSucceed(status),
       status,
-      closestPoint: vec3.fromRaw(closestPoint),
-      posOverPoly: positionOverPoly.value,
+      closestPoint,
+      isPointOverPoly,
     };
   }
 
@@ -343,12 +369,21 @@ export class NavMeshQuery {
       resultPointOverPoly
     );
 
+    const polyRef = resultPolyRef.value;
+    Raw.destroy(resultPolyRef);
+
+    const point = vec3.fromRaw(resultPoint);
+    Raw.destroy(resultPoint);
+
+    const isPointOverPoly = resultPointOverPoly.value;
+    Raw.destroy(resultPointOverPoly);
+
     return {
       success: Raw.Detour.statusSucceed(status),
       status,
-      polyRef: resultPolyRef.value,
-      point: vec3.fromRaw(resultPoint),
-      isPointOverPoly: resultPointOverPoly.value,
+      polyRef,
+      point,
+      isPointOverPoly,
     };
   }
 
@@ -387,9 +422,6 @@ export class NavMeshQuery {
     randomPolyRef: number;
     randomPoint: Vector3;
   } {
-    const randomPolyRef = new Raw.UnsignedIntRef();
-    const randomPoint = new Raw.Vec3();
-
     const filter = options?.filter ?? this.defaultFilter;
     const halfExtents = options?.halfExtents ?? this.defaultQueryHalfExtents;
 
@@ -415,20 +447,29 @@ export class NavMeshQuery {
       startRef = nearestPoly.nearestRef;
     }
 
+    const randomPolyRefRaw = new Raw.UnsignedIntRef();
+    const randomPointRaw = new Raw.Vec3();
+
     const status = this.raw.findRandomPointAroundCircle(
       startRef,
       vec3.toArray(position),
       radius,
       filter.raw,
-      randomPolyRef,
-      randomPoint
+      randomPolyRefRaw,
+      randomPointRaw
     );
+
+    const randomPolyRef = randomPolyRefRaw.value;
+    Raw.destroy(randomPolyRefRaw);
+
+    const randomPoint = vec3.fromRaw(randomPointRaw);
+    Raw.destroy(randomPointRaw);
 
     return {
       success: Raw.Detour.statusSucceed(status),
       status,
-      randomPolyRef: randomPolyRef.value,
-      randomPoint: vec3.fromRaw(randomPoint),
+      randomPolyRef,
+      randomPoint,
     };
   }
 
@@ -461,7 +502,7 @@ export class NavMeshQuery {
   ) {
     const maxVisitedSize = options?.maxVisitedSize ?? 256;
 
-    const resultPosition = new Raw.Vec3();
+    const resultPositionRaw = new Raw.Vec3();
     const visitedArray = new UnsignedIntArray();
 
     const filter = options?.filter?.raw ?? this.defaultFilter.raw;
@@ -471,18 +512,21 @@ export class NavMeshQuery {
       vec3.toArray(startPosition),
       vec3.toArray(endPosition),
       filter,
-      resultPosition,
+      resultPositionRaw,
       visitedArray.raw,
       maxVisitedSize
     );
 
+    const resultPosition = vec3.fromRaw(resultPositionRaw);
+    Raw.destroy(resultPositionRaw);
+
     const visited = [...visitedArray.getHeapView()];
-    visitedArray.free();
+    visitedArray.destroy();
 
     return {
       success: Raw.Detour.statusSucceed(status),
       status,
-      resultPosition: vec3.fromRaw(resultPosition),
+      resultPosition,
       visited,
     };
   }
@@ -499,20 +543,26 @@ export class NavMeshQuery {
      */
     filter?: QueryFilter;
   }) {
-    const randomPolyRef = new Raw.UnsignedIntRef();
-    const randomPoint = new Raw.Vec3();
+    const randomPolyRefRaw = new Raw.UnsignedIntRef();
+    const randomPointRaw = new Raw.Vec3();
 
     const status = this.raw.findRandomPoint(
       options?.filter?.raw ?? this.defaultFilter.raw,
-      randomPolyRef,
-      randomPoint
+      randomPolyRefRaw,
+      randomPointRaw
     );
+
+    const randomPolyRef = randomPolyRefRaw.value;
+    Raw.destroy(randomPolyRefRaw);
+
+    const randomPoint = vec3.fromRaw(randomPointRaw);
+    Raw.destroy(randomPointRaw);
 
     return {
       success: Raw.Detour.statusSucceed(status),
       status,
-      randomPolyRef: randomPolyRef.value,
-      randomPoint: vec3.fromRaw(randomPoint),
+      randomPolyRef,
+      randomPoint,
     };
   }
 
@@ -524,16 +574,20 @@ export class NavMeshQuery {
    */
   getPolyHeight(polyRef: number, position: Vector3) {
     const floatRef = new Raw.FloatRef();
+
     const status = this.raw.getPolyHeight(
       polyRef,
       vec3.toArray(position),
       floatRef
     );
 
+    const height = floatRef.value;
+    Raw.destroy(floatRef);
+
     return {
       success: Raw.Detour.statusSucceed(status),
       status,
-      height: floatRef.value,
+      height,
     };
   }
 
@@ -710,10 +764,10 @@ export class NavMeshQuery {
       });
     }
 
-    findPathResult.polys.free();
-    findStraightPathResult.straightPath.free();
-    findStraightPathResult.straightPathFlags.free();
-    findStraightPathResult.straightPathRefs.free();
+    findPathResult.polys.destroy();
+    findStraightPathResult.straightPath.destroy();
+    findStraightPathResult.straightPathFlags.destroy();
+    findStraightPathResult.straightPathRefs.destroy();
 
     return {
       success: true,
@@ -729,6 +783,12 @@ export class NavMeshQuery {
    * @param endPosition position within the end polygon.
    * @param options additional options
    * @returns
+   * 
+   * The `polys` array returned must be freed after use.
+   *
+   * ```ts
+   * findPathResult.polys.destroy();
+   * ```
    */
   findPath(
     startRef: number,
@@ -752,8 +812,8 @@ export class NavMeshQuery {
     const filter = options?.filter ?? this.defaultFilter;
     const maxPathPolys = options?.maxPathPolys ?? 256;
 
-    const polys = new UnsignedIntArray();
-    polys.resize(maxPathPolys);
+    const polysArray = new UnsignedIntArray();
+    polysArray.resize(maxPathPolys);
 
     const status = this.raw.findPath(
       startRef,
@@ -761,14 +821,14 @@ export class NavMeshQuery {
       vec3.toArray(startPosition),
       vec3.toArray(endPosition),
       filter.raw,
-      polys.raw,
+      polysArray.raw,
       maxPathPolys
     );
 
     return {
       success: Raw.Detour.statusSucceed(status),
       status,
-      polys,
+      polys: polysArray,
     };
   }
 
@@ -795,6 +855,14 @@ export class NavMeshQuery {
    * @param path an array of polygon references that represent the path corridor
    * @param options additional options
    * @returns the straight path result
+   * 
+   * The straightPath, straightPathFlags, and straightPathRefs arrays returned must be freed after use.
+   *
+   * ```ts
+   * findStraightPathResult.straightPath.destroy();
+   * findStraightPathResult.straightPathFlags.destroy();
+   * findStraightPathResult.straightPathRefs.destroy();
+   * ```
    */
   findStraightPath(
     start: Vector3,
@@ -860,7 +928,7 @@ export class NavMeshQuery {
     const straightPathRefs = new UnsignedIntArray();
     straightPathRefs.resize(maxStraightPathPoints);
 
-    const straightPathCount = new Raw.IntRef();
+    const straightPathCountRaw = new Raw.IntRef();
 
     const status = this.raw.findStraightPath(
       vec3.toArray(start),
@@ -869,10 +937,13 @@ export class NavMeshQuery {
       straightPath.raw,
       straightPathFlags.raw,
       straightPathRefs.raw,
-      straightPathCount,
+      straightPathCountRaw,
       maxStraightPathPoints,
       straightPathOptions
     );
+
+    const straightPathCount = straightPathCountRaw.value;
+    Raw.destroy(straightPathCountRaw);
 
     return {
       success: Raw.Detour.statusSucceed(status),
@@ -880,7 +951,7 @@ export class NavMeshQuery {
       straightPath,
       straightPathFlags,
       straightPathRefs,
-      straightPathCount: straightPathCount.value,
+      straightPathCount,
     };
   }
 
@@ -1008,7 +1079,7 @@ export class NavMeshQuery {
       prevRef
     );
 
-    return {
+    const result = {
       success: Raw.Detour.statusSucceed(status),
       status,
       t: raycastHit.t,
@@ -1018,6 +1089,10 @@ export class NavMeshQuery {
       maxPath: raycastHit.maxPath,
       pathCost: raycastHit.pathCost,
     };
+
+    Raw.destroy(raycastHit);
+
+    return result;
   }
 
   /**

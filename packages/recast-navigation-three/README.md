@@ -1,6 +1,6 @@
 # @recast-navigation/three
 
-Three.js helpers for [`recast-navigation`](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation).
+Three.js nav mesh generation and visualisation helpers for [`recast-navigation`](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation).
 
 ## Installation
 
@@ -88,7 +88,30 @@ https://github.com/isaac-mason/recast-navigation-js
 
 This library provides helpers that are used in conjunction with the core library.
 
+### Debug Drawer
 
+This package provides a `DebugDrawer` utility that can visualise a navmesh and other generation intermediates.
+
+```ts
+import { DebugDrawer } from 'recast-navigation/three';
+
+const debugDrawer = new DebugDrawer({ scene });
+
+// resize the debug drawer when the window resizes
+// required for rendering lines correctly
+debugDrawer.resize(window.innerWidth, window.innerHeight);
+
+// draw a navmesh
+debugDrawer.drawNavMesh(navMesh);
+
+// clear the debug drawer
+debugDrawer.reset();
+
+// dispose of threejs and wasm resources
+debugDrawer.dispose();
+```
+
+See the Debug Drawer storybooks for more examples: https://recast-navigation-js.isaacmason.com/?path=/story/debug-three-debug-drawer--nav-mesh
 
 ### Helpers
 

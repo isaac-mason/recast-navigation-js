@@ -9,7 +9,7 @@ import { decorators } from '../../decorators';
 import { parameters } from '../../parameters';
 
 export default {
-  title: 'NavMeshQuery / ComputePath',
+  title: 'NavMeshQuery / Compute Path',
   decorators,
   parameters,
 };
@@ -43,7 +43,7 @@ export const ComputePath = () => {
 
     if (!success) return;
 
-    const navMeshQuery = new NavMeshQuery({ navMesh });
+    const navMeshQuery = new NavMeshQuery(navMesh);
 
     const { point: start } = navMeshQuery.findClosestPoint({
       x: -4.128927083678903,

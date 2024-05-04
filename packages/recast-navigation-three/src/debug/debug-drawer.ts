@@ -75,6 +75,7 @@ export class DebugDrawer extends THREE.Group {
         transparent: true,
         opacity: 0.4,
         depthWrite: false,
+        resolution: new THREE.Vector2(800, 800),
       });
 
     this.debugDrawImpl = new Raw.Module.DebugDrawImpl();

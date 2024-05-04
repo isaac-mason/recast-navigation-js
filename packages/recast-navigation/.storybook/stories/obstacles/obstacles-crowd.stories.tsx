@@ -95,10 +95,9 @@ export const CrowdExample = () => {
       upToDate = result.upToDate;
     }
 
-    const navMeshQuery = new NavMeshQuery({ navMesh });
+    const navMeshQuery = new NavMeshQuery(navMesh);
 
-    const crowd = new Crowd({
-      navMesh,
+    const crowd = new Crowd(navMesh, {
       maxAgents: 1,
       maxAgentRadius: 0.2,
     });
@@ -132,10 +131,10 @@ export const CrowdExample = () => {
       setAgent(undefined);
       setCrowd(undefined);
 
+      navMeshQuery.destroy();
       crowd.destroy();
       navMesh.destroy();
       tileCache.destroy();
-      navMeshQuery.destroy();
     };
   }, [group]);
 

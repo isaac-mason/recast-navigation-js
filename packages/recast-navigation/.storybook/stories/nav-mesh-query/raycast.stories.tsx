@@ -53,7 +53,7 @@ export const Raycast = () => {
 
     if (!success) return;
 
-    const navMeshQuery = new NavMeshQuery({ navMesh });
+    const navMeshQuery = new NavMeshQuery(navMesh);
 
     setNavMesh(navMesh);
     setNavMeshQuery(navMeshQuery);
@@ -116,7 +116,6 @@ export const Raycast = () => {
       <group ref={setGroup} onPointerDown={setRaycastPoint}>
         <NavTestEnvironment />
       </group>
-
       <group position={[0, 0.05, 0]}>
         <mesh position={start}>
           <sphereGeometry args={[0.1, 32, 32]} />
@@ -159,9 +158,12 @@ export const Raycast = () => {
           style={{
             position: 'absolute',
             top: 0,
-            left: 0,
-            margin: '2em',
-            color: '#fff',
+            color: 'white',
+            padding: '25px',
+            userSelect: 'none',
+            fontSize: '1.5em',
+            fontFamily: 'monospace',
+            fontWeight: 400,
           }}
         >
           left click to set start point, right click to set end point
