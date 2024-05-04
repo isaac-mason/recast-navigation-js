@@ -1,12 +1,12 @@
-import { Environment, OrbitControls } from '@react-three/drei';
+import { OrbitControls } from '@react-three/drei';
 import { Canvas, useThree } from '@react-three/fiber';
+import RecastWasm from '@recast-navigation/wasm/wasm';
 import { useEffect, useRef } from 'react';
 import { NavMeshQuery, init } from 'recast-navigation';
 import { NavMeshHelper, threeToSoloNavMesh } from 'recast-navigation/three';
 import { suspend } from 'suspend-react';
 import { Color, Group, Mesh, MeshBasicMaterial, Vector2, Vector3 } from 'three';
 import { Line2, LineGeometry, LineMaterial } from 'three-stdlib';
-import RecastWasm from '@recast-navigation/wasm/wasm';
 
 const App = () => {
   const scene = useThree((state) => state.scene);
@@ -120,7 +120,8 @@ export default () => (
     <Canvas camera={{ position: [5, 5, 5] }}>
       <App />
 
-      <Environment preset="city" />
+      <ambientLight intensity={1.5} />
+      <directionalLight position={[5, 5, -5]} intensity={3} />
 
       <OrbitControls />
     </Canvas>
