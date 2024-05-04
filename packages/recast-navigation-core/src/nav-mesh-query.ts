@@ -1,11 +1,10 @@
 import { FloatArray, UnsignedCharArray, UnsignedIntArray } from './arrays';
 import { NavMesh } from './nav-mesh';
-import { Raw } from './raw';
-import type R from './raw-module';
+import { Raw, type RawModule } from './raw';
 import { Vector3, array, vec3 } from './utils';
 
 export class QueryFilter {
-  raw: R.dtQueryFilter;
+  raw: RawModule.dtQueryFilter;
 
   get includeFlags(): number {
     return this.raw.getIncludeFlags();
@@ -32,9 +31,9 @@ export class QueryFilter {
    * Constructs a query filter wrapper for a raw dtQueryFilter object.
    * @param raw
    */
-  constructor(raw: R.dtQueryFilter);
+  constructor(raw: RawModule.dtQueryFilter);
 
-  constructor(raw?: R.dtQueryFilter) {
+  constructor(raw?: RawModule.dtQueryFilter) {
     this.raw = raw ?? new Raw.Module.dtQueryFilter();
   }
 
@@ -68,7 +67,7 @@ export type NavMeshQueryParams = {
 };
 
 export class NavMeshQuery {
-  raw: R.NavMeshQuery;
+  raw: RawModule.NavMeshQuery;
 
   /**
    * Default query filter.
@@ -101,9 +100,9 @@ export class NavMeshQuery {
    * Constructs a navigation mesh query object from a raw object.
    * @param raw
    */
-  constructor(raw: R.NavMeshQuery);
+  constructor(raw: RawModule.NavMeshQuery);
 
-  constructor(value: R.NavMeshQuery | NavMesh, params?: NavMeshQueryParams) {
+  constructor(value: RawModule.NavMeshQuery | NavMesh, params?: NavMeshQueryParams) {
     if (value instanceof Raw.Module.NavMeshQuery) {
       this.raw = value;
     } else {

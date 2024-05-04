@@ -1,11 +1,10 @@
 import { UnsignedCharArray, UnsignedShortArray } from './arrays';
 import { NavMeshCreateParams } from './detour';
 import { NavMesh } from './nav-mesh';
-import { Raw } from './raw';
-import type R from './raw-module';
+import { Raw, type RawModule } from './raw';
 import { Vector3, vec3 } from './utils';
 
-export type ObstacleRef = R.dtObstacleRef;
+export type ObstacleRef = RawModule.dtObstacleRef;
 
 export type BoxObstacle = {
   type: 'box';
@@ -57,7 +56,7 @@ export type TileCacheParamsType = {
 };
 
 export class DetourTileCacheParams {
-  constructor(public raw: R.dtTileCacheParams) {}
+  constructor(public raw: RawModule.dtTileCacheParams) {}
 
   static create(config: TileCacheParamsType): DetourTileCacheParams {
     const tileCacheParams = new Raw.Module.dtTileCacheParams();
@@ -88,22 +87,22 @@ export type TileCacheUpdateResult = {
 };
 
 export class TileCache {
-  raw: R.TileCache;
+  raw: RawModule.TileCache;
 
   obstacles: Map<ObstacleRef, Obstacle> = new Map();
 
   /**
    * Constructs a new TileCache
    */
-  constructor()
+  constructor();
 
   /**
    * Creates a wrapper around a raw TileCache object
    * @param raw raw object
    */
-  constructor(raw: R.TileCache)
+  constructor(raw: RawModule.TileCache);
 
-  constructor(raw?: R.TileCache) {
+  constructor(raw?: RawModule.TileCache) {
     this.raw = raw ?? new Raw.Module.TileCache();
   }
 
@@ -113,8 +112,8 @@ export class TileCache {
    */
   init(
     params: DetourTileCacheParams,
-    alloc: R.RecastLinearAllocator,
-    compressor: R.RecastFastLZCompressor,
+    alloc: RawModule.RecastLinearAllocator,
+    compressor: RawModule.RecastFastLZCompressor,
     meshProcess: TileCacheMeshProcess
   ) {
     return this.raw.init(params.raw, alloc, compressor, meshProcess.raw);
@@ -255,11 +254,11 @@ export class TileCache {
   addTile(
     data: UnsignedCharArray,
     flags: number = Raw.Module.DT_COMPRESSEDTILE_FREE_DATA
-  ): R.TileCacheAddTileResult {
+  ): RawModule.TileCacheAddTileResult {
     return this.raw.addTile(data.raw, flags);
   }
 
-  buildNavMeshTile(ref: R.dtCompressedTileRef, navMesh: NavMesh) {
+  buildNavMeshTile(ref: RawModule.dtCompressedTileRef, navMesh: NavMesh) {
     return this.raw.buildNavMeshTile(ref, navMesh.raw);
   }
 
@@ -273,7 +272,7 @@ export class TileCache {
 }
 
 export class TileCacheMeshProcess {
-  raw: R.TileCacheMeshProcess;
+  raw: RawModule.TileCacheMeshProcess;
 
   constructor(
     process: (
@@ -313,8 +312,8 @@ export class TileCacheMeshProcess {
 }
 
 export const buildTileCacheLayer = (
-  comp: R.RecastFastLZCompressor,
-  header: R.dtTileCacheLayerHeader,
+  comp: RawModule.RecastFastLZCompressor,
+  header: RawModule.dtTileCacheLayerHeader,
   heights: UnsignedCharArray,
   areas: UnsignedCharArray,
   cons: UnsignedCharArray,

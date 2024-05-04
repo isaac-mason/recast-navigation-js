@@ -1,7 +1,6 @@
 import { Vector3Tuple } from 'three';
 import { FloatArray, IntArray, UnsignedCharArray } from './arrays';
-import { Raw } from './raw';
-import type R from './raw-module';
+import { Raw, type RawModule } from './raw';
 import { Vector2Tuple, Vector3, array, vec3 } from './utils';
 
 export type RecastConfig = {
@@ -131,7 +130,7 @@ export const recastConfigDefaults: RecastConfig = {
 
 export const createRcConfig = (
   partialConfig: Partial<RecastConfig>
-): R.rcConfig => {
+): RawModule.rcConfig => {
   const config = {
     ...recastConfigDefaults,
     ...partialConfig,
@@ -157,7 +156,9 @@ export const createRcConfig = (
   return rcConfig;
 };
 
-export const cloneRcConfig = (rcConfig: R.rcConfig): R.rcConfig => {
+export const cloneRcConfig = (
+  rcConfig: RawModule.rcConfig
+): RawModule.rcConfig => {
   const clone = new Raw.Module.rcConfig();
 
   clone.set_bmin(0, rcConfig.get_bmin(0));
@@ -189,7 +190,7 @@ export const cloneRcConfig = (rcConfig: R.rcConfig): R.rcConfig => {
 };
 
 export class RecastBuildContext {
-  raw: R.RecastBuildContext;
+  raw: RawModule.RecastBuildContext;
 
   logs: Array<{ category: number; msg: string }> = [];
   startTimes: { [label: string]: number } = {};
@@ -284,19 +285,19 @@ export class RecastBuildContext {
 }
 
 export class RecastChunkyTriMesh {
-  raw: R.rcChunkyTriMesh;
+  raw: RawModule.rcChunkyTriMesh;
 
   /**
    * Creates a new RecastChunkyTriMesh.
    */
-  constructor()
+  constructor();
 
   /**
    * Creates a wrapper around an existing raw RecastChunkyTriMesh object.
    */
-  constructor(raw: R.rcChunkyTriMesh)
+  constructor(raw: RawModule.rcChunkyTriMesh);
 
-  constructor(raw?: R.rcChunkyTriMesh) {
+  constructor(raw?: RawModule.rcChunkyTriMesh) {
     this.raw = raw ?? new Raw.rcChunkyTriMesh();
   }
 
@@ -331,7 +332,7 @@ export class RecastChunkyTriMesh {
     );
   }
 
-  nodes(index: number): R.rcChunkyTriMeshNode {
+  nodes(index: number): RawModule.rcChunkyTriMeshNode {
     return this.raw.get_nodes(index);
   }
 
@@ -341,9 +342,9 @@ export class RecastChunkyTriMesh {
 }
 
 export class RecastSpan {
-  raw: R.rcSpan;
+  raw: RawModule.rcSpan;
 
-  constructor(raw: R.rcSpan) {
+  constructor(raw: RawModule.rcSpan) {
     this.raw = raw;
   }
 
@@ -365,9 +366,9 @@ export class RecastSpan {
 }
 
 export class RecastSpanPool {
-  raw: R.rcSpanPool;
+  raw: RawModule.rcSpanPool;
 
-  constructor(raw: R.rcSpanPool) {
+  constructor(raw: RawModule.rcSpanPool) {
     this.raw = raw;
   }
 
@@ -383,9 +384,9 @@ export class RecastSpanPool {
 }
 
 export class RecastHeightfield {
-  raw: R.rcHeightfield;
+  raw: RawModule.rcHeightfield;
 
-  constructor(raw: R.rcHeightfield) {
+  constructor(raw: RawModule.rcHeightfield) {
     this.raw = raw;
   }
 
@@ -427,9 +428,9 @@ export class RecastHeightfield {
 }
 
 export class RecastCompactCell {
-  raw: R.rcCompactCell;
+  raw: RawModule.rcCompactCell;
 
-  constructor(raw: R.rcCompactCell) {
+  constructor(raw: RawModule.rcCompactCell) {
     this.raw = raw;
   }
 
@@ -443,9 +444,9 @@ export class RecastCompactCell {
 }
 
 export class RecastCompactSpan {
-  raw: R.rcCompactSpan;
+  raw: RawModule.rcCompactSpan;
 
-  constructor(raw: R.rcCompactSpan) {
+  constructor(raw: RawModule.rcCompactSpan) {
     this.raw = raw;
   }
 
@@ -467,9 +468,9 @@ export class RecastCompactSpan {
 }
 
 export class RecastCompactHeightfield {
-  raw: R.rcCompactHeightfield;
+  raw: RawModule.rcCompactHeightfield;
 
-  constructor(raw: R.rcCompactHeightfield) {
+  constructor(raw: RawModule.rcCompactHeightfield) {
     this.raw = raw;
   }
 
@@ -539,9 +540,9 @@ export class RecastCompactHeightfield {
 }
 
 export class RecastContour {
-  raw: R.rcContour;
+  raw: RawModule.rcContour;
 
-  constructor(raw: R.rcContour) {
+  constructor(raw: RawModule.rcContour) {
     this.raw = raw;
   }
 
@@ -571,9 +572,9 @@ export class RecastContour {
 }
 
 export class RecastContourSet {
-  raw: R.rcContourSet;
+  raw: RawModule.rcContourSet;
 
-  constructor(raw: R.rcContourSet) {
+  constructor(raw: RawModule.rcContourSet) {
     this.raw = raw;
   }
 
@@ -619,9 +620,9 @@ export class RecastContourSet {
 }
 
 export class RecastHeightfieldLayer {
-  raw: R.rcHeightfieldLayer;
+  raw: RawModule.rcHeightfieldLayer;
 
-  constructor(raw: R.rcHeightfieldLayer) {
+  constructor(raw: RawModule.rcHeightfieldLayer) {
     this.raw = raw;
   }
 
@@ -687,9 +688,9 @@ export class RecastHeightfieldLayer {
 }
 
 export class RecastHeightfieldLayerSet {
-  raw: R.rcHeightfieldLayerSet;
+  raw: RawModule.rcHeightfieldLayerSet;
 
-  constructor(raw: R.rcHeightfieldLayerSet) {
+  constructor(raw: RawModule.rcHeightfieldLayerSet) {
     this.raw = raw;
   }
 
@@ -703,9 +704,9 @@ export class RecastHeightfieldLayerSet {
 }
 
 export class RecastPolyMesh {
-  raw: R.rcPolyMesh;
+  raw: RawModule.rcPolyMesh;
 
-  constructor(raw: R.rcPolyMesh) {
+  constructor(raw: RawModule.rcPolyMesh) {
     this.raw = raw;
   }
 
@@ -779,9 +780,9 @@ export class RecastPolyMesh {
 }
 
 export class RecastPolyMeshDetail {
-  raw: R.rcPolyMeshDetail;
+  raw: RawModule.rcPolyMeshDetail;
 
-  constructor(raw: R.rcPolyMeshDetail) {
+  constructor(raw: RawModule.rcPolyMeshDetail) {
     this.raw = raw;
   }
 

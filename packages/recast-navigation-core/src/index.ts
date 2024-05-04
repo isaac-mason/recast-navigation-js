@@ -1,5 +1,3 @@
-import Wasm from './raw-module';
-
 export * from './arrays';
 export * from './crowd';
 export * from './detour';
@@ -10,4 +8,3 @@ export * from './recast';
 export * from './serdes';
 export * from './tile-cache';
 export * from './utils';
-export { Wasm };

@@ -1,5 +1,4 @@
-import { Raw } from './raw';
-import RawModule from './raw-module';
+import { Raw, RawModule } from './raw';
 
 type TypedArray =
   | typeof Int32Array

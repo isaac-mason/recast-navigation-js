@@ -6,6 +6,7 @@ import { NavMeshHelper, threeToSoloNavMesh } from 'recast-navigation/three';
 import { suspend } from 'suspend-react';
 import { Color, Group, Mesh, MeshBasicMaterial, Vector2, Vector3 } from 'three';
 import { Line2, LineGeometry, LineMaterial } from 'three-stdlib';
+import RecastWasm from '@recast-navigation/wasm/wasm';
 
 const App = () => {
   const scene = useThree((state) => state.scene);
@@ -109,7 +110,7 @@ const App = () => {
 };
 
 const RecastInit = (props: { children: JSX.Element }) => {
-  suspend(() => init(), []);
+  suspend(() => init(RecastWasm), []);
 
   return props.children;
 };

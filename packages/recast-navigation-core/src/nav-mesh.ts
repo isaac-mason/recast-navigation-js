@@ -5,14 +5,13 @@ import {
   DetourPoly,
   statusSucceed,
 } from './detour';
-import { Raw } from './raw';
-import type R from './raw-module';
+import { Raw, type RawModule } from './raw';
 import { Vector3, array, vec3 } from './utils';
 
 export class NavMeshGetTilesAtResult {
-  raw: R.NavMeshGetTilesAtResult;
+  raw: RawModule.NavMeshGetTilesAtResult;
 
-  constructor(raw: R.NavMeshGetTilesAtResult) {
+  constructor(raw: RawModule.NavMeshGetTilesAtResult) {
     this.raw = raw;
   }
 
@@ -26,9 +25,9 @@ export class NavMeshGetTilesAtResult {
 }
 
 export class NavMeshRemoveTileResult {
-  raw: R.NavMeshRemoveTileResult;
+  raw: RawModule.NavMeshRemoveTileResult;
 
-  constructor(raw: R.NavMeshRemoveTileResult) {
+  constructor(raw: RawModule.NavMeshRemoveTileResult) {
     this.raw = raw;
   }
 
@@ -42,9 +41,9 @@ export class NavMeshRemoveTileResult {
 }
 
 export class NavMeshCalcTileLocResult {
-  raw: R.NavMeshCalcTileLocResult;
+  raw: RawModule.NavMeshCalcTileLocResult;
 
-  constructor(raw: R.NavMeshCalcTileLocResult) {
+  constructor(raw: RawModule.NavMeshCalcTileLocResult) {
     this.raw = raw;
   }
 
@@ -58,9 +57,9 @@ export class NavMeshCalcTileLocResult {
 }
 
 export class NavMeshStoreTileStateResult {
-  raw: R.NavMeshStoreTileStateResult;
+  raw: RawModule.NavMeshStoreTileStateResult;
 
-  constructor(raw: R.NavMeshStoreTileStateResult) {
+  constructor(raw: RawModule.NavMeshStoreTileStateResult) {
     this.raw = raw;
   }
 
@@ -99,7 +98,7 @@ export type NavMeshParamsType = {
 };
 
 export class NavMeshParams {
-  constructor(public raw: R.dtNavMeshParams) {}
+  constructor(public raw: RawModule.dtNavMeshParams) {}
 
   static create(params: NavMeshParamsType): NavMeshParams {
     const raw = new Raw.Module.dtNavMeshParams();
@@ -132,7 +131,7 @@ export class NavMeshParams {
 }
 
 export class NavMesh {
-  raw: R.NavMesh;
+  raw: RawModule.NavMesh;
 
   /**
    * Constructs a new NavMesh
@@ -143,9 +142,9 @@ export class NavMesh {
    * Creates a wrapper around a raw NavMesh object
    * @param raw raw object
    */
-  constructor(raw: R.NavMesh);
+  constructor(raw: RawModule.NavMesh);
 
-  constructor(raw?: R.NavMesh) {
+  constructor(raw?: RawModule.NavMesh) {
     this.raw = raw ?? new Raw.Module.NavMesh();
   }
 
