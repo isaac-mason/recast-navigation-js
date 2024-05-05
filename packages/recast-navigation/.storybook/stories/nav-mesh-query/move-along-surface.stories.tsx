@@ -137,8 +137,8 @@ export const MoveAlongSurface = () => {
     const { success, navMesh } = threeToSoloNavMesh(meshes, {
       cs: cellSize,
       ch: 0.2,
-      walkableHeight: walkableHeight / cellSize,
-      walkableRadius: walkableRadius / cellSize,
+      walkableHeight: Math.round(walkableHeight / cellSize),
+      walkableRadius: Math.round(walkableRadius / cellSize),
     });
 
     if (!success) return;

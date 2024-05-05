@@ -14,45 +14,99 @@
   <script type="module">
     import * as THREE from 'three';
     import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-    import { init } from '@recast-navigation/core';
+    import {
+      init as initRecastNavigation,
+      NavMeshQuery,
+    } from '@recast-navigation/core';
     import { DebugDrawer, threeToSoloNavMesh } from '@recast-navigation/three';
 
-    await init();
+    // initialise recast-navigation
+    await initRecastNavigation();
 
+    // setup scene
     const renderer = new THREE.WebGLRenderer();
     document.body.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera();
-    camera.position.set(10, 10, 10);
+    camera.position.set(10, 10, -10);
 
     const orbitControls = new OrbitControls(camera, renderer.domElement);
 
+    // add some meshes
     const ground = new THREE.Mesh(
       new THREE.BoxGeometry(10, 1, 10),
       new THREE.MeshBasicMaterial({ color: '#333' })
     );
+    ground.position.set(0, -0.5, 0);
 
     scene.add(ground);
 
-    const box = new THREE.Mesh(
-      new THREE.BoxGeometry(2, 2, 2),
+    const boxOne = new THREE.Mesh(
+      new THREE.BoxGeometry(8, 2, 1),
       new THREE.MeshBasicMaterial({ color: '#555' })
     );
-    box.position.set(0, 1, 0);
+    boxOne.rotation.y = Math.PI / 4;
+    boxOne.position.set(-2, 1, 0);
+    scene.add(boxOne);
 
-    scene.add(box);
+    const boxTwo = new THREE.Mesh(
+      new THREE.BoxGeometry(8, 2, 1),
+      new THREE.MeshBasicMaterial({ color: '#555' })
+    );
+    boxTwo.rotation.y = Math.PI / 4;
+    boxTwo.position.set(2, 1, 0);
+    scene.add(boxTwo);
 
-    const { success, navMesh } = threeToSoloNavMesh([ground, box], {
-      cs: 0.05,
-      ch: 0.05,
+    // generate a solo navmesh
+    const cs = 0.05;
+    const ch = 0.05;
+    const walkableRadius = 0.2;
+    const { success, navMesh } = threeToSoloNavMesh([ground, boxOne, boxTwo], {
+      cs,
+      ch,
+      walkableRadius: Math.round(walkableRadius / ch),
     });
 
+    // debug draw the navmesh
     const debugDrawer = new DebugDrawer();
     debugDrawer.drawNavMesh(navMesh);
-
     scene.add(debugDrawer);
 
+    // compute a path
+    const start = { x: -4, y: 0, z: -4 };
+    const end = { x: 4, y: 0, z: 4 };
+
+    const navMeshQuery = new NavMeshQuery(navMesh);
+    const { path } = navMeshQuery.computePath(start, end);
+
+    // draw the path start
+    const startMarker = new THREE.Mesh(
+      new THREE.BoxGeometry(0.1, 0.1, 0.1),
+      new THREE.MeshBasicMaterial({ color: 'blue' })
+    );
+    startMarker.position.set(start.x, start.y + 0.1, start.z);
+    scene.add(startMarker);
+
+    // draw the path end
+    const endMarker = new THREE.Mesh(
+      new THREE.BoxGeometry(0.1, 0.1, 0.1),
+      new THREE.MeshBasicMaterial({ color: 'green' })
+    );
+    endMarker.position.set(end.x, end.y + 0.1, end.z);
+    scene.add(endMarker);
+
+    // draw the path line
+    const line = new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(
+        path.map(({ x, y, z }) => new THREE.Vector3(x, y, z))
+      ),
+      new THREE.LineBasicMaterial({ color: 'blue' })
+    );
+    line.position.y += 0.1;
+    scene.add(line);
+
+    // handle resizing
     const onWindowResize = () => {
       debugDrawer.resize(window.innerWidth, window.innerHeight);
 
@@ -64,6 +118,7 @@
 
     window.addEventListener('resize', onWindowResize);
 
+    // animate
     const animate = () => {
       requestAnimationFrame(animate);
       renderer.render(scene, camera);
