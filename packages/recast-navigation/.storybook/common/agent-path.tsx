@@ -1,6 +1,7 @@
 import { Line } from '@react-three/drei';
 import { CrowdAgent } from '@recast-navigation/core';
 import React, { useEffect, useState } from 'react';
+import * as THREE from 'three';
 
 export type AgentPathProps = {
   agent?: CrowdAgent;

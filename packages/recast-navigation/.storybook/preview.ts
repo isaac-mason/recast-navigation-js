@@ -20,6 +20,7 @@ export const parameters = {
         'Off Mesh Connections',
         'Helpers',
         'Advanced',
+        'Debug',
       ],
       locales: 'en-US',
     },

@@ -15,7 +15,7 @@ import { decorators } from '../../decorators';
 import { parameters } from '../../parameters';
 
 export default {
-  title: 'TileCache / Obstacles',
+  title: 'TileCache / Many Obstacles',
   decorators,
   parameters,
 };
@@ -30,7 +30,7 @@ const obstaclesMaterial = new MeshBasicMaterial({
   wireframe: true,
 });
 
-export const ManyObstaclesExample = () => {
+export const ManyObstacles = () => {
   const [group, setGroup] = useState<Group | null>(null);
 
   const [navMesh, setNavMesh] = useState<NavMesh | undefined>();

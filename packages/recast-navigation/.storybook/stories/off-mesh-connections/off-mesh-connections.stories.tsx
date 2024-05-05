@@ -73,7 +73,7 @@ const offMeshConnections: OffMeshConnectionParams[] = [
   },
 ];
 
-export const SoloNavMeshOffMeshConnection = () => {
+export const SoloNavMeshOffMeshConnections = () => {
   const [group, setGroup] = useState<Group | null>(null);
 
   const [navMeshQuery, setNavMeshQuery] = useState<NavMeshQuery>();

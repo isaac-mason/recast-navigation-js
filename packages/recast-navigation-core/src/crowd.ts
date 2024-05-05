@@ -3,8 +3,6 @@ import { NavMeshQuery, QueryFilter } from './nav-mesh-query';
 import { Raw, RawModule } from './raw';
 import { Vector3, vec3 } from './utils';
 
-const Epsilon = 0.001;
-
 export type CrowdAgentParams = {
   /**
    * The radius of the agent.
@@ -182,6 +180,14 @@ export class CrowdAgent implements CrowdAgentParams {
     this.raw.params.userData = value;
   }
 
+  /**
+   * The interpolated position of the agent.
+   *
+   * Use this if stepping the crowd with interpolation.
+   * This will not be updated if stepping the crowd without interpolation.
+   */
+  interpolatedPosition: Vector3 = { x: 0, y: 0, z: 0 };
+
   constructor(
     public crowd: Crowd,
     public agentIndex: number
@@ -239,6 +245,8 @@ export class CrowdAgent implements CrowdAgentParams {
       vec3.toArray(this.crowd.navMeshQuery.defaultQueryHalfExtents),
       this.crowd.navMeshQuery.defaultFilter.raw
     );
+
+    vec3.copy(position, this.interpolatedPosition);
   }
 
   /**
@@ -399,32 +407,20 @@ export class Crowd {
   navMesh: NavMesh;
 
   /**
-   * If delta time in navigation tick update is greater than the time step a number of sub iterations are done.
-   * If more iterations are need to reach deltatime they will be discarded.
-   * A value of 0 will set to no maximum and update will use as many substeps as needed.
-   */
-  maximumSubStepCount = 10;
-
-  /**
-   * Get the time step of the navigation tick update.
-   */
-  timeStep = 1 / 60;
-
-  /**
-   * Time factor applied when updating crowd agents (default 1). A value of 0 will pause crowd updates.
-   */
-  timeFactor = 1;
-
-  /**
    * The NavMeshQuery used to find nearest polys for commands
    */
   navMeshQuery: NavMeshQuery;
 
   /**
-   * 
+   * Accumulator for fixed updates
+   */
+  private accumulator = 0;
+
+  /**
+   *
    * @param navMesh the navmesh the crowd will use for planning
    * @param param1 the crowd parameters
-   * 
+   *
    * @example
    * ```ts
    * const crowd = new Crowd(navMesh, {
@@ -444,31 +440,39 @@ export class Crowd {
   }
 
   /**
-   * Updates the crowd
+   * Steps the crowd forward in time with a fixed time step.
+   *
+   * There are two modes. The simple mode is fixed timestepping without interpolation. In this case you only use the first argument. The second case uses interpolation. In that you also provide the time since the function was last used, as well as the maximum fixed timesteps to take.
+   *
+   * @param dt The fixed time step size to use.
+   * @param timeSinceLastCalled The time elapsed since the function was last called.
+   * @param maxSubSteps Maximum number of fixed steps to take per function call.
    */
-  update(deltaTime: number) {
-    if (deltaTime <= Epsilon) {
-      return;
-    }
-
-    // update crowd
-    const { timeStep } = this;
-    const maxStepCount = this.maximumSubStepCount;
-
-    if (timeStep <= Epsilon) {
-      this.raw.update(deltaTime, undefined!);
+  update(dt: number, timeSinceLastCalled?: number, maxSubSteps: number = 10) {
+    if (timeSinceLastCalled === undefined) {
+      // fixed step
+      this.raw.update(dt, undefined!);
     } else {
-      let iterationCount = Math.floor(deltaTime / timeStep);
-      if (maxStepCount && iterationCount > maxStepCount) {
-        iterationCount = maxStepCount;
-      }
-      if (iterationCount < 1) {
-        iterationCount = 1;
+      this.accumulator += timeSinceLastCalled;
+
+      // Do fixed steps to catch up
+      let substeps = 0;
+      while (this.accumulator >= dt && substeps < maxSubSteps) {
+        this.raw.update(dt, undefined!);
+        this.accumulator -= dt;
+        substeps++;
       }
 
-      const step = deltaTime / iterationCount;
-      for (let i = 0; i < iterationCount; i++) {
-        this.raw.update(step, undefined!);
+      // Interpolate the agent positions
+      const t = (this.accumulator % dt) / dt;
+      const agents = this.getAgents();
+      for (const agent of agents) {
+        vec3.lerp(
+          agent.interpolatedPosition,
+          agent.position(),
+          t,
+          agent.interpolatedPosition
+        );
       }
     }
   }
