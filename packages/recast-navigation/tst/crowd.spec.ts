@@ -1,4 +1,4 @@
-import { Crowd, NavMesh, NavMeshQuery, init } from 'recast-navigation';
+import { Crowd, NavMesh, init } from 'recast-navigation';
 import { generateSoloNavMesh } from 'recast-navigation/generators';
 import { BoxGeometry, BufferAttribute, Mesh } from 'three';
 import { beforeEach, describe, expect, test } from 'vitest';
