@@ -18,7 +18,11 @@
       init as initRecastNavigation,
       NavMeshQuery,
     } from '@recast-navigation/core';
-    import { DebugDrawer, threeToSoloNavMesh } from '@recast-navigation/three';
+    import { generateSoloNavMesh } from '@recast-navigation/generators';
+    import {
+      DebugDrawer,
+      getPositionsAndIndices,
+    } from '@recast-navigation/three';
 
     // initialise recast-navigation
     await initRecastNavigation();
@@ -58,11 +62,18 @@
     boxTwo.position.set(2, 1, 0);
     scene.add(boxTwo);
 
+    // get the positions and indices that we want to generate a navmesh from
+    const [positions, indices] = getPositionsAndIndices([
+      ground,
+      boxOne,
+      boxTwo,
+    ]);
+
     // generate a solo navmesh
     const cs = 0.05;
     const ch = 0.05;
     const walkableRadius = 0.2;
-    const { success, navMesh } = threeToSoloNavMesh([ground, boxOne, boxTwo], {
+    const { success, navMesh } = generateSoloNavMesh(positions, indices, {
       cs,
       ch,
       walkableRadius: Math.round(walkableRadius / ch),
