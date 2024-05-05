@@ -1,16 +1,11 @@
-import { Crowd, NavMesh, NavMeshQuery, Raw, init } from 'recast-navigation';
+import { Crowd, NavMesh, NavMeshQuery, init } from 'recast-navigation';
 import { generateSoloNavMesh } from 'recast-navigation/generators';
 import { BoxGeometry, BufferAttribute, Mesh } from 'three';
-import { beforeAll, beforeEach, describe, expect, test } from 'vitest';
+import { beforeEach, describe, expect, test } from 'vitest';
 import { expectVectorToBeCloseTo } from './utils';
 
 describe('Crowd', () => {
-  // beforeAll(async () => {
-  //   await init();
-  // });
-
   let navMesh: NavMesh;
-  let navMeshQuery: NavMeshQuery;
   let crowd: Crowd;
 
   beforeEach(async () => {
@@ -28,8 +23,6 @@ describe('Crowd', () => {
     if (!result.success) throw new Error('nav mesh generation failed');
 
     navMesh = result.navMesh;
-
-    navMeshQuery = new NavMeshQuery(navMesh);
 
     crowd = new Crowd(navMesh, {
       maxAgents: 10,
@@ -49,7 +42,9 @@ describe('Crowd', () => {
 
     agent.requestMoveTarget({ x: 2, y: 0, z: 2 });
 
-    crowd.update(5);
+    for (let i = 0; i < 120; i++) {
+      crowd.update(1 / 60);
+    }
 
     expectVectorToBeCloseTo(agent.position(), { x: 2, y: 0, z: 2 }, 0.3);
   });

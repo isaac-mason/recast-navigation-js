@@ -40,10 +40,10 @@ export const vec3 = {
     out.y = a.y + (b.y - a.y) * t;
     out.z = a.z + (b.z - a.z) * t;
   },
-  copy: (a: Vector3, out: Vector3 = { x: 0, y: 0, z: 0 }) => {
-    out.x = a.x;
-    out.y = a.y;
-    out.z = a.z;
+  copy: (source: Vector3, out: Vector3 = { x: 0, y: 0, z: 0 }) => {
+    out.x = source.x;
+    out.y = source.y;
+    out.z = source.z;
   },
 };
 
