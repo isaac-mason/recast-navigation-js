@@ -30,6 +30,21 @@ export const vec3 = {
   toArray: ({ x, y, z }: Vector3): Vector3Tuple => {
     return [x, y, z];
   },
+  lerp: (
+    a: Vector3,
+    b: Vector3,
+    t: number,
+    out: Vector3 = { x: 0, y: 0, z: 0 }
+  ) => {
+    out.x = a.x + (b.x - a.x) * t;
+    out.y = a.y + (b.y - a.y) * t;
+    out.z = a.z + (b.z - a.z) * t;
+  },
+  copy: (a: Vector3, out: Vector3 = { x: 0, y: 0, z: 0 }) => {
+    out.x = a.x;
+    out.y = a.y;
+    out.z = a.z;
+  },
 };
 
 export const array = <T>(getter: (index: number) => T, count: number) => {
