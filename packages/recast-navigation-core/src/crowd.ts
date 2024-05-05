@@ -193,6 +193,7 @@ export class CrowdAgent implements CrowdAgentParams {
     public agentIndex: number
   ) {
     this.raw = crowd.raw.getEditableAgent(agentIndex);
+    this.interpolatedPosition = this.position();
   }
 
   /**
