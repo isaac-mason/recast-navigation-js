@@ -1,9 +1,10 @@
 import { NavMesh, NavMeshQuery, init } from 'recast-navigation';
 import { generateSoloNavMesh } from 'recast-navigation/generators';
 import { BoxGeometry, BufferAttribute, Mesh } from 'three';
-import { beforeEach, describe, test } from 'vitest';
+import { beforeEach, describe, test, expect } from 'vitest';
+import { expectVectorToBeCloseTo } from './utils';
 
-describe('Smoke tests', () => {
+describe('NavMeshQuery', () => {
   let navMesh: NavMesh;
   let navMeshQuery: NavMeshQuery;
 
@@ -26,7 +27,7 @@ describe('Smoke tests', () => {
     navMeshQuery = new NavMeshQuery(navMesh);
   });
 
-  test('findClosestPoint', async ({ expect }) => {
+  test('findClosestPoint', () => {
     const { point: closestPoint } = navMeshQuery.findClosestPoint({
       x: 2,
       y: 1,
@@ -36,5 +37,27 @@ describe('Smoke tests', () => {
     expect(closestPoint.x).toBe(2);
     expect(closestPoint.y).toBeCloseTo(0.15, 0.01);
     expect(closestPoint.z).toBe(2);
+  });
+
+  test('computePath', () => {
+    const { point: start } = navMeshQuery.findClosestPoint({
+      x: -2,
+      y: 0,
+      z: -2,
+    });
+
+    const { point: end } = navMeshQuery.findClosestPoint({
+      x: 2,
+      y: 0,
+      z: 2,
+    });
+
+    const { path } = navMeshQuery.computePath(start, end);
+
+    expect(path.length).toBeGreaterThan(0);
+
+    expectVectorToBeCloseTo(path[0], start, 0.01);
+
+    expectVectorToBeCloseTo(path[path.length - 1], end, 0.01);
   });
 });
