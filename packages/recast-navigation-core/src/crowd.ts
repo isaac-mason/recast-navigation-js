@@ -262,14 +262,35 @@ export class CrowdAgent implements CrowdAgentParams {
   }
 
   /**
-   * The velocity of the agent.
-   * @returns
+   * The actual velocity of the agent. The change from velocityDesiredObstacleAdjusted -> velocity is constrained by max acceleration.
    */
   velocity(): Vector3 {
     return {
       x: this.raw.get_vel(0),
       y: this.raw.get_vel(1),
       z: this.raw.get_vel(2),
+    };
+  }
+
+  /**
+   * The desired velocity of the agent. Based on the current path, calculated from scratch each frame.
+   */
+  desiredVelocity(): Vector3 {
+    return {
+      x: this.raw.get_dvel(0),
+      y: this.raw.get_dvel(1),
+      z: this.raw.get_dvel(2),
+    };
+  }
+
+  /**
+   * The desired velocity adjusted by obstacle avoidance, calculated from scratch each frame.
+   */
+  desiredVelocityObstacleAdjusted(): Vector3 {
+    return {
+      x: this.raw.get_nvel(0),
+      y: this.raw.get_nvel(1),
+      z: this.raw.get_nvel(2),
     };
   }
 
@@ -412,7 +433,7 @@ export class Crowd {
   navMeshQuery: NavMeshQuery;
 
   /**
-   * Accumulator for fixed updates
+   * Accumulator for fixed updates with interpolation
    */
   private accumulator = 0;
 
@@ -447,6 +468,26 @@ export class Crowd {
    * @param dt The fixed time step size to use.
    * @param timeSinceLastCalled The time elapsed since the function was last called.
    * @param maxSubSteps Maximum number of fixed steps to take per function call.
+   *
+   * @example fixed time stepping
+   * ```ts
+   * const deltaTime = 1 / 60;
+   * crowd.update(deltaTime);
+   * ```
+   *
+   * @example variable time stepping
+   * ```ts
+   * crowd.update(timeSinceLastUpdate);
+   * ```
+   *
+   * @example fixed time stepping with interpolation
+   * ```ts
+   * const deltaTime = 1 / 60;
+   * const maxSubSteps = 10;
+   * crowd.update(deltaTime, timeSinceLastUpdate, maxSubSteps);
+   *
+   * console.log(agent.interpolatedPosition);
+   * ```
    */
   update(dt: number, timeSinceLastCalled?: number, maxSubSteps: number = 10) {
     if (timeSinceLastCalled === undefined) {
