@@ -5185,9 +5185,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-three/fiber@npm:^8.15.12":
-  version: 8.15.12
-  resolution: "@react-three/fiber@npm:8.15.12"
+"@react-three/fiber@npm:^8.16.3":
+  version: 8.16.3
+  resolution: "@react-three/fiber@npm:8.16.3"
   dependencies:
     "@babel/runtime": "npm:^7.17.8"
     "@types/react-reconciler": "npm:^0.26.7"
@@ -5222,7 +5222,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 10/5dccebef10822883399a473d20ea646658b7d137824682e69e6b0ee9debdae3a430d258db27c6a1a6ad28d78f654cfbb971d1bcd784f3cb3c7e4a8e8bfc9a42f
+  checksum: 10/5aae61cfcd408e2e84c6cde9295d352524c20d5184c6a98948880109155def86b0c04cebe5d0c908f00ce109793d421c08dd49605b579668add284c6569558af
   languageName: node
   linkType: hard
 
@@ -14946,7 +14946,7 @@ __metadata:
   dependencies:
     "@pmndrs/assets": "npm:^1.6.0"
     "@react-three/drei": "npm:^9.105.4"
-    "@react-three/fiber": "npm:^8.15.12"
+    "@react-three/fiber": "npm:^8.16.3"
     "@types/react": "npm:^18.3.1"
     "@types/react-dom": "npm:^18.2.8"
     "@types/three": "npm:^0.163.0"
@@ -15743,7 +15743,7 @@ __metadata:
   resolution: "parcel-example@workspace:examples/parcel-example"
   dependencies:
     "@react-three/drei": "npm:^9.105.4"
-    "@react-three/fiber": "npm:^8.15.12"
+    "@react-three/fiber": "npm:^8.16.3"
     parcel: "npm:^2.11.0"
     react: "npm:18.3.1"
     recast-navigation: "workspace:^"
@@ -16794,7 +16794,7 @@ __metadata:
     "@mdx-js/react": "npm:^2.3.0"
     "@pmndrs/assets": "npm:^1.6.0"
     "@react-three/drei": "npm:^9.105.4"
-    "@react-three/fiber": "npm:^8.15.12"
+    "@react-three/fiber": "npm:^8.16.3"
     "@recast-navigation/core": "npm:0.29.0"
     "@recast-navigation/generators": "npm:0.29.0"
     "@recast-navigation/three": "npm:0.29.0"
@@ -19383,7 +19383,7 @@ __metadata:
   resolution: "vite-wasm-example@workspace:examples/vite-wasm-example"
   dependencies:
     "@react-three/drei": "npm:^9.105.4"
-    "@react-three/fiber": "npm:^8.15.12"
+    "@react-three/fiber": "npm:^8.16.3"
     "@types/react": "npm:^18.3.1"
     "@types/react-dom": "npm:^18.2.8"
     "@types/three": "npm:^0.163.0"
@@ -19403,7 +19403,7 @@ __metadata:
   resolution: "vite-worker-example@workspace:examples/vite-worker-example"
   dependencies:
     "@react-three/drei": "npm:^9.105.4"
-    "@react-three/fiber": "npm:^8.15.12"
+    "@react-three/fiber": "npm:^8.16.3"
     "@types/react": "npm:^18.3.1"
     "@types/react-dom": "npm:^18.2.8"
     "@types/three": "npm:^0.163.0"

@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@react-three/drei": "^9.105.4",
-    "@react-three/fiber": "^8.15.12",
+    "@react-three/fiber": "^8.16.3",
     "react": "18.3.1",
     "recast-navigation": "workspace:^",
     "three": "^0.163.0"
