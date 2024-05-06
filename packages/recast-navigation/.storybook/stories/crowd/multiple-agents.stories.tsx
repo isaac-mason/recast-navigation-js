@@ -73,6 +73,7 @@ export const CrowdWithMultipleAgents = () => {
     setCrowd(crowd);
 
     return () => {
+      navMeshQuery.destroy();
       crowd.destroy();
       navMesh.destroy();
 

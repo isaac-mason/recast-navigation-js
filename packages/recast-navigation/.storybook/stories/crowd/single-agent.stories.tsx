@@ -82,9 +82,9 @@ export const CrowdWithSingleAgent = () => {
     setAgent(agent);
 
     return () => {
-      navMesh.destroy();
       navMeshQuery.destroy();
       crowd.destroy();
+      navMesh.destroy();
 
       setNavMesh(undefined);
       setNavMeshQuery(undefined);
