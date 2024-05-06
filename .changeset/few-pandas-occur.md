@@ -73,4 +73,4 @@ const update = (deltaTime: number) => {
 };
 ```
 
-As part of this change, the `maximumSubStepCount` and `timeFactor` Crowd properties have been removed.
+As part of this change, the `maximumSubStepCount`, `timeStep`, and `timeFactor` Crowd properties have been removed.
