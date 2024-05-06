@@ -57,12 +57,12 @@ You can use import maps to use the library without a bundler:
 ```html
 <script type="importmap">
   {
-    "imports":
-      "@recast-navigation/core": "https://unpkg.com/@recast-navigation/core@0.28.0/dist/index.mjs",
-      "@recast-navigation/wasm": "https://unpkg.com/@recast-navigation/wasm@0.28.0/dist/recast-navigation.wasm-compat.js",
-      "@recast-navigation/generators": "https://unpkg.com/@recast-navigation/generators@0.28.0/dist/index.mjs",
-      "@recast-navigation/three": "https://unpkg.com/@recast-navigation/three@0.28.0/dist/index.mjs"
-
+    "imports": {
+      "@recast-navigation/core": "https://unpkg.com/@recast-navigation/core@0.29.0/dist/index.mjs",
+      "@recast-navigation/wasm": "https://unpkg.com/@recast-navigation/wasm@0.29.0/dist/recast-navigation.wasm-compat.js",
+      "@recast-navigation/generators": "https://unpkg.com/@recast-navigation/generators@0.29.0/dist/index.mjs",
+      "@recast-navigation/three": "https://unpkg.com/@recast-navigation/three@0.29.0/dist/index.mjs"
+    }
   }
 </script>
 <script type="module">
