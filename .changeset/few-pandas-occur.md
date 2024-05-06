@@ -15,14 +15,16 @@ The new method signature is:
 update(dt: number, timeSinceLastCalled?: number, maxSubSteps?: number): void;
 ```
 
-To perform a variable sized time step update, call `update` with only the `dt` parameter.
+To perform a variable sized time step update, call `update` with the time since the last call.
+
+```ts
+crowd.update(deltaTime);
+```
+
+Similarly, to perform fixed time stepping, call `update` with the `dt` parameter.
 
 ```ts
 crowd.update(1 / 60);
-
-// or
-
-crowd.update(deltaTime);
 ```
 
 To perform fixed time stepping with interpolation, call `update` with the `dt`, `timeSinceLastCalled`, and `maxSubSteps` parameters.
