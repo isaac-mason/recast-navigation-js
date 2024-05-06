@@ -79,7 +79,7 @@
     "@mdx-js/react": "^2.3.0",
     "@pmndrs/assets": "^1.6.0",
     "@react-three/drei": "^9.105.4",
-    "@react-three/fiber": "^8.15.12",
+    "@react-three/fiber": "^8.16.3",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.0.1",
