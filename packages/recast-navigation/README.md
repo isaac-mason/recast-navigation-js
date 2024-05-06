@@ -614,6 +614,18 @@ Helpers for three.js.
 > npm install @recast-navigation/three
 ```
 
+### [**`@recast-navigation/wasm`**](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-wasm)
+
+[![Version](https://img.shields.io/npm/v/@recast-navigation/wasm)](https://www.npmjs.com/package/@recast-navigation/wasm)
+
+The WebAssembly build of the Recast and Detour libraries.
+
+You regularly won't need to use this package directly, as `@recast-navigation/core` uses it internally.
+
+```bash
+> npm install @recast-navigation/wasm
+```
+
 ## Apps
 
 ### [NavMesh Generator](https://navmesh.isaacmason.com/)
