@@ -62,7 +62,7 @@ You can use import maps to use the library without a bundler:
       "@recast-navigation/wasm": "https://unpkg.com/@recast-navigation/wasm@0.28.0/dist/recast-navigation.wasm-compat.js",
       "@recast-navigation/generators": "https://unpkg.com/@recast-navigation/generators@0.28.0/dist/index.mjs",
       "@recast-navigation/three": "https://unpkg.com/@recast-navigation/three@0.28.0/dist/index.mjs"
-    
+
   }
 </script>
 <script type="module">
@@ -220,6 +220,51 @@ const maxAgentRadius = 0.6;
 const crowd = new Crowd(navMesh, { maxAgents, maxAgentRadius });
 ```
 
+**Updating a Crowd**
+
+There are a few options for updating a crowd:
+
+**Variable time stepping**
+
+The simplest approach is to do varible time stepping. Simply call `crowd.update` with your delta time every frame.
+
+```ts
+crowd.update(timeSinceLastFrame);
+```
+
+This approach is suitable for most use cases, but the variable timestep will result in non-deterministic behaviour.
+
+Depending on your use case, you might want to clamp `timeSinceLastFrame` to a maximum value to prevent large time steps causing issues.
+
+**Fixed time stepping with interpolation**
+
+Fixed time stepping with interpolation can be preferable if you need deterministic behaviour, but still want smooth agent position updates each frame.
+
+If you provide `update` with a `dt` value and a `timeSinceLastFrame` value, the crowd update will do fixed time stepping with interpolation.
+
+```ts
+const dt = 1 / 60;
+const maxSubSteps = 10;
+
+crowd.update(dt, timeSinceLastFrame, maxSubSteps);
+```
+
+This will update the `interpolatedPosition` vector3 on each agent, which you can use to render a smoothly interpolated agent position between updates.
+
+```ts
+console.log(agent.interpolatedPosition); // { x: 1, y: 2, z: 3 }
+```
+
+**Manual fixed time stepping**
+
+If you want full control over crowd updates, you can simply call `crowd.update` with a given `dt` value.
+
+```ts
+const dt = 1 / 60;
+
+crowd.update(dt);
+```
+
 **Creating an Agent in a Crowd**
 
 ```ts
@@ -255,18 +300,6 @@ agent.requestMoveTarget(targetPosition);
 
 ```ts
 agent.resetMoveTarget();
-```
-
-**Updating the Crowd**
-
-To update the crowd, first set a timeStep, then call `update` each frame with the delta time.
-
-```ts
-const dt = 1 / 60;
-crowd.timeStep = dt;
-
-// you should call this every frame
-crowd.update(dt);
 ```
 
 **Interacting with Agents**
