@@ -1,5 +1,11 @@
 # @recast-navigation/wasm
 
+## 0.29.1
+
+### Patch Changes
+
+- b7140ef: feat: remove unused Log util
+
 ## 0.29.0
 
 ## 0.28.0
