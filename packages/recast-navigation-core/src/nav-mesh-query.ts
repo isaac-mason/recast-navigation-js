@@ -610,6 +610,12 @@ export class NavMeshQuery {
       filter?: QueryFilter;
 
       /**
+       * The search distance along each axis. [(x, y, z)]
+       * @default this.defaultQueryHalfExtents
+       */
+      halfExtents?: Vector3;
+
+      /**
        * The maximum number of polygons the path array can hold. [Limit: >= 1]
        * @default 256
        */
@@ -648,9 +654,10 @@ export class NavMeshQuery {
     path: Vector3[];
   } {
     const filter = options?.filter ?? this.defaultFilter;
+    const halfExtents = options?.halfExtents ?? this.defaultQueryHalfExtents;
 
     // find nearest polygons for start and end positions
-    const startNearestPolyResult = this.findNearestPoly(start, { filter });
+    const startNearestPolyResult = this.findNearestPoly(start, { filter, halfExtents });
 
     if (!startNearestPolyResult.success) {
       return {
@@ -663,7 +670,7 @@ export class NavMeshQuery {
       };
     }
 
-    const endNearestPolyResult = this.findNearestPoly(end, { filter });
+    const endNearestPolyResult = this.findNearestPoly(end, { filter, halfExtents });
 
     if (!endNearestPolyResult.success) {
       return {
