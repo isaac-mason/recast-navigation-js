@@ -1,5 +1,12 @@
 # @recast-navigation/core
 
+## 0.29.2
+
+### Patch Changes
+
+- 0b7f635: feat: add halfExtents option to NavMeshQuery computePath
+  - @recast-navigation/wasm@0.29.2
+
 ## 0.29.1
 
 ### Patch Changes
