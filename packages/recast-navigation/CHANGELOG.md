@@ -1,5 +1,22 @@
 # recast-navigation
 
+## 0.30.0
+
+### Minor Changes
+
+- 938dd84: feat: add CrowdAgent method "target" for getting the current agent target position
+- f4fec90: fix: "nextTargetInPath" should return the next agent corner position, not the current target position
+- f4fec90: feat: rename CrowdAgent "nextTargetPath" to "nextTargetInPath"
+
+### Patch Changes
+
+- Updated dependencies [938dd84]
+- Updated dependencies [f4fec90]
+- Updated dependencies [f4fec90]
+  - @recast-navigation/core@0.30.0
+  - @recast-navigation/generators@0.30.0
+  - @recast-navigation/three@0.30.0
+
 ## 0.29.2
 
 ### Patch Changes
