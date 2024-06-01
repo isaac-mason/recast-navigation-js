@@ -6,13 +6,13 @@ import {
   NavMesh,
   NavMeshQuery,
 } from '@recast-navigation/core';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { threeToSoloNavMesh } from 'recast-navigation/three';
 import { Group, Mesh, MeshStandardMaterial, Vector3 } from 'three';
 import { AgentPath } from '../../common/agent-path';
 import { Debug } from '../../common/debug';
 import { NavTestEnvironment } from '../../common/nav-test-environment';
-import { decorators } from '../../decorators';
+import { decorators, htmlTunnel } from '../../decorators';
 import { parameters } from '../../parameters';
 
 export default {
@@ -26,6 +26,9 @@ const agentMaterial = new MeshStandardMaterial({
 });
 
 export const CrowdWithSingleAgent = () => {
+  const agentTargetSpanRef = useRef<HTMLSpanElement>(null!);
+  const agentNextTargetPathSpanRef = useRef<HTMLSpanElement>(null!);
+
   const [group, setGroup] = useState<Group | null>(null);
 
   const [navMesh, setNavMesh] = useState<NavMesh | undefined>();
@@ -94,9 +97,20 @@ export const CrowdWithSingleAgent = () => {
   }, [group]);
 
   useFrame((_, delta) => {
-    if (!crowd) return;
+    if (!crowd || !agent) return;
 
     crowd.update(delta);
+
+    const agentTarget = agent.target();
+    const agentNextTargetPath = agent.nextTargetInPath();
+    agentTargetSpanRef.current.innerText = `${agentTarget.x.toFixed(
+      3
+    )}, ${agentTarget.y.toFixed(3)}, ${agentTarget.z.toFixed(3)}`;
+    agentNextTargetPathSpanRef.current.innerText = `${agentNextTargetPath.x.toFixed(
+      3
+    )}, ${agentNextTargetPath.y.toFixed(3)}, ${agentNextTargetPath.z.toFixed(
+      3
+    )}`;
   });
 
   const onPointerDown = (e: ThreeEvent<MouseEvent>) => {
@@ -128,6 +142,28 @@ export const CrowdWithSingleAgent = () => {
 
         <Debug navMesh={navMesh} crowd={crowd} agentMaterial={agentMaterial} />
       </group>
+
+      <htmlTunnel.In>
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            padding: '25px',
+            userSelect: 'none',
+            fontFamily: 'monospace',
+            fontWeight: 400,
+            color: 'white',
+          }}
+        >
+          <div>
+            agent target: <span ref={agentTargetSpanRef}></span>
+          </div>
+          <div>
+            agent next target path:{' '}
+            <span ref={agentNextTargetPathSpanRef}></span>
+          </div>
+        </div>
+      </htmlTunnel.In>
 
       <OrbitControls makeDefault />
     </>

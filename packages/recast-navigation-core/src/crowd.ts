@@ -296,18 +296,6 @@ export class CrowdAgent implements CrowdAgentParams {
   }
 
   /**
-   * Returns the next target position on the path to the target
-   * @returns
-   */
-  nextTargetPath(): Vector3 {
-    return {
-      x: this.raw.get_targetPos(0),
-      y: this.raw.get_targetPos(1),
-      z: this.raw.get_targetPos(2),
-    };
-  }
-
-  /**
    * Returns the state of the agent.
    *
    * 0 = DT_CROWDAGENT_STATE_INVALID
@@ -316,6 +304,30 @@ export class CrowdAgent implements CrowdAgentParams {
    */
   state(): number {
     return this.raw.state;
+  }
+
+  /**
+   * Returns the next target position on the path to the target
+   * @returns
+   */
+  target(): Vector3 {
+    return {
+      x: this.raw.get_targetPos(0),
+      y: this.raw.get_targetPos(1),
+      z: this.raw.get_targetPos(2),
+    };
+  }
+
+  /**
+   * Returns the next target position on the path to the target
+   * @returns
+   */
+  nextTargetInPath(): Vector3 {
+    return {
+      x: this.raw.get_cornerVerts(0),
+      y: this.raw.get_cornerVerts(1),
+      z: this.raw.get_cornerVerts(2),
+    };
   }
 
   /**
