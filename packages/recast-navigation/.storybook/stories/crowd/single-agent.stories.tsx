@@ -159,7 +159,7 @@ export const CrowdWithSingleAgent = () => {
             agent target: <span ref={agentTargetSpanRef}></span>
           </div>
           <div>
-            agent next target path:{' '}
+            agent next target in path:{' '}
             <span ref={agentNextTargetPathSpanRef}></span>
           </div>
         </div>
