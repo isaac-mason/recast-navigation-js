@@ -1,5 +1,6 @@
 ---
 "@recast-navigation/core": minor
+"recast-navigation": minor
 ---
 
-feat: rename nextTargetPath to nextTargetInPath, add target
+feat: rename CrowdAgent "nextTargetPath" to "nextTargetInPath"
