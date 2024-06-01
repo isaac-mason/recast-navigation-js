@@ -308,7 +308,8 @@ agent.resetMoveTarget();
 /* get information about the agent */
 const agentPosition = agent.position();
 const agentVelocity = agent.velocity();
-const agentNextTargetPath = agent.nextTargetPath();
+const agentTarget = agent.target();
+const agentNextTargetInPath = agent.nextTargetInPath();
 const agentState = agent.state();
 const agentCorners = agent.corners();
 const agentParameters = agent.parameters();
