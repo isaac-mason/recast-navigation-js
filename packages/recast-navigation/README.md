@@ -3,7 +3,6 @@
 [![Version](https://img.shields.io/npm/v/recast-navigation?style=for-the-badge)](https://www.npmjs.com/package/recast-navigation)
 ![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/isaac-mason/recast-navigation-js/release.yml?style=for-the-badge)
 [![Downloads](https://img.shields.io/npm/dt/recast-navigation.svg?style=for-the-badge)](https://www.npmjs.com/package/recast-navigation)
-[![Bundle Size](https://img.shields.io/bundlephobia/min/recast-navigation?style=for-the-badge&label=bundle%20size)](https://bundlephobia.com/result?p=recast-navigation)
 
 # recast-navigation-js
 
