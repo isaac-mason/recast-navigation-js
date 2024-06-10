@@ -27,7 +27,7 @@
   "devDependencies": {
     "@changesets/cli": "^2.26.2",
     "concurrently": "^8.2.2",
-    "vercel": "^33.7.0"
+    "vercel": "^34.2.6"
   },
   "packageManager": "yarn@4.1.1"
 }
