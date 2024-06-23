@@ -411,6 +411,17 @@ export class CrowdAgent implements CrowdAgentParams {
 
     this.crowd.raw.updateAgentParameters(this.agentIndex, dtCrowdAgentParams);
   }
+
+  /**
+   * Returns whether the agent is over an off-mesh connection.
+   * @returns
+   */
+  overOffMeshConnection(): boolean {
+    return Raw.CrowdUtils.overOffMeshConnection(
+      this.crowd.raw,
+      this.agentIndex
+    );
+  }
 }
 
 export type CrowdParams = {
