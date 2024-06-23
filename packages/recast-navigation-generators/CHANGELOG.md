@@ -1,5 +1,17 @@
 # @recast-navigation/generators
 
+## 0.31.0
+
+### Patch Changes
+
+- 1571a45: feat: check whether the library has been initialised in the high level generators, throw a friendly error
+- Updated dependencies [0fc8dd9]
+- Updated dependencies [225a983]
+- Updated dependencies [29e6ebc]
+- Updated dependencies [e2a7112]
+  - @recast-navigation/core@0.31.0
+  - @recast-navigation/wasm@0.31.0
+
 ## 0.30.0
 
 ### Patch Changes
