@@ -14,7 +14,7 @@ set(RECAST_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/)
 
 project("recast-navigation-wasm")
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 file(GLOB_RECURSE SRC_FILES
@@ -96,6 +96,7 @@ set(EMCC_WASM_COMPAT_ESM_ARGS ${EMCC_ARGS}
 
 set(EMCC_GLUE_ARGS
   -c
+  -std=c++17
   -I${RECAST_SRC_DIR}
   -I${CMAKE_CURRENT_SOURCE_DIR}/recastnavigation/Detour/Include
   -I${CMAKE_CURRENT_SOURCE_DIR}/recastnavigation/DetourCrowd/Include
