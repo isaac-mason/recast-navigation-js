@@ -106,7 +106,9 @@ export const CrowdWithSingleAgent = () => {
   useFrame((_, delta) => {
     if (!crowd || !agent) return;
 
-    crowd.update(delta);
+    const clampedDelta = Math.max(delta, 0.1);
+
+    crowd.update(clampedDelta);
 
     const agentTarget = agent.target();
     const agentNextTargetPath = agent.nextTargetInPath();
@@ -125,13 +127,12 @@ export const CrowdWithSingleAgent = () => {
 
     e.stopPropagation();
 
-    const point = _navMeshOnPointerDownVector.copy(e.point)
-    
+    const point = _navMeshOnPointerDownVector.copy(e.point);
+
     navMeshQuery.defaultQueryHalfExtents.x = 0.01;
     navMeshQuery.defaultQueryHalfExtents.z = 0.01;
     navMeshQuery.defaultQueryHalfExtents.y = 0.01;
     const { nearestPoint: target } = navMeshQuery.findNearestPoly(point);
-
 
     if (e.button === 2) {
       agent.teleport(target);
