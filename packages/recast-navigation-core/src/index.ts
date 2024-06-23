@@ -3,6 +3,7 @@ export * from './crowd';
 export * from './detour';
 export * from './nav-mesh';
 export * from './nav-mesh-query';
+export * from './random';
 export * from './raw';
 export * from './recast';
 export * from './serdes';

@@ -7,6 +7,7 @@ import { NavTestEnvironment } from '../../common/nav-test-environment';
 import { decorators, htmlTunnel } from '../../decorators';
 import { parameters } from '../../parameters';
 import { OrbitControls } from '@react-three/drei';
+import { setRandomSeed } from '@recast-navigation/core';
 
 export default {
   title: 'NavMeshQuery / Find Random Point',
@@ -38,6 +39,8 @@ export const FindRandomPoint = () => {
 
   useEffect(() => {
     if (!group) return;
+
+    setRandomSeed(1337);
 
     const meshes: Mesh[] = [];
 

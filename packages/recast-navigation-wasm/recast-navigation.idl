@@ -411,6 +411,11 @@ interface NavMesh {
     void destroy();
 };
 
+interface FastRand {
+    static long getSeed();
+    static void setSeed(long seed);
+};
+
 interface dtRaycastHit {
     void dtRaycastHit();
 

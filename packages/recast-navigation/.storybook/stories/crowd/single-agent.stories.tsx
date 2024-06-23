@@ -53,21 +53,16 @@ export const CrowdWithSingleAgent = () => {
 
     const agentRadius = 0.1;
     const cellSize = 0.05;
-    const cellHeight = 0.05;
 
     const { success, navMesh } = threeToSoloNavMesh(meshes, {
       cs: cellSize,
-      ch: cellHeight,
-      walkableRadius: Math.ceil(0.3 / cellSize),
-      borderSize: 5,
-      // maxEdgeLen: 2,
-      // walkableHeight: Math.floor(1 / cellHeight),
+      ch: 0.2,
+      walkableRadius: Math.ceil(agentRadius / cellSize),
     });
 
     if (!success) return;
 
     const navMeshQuery = new NavMeshQuery(navMesh);
-    // navMeshQuery.defaultQueryHalfExtents = { x: 0.5, y: 0.1, z: 0.5 }
 
     const crowd = new Crowd(navMesh, { maxAgents: 1, maxAgentRadius: 0.2 });
 
@@ -106,7 +101,7 @@ export const CrowdWithSingleAgent = () => {
   useFrame((_, delta) => {
     if (!crowd || !agent) return;
 
-    const clampedDelta = Math.max(delta, 0.1);
+    const clampedDelta = Math.min(delta, 0.1);
 
     crowd.update(clampedDelta);
 
@@ -129,9 +124,6 @@ export const CrowdWithSingleAgent = () => {
 
     const point = _navMeshOnPointerDownVector.copy(e.point);
 
-    navMeshQuery.defaultQueryHalfExtents.x = 0.01;
-    navMeshQuery.defaultQueryHalfExtents.z = 0.01;
-    navMeshQuery.defaultQueryHalfExtents.y = 0.01;
     const { nearestPoint: target } = navMeshQuery.findNearestPoly(point);
 
     if (e.button === 2) {

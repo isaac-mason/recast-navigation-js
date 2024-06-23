@@ -9,6 +9,33 @@
 #include "./Vec.h"
 #include "./NavMesh.h"
 
+class FastRand
+{
+public:
+    static inline int seed = 1337;
+
+    static inline int fastrand()
+    {
+        seed = (214013 * seed + 2531011);
+        return (seed >> 16) & 0x7FFF;
+    }
+
+    static inline float r01()
+    {
+        return fastrand() / 32767.0f;
+    }
+
+    static int getSeed()
+    {
+        return seed;
+    }
+
+    static void setSeed(int newSeed)
+    {
+        seed = newSeed;
+    }
+};
+
 class NavMeshQuery
 {
 public:

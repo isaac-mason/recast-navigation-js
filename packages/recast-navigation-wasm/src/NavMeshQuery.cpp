@@ -1,17 +1,5 @@
 #include "./NavMeshQuery.h"
 
-int g_seed = 1337;
-inline int fastrand()
-{
-    g_seed = (214013 * g_seed + 2531011);
-    return (g_seed >> 16) & 0x7FFF;
-}
-
-inline float r01()
-{
-    return ((float)fastrand()) * (1.f / 32767.f);
-}
-
 NavMeshQuery::NavMeshQuery()
 {
     m_navQuery = dtAllocNavMeshQuery();
@@ -103,7 +91,7 @@ dtStatus NavMeshQuery::findRandomPointAroundCircle(dtPolyRef startRef, const flo
 {
     dtPolyRef randomRef;
     Vec3 resDetour;
-    dtStatus status = m_navQuery->findRandomPointAroundCircle(startRef, centerPos, radius, filter, r01, &randomRef, &resDetour.x);
+    dtStatus status = m_navQuery->findRandomPointAroundCircle(startRef, centerPos, radius, filter, &FastRand::r01, &randomRef, &resDetour.x);
 
     resultRandomRef->value = randomRef;
     resultRandomPoint->x = resDetour.x;
@@ -129,7 +117,7 @@ dtStatus NavMeshQuery::findRandomPoint(const dtQueryFilter *filter, UnsignedIntR
 {
     dtPolyRef randomRef;
     Vec3 resDetour;
-    dtStatus status = m_navQuery->findRandomPoint(filter, r01, &randomRef, &resDetour.x);
+    dtStatus status = m_navQuery->findRandomPoint(filter, &FastRand::r01, &randomRef, &resDetour.x);
 
     resultRandomRef->value = randomRef;
     resultRandomPoint->x = resDetour.x;

@@ -86,7 +86,9 @@ export const CrowdWithMultipleAgents = () => {
   useFrame((_, delta) => {
     if (!crowd) return;
 
-    crowd.update(delta);
+    const clampedDelta = Math.min(delta, 0.1);
+
+    crowd.update(clampedDelta);
   });
 
   const onClick = (e: ThreeEvent<MouseEvent>) => {
