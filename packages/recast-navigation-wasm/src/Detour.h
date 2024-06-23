@@ -35,6 +35,10 @@ public:
     unsigned char TILECACHE_WALKABLE_AREA = DT_TILECACHE_WALKABLE_AREA;
     unsigned short TILECACHE_NULL_IDX = DT_TILECACHE_NULL_IDX;
 
+    unsigned int NULL_LINK = DT_NULL_LINK;
+    unsigned short EXT_LINK = DT_EXT_LINK;
+    unsigned int OFFMESH_CON_BIDIR = DT_OFFMESH_CON_BIDIR;
+
     bool statusSucceed(dtStatus status)
     {
         return dtStatusSucceed(status);

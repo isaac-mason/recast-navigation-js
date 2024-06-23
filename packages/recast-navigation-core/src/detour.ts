@@ -95,7 +95,7 @@ export class DetourLink {
   }
 
   next(): number {
-    return this.raw.next;
+    return this.raw.get_next();
   }
 
   edge(): number {

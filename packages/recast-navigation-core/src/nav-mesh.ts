@@ -403,6 +403,7 @@ export class NavMesh {
     Raw.destroy(endRaw);
 
     return {
+      success: statusSucceed(status),
       status,
       start,
       end,

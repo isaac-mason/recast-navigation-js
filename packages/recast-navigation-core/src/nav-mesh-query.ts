@@ -873,7 +873,7 @@ export class NavMeshQuery {
   findStraightPath(
     start: Vector3,
     end: Vector3,
-    path: UnsignedIntArray,
+    path: number[] | UnsignedIntArray,
     options?: {
       /**
        * The maximum number of points the straight path arrays can hold. [Limit: > 0]
@@ -925,6 +925,15 @@ export class NavMeshQuery {
     const maxStraightPathPoints = options?.maxStraightPathPoints ?? 256;
     const straightPathOptions = options?.straightPathOptions ?? 0;
 
+    let pathPolys;
+
+    if (Array.isArray(path)) {
+      pathPolys = new UnsignedIntArray();
+      pathPolys.copy(path);
+    } else {
+      pathPolys = path;
+    }
+
     const straightPath = new FloatArray();
     straightPath.resize(maxStraightPathPoints * 3);
 
@@ -939,7 +948,7 @@ export class NavMeshQuery {
     const status = this.raw.findStraightPath(
       vec3.toArray(start),
       vec3.toArray(end),
-      path.raw,
+      pathPolys.raw,
       straightPath.raw,
       straightPathFlags.raw,
       straightPathRefs.raw,
@@ -950,6 +959,10 @@ export class NavMeshQuery {
 
     const straightPathCount = straightPathCountRaw.value;
     Raw.destroy(straightPathCountRaw);
+
+    if (Array.isArray(path)) {
+      pathPolys.destroy();
+    }
 
     return {
       success: Raw.Detour.statusSucceed(status),

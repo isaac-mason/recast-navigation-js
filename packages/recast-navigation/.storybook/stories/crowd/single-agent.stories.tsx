@@ -25,6 +25,8 @@ const agentMaterial = new MeshStandardMaterial({
   color: 'red',
 });
 
+const _navMeshOnPointerDownVector = new Vector3();
+
 export const CrowdWithSingleAgent = () => {
   const agentTargetSpanRef = useRef<HTMLSpanElement>(null!);
   const agentNextTargetPathSpanRef = useRef<HTMLSpanElement>(null!);
@@ -51,16 +53,21 @@ export const CrowdWithSingleAgent = () => {
 
     const agentRadius = 0.1;
     const cellSize = 0.05;
+    const cellHeight = 0.05;
 
     const { success, navMesh } = threeToSoloNavMesh(meshes, {
       cs: cellSize,
-      ch: 0.2,
-      walkableRadius: Math.ceil(agentRadius / cellSize),
+      ch: cellHeight,
+      walkableRadius: Math.ceil(0.3 / cellSize),
+      borderSize: 5,
+      // maxEdgeLen: 2,
+      // walkableHeight: Math.floor(1 / cellHeight),
     });
 
     if (!success) return;
 
     const navMeshQuery = new NavMeshQuery(navMesh);
+    // navMeshQuery.defaultQueryHalfExtents = { x: 0.5, y: 0.1, z: 0.5 }
 
     const crowd = new Crowd(navMesh, { maxAgents: 1, maxAgentRadius: 0.2 });
 
@@ -118,7 +125,13 @@ export const CrowdWithSingleAgent = () => {
 
     e.stopPropagation();
 
-    const { point: target } = navMeshQuery.findClosestPoint(e.point);
+    const point = _navMeshOnPointerDownVector.copy(e.point)
+    
+    navMeshQuery.defaultQueryHalfExtents.x = 0.01;
+    navMeshQuery.defaultQueryHalfExtents.z = 0.01;
+    navMeshQuery.defaultQueryHalfExtents.y = 0.01;
+    const { nearestPoint: target } = navMeshQuery.findNearestPoly(point);
+
 
     if (e.button === 2) {
       agent.teleport(target);

@@ -590,6 +590,10 @@ interface Detour {
     attribute octet TILECACHE_WALKABLE_AREA;
     attribute unsigned short TILECACHE_NULL_IDX;
 
+    attribute unsigned long NULL_LINK;
+    attribute unsigned short EXT_LINK;
+    attribute unsigned long OFFMESH_CON_BIDIR;
+
     boolean statusSucceed(unsigned long status);
     boolean statusFailed(unsigned long status);
     boolean statusInProgress(unsigned long status);
