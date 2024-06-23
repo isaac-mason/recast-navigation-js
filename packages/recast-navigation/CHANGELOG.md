@@ -1,5 +1,22 @@
 # recast-navigation
 
+## 0.31.0
+
+### Minor Changes
+
+- 0fc8dd9: feat(CrowdAgent): add overOffMeshConnection
+- 225a983: feat: add support for getting/setting random seed used by NavMeshQuery
+
+### Patch Changes
+
+- 1571a45: feat: check whether the library has been initialised in the high level generators, throw a friendly error
+- Updated dependencies [0fc8dd9]
+- Updated dependencies [225a983]
+- Updated dependencies [1571a45]
+  - @recast-navigation/core@0.31.0
+  - @recast-navigation/generators@0.31.0
+  - @recast-navigation/three@0.31.0
+
 ## 0.30.0
 
 ### Minor Changes

@@ -1,5 +1,19 @@
 # @recast-navigation/core
 
+## 0.31.0
+
+### Minor Changes
+
+- 0fc8dd9: feat(CrowdAgent): add overOffMeshConnection
+- 225a983: feat: add support for getting/setting random seed used by NavMeshQuery
+
+### Patch Changes
+
+- Updated dependencies [225a983]
+- Updated dependencies [29e6ebc]
+- Updated dependencies [e2a7112]
+  - @recast-navigation/wasm@0.31.0
+
 ## 0.30.0
 
 ### Minor Changes

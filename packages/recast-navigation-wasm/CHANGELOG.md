@@ -1,5 +1,13 @@
 # @recast-navigation/wasm
 
+## 0.31.0
+
+### Minor Changes
+
+- 225a983: feat: add support for getting/setting random seed used by NavMeshQuery
+- 29e6ebc: feat: use c++ 17
+- e2a7112: feat: bump emsdk from 3.1.58 to 3.1.61
+
 ## 0.30.0
 
 ## 0.29.2
