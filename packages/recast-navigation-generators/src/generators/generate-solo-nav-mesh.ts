@@ -91,6 +91,12 @@ export const generateSoloNavMesh = (
   navMeshGeneratorConfig: Partial<SoloNavMeshGeneratorConfig> = {},
   keepIntermediates = false
 ): SoloNavMeshGeneratorResult => {
+  if (!Raw.Module) {
+    throw new Error(
+      '"init" must be called before using any recast-navigation-js APIs. See: https://github.com/isaac-mason/recast-navigation-js?tab=readme-ov-file#initialization'
+    );
+  }
+
   const buildContext = new RecastBuildContext();
 
   const intermediates: SoloNavMeshGeneratorIntermediates = {
@@ -141,7 +147,7 @@ export const generateSoloNavMesh = (
       error,
     };
   };
-  
+
   /* input geometry */
   const vertices = positions as number[];
   const numVertices = indices.length;

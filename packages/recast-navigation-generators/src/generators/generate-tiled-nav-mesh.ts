@@ -113,6 +113,12 @@ export const generateTiledNavMesh = (
   navMeshGeneratorConfig: Partial<TiledNavMeshGeneratorConfig> = {},
   keepIntermediates = false
 ): TiledNavMeshGeneratorResult => {
+  if (!Raw.Module) {
+    throw new Error(
+      '"init" must be called before using any recast-navigation-js APIs. See: https://github.com/isaac-mason/recast-navigation-js?tab=readme-ov-file#initialization'
+    );
+  }
+
   const buildContext = new RecastBuildContext();
 
   const intermediates: TiledNavMeshGeneratorIntermediates = {
