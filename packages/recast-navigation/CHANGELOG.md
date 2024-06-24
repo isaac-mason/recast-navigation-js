@@ -1,5 +1,15 @@
 # recast-navigation
 
+## 0.31.1
+
+### Patch Changes
+
+- 1b1f40e: fix(DetourLink): use 'next' property instead of 'get_next' function
+- Updated dependencies [1b1f40e]
+  - @recast-navigation/core@0.31.1
+  - @recast-navigation/generators@0.31.1
+  - @recast-navigation/three@0.31.1
+
 ## 0.31.0
 
 ### Minor Changes

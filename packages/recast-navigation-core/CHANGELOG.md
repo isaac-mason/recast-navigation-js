@@ -1,5 +1,12 @@
 # @recast-navigation/core
 
+## 0.31.1
+
+### Patch Changes
+
+- 1b1f40e: fix(DetourLink): use 'next' property instead of 'get_next' function
+  - @recast-navigation/wasm@0.31.1
+
 ## 0.31.0
 
 ### Minor Changes
