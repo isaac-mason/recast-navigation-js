@@ -3,7 +3,6 @@ import { ThreeEvent } from '@react-three/fiber';
 import {
   NavMesh,
   NavMeshQuery,
-  range,
   statusToReadableString,
 } from '@recast-navigation/core';
 import { threeToSoloNavMesh } from '@recast-navigation/three';
@@ -349,6 +348,14 @@ function polyRefToGeom(
 
   return geom;
 }
+
+/**
+ * @param n A non-negative integer
+ * @returns Array `[0, ..., n-1]`
+ */
+function range(n: number) {
+  return [...Array(n)].map((_, i) => i);
+};
 
 const navMeshMaterial = new THREE.MeshBasicMaterial({
   wireframe: true,
