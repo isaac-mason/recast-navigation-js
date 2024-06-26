@@ -1,5 +1,32 @@
 # recast-navigation
 
+## 0.32.0
+
+### Minor Changes
+
+- 73f3d0a: feat(TileCache): rename BoxObstacle extent to halfExtents
+- 0c927b6: feat: expose recast and detour constants and enums in 'Recast' and 'Detour' objects
+- 94d59b0: feat: remove 'range' array utility
+
+  The range utility was only used in examples, not in the core library.
+
+  If you were using it, you can easily replace it with a simple code snippet.
+
+  ```ts
+  function range(n: number) {
+    return [...Array(n)].map((_, i) => i);
+  }
+  ```
+
+### Patch Changes
+
+- Updated dependencies [73f3d0a]
+- Updated dependencies [0c927b6]
+- Updated dependencies [94d59b0]
+  - @recast-navigation/core@0.32.0
+  - @recast-navigation/generators@0.32.0
+  - @recast-navigation/three@0.32.0
+
 ## 0.31.1
 
 ### Patch Changes
