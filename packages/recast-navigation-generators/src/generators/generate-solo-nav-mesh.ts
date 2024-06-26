@@ -2,6 +2,7 @@ import {
   NavMesh,
   NavMeshCreateParams,
   Raw,
+  Recast,
   RecastBuildContext,
   RecastCompactHeightfield,
   RecastConfig,
@@ -326,7 +327,7 @@ export const generateSoloNavMesh = (
       config.maxSimplificationError,
       config.maxEdgeLen,
       contourSet,
-      Raw.Module.RC_CONTOUR_TESS_WALL_EDGES
+      Recast.RC_CONTOUR_TESS_WALL_EDGES
     )
   ) {
     return fail('Failed to create contours');
@@ -373,7 +374,7 @@ export const generateSoloNavMesh = (
   // Step 8. Create Detour data from Recast poly mesh.
   //
   for (let i = 0; i < polyMesh.npolys(); i++) {
-    if (polyMesh.areas(i) == Raw.Recast.WALKABLE_AREA) {
+    if (polyMesh.areas(i) == Recast.RC_WALKABLE_AREA) {
       polyMesh.setAreas(i, 0);
     }
     if (polyMesh.areas(i) == 0) {

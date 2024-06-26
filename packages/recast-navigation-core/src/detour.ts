@@ -1,5 +1,5 @@
 import { UnsignedCharArray } from './arrays';
-import { Raw, type RawModule } from './raw';
+import { Detour, Raw, type RawModule } from './raw';
 import { RecastPolyMesh, RecastPolyMeshDetail } from './recast';
 import { Vector3, Vector3Tuple, array, vec3 } from './utils';
 
@@ -32,14 +32,14 @@ export const statusToReadableString = (status: number): string => {
     let reason: string | undefined = undefined;
 
     const DT_STATUS_REASONS = {
-      DT_WRONG_MAGIC: Raw.Detour.WRONG_MAGIC,
-      DT_WRONG_VERSION: Raw.Detour.WRONG_VERSION,
-      DT_OUT_OF_MEMORY: Raw.Detour.OUT_OF_MEMORY,
-      DT_INVALID_PARAM: Raw.Detour.INVALID_PARAM,
-      DT_BUFFER_TOO_SMALL: Raw.Detour.BUFFER_TOO_SMALL,
-      DT_OUT_OF_NODES: Raw.Detour.OUT_OF_NODES,
-      DT_PARTIAL_RESULT: Raw.Detour.PARTIAL_RESULT,
-      DT_ALREADY_OCCUPIED: Raw.Detour.ALREADY_OCCUPIED,
+      DT_WRONG_MAGIC: Detour.DT_WRONG_MAGIC,
+      DT_WRONG_VERSION: Detour.DT_WRONG_VERSION,
+      DT_OUT_OF_MEMORY: Detour.DT_OUT_OF_MEMORY,
+      DT_INVALID_PARAM: Detour.DT_INVALID_PARAM,
+      DT_BUFFER_TOO_SMALL: Detour.DT_BUFFER_TOO_SMALL,
+      DT_OUT_OF_NODES: Detour.DT_OUT_OF_NODES,
+      DT_PARTIAL_RESULT: Detour.DT_PARTIAL_RESULT,
+      DT_ALREADY_OCCUPIED: Detour.DT_ALREADY_OCCUPIED,
     };
 
     for (const [reasonName, reasonMask] of Object.entries(DT_STATUS_REASONS)) {
@@ -95,7 +95,9 @@ export class DetourLink {
   }
 
   next(): number {
-    return this.raw.next;
+    // convert signed to unsigned
+    // https://github.com/emscripten-core/emscripten/issues/22134
+    return this.raw.next >>> 0;
   }
 
   edge(): number {

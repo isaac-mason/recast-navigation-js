@@ -1,6 +1,6 @@
 import { OrbitControls } from '@react-three/drei';
 import { ThreeEvent } from '@react-three/fiber';
-import { NavMeshQuery, Raw } from '@recast-navigation/core';
+import { Detour, NavMeshQuery } from '@recast-navigation/core';
 import { DebugDrawer, threeToSoloNavMesh } from '@recast-navigation/three';
 import React, { useEffect, useState } from 'react';
 import * as THREE from 'three';
@@ -72,7 +72,7 @@ export const FloodFillPruning = () => {
       for (
         let i = poly.firstLink();
         // https://github.com/emscripten-core/emscripten/issues/22134
-        i !== Raw.Detour.NULL_LINK && i !== -1;
+        i !== Detour.DT_NULL_LINK;
         i = tile.links(i).next()
       ) {
         const neiRef = tile.links(i).ref();

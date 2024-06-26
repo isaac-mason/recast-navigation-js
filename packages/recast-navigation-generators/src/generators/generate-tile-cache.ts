@@ -1,9 +1,11 @@
 import {
   ChunkIdsArray,
+  Detour,
   DetourTileCacheParams,
   NavMesh,
   NavMeshParams,
   Raw,
+  Recast,
   RecastBuildContext,
   RecastChunkyTriMesh,
   RecastCompactHeightfield,
@@ -42,6 +44,7 @@ import {
   markWalkableTriangles,
   rasterizeTriangles,
   recastConfigDefaults,
+  statusFailed,
   vec3,
 } from '@recast-navigation/core';
 import { Pretty } from '../types';
@@ -495,8 +498,8 @@ export const generateTileCache = (
 
       // Store header
       const header = new Raw.dtTileCacheLayerHeader();
-      header.magic = Raw.Detour.TILECACHE_MAGIC;
-      header.version = Raw.Detour.TILECACHE_VERSION;
+      header.magic = Detour.DT_TILECACHE_MAGIC;
+      header.version = Detour.DT_TILECACHE_VERSION;
 
       // Tile layer location in the navmesh
       header.tx = tileX;
@@ -536,7 +539,7 @@ export const generateTileCache = (
         tile
       );
 
-      if (Raw.Detour.statusFailed(status)) {
+      if (statusFailed(status)) {
         return { n: 0 };
       }
 
@@ -564,9 +567,9 @@ export const generateTileCache = (
 
           const addResult = tileCache.addTile(tileCacheData);
 
-          if (Raw.Detour.statusFailed(addResult.status)) {
+          if (statusFailed(addResult.status)) {
             buildContext.log(
-              Raw.Module.RC_LOG_WARNING,
+              Recast.RC_LOG_WARNING,
               `Failed to add tile to tile cache - tx: ${x}, ty: ${y}`
             );
             continue;
@@ -581,7 +584,7 @@ export const generateTileCache = (
     for (let x = 0; x < tileWidth; x++) {
       const dtStatus = tileCache.buildNavMeshTilesAt(x, y, navMesh);
 
-      if (Raw.Detour.statusFailed(dtStatus)) {
+      if (statusFailed(dtStatus)) {
         return fail(`Failed to build nav mesh tiles at ${x}, ${y}`);
       }
     }

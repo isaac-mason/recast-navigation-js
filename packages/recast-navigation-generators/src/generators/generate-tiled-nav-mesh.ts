@@ -1,9 +1,11 @@
 import {
   ChunkIdsArray,
+  Detour,
   NavMesh,
   NavMeshCreateParams,
   NavMeshParams,
   Raw,
+  Recast,
   RecastBuildContext,
   RecastChunkyTriMesh,
   RecastCompactHeightfield,
@@ -46,6 +48,7 @@ import {
   markWalkableTriangles,
   rasterizeTriangles,
   recastConfigDefaults,
+  statusFailed,
   statusToReadableString,
   vec3,
 } from '@recast-navigation/core';
@@ -266,7 +269,7 @@ export const generateTiledNavMesh = (
     | { success: true; data?: UnsignedCharArray }
     | { success: false; error: string } => {
     const failTileMesh = (error: string) => {
-      buildContext.log(Raw.Module.RC_LOG_ERROR, error);
+      buildContext.log(Recast.RC_LOG_ERROR, error);
 
       return { success: false as const, error };
     };
@@ -320,18 +323,18 @@ export const generateTiledNavMesh = (
     buildContext.resetTimers();
 
     // Start the build process
-    buildContext.startTimer(Raw.Module.RC_TIMER_TOTAL);
+    buildContext.startTimer(Recast.RC_TIMER_TOTAL);
 
     buildContext.log(
-      Raw.Module.RC_LOG_PROGRESS,
+      Recast.RC_LOG_PROGRESS,
       `Building tile ${intermediates.tileIntermediates.length} at x: ${tileX}, y: ${tileY}`
     );
     buildContext.log(
-      Raw.Module.RC_LOG_PROGRESS,
+      Recast.RC_LOG_PROGRESS,
       ` - ${config.width} x ${config.height} cells`
     );
     buildContext.log(
-      Raw.Module.RC_LOG_PROGRESS,
+      Recast.RC_LOG_PROGRESS,
       ` - ${numVertices / 1000}fK verts, ${numTriangles / 1000}K tris`
     );
 
@@ -514,7 +517,7 @@ export const generateTiledNavMesh = (
         tileConfig.maxSimplificationError,
         tileConfig.maxEdgeLen,
         contourSet,
-        Raw.Module.RC_CONTOUR_TESS_WALL_EDGES
+        Recast.RC_CONTOUR_TESS_WALL_EDGES
       )
     ) {
       return failTileMesh('Failed to create contours');
@@ -564,7 +567,7 @@ export const generateTiledNavMesh = (
 
     // Update poly flags from areas.
     for (let i = 0; i < polyMesh.npolys(); i++) {
-      if (polyMesh.areas(i) == Raw.Recast.WALKABLE_AREA) {
+      if (polyMesh.areas(i) == Recast.RC_WALKABLE_AREA) {
         polyMesh.setAreas(i, 0);
       }
       if (polyMesh.areas(i) == 0) {
@@ -602,14 +605,14 @@ export const generateTiledNavMesh = (
     }
 
     buildContext.log(
-      Raw.Module.RC_LOG_PROGRESS,
+      Recast.RC_LOG_PROGRESS,
       `>> Polymesh: ${polyMesh.nverts()} vertices  ${polyMesh.npolys()} polygons`
     );
 
     return { success: true, data: createNavMeshDataResult.navMeshData };
   };
 
-  buildContext.startTimer(Raw.Module.RC_TIMER_TEMP);
+  buildContext.startTimer(Recast.RC_TIMER_TEMP);
 
   const lastBuiltTileBmin: Vector3Tuple = [0, 0, 0];
   const lastBuiltTileBmax: Vector3Tuple = [0, 0, 0];
@@ -631,13 +634,13 @@ export const generateTiledNavMesh = (
 
         const addTileResult = navMesh.addTile(
           result.data,
-          Raw.Module.DT_TILE_FREE_DATA,
+          Detour.DT_TILE_FREE_DATA,
           0
         );
 
-        if (Raw.Detour.statusFailed(addTileResult.status)) {
+        if (statusFailed(addTileResult.status)) {
           buildContext.log(
-            Raw.Module.RC_LOG_WARNING,
+            Recast.RC_LOG_WARNING,
             `Failed to add tile to nav mesh` +
               '\n\t' +
               `tx: ${x}, ty: ${y},` +
@@ -652,7 +655,7 @@ export const generateTiledNavMesh = (
     }
   }
 
-  buildContext.stopTimer(Raw.Module.RC_TIMER_TEMP);
+  buildContext.stopTimer(Recast.RC_TIMER_TEMP);
 
   if (!keepIntermediates) {
     cleanup();

@@ -1,5 +1,6 @@
 import { Line, OrbitControls } from '@react-three/drei';
 import {
+  Detour,
   NavMesh,
   NavMeshQuery,
   OffMeshConnectionParams,
@@ -315,10 +316,10 @@ function computeSmoothPath(
     }
 
     const isEndOfPath =
-      steerTarget.steerPosFlag & Raw.Module.DT_STRAIGHTPATH_END;
+      steerTarget.steerPosFlag & Detour.DT_STRAIGHTPATH_END;
 
     const isOffMeshConnection =
-      steerTarget.steerPosFlag & Raw.Module.DT_STRAIGHTPATH_OFFMESH_CONNECTION;
+      steerTarget.steerPosFlag & Detour.DT_STRAIGHTPATH_OFFMESH_CONNECTION;
 
     // Find movement delta.
     const steerPos = steerTarget.steerPos;
@@ -485,7 +486,7 @@ function getSteerTarget(
     // Stop at Off-Mesh link or when point is further than slop away
     if (
       straightPath.straightPathFlags.get(ns) &
-      Raw.Module.DT_STRAIGHTPATH_OFFMESH_CONNECTION
+      Detour.DT_STRAIGHTPATH_OFFMESH_CONNECTION
     ) {
       break;
     }
@@ -610,14 +611,11 @@ function fixupShortcuts(pathPolys: number[], navMesh: NavMesh) {
 
   const poly = tileAndPoly.poly;
   const tile = tileAndPoly.tile;
-
   for (
     let k = poly.firstLink();
-    // https://github.com/emscripten-core/emscripten/issues/22134
-    k !== Raw.Detour.NULL_LINK && k !== -1;
+    k !== Detour.DT_NULL_LINK;
     k = tile.links(k).next()
   ) {
-    console.log(tile.links(k).next(), tile.links(k));
     const link = tile.links(k);
 
     if (link.ref() !== 0) {

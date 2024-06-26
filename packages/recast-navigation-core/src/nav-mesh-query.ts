@@ -1,4 +1,5 @@
 import { FloatArray, UnsignedCharArray, UnsignedIntArray } from './arrays';
+import { statusSucceed } from './detour';
 import { NavMesh } from './nav-mesh';
 import { Raw, type RawModule } from './raw';
 import { Vector3, array, vec3 } from './utils';
@@ -102,7 +103,10 @@ export class NavMeshQuery {
    */
   constructor(raw: RawModule.NavMeshQuery);
 
-  constructor(value: RawModule.NavMeshQuery | NavMesh, params?: NavMeshQueryParams) {
+  constructor(
+    value: RawModule.NavMeshQuery | NavMesh,
+    params?: NavMeshQueryParams
+  ) {
     if (value instanceof Raw.Module.NavMeshQuery) {
       this.raw = value;
     } else {
@@ -161,7 +165,7 @@ export class NavMeshQuery {
     Raw.destroy(isOverPolyRaw);
 
     return {
-      success: Raw.Detour.statusSucceed(status),
+      success: statusSucceed(status),
       status,
       nearestRef,
       nearestPoint,
@@ -236,7 +240,7 @@ export class NavMeshQuery {
     // const resultCount = resultCountRef.value;
 
     return {
-      success: Raw.Detour.statusSucceed(status),
+      success: statusSucceed(status),
       status,
       resultRefs,
       resultParents,
@@ -292,7 +296,7 @@ export class NavMeshQuery {
     polysRefsArray.destroy();
 
     return {
-      success: Raw.Detour.statusSucceed(status),
+      success: statusSucceed(status),
       status,
       polyRefs,
       polyCount,
@@ -323,7 +327,7 @@ export class NavMeshQuery {
     Raw.destroy(positionOverPolyRaw);
 
     return {
-      success: Raw.Detour.statusSucceed(status),
+      success: statusSucceed(status),
       status,
       closestPoint,
       isPointOverPoly,
@@ -378,7 +382,7 @@ export class NavMeshQuery {
     Raw.destroy(resultPointOverPoly);
 
     return {
-      success: Raw.Detour.statusSucceed(status),
+      success: statusSucceed(status),
       status,
       polyRef,
       point,
@@ -465,7 +469,7 @@ export class NavMeshQuery {
     Raw.destroy(randomPointRaw);
 
     return {
-      success: Raw.Detour.statusSucceed(status),
+      success: statusSucceed(status),
       status,
       randomPolyRef,
       randomPoint,
@@ -523,7 +527,7 @@ export class NavMeshQuery {
     visitedArray.destroy();
 
     return {
-      success: Raw.Detour.statusSucceed(status),
+      success: statusSucceed(status),
       status,
       resultPosition,
       visited,
@@ -558,7 +562,7 @@ export class NavMeshQuery {
     Raw.destroy(randomPointRaw);
 
     return {
-      success: Raw.Detour.statusSucceed(status),
+      success: statusSucceed(status),
       status,
       randomPolyRef,
       randomPoint,
@@ -584,7 +588,7 @@ export class NavMeshQuery {
     Raw.destroy(floatRef);
 
     return {
-      success: Raw.Detour.statusSucceed(status),
+      success: statusSucceed(status),
       status,
       height,
     };
@@ -657,7 +661,10 @@ export class NavMeshQuery {
     const halfExtents = options?.halfExtents ?? this.defaultQueryHalfExtents;
 
     // find nearest polygons for start and end positions
-    const startNearestPolyResult = this.findNearestPoly(start, { filter, halfExtents });
+    const startNearestPolyResult = this.findNearestPoly(start, {
+      filter,
+      halfExtents,
+    });
 
     if (!startNearestPolyResult.success) {
       return {
@@ -670,7 +677,10 @@ export class NavMeshQuery {
       };
     }
 
-    const endNearestPolyResult = this.findNearestPoly(end, { filter, halfExtents });
+    const endNearestPolyResult = this.findNearestPoly(end, {
+      filter,
+      halfExtents,
+    });
 
     if (!endNearestPolyResult.success) {
       return {
@@ -789,7 +799,7 @@ export class NavMeshQuery {
    * @param endPosition position within the end polygon.
    * @param options additional options
    * @returns
-   * 
+   *
    * The `polys` array returned must be freed after use.
    *
    * ```ts
@@ -832,7 +842,7 @@ export class NavMeshQuery {
     );
 
     return {
-      success: Raw.Detour.statusSucceed(status),
+      success: statusSucceed(status),
       status,
       polys: polysArray,
     };
@@ -861,7 +871,7 @@ export class NavMeshQuery {
    * @param path an array of polygon references that represent the path corridor
    * @param options additional options
    * @returns the straight path result
-   * 
+   *
    * The straightPath, straightPathFlags, and straightPathRefs arrays returned must be freed after use.
    *
    * ```ts
@@ -911,9 +921,9 @@ export class NavMeshQuery {
     /**
      * The reference ids of the visited polygons.
      *
-     * Raw.Module.DT_STRAIGHTPATH_START
-     * Raw.Module.DT_STRAIGHTPATH_END
-     * Raw.Module.DT_STRAIGHTPATH_OFFMESH_CONNECTION
+     * Detour.DT_STRAIGHTPATH_START
+     * Detour.DT_STRAIGHTPATH_END
+     * Detour.DT_STRAIGHTPATH_OFFMESH_CONNECTION
      */
     straightPathRefs: UnsignedIntArray;
 
@@ -965,7 +975,7 @@ export class NavMeshQuery {
     }
 
     return {
-      success: Raw.Detour.statusSucceed(status),
+      success: statusSucceed(status),
       status,
       straightPath,
       straightPathFlags,
@@ -1099,7 +1109,7 @@ export class NavMeshQuery {
     );
 
     const result = {
-      success: Raw.Detour.statusSucceed(status),
+      success: statusSucceed(status),
       status,
       t: raycastHit.t,
       hitNormal: vec3.fromArray(array((i) => raycastHit.get_hitNormal(i), 3)),

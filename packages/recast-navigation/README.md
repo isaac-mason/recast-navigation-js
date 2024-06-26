@@ -500,7 +500,7 @@ If you need to work with status codes programmatically, you can use these utilit
 
 ```ts
 import {
-  Raw,
+  Detour,
   statusSucceed,
   statusInProgress,
   statusFailed,
@@ -517,15 +517,15 @@ const inProgress = statusInProgress(status);
 const failed = statusFailed(status);
 
 // get the detail of the status
-const detail = Raw.Detour.BUFFER_TOO_SMALL;
-// Raw.Detour.WRONG_MAGIC;
-// Raw.Detour.WRONG_VERSION;
-// Raw.Detour.OUT_OF_MEMORY;
-// Raw.Detour.INVALID_PARAM;
-// Raw.Detour.BUFFER_TOO_SMALL;
-// Raw.Detour.OUT_OF_NODES;
-// Raw.Detour.PARTIAL_RESULT;
-// Raw.Detour.ALREADY_OCCUPIED;
+const detail = Detour.DT_BUFFER_TOO_SMALL;
+// Detour.DT_WRONG_MAGIC;
+// Detour.DT_WRONG_VERSION;
+// Detour.DT_OUT_OF_MEMORY;
+// Detour.DT_INVALID_PARAM;
+// Detour.DT_BUFFER_TOO_SMALL;
+// Detour.DT_OUT_OF_NODES;
+// Detour.DT_PARTIAL_RESULT;
+// Detour.DT_ALREADY_OCCUPIED;
 
 const detail = statusDetail(status, detail);
 ```

@@ -1,7 +1,7 @@
 import { UnsignedCharArray, UnsignedShortArray } from './arrays';
-import { NavMeshCreateParams } from './detour';
+import { NavMeshCreateParams, statusSucceed } from './detour';
 import { NavMesh } from './nav-mesh';
-import { Raw, type RawModule } from './raw';
+import { Detour, Raw, type RawModule } from './raw';
 import { Vector3, vec3 } from './utils';
 
 export type ObstacleRef = RawModule.dtObstacleRef;
@@ -143,7 +143,7 @@ export class TileCache {
     const { status, upToDate } = this.raw.update(navMesh.raw);
 
     return {
-      success: Raw.Detour.statusSucceed(status),
+      success: statusSucceed(status),
       status,
       upToDate,
     };
@@ -163,7 +163,7 @@ export class TileCache {
       height
     );
 
-    if (result.status !== Raw.Detour.SUCCESS) {
+    if (result.status !== Detour.DT_SUCCESS) {
       return {
         success: false,
         status: result.status,
@@ -203,7 +203,7 @@ export class TileCache {
       angle
     );
 
-    if (result.status !== Raw.Detour.SUCCESS) {
+    if (result.status !== Detour.DT_SUCCESS) {
       return {
         success: false,
         status: result.status,
@@ -246,14 +246,14 @@ export class TileCache {
     const status = this.raw.removeObstacle(ref);
 
     return {
-      success: Raw.Detour.statusSucceed(status),
+      success: statusSucceed(status),
       status,
     };
   }
 
   addTile(
     data: UnsignedCharArray,
-    flags: number = Raw.Module.DT_COMPRESSEDTILE_FREE_DATA
+    flags: number = Detour.DT_COMPRESSEDTILE_FREE_DATA
   ): RawModule.TileCacheAddTileResult {
     return this.raw.addTile(data.raw, flags);
   }

@@ -1,6 +1,6 @@
 import { Vector3Tuple } from 'three';
 import { FloatArray, IntArray, UnsignedCharArray } from './arrays';
-import { Raw, type RawModule } from './raw';
+import { Raw, Recast, type RawModule } from './raw';
 import { Vector2Tuple, Vector3, array, vec3 } from './utils';
 
 export type RecastConfig = {
@@ -277,7 +277,7 @@ export class RecastBuildContext {
   }
 
   resetTimers() {
-    for (let i = 0; i < Raw.Module.RC_MAX_TIMERS; i++) {
+    for (let i = 0; i < Recast.RC_MAX_TIMERS; i++) {
       this.startTimes[i] = -1;
       this.accumulatedTimes[i] = -1;
     }
@@ -1146,7 +1146,7 @@ export const buildContours = (
   maxError: number,
   maxEdgeLen: number,
   contourSet: RecastContourSet,
-  buildFlags = Raw.Module.RC_CONTOUR_TESS_WALL_EDGES
+  buildFlags = Recast.RC_CONTOUR_TESS_WALL_EDGES
 ) => {
   return Raw.Recast.buildContours(
     buildContext.raw,

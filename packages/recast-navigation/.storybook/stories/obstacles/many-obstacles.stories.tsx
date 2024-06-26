@@ -1,5 +1,6 @@
 import { Line, OrbitControls } from '@react-three/drei';
 import {
+  Detour,
   NavMesh,
   NavMeshQuery,
   Raw,
@@ -102,7 +103,7 @@ export const ManyObstacles = () => {
 
         if (
           !result.success &&
-          statusDetail(result.status, Raw.Detour.BUFFER_TOO_SMALL)
+          statusDetail(result.status, Detour.DT_BUFFER_TOO_SMALL)
         ) {
           fullTileCacheUpdate();
 
