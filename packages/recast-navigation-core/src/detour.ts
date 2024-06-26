@@ -95,9 +95,7 @@ export class DetourLink {
   }
 
   next(): number {
-    // convert signed to unsigned
-    // https://github.com/emscripten-core/emscripten/issues/22134
-    return this.raw.next >>> 0;
+    return this.raw.next;
   }
 
   edge(): number {
