@@ -58,12 +58,12 @@ export class TileCacheHelper extends Object3D {
         mesh.position.copy(position as Vector3);
 
         if (obstacle.type === 'box') {
-          const { extent, angle } = obstacle;
+          const { halfExtents, angle } = obstacle;
 
           mesh.geometry = new BoxGeometry(
-            extent.x * 2,
-            extent.y * 2,
-            extent.z * 2
+            halfExtents.x * 2,
+            halfExtents.y * 2,
+            halfExtents.z * 2
           );
 
           mesh.rotation.y = angle;

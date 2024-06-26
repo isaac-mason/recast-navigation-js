@@ -375,9 +375,9 @@ If many obstacle requests have been made and you need to avoid reaching the 64 o
 ```ts
 /* add a Box obstacle to the NavMesh */
 const position = { x: 0, y: 0, z: 0 };
-const extent = { x: 1, y: 1, z: 1 };
+const halfExtents = { x: 1, y: 1, z: 1 };
 const angle = 0;
-const addBoxObstacleResult = tileCache.addBoxObstacle(position, extent, angle);
+const addBoxObstacleResult = tileCache.addBoxObstacle(position, halfExtents, angle);
 const boxObstacle = addBoxObstacleResult.obstacle;
 
 /* add a Cylinder obstacle to the NavMesh */

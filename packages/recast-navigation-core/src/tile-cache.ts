@@ -10,7 +10,7 @@ export type BoxObstacle = {
   type: 'box';
   ref: ObstacleRef;
   position: Vector3;
-  extent: Vector3;
+  halfExtents: Vector3;
   angle: number;
 };
 
@@ -194,14 +194,20 @@ export class TileCache {
    */
   addBoxObstacle(
     position: Vector3,
-    extent: Vector3,
+    halfExtents: Vector3,
     angle: number
   ): AddObstacleResult<BoxObstacle> {
+    const rawPosition = vec3.toRaw(position);
+    const rawHalfExtents = vec3.toRaw(halfExtents);
+
     const result = this.raw.addBoxObstacle(
-      vec3.toRaw(position),
-      vec3.toRaw(extent),
+      rawPosition,
+      rawHalfExtents,
       angle
     );
+
+    Raw.destroy(rawPosition);
+    Raw.destroy(rawHalfExtents);
 
     if (result.status !== Detour.DT_SUCCESS) {
       return {
@@ -216,7 +222,7 @@ export class TileCache {
       type: 'box',
       ref,
       position,
-      extent,
+      halfExtents,
       angle,
     };
 
