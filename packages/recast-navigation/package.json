@@ -64,7 +64,7 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "test": "tsc && vitest run",
-    "lint": "eslint --ext .ts src"
+    "lint": "eslint src"
   },
   "dependencies": {
     "@recast-navigation/core": "0.32.0",
@@ -75,7 +75,7 @@
     "@babel/core": "^7.24.5",
     "@babel/preset-env": "^7.24.5",
     "@babel/preset-typescript": "^7.24.1",
-    "@isaac-mason/eslint-config-typescript": "^0.0.5",
+    "@isaac-mason/eslint-config-typescript": "^0.0.9",
     "@mdx-js/react": "^2.3.0",
     "@pmndrs/assets": "^1.6.0",
     "@react-three/drei": "^9.105.4",
@@ -96,7 +96,7 @@
     "@types/react-dom": "^18.2.8",
     "@types/three": "^0.163.0",
     "@vitejs/plugin-react": "^4.2.1",
-    "eslint": "^8.56.0",
+    "eslint": "^9.6.0",
     "leva": "^0.9.35",
     "react": "^18.3.1",
     "react-dom": "^18.2.0",
