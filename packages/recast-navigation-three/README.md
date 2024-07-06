@@ -95,7 +95,7 @@ This package provides a `DebugDrawer` utility that can visualise a navmesh and o
 ```ts
 import { DebugDrawer } from 'recast-navigation/three';
 
-const debugDrawer = new DebugDrawer({ scene });
+const debugDrawer = new DebugDrawer();
 
 // resize the debug drawer when the window resizes
 // required for rendering lines correctly
