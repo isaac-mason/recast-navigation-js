@@ -1,5 +1,15 @@
 # @recast-navigation/core
 
+## 0.33.0
+
+### Minor Changes
+
+- 2eb2223: feat: split tilecache import/export into seperate importTileCache and exportTileCache functions
+
+### Patch Changes
+
+- @recast-navigation/wasm@0.33.0
+
 ## 0.32.0
 
 ### Minor Changes
