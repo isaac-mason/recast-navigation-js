@@ -1,2 +1,2 @@
-export * from './export-nav-mesh';
-export * from './import-nav-mesh';
+export * from './export';
+export * from './import';

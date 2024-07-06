@@ -1,9 +1,12 @@
 import { OrbitControls } from '@react-three/drei';
 import {
   NavMesh,
+  TileCache,
   TileCacheMeshProcess,
   exportNavMesh,
+  exportTileCache,
   importNavMesh,
+  importTileCache,
 } from '@recast-navigation/core';
 import { threeToSoloNavMesh, threeToTileCache } from '@recast-navigation/three';
 import { button, useControls } from 'leva';
@@ -98,7 +101,8 @@ export const NavMeshExample = () => {
 export const TileCacheExample = () => {
   const [group, setGroup] = useState<Group | null>(null);
 
-  const [result, setResult] = useState<NavMesh | undefined>();
+  const [navMesh, setNavMesh] = useState<NavMesh | undefined>();
+  const [tileCache, setTileCache] = useState<TileCache | undefined>();
 
   const [navMeshExport, setNavMeshExport] = useState<Uint8Array | undefined>();
 
@@ -120,22 +124,24 @@ export const TileCacheExample = () => {
           }
         });
 
-        const { navMesh } = threeToTileCache(meshes, navMeshConfig);
+        const { navMesh, tileCache } = threeToTileCache(meshes, navMeshConfig);
 
-        setResult(navMesh);
+        setNavMesh(navMesh);
+        setTileCache(tileCache);
       }),
       reset: button(() => {
-        setResult(undefined);
+        setNavMesh(undefined);
+        setTileCache(undefined);
       }),
       save: button(
         () => {
-          if (!result) return;
+          if (!navMesh || !tileCache) return;
 
-          const buffer = exportNavMesh(result);
+          const buffer = exportTileCache(navMesh, tileCache);
 
           setNavMeshExport(buffer);
         },
-        { disabled: !result }
+        { disabled: !navMesh || !tileCache }
       ),
       load: button(
         () => {
@@ -144,20 +150,24 @@ export const TileCacheExample = () => {
           const meshProcess = new TileCacheMeshProcess(
             (navMeshCreateParams, polyAreas, polyFlags) => {
               for (let i = 0; i < navMeshCreateParams.polyCount(); ++i) {
-                polyAreas.set_data(i, 0);
-                polyFlags.set_data(i, 1);
+                polyAreas.set(i, 0);
+                polyFlags.set(i, 1);
               }
             }
           );
 
-          const { navMesh } = importNavMesh(navMeshExport, meshProcess);
+          const { navMesh, tileCache } = importTileCache(
+            navMeshExport,
+            meshProcess
+          );
 
-          setResult(navMesh);
+          setNavMesh(navMesh);
+          setTileCache(tileCache);
         },
         { disabled: !navMeshExport }
       ),
     },
-    [group, navMeshConfig, result, navMeshExport]
+    [group, navMeshConfig, navMesh, tileCache, navMeshExport]
   );
 
   return (
@@ -166,7 +176,7 @@ export const TileCacheExample = () => {
         <NavTestEnvironment />
       </group>
 
-      <Debug navMesh={result} navMeshMaterial={navMeshMaterial} />
+      <Debug navMesh={navMesh} navMeshMaterial={navMeshMaterial} />
 
       <OrbitControls />
     </>

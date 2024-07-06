@@ -377,7 +377,11 @@ If many obstacle requests have been made and you need to avoid reaching the 64 o
 const position = { x: 0, y: 0, z: 0 };
 const halfExtents = { x: 1, y: 1, z: 1 };
 const angle = 0;
-const addBoxObstacleResult = tileCache.addBoxObstacle(position, halfExtents, angle);
+const addBoxObstacleResult = tileCache.addBoxObstacle(
+  position,
+  halfExtents,
+  angle
+);
 const boxObstacle = addBoxObstacleResult.obstacle;
 
 /* add a Cylinder obstacle to the NavMesh */
@@ -549,18 +553,28 @@ const { navMesh } = importNavMesh(navMeshExport);
 To export a TileCache and NavMesh, the usage varies slightly:
 
 ```ts
-import { exportNavMesh, importNavMesh } from 'recast-navigation';
+import { exportTileCache, importTileCache } from 'recast-navigation';
 
 /* exporting */
 // pass both the navMesh and the tileCache
-const navMeshExport: Uint8Array = exportNavMesh(navMesh, tileCache);
+const navMeshExport: Uint8Array = exportTileCache(navMesh, tileCache);
 
 /* importing */
 // also pass the TileCacheMeshProcess implementation for the tile cache
 // if you used `generateTileCache` and didn't provide one, `createDefaultTileCacheMeshProcess` returns the default TileCacheMeshProcess `generateTileCache` uses
 const tileCacheMeshProcess = createDefaultTileCacheMeshProcess();
 
-const { navMesh, tileCache } = importNavMesh(
+// otherwise, you can use your own TileCacheMeshProcess
+const customTileCacheMeshProcess = new TileCacheMeshProcess(
+  (navMeshCreateParams, polyAreas, polyFlags) => {
+    for (let i = 0; i < navMeshCreateParams.polyCount(); ++i) {
+      polyAreas.set(i, 0);
+      polyFlags.set(i, 1);
+    }
+  }
+);
+
+const { navMesh, tileCache, allocator, compressor } = importTileCache(
   navMeshExport,
   tileCacheMeshProcess
 );

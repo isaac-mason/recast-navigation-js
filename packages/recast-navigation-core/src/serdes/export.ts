@@ -2,14 +2,10 @@ import { NavMesh } from '../nav-mesh';
 import { TileCache } from '../tile-cache';
 import { Raw } from '../raw';
 
-export const exportNavMesh = (
-  navMesh: NavMesh,
-  tileCache?: TileCache
-): Uint8Array => {
+const exportImpl = (navMesh: NavMesh, tileCache?: TileCache): Uint8Array => {
   const navMeshExport = Raw.NavMeshExporter.exportNavMesh(
     navMesh.raw,
-    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-    tileCache?.raw!
+    tileCache?.raw as never
   );
 
   const arrView = new Uint8Array(
@@ -23,4 +19,15 @@ export const exportNavMesh = (
   Raw.NavMeshExporter.freeNavMeshExport(navMeshExport);
 
   return data;
+};
+
+export const exportNavMesh = (navMesh: NavMesh): Uint8Array => {
+  return exportImpl(navMesh);
+};
+
+export const exportTileCache = (
+  navMesh: NavMesh,
+  tileCache: TileCache
+): Uint8Array => {
+  return exportImpl(navMesh, tileCache);
 };
