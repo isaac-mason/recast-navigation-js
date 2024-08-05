@@ -5947,14 +5947,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-mdx-gfm@npm:^8.0.9":
-  version: 8.0.9
-  resolution: "@storybook/addon-mdx-gfm@npm:8.0.9"
+"@storybook/addon-mdx-gfm@npm:^8.2.7":
+  version: 8.2.7
+  resolution: "@storybook/addon-mdx-gfm@npm:8.2.7"
   dependencies:
-    "@storybook/node-logger": "npm:8.0.9"
     remark-gfm: "npm:^4.0.0"
     ts-dedent: "npm:^2.0.0"
-  checksum: 10/fa481569bcd96ae1b97688b653303a713771cdbf4dae4b3e2e4da4c0c9ed2edc31b92303c12bf94c70085403b7d94c1f5f48f4738cd15ce184267e628c205036
+  peerDependencies:
+    storybook: ^8.2.7
+  checksum: 10/de48db6f3c6e4a2c161bd2c704d9ec80dd01fd77f58cd540babde17e823bbc9c2a0e0165fb3305646526666db19222ebc93d8b941cdca3d83bfffd6cdcfc879f
   languageName: node
   linkType: hard
 
@@ -16860,7 +16861,7 @@ __metadata:
     "@storybook/addon-essentials": "npm:^8.0.9"
     "@storybook/addon-interactions": "npm:^8.0.9"
     "@storybook/addon-links": "npm:^8.0.9"
-    "@storybook/addon-mdx-gfm": "npm:^8.0.9"
+    "@storybook/addon-mdx-gfm": "npm:^8.2.7"
     "@storybook/react": "npm:^8.0.9"
     "@storybook/react-vite": "npm:^8.0.9"
     "@types/react": "npm:^18.3.1"
