@@ -155,22 +155,27 @@ export const generateTiledNavMesh = (
 
       if (tileIntermediate.compactHeightfield) {
         freeCompactHeightfield(tileIntermediate.compactHeightfield);
+        tileIntermediate.compactHeightfield = undefined;
       }
 
       if (tileIntermediate.heightfield) {
         freeHeightfield(tileIntermediate.heightfield);
+        tileIntermediate.heightfield = undefined;
       }
 
       if (tileIntermediate.contourSet) {
         freeContourSet(tileIntermediate.contourSet);
+        tileIntermediate.contourSet = undefined;
       }
 
       if (tileIntermediate.polyMesh) {
         freePolyMesh(tileIntermediate.polyMesh);
+        tileIntermediate.polyMesh = undefined;
       }
 
       if (tileIntermediate.polyMeshDetail) {
         freePolyMeshDetail(tileIntermediate.polyMeshDetail);
+        tileIntermediate.polyMeshDetail = undefined;
       }
     }
 
