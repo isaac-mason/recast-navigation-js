@@ -41,8 +41,6 @@ const App = () => {
 
       debugDrawer.clear();
       debugDrawer.drawNavMesh(navMesh);
-
-      console.log('here');
     };
 
     worker.postMessage({ positions, indices, config }, [
