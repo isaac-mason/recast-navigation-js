@@ -15,7 +15,7 @@ import {
   LineMaterial,
   LineSegments2,
   LineSegmentsGeometry,
-} from 'three-stdlib';
+} from 'three/addons';
 
 type VertexData = [
   x: number,
@@ -72,7 +72,6 @@ export class DebugDrawer extends THREE.Group {
         color: 0xffffff,
         linewidth: 2,
         vertexColors: true,
-        resolution: new THREE.Vector2(800, 800),
         polygonOffset: true,
         polygonOffsetFactor: -4,
         polygonOffsetUnits: -10,
@@ -267,10 +266,6 @@ export class DebugDrawer extends THREE.Group {
   // - drawTileCacheContours
   // - drawTileCachePolyMesh
 
-  resize(width: number, height: number): void {
-    this.lineMaterial.resolution.set(width, height);
-  }
-
   reset(): void {
     for (const child of this.children) {
       if (child instanceof THREE.Mesh || child instanceof LineSegments2) {
@@ -285,6 +280,12 @@ export class DebugDrawer extends THREE.Group {
     this.reset();
 
     Raw.Module.destroy(this.debugDrawImpl);
+    
+    this.pointGeometry.dispose();
+
+    this.triMaterial.dispose();
+    this.pointMaterial.dispose();
+    this.lineMaterial.dispose();
   }
 
   private vertex(x: number, y: number, z: number, color: number) {

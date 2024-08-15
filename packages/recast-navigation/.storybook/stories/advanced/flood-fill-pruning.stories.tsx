@@ -113,7 +113,6 @@ export const FloodFillPruning = () => {
     const debug = new DebugDrawer();
 
     debug.drawNavMeshPolysWithFlags(navMesh, 1, 0x0000ff);
-    debug.resize(window.innerWidth, window.innerHeight);
 
     setDebug(debug);
 

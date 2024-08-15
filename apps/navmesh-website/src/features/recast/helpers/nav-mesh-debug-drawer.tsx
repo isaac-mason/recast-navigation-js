@@ -140,22 +140,6 @@ export const NavMeshDebugDrawer = ({
   useEffect(() => {
     if (!debug) return;
 
-    const onResize = () => {
-      debug.resize(window.innerWidth, window.innerHeight);
-    };
-
-    onResize();
-
-    window.addEventListener('resize', onResize);
-
-    return () => {
-      window.removeEventListener('resize', onResize);
-    };
-  }, [debug]);
-
-  useEffect(() => {
-    if (!debug) return;
-
     debug.reset();
 
     if (!navMesh) return;
