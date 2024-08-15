@@ -28,6 +28,84 @@ export const DebugDrawerOption = {
   NAVMESH_BV_TREE: 'navmesh bv tree',
 };
 
+const getIntermediates = (
+  intermediates:
+    | SoloNavMeshGeneratorIntermediates
+    | TiledNavMeshGeneratorIntermediates
+    | TileCacheGeneratorIntermediates
+    | undefined
+) => {
+  const heightfieldList: RecastHeightfield[] = [];
+  const compactHeightfieldList: RecastCompactHeightfield[] = [];
+  const contourSetList: RecastContourSet[] = [];
+  const polyMeshList: RecastPolyMesh[] = [];
+  const polyMeshDetailList: RecastPolyMeshDetail[] = [];
+
+  if (intermediates) {
+    if (intermediates.type === 'solo') {
+      if (intermediates.heightfield) {
+        heightfieldList.push(intermediates.heightfield);
+      }
+
+      if (intermediates.compactHeightfield) {
+        compactHeightfieldList.push(intermediates.compactHeightfield);
+      }
+
+      if (intermediates.contourSet) {
+        contourSetList.push(intermediates.contourSet);
+      }
+
+      if (intermediates.polyMesh) {
+        polyMeshList.push(intermediates.polyMesh);
+      }
+
+      if (intermediates.polyMeshDetail) {
+        polyMeshDetailList.push(intermediates.polyMeshDetail);
+      }
+    } else if (intermediates.type === 'tiled') {
+      for (const tile of intermediates.tileIntermediates) {
+        if (tile.heightfield) {
+          heightfieldList.push(tile.heightfield);
+        }
+
+        if (tile.compactHeightfield) {
+          compactHeightfieldList.push(tile.compactHeightfield);
+        }
+
+        if (tile.contourSet) {
+          contourSetList.push(tile.contourSet);
+        }
+
+        if (tile.polyMesh) {
+          polyMeshList.push(tile.polyMesh);
+        }
+
+        if (tile.polyMeshDetail) {
+          polyMeshDetailList.push(tile.polyMeshDetail);
+        }
+      }
+    } else if (intermediates.type === 'tilecache') {
+      for (const tile of intermediates.tileIntermediates) {
+        if (tile.heightfield) {
+          heightfieldList.push(tile.heightfield);
+        }
+
+        if (tile.compactHeightfield) {
+          compactHeightfieldList.push(tile.compactHeightfield);
+        }
+      }
+    }
+  }
+
+  return {
+    heightfieldList,
+    compactHeightfieldList,
+    contourSetList,
+    polyMeshList,
+    polyMeshDetailList,
+  };
+};
+
 type DebugDrawerOptions =
   (typeof DebugDrawerOption)[keyof typeof DebugDrawerOption];
 
@@ -82,39 +160,13 @@ export const NavMeshDebugDrawer = ({
 
     if (!navMesh) return;
 
-    const heightfieldList: RecastHeightfield[] = [];
-    const compactHeightfieldList: RecastCompactHeightfield[] = [];
-    const contourSetList: RecastContourSet[] = [];
-    const polyMeshList: RecastPolyMesh[] = [];
-    const polyMeshDetailList: RecastPolyMeshDetail[] = [];
-
-    if (intermediates) {
-      const intermediatesList = Array.isArray(intermediates)
-        ? intermediates
-        : [intermediates];
-
-      for (const intermediate of intermediatesList) {
-        if (intermediate.heightfield) {
-          heightfieldList.push(intermediate.heightfield);
-        }
-
-        if (intermediate.compactHeightfield) {
-          compactHeightfieldList.push(intermediate.compactHeightfield);
-        }
-
-        if (intermediate.contourSet) {
-          contourSetList.push(intermediate.contourSet);
-        }
-
-        if (intermediate.polyMesh) {
-          polyMeshList.push(intermediate.polyMesh);
-        }
-
-        if (intermediate.polyMeshDetail) {
-          polyMeshDetailList.push(intermediate.polyMeshDetail);
-        }
-      }
-    }
+    const {
+      heightfieldList,
+      compactHeightfieldList,
+      contourSetList,
+      polyMeshList,
+      polyMeshDetailList,
+    } = getIntermediates(intermediates);
 
     if (option === DebugDrawerOption.HEIGHTFIELD_SOLID) {
       for (const heightfield of heightfieldList) {
