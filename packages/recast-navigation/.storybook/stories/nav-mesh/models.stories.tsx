@@ -1,13 +1,13 @@
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { NavMesh } from '@recast-navigation/core';
 import {
+  DebugDrawer,
   threeToSoloNavMesh,
   threeToTileCache,
   threeToTiledNavMesh,
 } from '@recast-navigation/three';
 import React, { useEffect, useState } from 'react';
-import { Group, Mesh, MeshBasicMaterial } from 'three';
-import { Debug } from '../../common/debug';
+import { Group, Mesh } from 'three';
 import { DungeonEnvironment } from '../../common/dungeon-environment';
 import { NavTestEnvironment } from '../../common/nav-test-environment';
 import { decorators } from '../../decorators';
@@ -18,11 +18,6 @@ export default {
   decorators,
   parameters,
 };
-
-const navMeshMaterial = new MeshBasicMaterial({
-  wireframe: true,
-  color: 'red',
-});
 
 const Levels = {
   Dungeon: {
@@ -50,7 +45,7 @@ type CommonProps = {
 const Common = ({ level, type, tileSize }: CommonProps) => {
   const [group, setGroup] = useState<Group | null>(null);
 
-  const [navMesh, setNavMesh] = useState<NavMesh | undefined>();
+  const [debugDrawer, setDebugDrawer] = useState<DebugDrawer | undefined>();
 
   useEffect(() => {
     if (!group) return;
@@ -73,19 +68,29 @@ const Common = ({ level, type, tileSize }: CommonProps) => {
       tileSize,
     };
 
+    let navMesh: NavMesh | undefined;
+
     if (type === 'solo') {
-      const { navMesh } = threeToSoloNavMesh(meshes, config, false);
-      setNavMesh(navMesh);
+      const result = threeToSoloNavMesh(meshes, config, false);
+      navMesh = result.navMesh;
     } else if (type === 'tiled') {
-      const { navMesh } = threeToTiledNavMesh(meshes, config, false);
-      setNavMesh(navMesh);
+      const result = threeToTiledNavMesh(meshes, config, false);
+      navMesh = result.navMesh;
     } else {
-      const { navMesh } = threeToTileCache(meshes, config);
-      setNavMesh(navMesh);
+      const result = threeToTileCache(meshes, config);
+      navMesh = result.navMesh;
     }
 
+    const debugDrawer = new DebugDrawer();
+
+    if (navMesh) {
+      debugDrawer.drawNavMesh(navMesh);
+    }
+
+    setDebugDrawer(debugDrawer);
+
     return () => {
-      setNavMesh(undefined);
+      setDebugDrawer(undefined);
     };
   }, [group]);
 
@@ -95,7 +100,7 @@ const Common = ({ level, type, tileSize }: CommonProps) => {
         <level.Environment />
       </group>
 
-      <Debug navMesh={navMesh} navMeshMaterial={navMeshMaterial} />
+      {debugDrawer && <primitive object={debugDrawer} />}
 
       <OrbitControls target={level.camera.lookAt} />
 
