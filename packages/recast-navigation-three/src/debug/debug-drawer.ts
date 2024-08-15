@@ -17,15 +17,15 @@ import {
   LineSegmentsGeometry,
 } from 'three-stdlib';
 
-type VertexData = {
-  x: number;
-  y: number;
-  z: number;
-  r: number;
-  g: number;
-  b: number;
-  a: number;
-};
+type VertexData = [
+  x: number,
+  y: number,
+  z: number,
+  r: number,
+  g: number,
+  b: number,
+  a: number,
+];
 
 const _color = new THREE.Color();
 
@@ -70,12 +70,12 @@ export class DebugDrawer extends THREE.Group {
       lineMaterial ??
       new LineMaterial({
         color: 0xffffff,
-        linewidth: 1,
+        linewidth: 2,
         vertexColors: true,
-        transparent: true,
-        opacity: 0.4,
-        depthWrite: false,
         resolution: new THREE.Vector2(800, 800),
+        polygonOffset: true,
+        polygonOffsetFactor: -4,
+        polygonOffsetUnits: -10,
       });
 
     this.debugDrawImpl = new Raw.Module.DebugDrawImpl();
@@ -293,7 +293,7 @@ export class DebugDrawer extends THREE.Group {
     const b = (color & 0xff) / 255;
     const a = ((color >> 24) & 0xff) / 255;
 
-    this.currentVertices.push({ x, y, z, r, g, b, a });
+    this.currentVertices.push([x, y, z, r, g, b, a]);
   }
 
   private endPoints(): void {
@@ -306,14 +306,11 @@ export class DebugDrawer extends THREE.Group {
     );
 
     for (let i = 0; i < this.currentVertices.length; i++) {
-      const point = this.currentVertices[i];
+      const [x, y, z, r, g, b] = this.currentVertices[i];
 
-      instancedMesh.setMatrixAt(
-        i,
-        new THREE.Matrix4().setPosition(point.x, point.y, point.z)
-      );
+      instancedMesh.setMatrixAt(i, new THREE.Matrix4().setPosition(x, y, z));
 
-      instancedMesh.setColorAt(i, _color.setRGB(point.r, point.g, point.b));
+      instancedMesh.setColorAt(i, _color.setRGB(r, g, b));
     }
 
     instancedMesh.instanceMatrix.needsUpdate = true;
@@ -328,14 +325,14 @@ export class DebugDrawer extends THREE.Group {
     const colors: number[] = [];
 
     for (let i = 0; i < this.currentVertices.length; i += 2) {
-      const p1 = this.currentVertices[i];
-      const p2 = this.currentVertices[i + 1];
+      const [x1, y1, z1, r1, g1, b1] = this.currentVertices[i];
+      const [x2, y2, z2, r2, g2, b2] = this.currentVertices[i + 1];
 
-      positions.push(p1.x, p1.y, p1.z);
-      positions.push(p2.x, p2.y, p2.z);
+      positions.push(x1, y1, z1);
+      positions.push(x2, y2, z2);
 
-      colors.push(p1.r, p1.g, p1.b);
-      colors.push(p2.r, p2.g, p2.b);
+      colors.push(r1, g1, b1);
+      colors.push(r2, g2, b2);
     }
 
     lineSegmentsGeometry.setPositions(positions);
@@ -355,14 +352,14 @@ export class DebugDrawer extends THREE.Group {
     const colors = new Float32Array(this.currentVertices.length * 3);
 
     for (let i = 0; i < this.currentVertices.length; i++) {
-      const point = this.currentVertices[i];
-      positions[i * 3 + 0] = point.x;
-      positions[i * 3 + 1] = point.y;
-      positions[i * 3 + 2] = point.z;
+      const [x, y, z, r, g, b] = this.currentVertices[i];
+      positions[i * 3 + 0] = x;
+      positions[i * 3 + 1] = y;
+      positions[i * 3 + 2] = z;
 
-      colors[i * 3 + 0] = point.r;
-      colors[i * 3 + 1] = point.g;
-      colors[i * 3 + 2] = point.b;
+      colors[i * 3 + 0] = r;
+      colors[i * 3 + 1] = g;
+      colors[i * 3 + 2] = b;
     }
 
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
@@ -389,9 +386,9 @@ export class DebugDrawer extends THREE.Group {
         this.currentVertices[i + 3],
       ];
 
-      for (const vertex of vertices) {
-        positions.push(vertex.x, vertex.y, vertex.z);
-        colors.push(vertex.r, vertex.g, vertex.b);
+      for (const [x, y, z, r, g, b] of vertices) {
+        positions.push(x, y, z);
+        colors.push(r, g, b);
       }
     }
 
