@@ -1,5 +1,22 @@
 # @recast-navigation/three
 
+## 0.34.0
+
+### Minor Changes
+
+- 06fffde: feat: remove resize from DebugDrawer, three LineMaterial no longer requires manually setting resolution
+
+  If using an older version of three.js, you may need to manually set the resolution of the LineMaterial on `debugDrawer.lineMaterial`.
+
+### Patch Changes
+
+- 175a8c8: fix: dispose DebugDrawer materials and geometry
+- ae5bbff: feat: refactor DebugDrawer handling of vertex data
+- 06fffde: feat: increase linewidth for DebugDrawer default line material
+- Updated dependencies [03ab142]
+  - @recast-navigation/generators@0.34.0
+  - @recast-navigation/core@0.34.0
+
 ## 0.33.0
 
 ### Patch Changes

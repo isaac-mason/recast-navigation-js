@@ -1,5 +1,13 @@
 # @recast-navigation/generators
 
+## 0.34.0
+
+### Patch Changes
+
+- 03ab142: fix: set tiled navmesh intermediates to undefined after freeing wasm memory
+  - @recast-navigation/core@0.34.0
+  - @recast-navigation/wasm@0.34.0
+
 ## 0.33.0
 
 ### Patch Changes
