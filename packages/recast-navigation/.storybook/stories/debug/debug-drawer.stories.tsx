@@ -65,7 +65,6 @@ const DebugDraw = ({ example, showModel = false }: DebugDrawProps) => {
     if (!success) return;
 
     const debugDrawer = new DebugDrawer();
-    debugDrawer.resize(window.innerWidth, window.innerHeight);
 
     if (example === DebugDrawExample.HEIGHTFIELD_SOLID) {
       debugDrawer.drawHeightfieldSolid(intermediates.heightfield!);

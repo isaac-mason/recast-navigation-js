@@ -97,10 +97,6 @@ import { DebugDrawer } from 'recast-navigation/three';
 
 const debugDrawer = new DebugDrawer();
 
-// resize the debug drawer when the window resizes
-// required for rendering lines correctly
-debugDrawer.resize(window.innerWidth, window.innerHeight);
-
 // draw a navmesh
 debugDrawer.drawNavMesh(navMesh);
 

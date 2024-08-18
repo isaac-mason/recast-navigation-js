@@ -48,14 +48,6 @@ const App = () => {
       indices.buffer,
     ]);
 
-    const onResize = () => {
-      debugDrawer.resize(window.innerWidth, window.innerHeight);
-    };
-
-    onResize();
-
-    window.addEventListener('resize', onResize);
-
     scene.add(debugDrawer);
 
     return () => {
@@ -66,7 +58,6 @@ const App = () => {
       }
 
       scene.remove(debugDrawer);
-      window.removeEventListener('resize', onResize);
       debugDrawer.dispose();
     };
   }, []);
