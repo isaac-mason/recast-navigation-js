@@ -4031,6 +4031,7 @@ __metadata:
     "@rollup/plugin-terser": "npm:^0.4.3"
     "@rollup/plugin-typescript": "npm:^11.1.6"
     eslint: "npm:^9.6.0"
+    playcanvas: "npm:^1.74.0"
     prettier: "npm:^3.1.0"
     rollup: "npm:^4.14.0"
     rollup-plugin-copy: "npm:^3.4.0"
@@ -5515,7 +5516,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/webxr@npm:*, @types/webxr@npm:^0.5.2":
+"@types/webxr@npm:*, @types/webxr@npm:^0.5.16, @types/webxr@npm:^0.5.2":
   version: 0.5.20
   resolution: "@types/webxr@npm:0.5.20"
   checksum: 10/913dad1426e198f60aaa31d52bcefa69cddb620b5bb5ab201ccaf42867b55f1af3f3fcc8a0cb85ab8f92c2260adc503cb2cbf1a3cd217d16707bfa4fd12e1aea
@@ -6007,6 +6008,13 @@ __metadata:
     loupe: "npm:^3.1.1"
     tinyrainbow: "npm:^1.2.0"
   checksum: 10/605f1807c343ac01cde053b062bda8f0cc51b321a3cd9c751424a1e24549a35120896bd58612a14f068460242013f69e08fc0a69355387e981a5a50bce9ae04e
+  languageName: node
+  linkType: hard
+
+"@webgpu/types@npm:^0.1.40":
+  version: 0.1.48
+  resolution: "@webgpu/types@npm:0.1.48"
+  checksum: 10/794899f7ab6c99173961896010d750d4d88df3269cdc04b7cdf5ab41d81477e3a83666bdbef11fe7c3591a566405ed8f59f59e18610f69606382d0fac1e802cb
   languageName: node
   linkType: hard
 
@@ -13212,6 +13220,16 @@ __metadata:
     mlly: "npm:^1.7.1"
     pathe: "npm:^1.1.2"
   checksum: 10/ed732842b86260395b82e31afc0dd8316e74642a78754ad148a5500ca5537565c6dfbd6c80c2dc92077afc1beb471b05a85a9572089cc8a1bba82248c331bf45
+  languageName: node
+  linkType: hard
+
+"playcanvas@npm:^1.74.0":
+  version: 1.74.0
+  resolution: "playcanvas@npm:1.74.0"
+  dependencies:
+    "@types/webxr": "npm:^0.5.16"
+    "@webgpu/types": "npm:^0.1.40"
+  checksum: 10/2d1454f9dfb3adb57bbac040f4c277fa89f8bf6482ccaa9d955a073e46f3d612d020b9465ec4061757c69242c2a2d38ee67cea86b390043857ba48dbd5a3300a
   languageName: node
   linkType: hard
 
