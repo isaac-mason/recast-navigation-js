@@ -3,7 +3,7 @@ import { Canvas, useThree } from '@react-three/fiber';
 import RecastWasm from '@recast-navigation/wasm/wasm';
 import { useEffect, useRef } from 'react';
 import { NavMeshQuery, init } from 'recast-navigation';
-import { NavMeshHelper, threeToSoloNavMesh } from 'recast-navigation/three';
+import { NavMeshHelper, threeToSoloNavMesh } from '@recast-navigation/three';
 import { suspend } from 'suspend-react';
 import { Color, Group, Mesh, MeshBasicMaterial, Vector2, Vector3 } from 'three';
 import { Line2, LineGeometry, LineMaterial } from 'three-stdlib';

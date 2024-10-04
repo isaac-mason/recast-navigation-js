@@ -56,8 +56,4 @@ export default [
     name: 'generators',
     external: ['@recast-navigation/core', '@recast-navigation/generators'],
   }),
-  entrypoint({
-    name: 'three',
-    external: ['@recast-navigation/core', '@recast-navigation/three', 'three'],
-  }),
 ];

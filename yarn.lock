@@ -4037,11 +4037,11 @@ __metadata:
     rollup-plugin-filesize: "npm:^10.0.0"
     typescript: "npm:^5.4.3"
   peerDependencies:
-    playcanvas: ^2.0.0
+    playcanvas: ^1.74.0
   languageName: unknown
   linkType: soft
 
-"@recast-navigation/three@npm:0.34.0, @recast-navigation/three@workspace:packages/recast-navigation-three":
+"@recast-navigation/three@workspace:packages/recast-navigation-three":
   version: 0.0.0-use.local
   resolution: "@recast-navigation/three@workspace:packages/recast-navigation-three"
   dependencies:
@@ -13788,7 +13788,6 @@ __metadata:
     "@react-three/fiber": "npm:^8.16.3"
     "@recast-navigation/core": "npm:0.34.0"
     "@recast-navigation/generators": "npm:0.34.0"
-    "@recast-navigation/three": "npm:0.34.0"
     "@rollup/plugin-babel": "npm:^6.0.4"
     "@rollup/plugin-commonjs": "npm:^25.0.7"
     "@rollup/plugin-node-resolve": "npm:^15.0.1"

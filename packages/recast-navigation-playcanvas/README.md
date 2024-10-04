@@ -85,7 +85,7 @@ This package provides helpers for visualizing various recast-navigation objects 
 #### `NavMeshHelper`
 
 ```ts
-import { NavMeshHelper } from 'recast-navigation/three';
+import { NavMeshHelper } from '@recast-navigation/three';
 
 const navMeshHelper = new NavMeshHelper({ navMesh });
 
@@ -98,7 +98,7 @@ navMeshHelper.update();
 #### `OffMeshConnectionsHelper`
 
 ```ts
-import { OffMeshConnectionsHelper } from 'recast-navigation/three';
+import { OffMeshConnectionsHelper } from '@recast-navigation/three';
 
 const offMeshConnectionsHelper = new OffMeshConnectionsHelper({
   offMeshConnections,
@@ -112,7 +112,7 @@ this.entity.add(offMeshConnectionsHelper);
 Visualises obstacles in a `TileCache`.
 
 ```ts
-import { TileCacheHelper } from 'recast-navigation/three';
+import { TileCacheHelper } from '@recast-navigation/three';
 
 const tileCacheHelper = new TileCacheHelper({ tileCache });
 
@@ -127,7 +127,7 @@ tileCacheHelper.update();
 Visualises agents in a `Crowd`.
 
 ```ts
-import { CrowdHelper } from 'recast-navigation/three';
+import { CrowdHelper } from '@recast-navigation/three';
 
 const crowdHelper = new CrowdHelper({ crowd });
 

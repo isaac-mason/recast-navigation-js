@@ -2,7 +2,7 @@ import { Line } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { Crowd, CrowdAgent, NavMesh, NavMeshQuery } from 'recast-navigation';
-import { CrowdHelper } from 'recast-navigation/three';
+import { CrowdHelper } from '@recast-navigation/three';
 import { MeshStandardMaterial, Vector3, Vector3Tuple } from 'three';
 
 export type RecastAgentRef = {

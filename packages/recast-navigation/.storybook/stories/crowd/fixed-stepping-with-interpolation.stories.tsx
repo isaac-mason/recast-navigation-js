@@ -7,7 +7,7 @@ import {
   NavMeshQuery,
 } from '@recast-navigation/core';
 import React, { useEffect, useRef, useState } from 'react';
-import { threeToSoloNavMesh } from 'recast-navigation/three';
+import { threeToSoloNavMesh } from '@recast-navigation/three';
 import * as THREE from 'three';
 import { AgentPath } from '../../common/agent-path';
 import { Debug } from '../../common/debug';

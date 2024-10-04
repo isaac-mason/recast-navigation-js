@@ -2,7 +2,7 @@ import { Environment, OrbitControls } from '@react-three/drei';
 import { Canvas, useThree } from '@react-three/fiber';
 import { useEffect, useState } from 'react';
 import { NavMesh, importNavMesh, init } from 'recast-navigation';
-import { DebugDrawer, getPositionsAndIndices } from 'recast-navigation/three';
+import { DebugDrawer, getPositionsAndIndices } from '@recast-navigation/three';
 import { suspend } from 'suspend-react';
 import { Mesh } from 'three';
 import NavMeshWorker from './navmesh-worker?worker';

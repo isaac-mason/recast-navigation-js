@@ -582,9 +582,9 @@ const { navMesh, tileCache, allocator, compressor } = importTileCache(
 
 ## Packages
 
-Functionality is spread across packages in the `@recast-navigation/*` organization, with the `recast-navigation` acting as an umbrella package.
+Functionality is spread across packages in the `@recast-navigation/*` organization.
 
-You can choose between picking the scoped packages you need, or using the umbrella `recast-navigation` package, which provides additional entrypoints for specific frameworks and libraries.
+The `recast-navigation` package is the umbrella package for core packages, and has entrypoints for `@recast-navigation/core` and `@recast-navigation/generators`.
 
 All packages ship as ECMAScript modules, and are compatible with Node.js and browser environments.
 
@@ -596,6 +596,11 @@ The umbrella package for `recast-navigation`.
 
 ```bash
 > npm install recast-navigation
+```
+
+```ts
+import { init } from 'recast-navigation';
+import { generateSoloNavMesh } from 'recast-navigation/generators';
 ```
 
 ### [**`@recast-navigation/core`**](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-core)
