@@ -9,11 +9,11 @@
   "updateInternalDependencies": "patch",
   "ignore": [
     "navmesh-website",
-    "node-cjs-example",
-    "node-esm-example",
-    "parcel-example",
-    "vite-wasm-example",
-    "vite-worker-example",
+    "three-node-cjs-example",
+    "three-node-esm-example",
+    "three-parcel-example",
+    "three-vite-wasm-example",
+    "three-vite-worker-example",
     "playcanvas-example"
   ],
   "___experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH": {
