@@ -1,5 +1,5 @@
 {
-  "name": "vite-worker-example",
+  "name": "three-vite-worker-example",
   "private": true,
   "type": "module",
   "scripts": {

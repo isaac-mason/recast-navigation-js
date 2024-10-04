@@ -1,5 +1,5 @@
 {
-  "name": "node-cjs-example",
+  "name": "three-node-cjs-example",
   "private": true,
   "version": "1.0.0",
   "description": "example of using recast-navigation in node",
