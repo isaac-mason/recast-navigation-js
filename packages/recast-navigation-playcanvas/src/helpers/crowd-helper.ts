@@ -1,17 +1,15 @@
-import { Crowd, CrowdAgent } from '@recast-navigation/core@';
+import { Crowd, CrowdAgent } from '@recast-navigation/core';
 import {
-  BasicMaterial,
-  Entity,
-  Vec3,
   CylinderGeometry,
+  Entity,
+  GraphNode,
+  GraphicsDevice,
+  Material,
   Mesh,
   MeshInstance,
-  Material,
-  GraphicsDevice,
   StandardMaterial,
-  GraphNode
+  Vec3,
 } from 'playcanvas';
-
 
 export type CrowdHelperParams = {
   crowd: Crowd;
@@ -23,11 +21,11 @@ export type CrowdAgentData = {
   height: number;
 };
 
-const tmpVec3: Vec3 = new Vec3();
+const _position = new Vec3();
+const _velocity = new Vec3();
 
-export class CrowdHelper extends GraphNode
- {
-  agentMeshes: Map<number, Mesh> = new Map();
+export class CrowdHelper extends GraphNode {
+  agentMeshes = new Map<CrowdAgent, Entity>();
 
   recastCrowd: Crowd;
 
@@ -35,18 +33,26 @@ export class CrowdHelper extends GraphNode
 
   graphicsDevice: GraphicsDevice;
 
-  agentMeshData: Map<number, CrowdAgentData> = new Map();
+  agentMeshData = new Map<number, CrowdAgentData>();
 
-  constructor(graphicsDevice: GraphicsDevice, { crowd, agentMaterial }: CrowdHelperParams) {
+  constructor(
+    graphicsDevice: GraphicsDevice,
+    { crowd, agentMaterial }: CrowdHelperParams
+  ) {
     super();
 
     this.agentMeshData = new Map();
     this.recastCrowd = crowd;
     this.graphicsDevice = graphicsDevice;
 
-    this.agentMaterial = agentMaterial ?? new StandardMaterial();
+    if (agentMaterial) {
+      this.agentMaterial = agentMaterial;
+    } else {
+      const material = new StandardMaterial();
+      material.diffuse.set(1, 0, 0);
 
-    agentMaterial && this.agentMaterial.diffuse?.set(1, 0, 0);
+      this.agentMaterial = material;
+    }
 
     this.update();
   }
@@ -62,18 +68,18 @@ export class CrowdHelper extends GraphNode
     const unseen = new Set(this.agentMeshes.keys());
 
     for (const agent of agents) {
-      unseen.delete(agent.agentIndex);
+      unseen.delete(agent);
 
       const position = agent.position();
       const velocity = agent.velocity();
 
-      let agentMesh = this.agentMeshes.get(agent.agentIndex);
+      let agentMesh = this.agentMeshes.get(agent);
 
       if (agentMesh === undefined) {
         agentMesh = this.createAgentMesh(agent);
 
         this.addChild(agentMesh);
-        this.agentMeshes.set(agent.agentIndex, agentMesh);
+        this.agentMeshes.set(agent, agentMesh);
       } else {
         this.updateAgentGeometry(agentMesh, agent);
       }
@@ -85,7 +91,9 @@ export class CrowdHelper extends GraphNode
       );
 
       agentMesh.lookAt(
-        tmpVec3.copy(agentMesh.position).add(velocity)
+        _position
+          .copy(agentMesh.getPosition())
+          .add(_velocity.set(velocity.x, velocity.y, velocity.z))
       );
     }
 
@@ -103,7 +111,7 @@ export class CrowdHelper extends GraphNode
     const mesh = new Entity();
     mesh.addComponent('render');
 
-    mesh.material = this.agentMaterial;
+    mesh.render!.material = this.agentMaterial;
 
     this.updateAgentGeometry(mesh, agent);
 
@@ -116,20 +124,32 @@ export class CrowdHelper extends GraphNode
   }
 
   updateAgentGeometry(agentMesh: Entity, agentParams: CrowdAgent) {
-
-    const agentData : CrowdAgentData | undefined = this.agentMeshData.get(agentParams.agentIndex);
+    const agentData: CrowdAgentData | undefined = this.agentMeshData.get(
+      agentParams.agentIndex
+    );
 
     if (
       agentData === undefined ||
       agentData.radius !== agentParams.radius ||
       agentData.height !== agentParams.height
     ) {
-
       // Dispose of the old mesh
-      agentMesh.render.meshInstances.forEach((meshInstance : MeshInstance) => meshInstance.mesh.dispose());
+      if (agentMesh.render) {
+        agentMesh.render.meshInstances.forEach((meshInstance: MeshInstance) =>
+          meshInstance.mesh.destroy()
+        );
+      }
 
-      const mesh: Mesh = Mesh.fromGeometry(this.graphicsDevice, new CylinderGeometry(agentParams))
-      agentMesh.render.meshInstances = [new MeshInstance(mesh, this.agentMaterial, agentMesh)];
+      const mesh: Mesh = Mesh.fromGeometry(
+        this.graphicsDevice,
+        new CylinderGeometry(agentParams)
+      );
+
+      if (agentMesh.render) {
+        agentMesh.render.meshInstances = [
+          new MeshInstance(mesh, this.agentMaterial, agentMesh),
+        ];
+      }
 
       this.agentMeshData.set(agentParams.agentIndex, agentParams);
     }

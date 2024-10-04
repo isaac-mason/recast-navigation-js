@@ -1,17 +1,15 @@
 {
-  "name": "parcel-example",
+  "name": "three-parcel-example",
   "private": true,
   "packageManager": "yarn@3.5.0",
   "scripts": {
-    "start": "parcel index.html",
+    "dev": "parcel index.html",
     "build": "parcel build index.html"
   },
   "dependencies": {
-    "@react-three/drei": "^9.105.4",
-    "@react-three/fiber": "^8.16.3",
     "react": "18.3.1",
     "recast-navigation": "workspace:^",
-    "three": "^0.167.1"
+    "three": "^0.169.0"
   },
   "devDependencies": {
     "parcel": "^2.11.0"

@@ -13,7 +13,8 @@
     "node-esm-example",
     "parcel-example",
     "vite-wasm-example",
-    "vite-worker-example"
+    "vite-worker-example",
+    "playcanvas-example"
   ],
   "___experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH": {
     "onlyUpdatePeerDependentsWhenOutOfRange": true

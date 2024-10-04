@@ -4015,7 +4015,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@recast-navigation/playcanvas@workspace:packages/recast-navigation-playcanvas":
+"@recast-navigation/playcanvas@workspace:^, @recast-navigation/playcanvas@workspace:packages/recast-navigation-playcanvas":
   version: 0.0.0-use.local
   resolution: "@recast-navigation/playcanvas@workspace:packages/recast-navigation-playcanvas"
   dependencies:
@@ -12268,26 +12268,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-cjs-example@workspace:examples/node-cjs-example":
-  version: 0.0.0-use.local
-  resolution: "node-cjs-example@workspace:examples/node-cjs-example"
-  dependencies:
-    "@types/three": "npm:^0.167.1"
-    recast-navigation: "npm:0.34.0"
-    three: "npm:^0.167.1"
-  languageName: unknown
-  linkType: soft
-
-"node-esm-example@workspace:examples/node-esm-example":
-  version: 0.0.0-use.local
-  resolution: "node-esm-example@workspace:examples/node-esm-example"
-  dependencies:
-    "@types/three": "npm:^0.167.1"
-    recast-navigation: "npm:0.34.0"
-    three: "npm:^0.167.1"
-  languageName: unknown
-  linkType: soft
-
 "node-fetch@npm:2.6.7":
   version: 2.6.7
   resolution: "node-fetch@npm:2.6.7"
@@ -12934,19 +12914,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"parcel-example@workspace:examples/parcel-example":
-  version: 0.0.0-use.local
-  resolution: "parcel-example@workspace:examples/parcel-example"
-  dependencies:
-    "@react-three/drei": "npm:^9.105.4"
-    "@react-three/fiber": "npm:^8.16.3"
-    parcel: "npm:^2.11.0"
-    react: "npm:18.3.1"
-    recast-navigation: "workspace:^"
-    three: "npm:^0.167.1"
-  languageName: unknown
-  linkType: soft
-
 "parcel@npm:^2.11.0":
   version: 2.12.0
   resolution: "parcel@npm:2.12.0"
@@ -13222,6 +13189,18 @@ __metadata:
   checksum: 10/ed732842b86260395b82e31afc0dd8316e74642a78754ad148a5500ca5537565c6dfbd6c80c2dc92077afc1beb471b05a85a9572089cc8a1bba82248c331bf45
   languageName: node
   linkType: hard
+
+"playcanvas-example@workspace:examples/playcanvas-example":
+  version: 0.0.0-use.local
+  resolution: "playcanvas-example@workspace:examples/playcanvas-example"
+  dependencies:
+    "@recast-navigation/playcanvas": "workspace:^"
+    playcanvas: "npm:^1.74.0"
+    recast-navigation: "workspace:^"
+    typescript: "npm:^5.4.3"
+    vite: "npm:^5.2.8"
+  languageName: unknown
+  linkType: soft
 
 "playcanvas@npm:^1.74.0":
   version: 1.74.0
@@ -15106,6 +15085,37 @@ __metadata:
   languageName: node
   linkType: hard
 
+"three-node-cjs-example@workspace:examples/three-node-cjs-example":
+  version: 0.0.0-use.local
+  resolution: "three-node-cjs-example@workspace:examples/three-node-cjs-example"
+  dependencies:
+    "@types/three": "npm:^0.167.1"
+    recast-navigation: "npm:0.34.0"
+    three: "npm:^0.167.1"
+  languageName: unknown
+  linkType: soft
+
+"three-node-esm-example@workspace:examples/three-node-esm-example":
+  version: 0.0.0-use.local
+  resolution: "three-node-esm-example@workspace:examples/three-node-esm-example"
+  dependencies:
+    "@types/three": "npm:^0.167.1"
+    recast-navigation: "npm:0.34.0"
+    three: "npm:^0.167.1"
+  languageName: unknown
+  linkType: soft
+
+"three-parcel-example@workspace:examples/three-parcel-example":
+  version: 0.0.0-use.local
+  resolution: "three-parcel-example@workspace:examples/three-parcel-example"
+  dependencies:
+    parcel: "npm:^2.11.0"
+    react: "npm:18.3.1"
+    recast-navigation: "workspace:^"
+    three: "npm:^0.169.0"
+  languageName: unknown
+  linkType: soft
+
 "three-pathfinding@npm:^1.2.0":
   version: 1.3.0
   resolution: "three-pathfinding@npm:1.3.0"
@@ -15131,10 +15141,49 @@ __metadata:
   languageName: node
   linkType: hard
 
+"three-vite-wasm-example@workspace:examples/three-vite-wasm-example":
+  version: 0.0.0-use.local
+  resolution: "three-vite-wasm-example@workspace:examples/three-vite-wasm-example"
+  dependencies:
+    "@types/three": "npm:^0.167.1"
+    recast-navigation: "npm:0.34.0"
+    three: "npm:^0.169.0"
+    typescript: "npm:^5.4.3"
+    vite: "npm:^5.2.8"
+  languageName: unknown
+  linkType: soft
+
+"three-vite-worker-example@workspace:examples/three-vite-worker-example":
+  version: 0.0.0-use.local
+  resolution: "three-vite-worker-example@workspace:examples/three-vite-worker-example"
+  dependencies:
+    "@react-three/drei": "npm:^9.105.4"
+    "@react-three/fiber": "npm:^8.16.3"
+    "@types/react": "npm:^18.3.1"
+    "@types/react-dom": "npm:^18.2.8"
+    "@types/three": "npm:^0.167.1"
+    "@vitejs/plugin-react": "npm:^4.2.0"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.2.0"
+    recast-navigation: "npm:0.34.0"
+    suspend-react: "npm:^0.1.3"
+    three: "npm:^0.167.1"
+    typescript: "npm:^5.4.3"
+    vite: "npm:^5.2.8"
+  languageName: unknown
+  linkType: soft
+
 "three@npm:^0.167.1":
   version: 0.167.1
   resolution: "three@npm:0.167.1"
   checksum: 10/48022352c7feaba61b217958919f93556030b832a90c47661c8c57874ce7120116ca157eec7993755d54881a6135c952435e842541bd6b0972cd66c3add203ad
+  languageName: node
+  linkType: hard
+
+"three@npm:^0.169.0":
+  version: 0.169.0
+  resolution: "three@npm:0.169.0"
+  checksum: 10/5d0a5a4c8aeff37877132c4cb633989dba0749891fd1bf6414c551b16ef46ddb3529954901cbcbe4b493698d93c915c1cff9145157adcaa69f122c1fc2d1538f
   languageName: node
   linkType: hard
 
@@ -16000,46 +16049,6 @@ __metadata:
   checksum: 10/e0d2f8cddc21209d1db4502de546d8a457016f7a38e02af89742a85ee1638b3515ae90532a344e25bd0745665376f793cef10b8b90d9d3d97529c58808d8d06d
   languageName: node
   linkType: hard
-
-"vite-wasm-example@workspace:examples/vite-wasm-example":
-  version: 0.0.0-use.local
-  resolution: "vite-wasm-example@workspace:examples/vite-wasm-example"
-  dependencies:
-    "@react-three/drei": "npm:^9.105.4"
-    "@react-three/fiber": "npm:^8.16.3"
-    "@types/react": "npm:^18.3.1"
-    "@types/react-dom": "npm:^18.2.8"
-    "@types/three": "npm:^0.167.1"
-    "@vitejs/plugin-react": "npm:^4.2.0"
-    react: "npm:^18.3.1"
-    react-dom: "npm:^18.2.0"
-    recast-navigation: "npm:0.34.0"
-    suspend-react: "npm:^0.1.3"
-    three: "npm:^0.167.1"
-    typescript: "npm:^5.4.3"
-    vite: "npm:^5.2.8"
-  languageName: unknown
-  linkType: soft
-
-"vite-worker-example@workspace:examples/vite-worker-example":
-  version: 0.0.0-use.local
-  resolution: "vite-worker-example@workspace:examples/vite-worker-example"
-  dependencies:
-    "@react-three/drei": "npm:^9.105.4"
-    "@react-three/fiber": "npm:^8.16.3"
-    "@types/react": "npm:^18.3.1"
-    "@types/react-dom": "npm:^18.2.8"
-    "@types/three": "npm:^0.167.1"
-    "@vitejs/plugin-react": "npm:^4.2.0"
-    react: "npm:^18.3.1"
-    react-dom: "npm:^18.2.0"
-    recast-navigation: "npm:0.34.0"
-    suspend-react: "npm:^0.1.3"
-    three: "npm:^0.167.1"
-    typescript: "npm:^5.4.3"
-    vite: "npm:^5.2.8"
-  languageName: unknown
-  linkType: soft
 
 "vite@npm:^5.0.0, vite@npm:^5.2.10, vite@npm:^5.2.8":
   version: 5.4.8
