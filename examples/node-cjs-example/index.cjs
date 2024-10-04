@@ -1,7 +1,7 @@
 const THREE = require('three');
 const Recast = require('recast-navigation');
 const RecastGenerators = require('recast-navigation/generators');
-const RecastThree = require('recast-navigation/three');
+const RecastThree = require('@recast-navigation/three');
 
 Recast.init().then(() => {
   console.log(RecastThree);

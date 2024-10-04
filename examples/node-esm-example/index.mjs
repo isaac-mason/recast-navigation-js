@@ -1,6 +1,6 @@
 import { NavMeshQuery, init } from 'recast-navigation';
 import { generateSoloNavMesh } from 'recast-navigation/generators';
-import * as RecastThree from 'recast-navigation/three';
+import * as RecastThree from '@recast-navigation/three';
 import { BoxGeometry, Mesh } from 'three';
 
 await init();

@@ -16,7 +16,7 @@ To import the three.js glue, you can either use the `three` entrypoint in `recas
 
 ```ts
 import { init } from 'recast-navigation'
-import { ... } from 'recast-navigation/three';
+import { ... } from '@recast-navigation/three';
 ```
 
 Or you can use the packages directly:
@@ -44,7 +44,7 @@ This package provides convenience functions for generating nav meshes from THREE
 
 ```ts
 import { init } from 'recast-navigation';
-import { threeToSoloNavMesh, threeToTiledNavMesh, threeToTileCache } from 'recast-navigation/three';
+import { threeToSoloNavMesh, threeToTiledNavMesh, threeToTileCache } from '@recast-navigation/three';
 import * as THREE from 'three';
 
 /* initialize the library */
@@ -93,7 +93,7 @@ This library provides helpers that are used in conjunction with the core library
 This package provides a `DebugDrawer` utility that can visualise a navmesh and other generation intermediates.
 
 ```ts
-import { DebugDrawer } from 'recast-navigation/three';
+import { DebugDrawer } from '@recast-navigation/three';
 
 const debugDrawer = new DebugDrawer();
 
@@ -116,7 +116,7 @@ This package provides helpers for visualizing various recast-navigation objects 
 #### `NavMeshHelper`
 
 ```ts
-import { NavMeshHelper } from 'recast-navigation/three';
+import { NavMeshHelper } from '@recast-navigation/three';
 
 const navMeshHelper = new NavMeshHelper({ navMesh });
 
@@ -129,7 +129,7 @@ navMeshHelper.update();
 #### `OffMeshConnectionsHelper`
 
 ```ts
-import { OffMeshConnectionsHelper } from 'recast-navigation/three';
+import { OffMeshConnectionsHelper } from '@recast-navigation/three';
 
 const offMeshConnectionsHelper = new OffMeshConnectionsHelper({
   offMeshConnections,
@@ -143,7 +143,7 @@ scene.add(offMeshConnectionsHelper);
 Visualises obstacles in a `TileCache`.
 
 ```ts
-import { TileCacheHelper } from 'recast-navigation/three';
+import { TileCacheHelper } from '@recast-navigation/three';
 
 const tileCacheHelper = new TileCacheHelper({ tileCache });
 
@@ -158,7 +158,7 @@ tileCacheHelper.update();
 Visualises agents in a `Crowd`.
 
 ```ts
-import { CrowdHelper } from 'recast-navigation/three';
+import { CrowdHelper } from '@recast-navigation/three';
 
 const crowdHelper = new CrowdHelper({ crowd });
 

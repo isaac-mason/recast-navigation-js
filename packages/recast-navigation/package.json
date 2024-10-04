@@ -38,11 +38,6 @@
       "types": "./generators.d.ts",
       "import": "./generators.mjs",
       "default": "./generators.mjs"
-    },
-    "./three": {
-      "types": "./three.d.ts",
-      "import": "./three.mjs",
-      "default": "./three.mjs"
     }
   },
   "files": [
@@ -52,14 +47,11 @@
     "generators.mjs",
     "generators.mjs.map",
     "generators.d.ts",
-    "three.mjs",
-    "three.mjs.map",
-    "three.d.ts",
     "LICENSE",
     "README.md"
   ],
   "scripts": {
-    "clean": "(rm index.mjs index.d.ts generators.mjs generators.d.ts three.mjs three.d.ts || true)",
+    "clean": "(rm index.mjs index.d.ts generators.mjs generators.d.ts || true)",
     "build": "yarn clean && rollup --config rollup.config.js --bundleConfigAsCjs",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
@@ -68,8 +60,7 @@
   },
   "dependencies": {
     "@recast-navigation/core": "0.34.0",
-    "@recast-navigation/generators": "0.34.0",
-    "@recast-navigation/three": "0.34.0"
+    "@recast-navigation/generators": "0.34.0"
   },
   "devDependencies": {
     "@babel/core": "^7.24.5",

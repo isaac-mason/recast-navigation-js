@@ -3,7 +3,7 @@ import { Canvas } from '@react-three/fiber';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { init } from 'recast-navigation';
-import { NavMeshHelper, threeToSoloNavMesh } from 'recast-navigation/three';
+import { NavMeshHelper, threeToSoloNavMesh } from '@recast-navigation/three';
 import { suspend } from 'suspend-react';
 import { Mesh } from 'three';
 import './styles.css';
