@@ -1,65 +1,82 @@
+import { NavMeshHelper, pcToSoloNavMesh } from '@recast-navigation/playcanvas';
 import * as pc from 'playcanvas';
+import { init as initRecast } from 'recast-navigation';
 
-const canvas = document.getElementById('root') as HTMLCanvasElement;
+const init = async () => {
+  await initRecast();
 
-const deviceType = pc.DEVICETYPE_WEBGL2;
+  const canvas = document.querySelector('#app') as HTMLCanvasElement;
 
-const gfxOptions = {
-  deviceTypes: [deviceType],
-  // glslangUrl: rootPath + '/static/lib/glslang/glslang.js',
-  // twgslUrl: rootPath + '/static/lib/twgsl/twgsl.js'
+  const device = await pc.createGraphicsDevice(canvas, {
+    deviceTypes: [pc.DEVICETYPE_WEBGL2],
+  });
+  device.maxPixelRatio = Math.min(window.devicePixelRatio, 2);
+
+  const app = new pc.Application(canvas);
+  app.setCanvasFillMode(pc.FILLMODE_FILL_WINDOW);
+  app.setCanvasResolution(pc.RESOLUTION_AUTO);
+  app.start();
+
+  const resize = () => app.resizeCanvas();
+  window.addEventListener('resize', resize);
+
+  const ground = new pc.Entity('cube');
+  ground.addComponent('render');
+  ground.render!.meshInstances = [
+    new pc.MeshInstance(
+      pc.Mesh.fromGeometry(
+        app.graphicsDevice,
+        new pc.BoxGeometry({ halfExtents: new pc.Vec3(5, 0.2, 5) })
+      ),
+      new pc.StandardMaterial()
+    ),
+  ];
+  app.root.addChild(ground);
+
+  const obstacle = new pc.Entity('obstacle');
+  obstacle.addComponent('render', {
+    type: 'box',
+    material: new pc.StandardMaterial(),
+  });
+  obstacle.setLocalScale(1, 1, 1);
+  obstacle.setPosition(0, 0.5, 0);
+  app.root.addChild(obstacle);
+
+  const camera = new pc.Entity('camera');
+  camera.addComponent('camera', {
+    clearColor: new pc.Color(0.5, 0.6, 0.9),
+  });
+  app.root.addChild(camera);
+  camera.setPosition(5, 5, 5);
+  camera.lookAt(0, 0, 0);
+
+  const light = new pc.Entity('light');
+  light.addComponent('light');
+  app.root.addChild(light);
+  light.setEulerAngles(45, 0, 0);
+
+  const recastConfig = {
+    cs: 0.05,
+    ch: 0.2,
+  };
+
+  const navMeshMeshInstances = [
+    ...ground.render!.meshInstances,
+    ...obstacle.render!.meshInstances,
+  ];
+
+  const { success, navMesh } = pcToSoloNavMesh(
+    navMeshMeshInstances,
+    recastConfig
+  );
+
+  if (success) {
+    const navMeshHelper = new NavMeshHelper(app.graphicsDevice, {
+      navMesh,
+    });
+
+    app.root.addChild(navMeshHelper);
+  }
 };
 
-const device = await pc.createGraphicsDevice(canvas, gfxOptions);
-device.maxPixelRatio = Math.min(window.devicePixelRatio, 2);
-
-const createOptions = new pc.AppOptions();
-createOptions.graphicsDevice = device;
-
-createOptions.componentSystems = [
-  pc.RenderComponentSystem,
-  pc.CameraComponentSystem,
-  pc.LightComponentSystem,
-];
-createOptions.resourceHandlers = [pc.TextureHandler, pc.ContainerHandler];
-
-const app = new pc.AppBase(canvas);
-app.init(createOptions);
-app.start();
-
-// Set the canvas to fill the window and automatically change resolution to be the same as the canvas size
-app.setCanvasFillMode(pc.FILLMODE_FILL_WINDOW);
-app.setCanvasResolution(pc.RESOLUTION_AUTO);
-
-// Ensure canvas is resized when window changes size
-const resize = () => app.resizeCanvas();
-window.addEventListener('resize', resize);
-app.on('destroy', () => {
-  window.removeEventListener('resize', resize);
-});
-
-// create box entity
-const box = new pc.Entity('cube');
-box.addComponent('render', {
-  type: 'box',
-});
-app.root.addChild(box);
-
-// create camera entity
-const camera = new pc.Entity('camera');
-camera.addComponent('camera', {
-  clearColor: new pc.Color(0.5, 0.6, 0.9),
-});
-app.root.addChild(camera);
-camera.setPosition(0, 0, 3);
-
-// create directional light entity
-const light = new pc.Entity('light');
-light.addComponent('light');
-app.root.addChild(light);
-light.setEulerAngles(45, 0, 0);
-
-// rotate the box according to the delta time since the last frame
-app.on('update', (dt: number) => {
-  box.rotate(10 * dt, 20 * dt, 30 * dt);
-});
+init();

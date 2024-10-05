@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@recast-navigation/playcanvas": "workspace:^",
-    "playcanvas": "^1.74.0",
+    "playcanvas": "^2.0.0",
     "recast-navigation": "workspace:^"
   },
   "devDependencies": {
