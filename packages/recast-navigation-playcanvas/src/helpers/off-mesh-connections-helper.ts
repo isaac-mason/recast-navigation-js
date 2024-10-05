@@ -62,12 +62,11 @@ export class OffMeshConnectionsHelper extends Entity {
       this.entryCircleMaterial.update();
     }
 
-    this.exitCircleMaterial =
-      params.exitCircleMaterial || new StandardMaterial();
-
     if (params.exitCircleMaterial) {
       this.exitCircleMaterial = params.exitCircleMaterial;
     } else {
+      this.exitCircleMaterial = new StandardMaterial();
+    
       if ('diffuse' in this.exitCircleMaterial) {
         this.exitCircleMaterial.diffuse = new Color(0, 0, 1); // Blue
       }
