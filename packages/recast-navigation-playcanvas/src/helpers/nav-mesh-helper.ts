@@ -67,7 +67,7 @@ export class NavMeshHelper extends Entity {
 
   /**
    * Updates the mesh using the nav mesh data
-   * @privare
+   * @private
    */
   updateMesh(graphicsDevice: GraphicsDevice) {
     const [positions, indices] = this.navMesh.getDebugNavMesh();

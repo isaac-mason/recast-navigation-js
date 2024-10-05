@@ -10,25 +10,24 @@ import {
   RecastPolyMesh,
   RecastPolyMeshDetail,
 } from '@recast-navigation/core';
-
 import {
+  AppBase,
+  BLEND_NORMAL,
+  BUFFER_STATIC,
+  Color,
   Entity,
+  GraphicsDevice,
   Mesh,
   MeshInstance,
-  StandardMaterial,
-  Color,
-  GraphicsDevice,
-  VertexFormat,
-  VertexBuffer,
-  SEMANTIC_POSITION,
-  SEMANTIC_COLOR,
-  TYPE_FLOAT32,
-  PRIMITIVE_TRIANGLES,
   PRIMITIVE_LINES,
   PRIMITIVE_POINTS,
-  BUFFER_STATIC,
-  BLEND_NORMAL,
-  Application,
+  PRIMITIVE_TRIANGLES,
+  SEMANTIC_COLOR,
+  SEMANTIC_POSITION,
+  StandardMaterial,
+  TYPE_FLOAT32,
+  VertexBuffer,
+  VertexFormat
 } from 'playcanvas';
 
 /**
@@ -48,7 +47,7 @@ type VertexData = {
  * Parameters for creating DebugDrawer.
  */
 export type DebugDrawerParams = {
-  app: Application;
+  app: AppBase;
   triMaterial?: StandardMaterial;
   pointMaterial?: StandardMaterial;
   lineMaterial?: StandardMaterial;
@@ -62,7 +61,7 @@ export class DebugDrawer extends Entity {
   pointMaterial: StandardMaterial;
   lineMaterial: StandardMaterial;
 
-  private app: Application;
+  private app: AppBase;
   private debugDrawImpl: any; // Replace 'any' with the actual type if available
   private currentVertices: VertexData[] = [];
   private currentPrimitive: number = 0;

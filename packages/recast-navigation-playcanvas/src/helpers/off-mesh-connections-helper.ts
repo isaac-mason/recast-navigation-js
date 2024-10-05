@@ -102,7 +102,7 @@ export class OffMeshConnectionsHelper extends Entity {
       this.children[0].destroy();
     }
 
-    const graphicsDevice = this.app.graphicsDevice;
+    const graphicsDevice = (this as any).app.graphicsDevice;
 
     for (const offMeshConnection of this.offMeshConnections) {
       // Create circle mesh at start position
