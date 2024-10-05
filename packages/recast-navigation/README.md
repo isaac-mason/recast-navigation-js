@@ -633,6 +633,16 @@ Helpers for three.js.
 > npm install @recast-navigation/three
 ```
 
+### [**`@recast-navigation/playcanvas`**](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-playcanvas)
+
+[![Version](https://img.shields.io/npm/v/@recast-navigation/playcanvas)](https://www.npmjs.com/package/@recast-navigation/playcanvas)
+
+Helpers for playcanvas.
+
+```bash
+> npm install @recast-navigation/playcanvas
+```
+
 ### [**`@recast-navigation/wasm`**](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-wasm)
 
 [![Version](https://img.shields.io/npm/v/@recast-navigation/wasm)](https://www.npmjs.com/package/@recast-navigation/wasm)
