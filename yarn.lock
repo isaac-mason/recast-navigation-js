@@ -4031,14 +4031,14 @@ __metadata:
     "@rollup/plugin-terser": "npm:^0.4.3"
     "@rollup/plugin-typescript": "npm:^11.1.6"
     eslint: "npm:^9.6.0"
-    playcanvas: "npm:^1.74.0"
+    playcanvas: "npm:^2.0.0"
     prettier: "npm:^3.1.0"
     rollup: "npm:^4.14.0"
     rollup-plugin-copy: "npm:^3.4.0"
     rollup-plugin-filesize: "npm:^10.0.0"
     typescript: "npm:^5.4.3"
   peerDependencies:
-    playcanvas: ^1.74.0
+    playcanvas: ^2.0.0
   languageName: unknown
   linkType: soft
 
@@ -13195,20 +13195,20 @@ __metadata:
   resolution: "playcanvas-example@workspace:examples/playcanvas-example"
   dependencies:
     "@recast-navigation/playcanvas": "workspace:^"
-    playcanvas: "npm:^1.74.0"
+    playcanvas: "npm:^2.0.0"
     recast-navigation: "workspace:^"
     typescript: "npm:^5.4.3"
     vite: "npm:^5.2.8"
   languageName: unknown
   linkType: soft
 
-"playcanvas@npm:^1.74.0":
-  version: 1.74.0
-  resolution: "playcanvas@npm:1.74.0"
+"playcanvas@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "playcanvas@npm:2.0.0"
   dependencies:
     "@types/webxr": "npm:^0.5.16"
     "@webgpu/types": "npm:^0.1.40"
-  checksum: 10/2d1454f9dfb3adb57bbac040f4c277fa89f8bf6482ccaa9d955a073e46f3d612d020b9465ec4061757c69242c2a2d38ee67cea86b390043857ba48dbd5a3300a
+  checksum: 10/718c8fb9c3d9dc2a208f31c804b3d239c2288ab11e09041c534883121a5b73d0736d2747ef3f9fb70d09f134939510956f8d13ec266191dcf0befe77f5553a85
   languageName: node
   linkType: hard
 

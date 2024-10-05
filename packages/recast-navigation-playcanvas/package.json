@@ -36,7 +36,7 @@
     "@rollup/plugin-terser": "^0.4.3",
     "@rollup/plugin-typescript": "^11.1.6",
     "eslint": "^9.6.0",
-    "playcanvas": "^1.74.0",
+    "playcanvas": "^2.0.0",
     "prettier": "^3.1.0",
     "rollup": "^4.14.0",
     "rollup-plugin-copy": "^3.4.0",
@@ -45,6 +45,6 @@
   },
   "packageManager": "yarn@3.2.1",
   "peerDependencies": {
-    "playcanvas": "^1.74.0"
+    "playcanvas": "^2.0.0"
   }
 }

@@ -30,7 +30,7 @@ export default [
     external: [
       '@recast-navigation/core',
       '@recast-navigation/generators',
-      'three',
+      'playcanvas',
     ],
     output: [
       {
@@ -41,7 +41,7 @@ export default [
       },
     ],
     plugins: [
-      terser(),
+      // terser(),
       resolve(),
       commonjs(),
       typescript({
