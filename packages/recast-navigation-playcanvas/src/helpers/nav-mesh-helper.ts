@@ -11,7 +11,6 @@ import {
 } from 'playcanvas';
 
 export type NavMeshHelperParams = {
-  navMesh: NavMesh;
   navMeshMaterial?: Material;
 };
 
@@ -26,15 +25,17 @@ export class NavMeshHelper extends Entity {
   mesh!: Mesh;
 
   constructor(
+    navMesh: NavMesh,
     graphicsDevice: GraphicsDevice,
-    { navMesh, navMeshMaterial }: NavMeshHelperParams
+    params?: NavMeshHelperParams
   ) {
     super();
 
     this.navMesh = navMesh;
 
     // Create material if not provided
-    this.navMeshMaterial = navMeshMaterial || this.createDefaultMaterial();
+    this.navMeshMaterial =
+      params?.navMeshMaterial || this.createDefaultMaterial();
 
     // Update the mesh
     this.updateMesh(graphicsDevice);

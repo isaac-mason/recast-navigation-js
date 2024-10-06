@@ -11,7 +11,6 @@ import {
  * Parameters for creating TileCacheHelper.
  */
 export type TileCacheHelperParams = {
-  tileCache: TileCache;
   obstacleMaterial?: StandardMaterial;
 };
 
@@ -23,14 +22,14 @@ export class TileCacheHelper extends Entity {
   obstacleMeshes = new Map<Obstacle, Entity>();
   obstacleMaterial: StandardMaterial;
 
-  constructor({ tileCache, obstacleMaterial }: TileCacheHelperParams) {
+  constructor(tileCache: TileCache, params?: TileCacheHelperParams) {
     super();
 
     this.tileCache = tileCache;
 
     // Initialize obstacleMaterial
-    if (obstacleMaterial) {
-      this.obstacleMaterial = obstacleMaterial;
+    if (params?.obstacleMaterial) {
+      this.obstacleMaterial = params.obstacleMaterial;
     } else {
       this.obstacleMaterial = new StandardMaterial();
       this.obstacleMaterial.diffuse = new Color(1, 0, 0); // Red color
