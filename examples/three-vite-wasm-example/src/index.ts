@@ -51,7 +51,7 @@ const init = async () => {
   const { success, navMesh } = threeToSoloNavMesh([mesh]);
 
   if (success) {
-    const navMeshHelper = new NavMeshHelper({ navMesh });
+    const navMeshHelper = new NavMeshHelper(navMesh);
 
     scene.add(navMeshHelper);
   }

@@ -3,10 +3,9 @@ import {
   Detour,
   NavMesh,
   NavMeshQuery,
-  Raw,
   TileCache,
   statusDetail,
-  statusToReadableString,
+  statusToReadableString
 } from '@recast-navigation/core';
 import { threeToTileCache } from '@recast-navigation/three';
 import React, { useEffect, useState } from 'react';

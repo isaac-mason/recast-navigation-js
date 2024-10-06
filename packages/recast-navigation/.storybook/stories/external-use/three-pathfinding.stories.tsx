@@ -136,7 +136,7 @@ export const ThreePathfinding = () => {
       y: 0,
       z: 1.5,
     };
-    const startGroupId = pathfinding.getGroup(ZONE, start, true);
+    const startGroupId = pathfinding.getGroup(ZONE, start as Vector3);
 
     const end = {
       x: 1.5,
@@ -144,7 +144,12 @@ export const ThreePathfinding = () => {
       z: -1.5,
     };
 
-    const path = pathfinding.findPath(start, end, ZONE, startGroupId);
+    const path = pathfinding.findPath(
+      start as Vector3,
+      end as Vector3,
+      ZONE,
+      startGroupId
+    );
 
     setNavMeshGeometry(geometry);
     setPath(path);
