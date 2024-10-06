@@ -13190,9 +13190,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playcanvas-example@workspace:examples/playcanvas-example":
+"playcanvas-vite-example@workspace:examples/playcanvas-vite-example":
   version: 0.0.0-use.local
-  resolution: "playcanvas-example@workspace:examples/playcanvas-example"
+  resolution: "playcanvas-vite-example@workspace:examples/playcanvas-vite-example"
   dependencies:
     "@recast-navigation/playcanvas": "workspace:^"
     playcanvas: "npm:^2.0.0"

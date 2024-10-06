@@ -11,10 +11,9 @@
     "navmesh-website",
     "three-node-cjs-example",
     "three-node-esm-example",
-    "three-parcel-example",
     "three-vite-wasm-example",
     "three-vite-worker-example",
-    "playcanvas-example"
+    "playcanvas-vite-example"
   ],
   "___experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH": {
     "onlyUpdatePeerDependentsWhenOutOfRange": true
