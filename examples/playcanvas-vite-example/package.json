@@ -1,5 +1,5 @@
 {
-  "name": "playcanvas-example",
+  "name": "playcanvas-vite-example",
   "private": true,
   "type": "module",
   "scripts": {
