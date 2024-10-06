@@ -10,7 +10,6 @@ import {
 } from 'three';
 
 export type TileCacheHelperParams = {
-  tileCache: TileCache;
   obstacleMaterial?: Material;
 };
 
@@ -21,13 +20,13 @@ export class TileCacheHelper extends Object3D {
 
   obstacleMaterial: Material;
 
-  constructor({ tileCache, obstacleMaterial }: TileCacheHelperParams) {
+  constructor(tileCache: TileCache, params?: TileCacheHelperParams) {
     super();
 
     this.tileCache = tileCache;
 
-    this.obstacleMaterial = obstacleMaterial
-      ? obstacleMaterial
+    this.obstacleMaterial = params?.obstacleMaterial
+      ? params.obstacleMaterial
       : new MeshBasicMaterial({
           color: 'red',
           wireframe: true,

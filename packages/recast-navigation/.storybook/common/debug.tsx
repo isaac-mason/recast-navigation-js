@@ -38,8 +38,7 @@ export const Debug = ({
   const navMeshHelper = useMemo(() => {
     if (!navMesh) return null;
 
-    return new NavMeshHelper({
-      navMesh,
+    return new NavMeshHelper(navMesh, {
       navMeshMaterial,
     });
   }, [navMesh, navMeshMaterial]);
@@ -47,8 +46,7 @@ export const Debug = ({
   const tileCacheHelper = useMemo(() => {
     if (!tileCache) return null;
 
-    return new TileCacheHelper({
-      tileCache,
+    return new TileCacheHelper(tileCache, {
       obstacleMaterial,
     });
   }, [tileCache, obstacleMaterial]);
@@ -56,8 +54,7 @@ export const Debug = ({
   const crowdHelper = useMemo(() => {
     if (!crowd) return null;
 
-    return new CrowdHelper({
-      crowd,
+    return new CrowdHelper(crowd, {
       agentMaterial,
     });
   }, [crowd, agentMaterial]);
@@ -65,9 +62,7 @@ export const Debug = ({
   const offMeshConnectionsHelper = useMemo(() => {
     if (!offMeshConnections) return null;
 
-    return new OffMeshConnectionsHelper({
-      offMeshConnections,
-    });
+    return new OffMeshConnectionsHelper(offMeshConnections);
   }, [offMeshConnections]);
 
   useFrame(() => {

@@ -69,20 +69,20 @@ export const RecastAgent = forwardRef<RecastAgentRef, RecastAgentProps>(
         maxAgentRadius: agentRadius,
       });
 
-      const { point: agentPosition } = navMeshQuery.findClosestPoint({ x: 0, y: 0, z: 0 });
+      const { point: agentPosition } = navMeshQuery.findClosestPoint({
+        x: 0,
+        y: 0,
+        z: 0,
+      });
 
-      const agent = crowd.addAgent(
-        agentPosition,
-        {
-          radius: agentRadius,
-          height: agentHeight,
-          maxAcceleration: agentMaxAcceleration,
-          maxSpeed: agentMaxSpeed,
-        }
-      );
+      const agent = crowd.addAgent(agentPosition, {
+        radius: agentRadius,
+        height: agentHeight,
+        maxAcceleration: agentMaxAcceleration,
+        maxSpeed: agentMaxSpeed,
+      });
 
-      const crowdHelper = new CrowdHelper({
-        crowd,
+      const crowdHelper = new CrowdHelper(crowd, {
         agentMaterial: new MeshStandardMaterial({ color: 'red' }),
       });
 

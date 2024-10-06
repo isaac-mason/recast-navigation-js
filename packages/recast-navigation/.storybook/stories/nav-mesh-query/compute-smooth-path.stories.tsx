@@ -4,8 +4,7 @@ import {
   NavMesh,
   NavMeshQuery,
   OffMeshConnectionParams,
-  QueryFilter,
-  Raw,
+  QueryFilter
 } from '@recast-navigation/core';
 import { threeToSoloNavMesh } from '@recast-navigation/three';
 import React, { useEffect, useState } from 'react';
@@ -297,7 +296,7 @@ function computeSmoothPath(
   const targetPos = new Vector3().copy(closestEnd);
 
   const polys = [...findPathResult.polys.getHeapView()];
-  let smoothPath: Vector3[] = [];
+  const smoothPath: Vector3[] = [];
 
   smoothPath.push(iterPos.clone());
 
