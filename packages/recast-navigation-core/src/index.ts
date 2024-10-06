@@ -1,5 +1,6 @@
 export * from './arrays';
 export * from './crowd';
+export * from './debug-drawer-utils';
 export * from './detour';
 export * from './nav-mesh';
 export * from './nav-mesh-query';
