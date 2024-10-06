@@ -1,7 +1,8 @@
 import {
+  DebugDrawerPrimitive,
+  DebugDrawerUtils,
   NavMesh,
   NavMeshQuery,
-  Raw,
   RecastCompactHeightfield,
   RecastContourSet,
   RecastHeightfield,
@@ -31,19 +32,6 @@ import {
 } from 'playcanvas';
 
 /**
- * Represents a vertex with position and color data.
- */
-type VertexData = {
-  x: number;
-  y: number;
-  z: number;
-  r: number;
-  g: number;
-  b: number;
-  a: number;
-};
-
-/**
  * Parameters for creating DebugDrawer.
  */
 export type DebugDrawerParams = {
@@ -61,13 +49,13 @@ export class DebugDrawer extends Entity {
   pointMaterial: StandardMaterial;
   lineMaterial: StandardMaterial;
 
+  private debugDrawerUtils: DebugDrawerUtils;
   private graphicsDevice: GraphicsDevice;
-  private debugDrawImpl: any; // Replace 'any' with the actual type if available
-  private currentVertices: VertexData[] = [];
-  private currentPrimitive: number = 0;
 
   constructor(graphicsDevice: GraphicsDevice, params?: DebugDrawerParams) {
     super();
+
+    this.debugDrawerUtils = new DebugDrawerUtils();
 
     this.graphicsDevice = graphicsDevice;
 
@@ -100,137 +88,91 @@ export class DebugDrawer extends Entity {
       this.lineMaterial.emissive = new Color(1, 1, 1);
       this.lineMaterial.update();
     }
+  }
 
-    this.debugDrawImpl = new Raw.Module.DebugDrawImpl();
-
-    // Bind the debug draw implementation handlers
-    this.debugDrawImpl.handleBegin = (primitive: number, _size: number) => {
-      this.currentPrimitive = primitive;
-      this.currentVertices = [];
-    };
-
-    this.debugDrawImpl.handleDepthMask = (_state: number) => {
-      // Implement if necessary
-    };
-
-    this.debugDrawImpl.handleTexture = (_state: number) => {
-      // Implement if necessary
-    };
-
-    this.debugDrawImpl.handleVertexWithColor = (
-      x: number,
-      y: number,
-      z: number,
-      color: number
-    ) => {
-      this.vertex(x, y, z, color);
-    };
-
-    this.debugDrawImpl.handleVertexWithColorAndUV = (
-      x: number,
-      y: number,
-      z: number,
-      color: number,
-      _u: number,
-      _v: number
-    ) => {
-      this.vertex(x, y, z, color);
-    };
-
-    this.debugDrawImpl.handleEnd = () => {
-      if (this.currentPrimitive === Raw.Module.DU_DRAW_LINES) {
-        this.endLines();
-      } else if (this.currentPrimitive === Raw.Module.DU_DRAW_TRIS) {
-        this.endTris();
-      } else if (this.currentPrimitive === Raw.Module.DU_DRAW_QUADS) {
-        this.endQuads();
-      } else if (this.currentPrimitive === Raw.Module.DU_DRAW_POINTS) {
-        this.endPoints();
+  drawPrimitives(primitives: DebugDrawerPrimitive[]): void {
+    for (const primitive of primitives) {
+      switch (primitive.type) {
+        case 'points':
+          this.drawPoints(primitive);
+          break;
+        case 'lines':
+          this.drawLines(primitive);
+          break;
+        case 'tris':
+          this.drawTris(primitive);
+          break;
+        case 'quads':
+          this.drawQuads(primitive);
+          break;
       }
-    };
+    }
   }
 
   drawHeightfieldSolid(hf: RecastHeightfield): void {
-    Raw.RecastDebugDraw.debugDrawHeightfieldSolid(this.debugDrawImpl, hf.raw);
+    const primitives = this.debugDrawerUtils.drawHeightfieldSolid(hf);
+    this.drawPrimitives(primitives);
   }
 
   drawHeightfieldWalkable(hf: RecastHeightfield): void {
-    Raw.RecastDebugDraw.debugDrawHeightfieldWalkable(
-      this.debugDrawImpl,
-      hf.raw
-    );
+    const primitives = this.debugDrawerUtils.drawHeightfieldWalkable(hf);
+    this.drawPrimitives(primitives);
   }
 
   drawCompactHeightfieldSolid(chf: RecastCompactHeightfield): void {
-    Raw.RecastDebugDraw.debugDrawCompactHeightfieldSolid(
-      this.debugDrawImpl,
-      chf.raw
-    );
+    const primitives = this.debugDrawerUtils.drawCompactHeightfieldSolid(chf);
+    this.drawPrimitives(primitives);
   }
 
   drawCompactHeightfieldRegions(chf: RecastCompactHeightfield): void {
-    Raw.RecastDebugDraw.debugDrawCompactHeightfieldRegions(
-      this.debugDrawImpl,
-      chf.raw
-    );
+    const primitives = this.debugDrawerUtils.drawCompactHeightfieldRegions(chf);
+    this.drawPrimitives(primitives);
   }
 
   drawCompactHeightfieldDistance(chf: RecastCompactHeightfield): void {
-    Raw.RecastDebugDraw.debugDrawCompactHeightfieldDistance(
-      this.debugDrawImpl,
-      chf.raw
-    );
+    const primitives =
+      this.debugDrawerUtils.drawCompactHeightfieldDistance(chf);
+    this.drawPrimitives(primitives);
   }
 
   drawHeightfieldLayer(layer: RecastHeightfieldLayer, idx: number): void {
-    Raw.RecastDebugDraw.debugDrawHeightfieldLayer(
-      this.debugDrawImpl,
-      layer.raw,
-      idx
-    );
+    const primitives = this.debugDrawerUtils.drawHeightfieldLayer(layer, idx);
+    this.drawPrimitives(primitives);
   }
 
   drawHeightfieldLayers(lset: RecastHeightfieldLayerSet): void {
-    Raw.RecastDebugDraw.debugDrawHeightfieldLayers(
-      this.debugDrawImpl,
-      lset.raw
-    );
+    const primitives = this.debugDrawerUtils.drawHeightfieldLayers(lset);
+    this.drawPrimitives(primitives);
   }
 
   drawRegionConnections(cset: RecastContourSet, alpha: number = 1): void {
-    Raw.RecastDebugDraw.debugDrawRegionConnections(
-      this.debugDrawImpl,
-      cset.raw,
-      alpha
-    );
+    const primitives = this.debugDrawerUtils.drawRegionConnections(cset, alpha);
+    this.drawPrimitives(primitives);
   }
 
   drawRawContours(cset: RecastContourSet, alpha: number = 1): void {
-    Raw.RecastDebugDraw.debugDrawRawContours(
-      this.debugDrawImpl,
-      cset.raw,
-      alpha
-    );
+    const primitives = this.debugDrawerUtils.drawRawContours(cset, alpha);
+    this.drawPrimitives(primitives);
   }
 
   drawContours(cset: RecastContourSet, alpha: number = 1): void {
-    Raw.RecastDebugDraw.debugDrawContours(this.debugDrawImpl, cset.raw, alpha);
+    const primitives = this.debugDrawerUtils.drawContours(cset, alpha);
+    this.drawPrimitives(primitives);
   }
 
   drawPolyMesh(mesh: RecastPolyMesh): void {
-    Raw.RecastDebugDraw.debugDrawPolyMesh(this.debugDrawImpl, mesh.raw);
+    const primitives = this.debugDrawerUtils.drawPolyMesh(mesh);
+    this.drawPrimitives(primitives);
   }
 
   drawPolyMeshDetail(dmesh: RecastPolyMeshDetail): void {
-    Raw.RecastDebugDraw.debugDrawPolyMeshDetail(this.debugDrawImpl, dmesh.raw);
+    const primitives = this.debugDrawerUtils.drawPolyMeshDetail(dmesh);
+    this.drawPrimitives(primitives);
   }
 
   drawNavMesh(mesh: NavMesh, flags: number = 0): void {
-    Raw.DetourDebugDraw.debugDrawNavMesh(
-      this.debugDrawImpl,
-      mesh.raw.getNavMesh(),
-      flags
-    );
+    const primitives = this.debugDrawerUtils.drawNavMesh(mesh, flags);
+    this.drawPrimitives(primitives);
   }
 
   drawNavMeshWithClosedList(
@@ -238,51 +180,41 @@ export class DebugDrawer extends Entity {
     query: NavMeshQuery,
     flags: number = 0
   ): void {
-    Raw.DetourDebugDraw.debugDrawNavMeshWithClosedList(
-      this.debugDrawImpl,
-      mesh.raw.m_navMesh,
-      query.raw.m_navQuery,
+    const primitives = this.debugDrawerUtils.drawNavMeshWithClosedList(
+      mesh,
+      query,
       flags
     );
+    this.drawPrimitives(primitives);
   }
 
   drawNavMeshNodes(query: NavMeshQuery): void {
-    Raw.DetourDebugDraw.debugDrawNavMeshNodes(
-      this.debugDrawImpl,
-      query.raw.m_navQuery
-    );
+    const primitives = this.debugDrawerUtils.drawNavMeshNodes(query);
+    this.drawPrimitives(primitives);
   }
 
   drawNavMeshBVTree(mesh: NavMesh): void {
-    Raw.DetourDebugDraw.debugDrawNavMeshBVTree(
-      this.debugDrawImpl,
-      mesh.raw.m_navMesh
-    );
+    const primitives = this.debugDrawerUtils.drawNavMeshBVTree(mesh);
+    this.drawPrimitives(primitives);
   }
 
   drawNavMeshPortals(mesh: NavMesh): void {
-    Raw.DetourDebugDraw.debugDrawNavMeshPortals(
-      this.debugDrawImpl,
-      mesh.raw.m_navMesh
-    );
+    const primitives = this.debugDrawerUtils.drawNavMeshPortals(mesh);
+    this.drawPrimitives(primitives);
   }
 
   drawNavMeshPolysWithFlags(mesh: NavMesh, flags: number, col: number): void {
-    Raw.DetourDebugDraw.debugDrawNavMeshPolysWithFlags(
-      this.debugDrawImpl,
-      mesh.raw.m_navMesh,
+    const primitives = this.debugDrawerUtils.drawNavMeshPolysWithFlags(
+      mesh,
       flags,
       col
     );
+    this.drawPrimitives(primitives);
   }
 
   drawNavMeshPoly(mesh: NavMesh, ref: number, col: number): void {
-    Raw.DetourDebugDraw.debugDrawNavMeshPoly(
-      this.debugDrawImpl,
-      mesh.raw.m_navMesh,
-      ref,
-      col
-    );
+    const primitives = this.debugDrawerUtils.drawNavMeshPoly(mesh, ref, col);
+    this.drawPrimitives(primitives);
   }
 
   // Implement other drawing methods similarly...
@@ -305,30 +237,20 @@ export class DebugDrawer extends Entity {
    * Disposes of the debug drawer and releases resources.
    */
   dispose(): void {
+    this.debugDrawerUtils.dispose();
     this.reset();
-    Raw.Module.destroy(this.debugDrawImpl);
-    // Dispose materials if necessary
   }
 
-  private vertex(x: number, y: number, z: number, color: number) {
-    const r = ((color >> 16) & 0xff) / 255;
-    const g = ((color >> 8) & 0xff) / 255;
-    const b = (color & 0xff) / 255;
-    const a = ((color >> 24) & 0xff) / 255;
-
-    this.currentVertices.push({ x, y, z, r, g, b, a });
-  }
-
-  private endPoints(): void {
+  private drawPoints(primitive: DebugDrawerPrimitive): void {
     const graphicsDevice = this.graphicsDevice;
 
     const positions: number[] = [];
     const colors: number[] = [];
 
-    for (let i = 0; i < this.currentVertices.length; i++) {
-      const vertex = this.currentVertices[i];
-      positions.push(vertex.x, vertex.y, vertex.z);
-      colors.push(vertex.r, vertex.g, vertex.b, vertex.a);
+    for (let i = 0; i < primitive.vertices.length; i++) {
+      const [x, y, z, r, g, b, a] = primitive.vertices[i];
+      positions.push(x, y, z);
+      colors.push(r, g, b, a);
     }
 
     const mesh = createPointMesh(graphicsDevice, positions, colors);
@@ -340,16 +262,16 @@ export class DebugDrawer extends Entity {
     this.addChild(entity);
   }
 
-  private endLines(): void {
+  private drawLines(primitive: DebugDrawerPrimitive): void {
     const graphicsDevice = this.graphicsDevice;
 
     const positions: number[] = [];
     const colors: number[] = [];
 
-    for (let i = 0; i < this.currentVertices.length; i++) {
-      const vertex = this.currentVertices[i];
-      positions.push(vertex.x, vertex.y, vertex.z);
-      colors.push(vertex.r, vertex.g, vertex.b, vertex.a);
+    for (let i = 0; i < primitive.vertices.length; i++) {
+      const [x, y, z, r, g, b, a] = primitive.vertices[i];
+      positions.push(x, y, z);
+      colors.push(r, g, b, a);
     }
 
     const mesh = createLineMesh(graphicsDevice, positions, colors);
@@ -361,16 +283,16 @@ export class DebugDrawer extends Entity {
     this.addChild(entity);
   }
 
-  private endTris(): void {
+  private drawTris(primitive: DebugDrawerPrimitive): void {
     const graphicsDevice = this.graphicsDevice;
 
     const positions: number[] = [];
     const colors: number[] = [];
 
-    for (let i = 0; i < this.currentVertices.length; i++) {
-      const vertex = this.currentVertices[i];
-      positions.push(vertex.x, vertex.y, vertex.z);
-      colors.push(vertex.r, vertex.g, vertex.b, vertex.a);
+    for (let i = 0; i < primitive.vertices.length; i++) {
+      const [x, y, z, r, g, b, a] = primitive.vertices[i];
+      positions.push(x, y, z);
+      colors.push(r, g, b, a);
     }
 
     const mesh = createTriangleMesh(graphicsDevice, positions, colors);
@@ -382,52 +304,26 @@ export class DebugDrawer extends Entity {
     this.addChild(entity);
   }
 
-  private endQuads(): void {
+  private drawQuads(primitive: DebugDrawerPrimitive): void {
     // Quads are converted to triangles
     const graphicsDevice = this.graphicsDevice;
 
     const positions: number[] = [];
     const colors: number[] = [];
 
-    for (let i = 0; i < this.currentVertices.length; i += 4) {
-      const v0 = this.currentVertices[i];
-      const v1 = this.currentVertices[i + 1];
-      const v2 = this.currentVertices[i + 2];
-      const v3 = this.currentVertices[i + 3];
+    for (let i = 0; i < primitive.vertices.length; i += 4) {
+      const [x0, y0, z0, r0, g0, b0, a0] = primitive.vertices[i];
+      const [x1, y1, z1, r1, g1, b1, a1] = primitive.vertices[i + 1];
+      const [x2, y2, z2, r2, g2, b2, a2] = primitive.vertices[i + 2];
+      const [x3, y3, z3, r3, g3, b3, a3] = primitive.vertices[i + 3];
 
       // First triangle (v0, v1, v2)
-      positions.push(v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
-      colors.push(
-        v0.r,
-        v0.g,
-        v0.b,
-        v0.a,
-        v1.r,
-        v1.g,
-        v1.b,
-        v1.a,
-        v2.r,
-        v2.g,
-        v2.b,
-        v2.a
-      );
+      positions.push(x0, y0, z0, x1, y1, z1, x2, y2, z2);
+      colors.push(r0, g0, b0, a0, r1, g1, b1, a1, r2, g2, b2, a2);
 
       // Second triangle (v0, v2, v3)
-      positions.push(v0.x, v0.y, v0.z, v2.x, v2.y, v2.z, v3.x, v3.y, v3.z);
-      colors.push(
-        v0.r,
-        v0.g,
-        v0.b,
-        v0.a,
-        v2.r,
-        v2.g,
-        v2.b,
-        v2.a,
-        v3.r,
-        v3.g,
-        v3.b,
-        v3.a
-      );
+      positions.push(x0, y0, z0, x2, y2, z2, x3, y3, z3);
+      colors.push(r0, g0, b0, a0, r2, g2, b2, a2, r3, g3, b3, a3);
     }
 
     const mesh = createTriangleMesh(graphicsDevice, positions, colors);
