@@ -27,7 +27,7 @@ import {
   StandardMaterial,
   TYPE_FLOAT32,
   VertexBuffer,
-  VertexFormat
+  VertexFormat,
 } from 'playcanvas';
 
 /**
@@ -61,23 +61,20 @@ export class DebugDrawer extends Entity {
   pointMaterial: StandardMaterial;
   lineMaterial: StandardMaterial;
 
-  private app: AppBase;
+  private graphicsDevice: GraphicsDevice;
   private debugDrawImpl: any; // Replace 'any' with the actual type if available
   private currentVertices: VertexData[] = [];
   private currentPrimitive: number = 0;
 
-  constructor({
-    app,
-    triMaterial,
-    pointMaterial,
-    lineMaterial,
-  }: DebugDrawerParams) {
+  constructor(graphicsDevice: GraphicsDevice, params?: DebugDrawerParams) {
     super();
 
-    this.app = app;
+    this.graphicsDevice = graphicsDevice;
 
-    this.triMaterial = triMaterial || new StandardMaterial();
-    if (!triMaterial) {
+    if (params?.triMaterial) {
+      this.triMaterial = params.triMaterial;
+    } else {
+      this.triMaterial = new StandardMaterial();
       this.triMaterial.useLighting = false;
       this.triMaterial.diffuse = new Color(1, 1, 1);
       this.triMaterial.opacity = 0.4;
@@ -86,14 +83,18 @@ export class DebugDrawer extends Entity {
       this.triMaterial.update();
     }
 
-    this.pointMaterial = pointMaterial || new StandardMaterial();
-    if (!pointMaterial) {
+    if (params?.pointMaterial) {
+      this.pointMaterial = params.pointMaterial;
+    } else {
+      this.pointMaterial = new StandardMaterial();
       this.pointMaterial.useLighting = false;
       this.pointMaterial.update();
     }
 
-    this.lineMaterial = lineMaterial || new StandardMaterial();
-    if (!lineMaterial) {
+    if (params?.lineMaterial) {
+      this.lineMaterial = params.lineMaterial;
+    } else {
+      this.lineMaterial = new StandardMaterial();
       this.lineMaterial.useLighting = false;
       this.lineMaterial.diffuse = new Color(1, 1, 1);
       this.lineMaterial.emissive = new Color(1, 1, 1);
@@ -319,7 +320,7 @@ export class DebugDrawer extends Entity {
   }
 
   private endPoints(): void {
-    const graphicsDevice = this.app.graphicsDevice;
+    const graphicsDevice = this.graphicsDevice;
 
     const positions: number[] = [];
     const colors: number[] = [];
@@ -340,7 +341,7 @@ export class DebugDrawer extends Entity {
   }
 
   private endLines(): void {
-    const graphicsDevice = this.app.graphicsDevice;
+    const graphicsDevice = this.graphicsDevice;
 
     const positions: number[] = [];
     const colors: number[] = [];
@@ -361,7 +362,7 @@ export class DebugDrawer extends Entity {
   }
 
   private endTris(): void {
-    const graphicsDevice = this.app.graphicsDevice;
+    const graphicsDevice = this.graphicsDevice;
 
     const positions: number[] = [];
     const colors: number[] = [];
@@ -383,7 +384,7 @@ export class DebugDrawer extends Entity {
 
   private endQuads(): void {
     // Quads are converted to triangles
-    const graphicsDevice = this.app.graphicsDevice;
+    const graphicsDevice = this.graphicsDevice;
 
     const positions: number[] = [];
     const colors: number[] = [];

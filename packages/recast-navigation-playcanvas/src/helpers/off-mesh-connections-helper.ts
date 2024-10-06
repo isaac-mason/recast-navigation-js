@@ -15,7 +15,6 @@ import {
  * Parameters for creating OffMeshConnectionsHelper.
  */
 export type OffMeshConnectionsHelperParams = {
-  offMeshConnections?: OffMeshConnectionParams[];
   entryCircleMaterial?: Material;
   exitCircleMaterial?: Material;
   lineMaterial?: Material;
@@ -40,13 +39,16 @@ export class OffMeshConnectionsHelper extends Entity {
 
   lineMaterial: Material;
 
-  constructor(params: OffMeshConnectionsHelperParams) {
+  constructor(
+    offMeshConnections: OffMeshConnectionParams[],
+    params?: OffMeshConnectionsHelperParams
+  ) {
     super();
 
-    this.offMeshConnections = params.offMeshConnections || [];
+    this.offMeshConnections = offMeshConnections;
 
     // Initialize materials
-    if (params.entryCircleMaterial) {
+    if (params?.entryCircleMaterial) {
       this.entryCircleMaterial = params.entryCircleMaterial;
     } else {
       this.entryCircleMaterial = new StandardMaterial();
@@ -62,11 +64,11 @@ export class OffMeshConnectionsHelper extends Entity {
       this.entryCircleMaterial.update();
     }
 
-    if (params.exitCircleMaterial) {
+    if (params?.exitCircleMaterial) {
       this.exitCircleMaterial = params.exitCircleMaterial;
     } else {
       this.exitCircleMaterial = new StandardMaterial();
-    
+
       if ('diffuse' in this.exitCircleMaterial) {
         this.exitCircleMaterial.diffuse = new Color(0, 0, 1); // Blue
       }
@@ -76,7 +78,7 @@ export class OffMeshConnectionsHelper extends Entity {
       this.exitCircleMaterial.update();
     }
 
-    if (params.lineMaterial) {
+    if (params?.lineMaterial) {
       this.lineMaterial = params.lineMaterial;
     } else {
       this.lineMaterial = new StandardMaterial();

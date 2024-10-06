@@ -12,7 +12,6 @@ import {
 } from 'playcanvas';
 
 export type CrowdHelperParams = {
-  crowd: Crowd;
   agentMaterial?: Material;
 };
 
@@ -36,8 +35,9 @@ export class CrowdHelper extends GraphNode {
   agentMeshData = new Map<number, CrowdAgentData>();
 
   constructor(
+    crowd: Crowd,
     graphicsDevice: GraphicsDevice,
-    { crowd, agentMaterial }: CrowdHelperParams
+    params?: CrowdHelperParams
   ) {
     super();
 
@@ -45,8 +45,8 @@ export class CrowdHelper extends GraphNode {
     this.recastCrowd = crowd;
     this.graphicsDevice = graphicsDevice;
 
-    if (agentMaterial) {
-      this.agentMaterial = agentMaterial;
+    if (params?.agentMaterial) {
+      this.agentMaterial = params.agentMaterial;
     } else {
       const material = new StandardMaterial();
       material.diffuse.set(1, 0, 0);
