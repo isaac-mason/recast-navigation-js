@@ -99,8 +99,8 @@
     "three": "^0.167.1",
     "three-pathfinding": "^1.2.0",
     "typescript": "^5.4.3",
-    "vite": "^5.2.10",
-    "vitest": "^1.5.2",
+    "vite": "^5.4.8",
+    "vitest": "^2.1.2",
     "zustand": "^4.5.2"
   },
   "packageManager": "yarn@3.2.2"
