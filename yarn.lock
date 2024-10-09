@@ -15079,9 +15079,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"three-vite-wasm-example@workspace:examples/three-vite-wasm-example":
+"three-vite-example@workspace:examples/three-vite-example":
   version: 0.0.0-use.local
-  resolution: "three-vite-wasm-example@workspace:examples/three-vite-wasm-example"
+  resolution: "three-vite-example@workspace:examples/three-vite-example"
   dependencies:
     "@types/three": "npm:^0.167.1"
     recast-navigation: "npm:0.34.0"

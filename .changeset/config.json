@@ -11,7 +11,7 @@
     "navmesh-website",
     "three-node-cjs-example",
     "three-node-esm-example",
-    "three-vite-wasm-example",
+    "three-vite-example",
     "three-vite-worker-example",
     "playcanvas-vite-example"
   ],
