@@ -51,44 +51,31 @@ export class OffMeshConnectionsHelper extends Entity {
     if (params?.entryCircleMaterial) {
       this.entryCircleMaterial = params.entryCircleMaterial;
     } else {
-      this.entryCircleMaterial = new StandardMaterial();
-
-      if ('diffuse' in this.entryCircleMaterial) {
-        this.entryCircleMaterial.diffuse = new Color(0, 1, 0); // Green
-      }
-
-      if ('useLighting' in this.entryCircleMaterial) {
-        this.entryCircleMaterial.useLighting = false;
-      }
-
-      this.entryCircleMaterial.update();
+      const material = new StandardMaterial();
+      material.diffuse = new Color(0, 1, 0); // Green
+      material.useLighting = false;
+      material.update();
+      this.entryCircleMaterial = material;
     }
 
     if (params?.exitCircleMaterial) {
       this.exitCircleMaterial = params.exitCircleMaterial;
     } else {
-      this.exitCircleMaterial = new StandardMaterial();
-
-      if ('diffuse' in this.exitCircleMaterial) {
-        this.exitCircleMaterial.diffuse = new Color(0, 0, 1); // Blue
-      }
-      if ('useLighting' in this.exitCircleMaterial) {
-        this.exitCircleMaterial.useLighting = false;
-      }
-      this.exitCircleMaterial.update();
+      const material = new StandardMaterial();
+      material.diffuse = new Color(0, 0, 1); // Blue
+      material.useLighting = false;
+      material.update();
+      this.exitCircleMaterial = material;
     }
 
     if (params?.lineMaterial) {
       this.lineMaterial = params.lineMaterial;
     } else {
-      this.lineMaterial = new StandardMaterial();
-      if ('diffuse' in this.lineMaterial) {
-        this.lineMaterial.diffuse = new Color(1, 0, 0); // Red
-      }
-      if ('useLighting' in this.lineMaterial) {
-        this.lineMaterial.useLighting = false;
-      }
-      this.lineMaterial.update();
+      const material = new StandardMaterial();
+      material.diffuse = new Color(1, 0, 0); // Red
+      material.useLighting = false;
+      material.update();
+      this.lineMaterial = material;
     }
 
     this.updateHelper();
