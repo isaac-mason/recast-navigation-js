@@ -40,7 +40,7 @@ await init();
 
 ### Generating a NavMesh
 
-This package provides convenience functions for generating nav meshes from THREE.Mesh objects.
+This package provides convenience functions for generating nav meshes from playcanvas MeshInstance objects.
 
 ```ts
 import { init } from 'recast-navigation';
@@ -49,21 +49,19 @@ import { pcToSoloNavMesh, pcToTiledNavMesh, pcToTileCache } from 'recast-navigat
 /* initialize the library */
 await init();
 
-
-
 /* generate a solo navmesh */
-const { success, navMesh } = pcToSoloNavMesh(meshes, {
+const { success, navMesh } = pcToSoloNavMesh(meshInstances, {
   // ... nav mesh generation config ...
 }});
 
 /* generate a tiled navmesh */
-const { success, navMesh } = pcToTiledNavMesh(meshes, {
+const { success, navMesh } = pcToTiledNavMesh(meshInstances, {
   tileSize: 16,
   // ... nav mesh generation config ...
 }});
 
 /* generate a tile cache with support for temporary obstacles */
-const { success, navMesh, tileCache } = pcToTileCache(meshes, {
+const { success, navMesh, tileCache } = pcToTileCache(meshInstances, {
   tileSize: 16,
   // ... nav mesh generation config ...
 }});
@@ -77,17 +75,16 @@ https://github.com/isaac-mason/recast-navigation-js
 
 This library provides helpers that are used in conjunction with the core library.
 
-
 ### Helpers
 
-This package provides helpers for visualizing various recast-navigation objects in three.js.
+This package provides helpers for visualizing various recast-navigation objects in playcanvas.
 
 #### `NavMeshHelper`
 
 ```ts
-import { NavMeshHelper } from '@recast-navigation/three';
+import { NavMeshHelper } from '@recast-navigation/playcanas';
 
-const navMeshHelper = new NavMeshHelper({ navMesh });
+const navMeshHelper = new NavMeshHelper(navMesh, graphicsDevice);
 
 this.entity.add(navMeshHelper);
 
@@ -98,11 +95,11 @@ navMeshHelper.update();
 #### `OffMeshConnectionsHelper`
 
 ```ts
-import { OffMeshConnectionsHelper } from '@recast-navigation/three';
+import { OffMeshConnectionsHelper } from '@recast-navigation/playcanvas';
 
-const offMeshConnectionsHelper = new OffMeshConnectionsHelper({
-  offMeshConnections,
-});
+const offMeshConnectionsHelper = new OffMeshConnectionsHelper(
+  offMeshConnections
+);
 
 this.entity.add(offMeshConnectionsHelper);
 ```
@@ -112,9 +109,9 @@ this.entity.add(offMeshConnectionsHelper);
 Visualises obstacles in a `TileCache`.
 
 ```ts
-import { TileCacheHelper } from '@recast-navigation/three';
+import { TileCacheHelper } from '@recast-navigation/playcanvas';
 
-const tileCacheHelper = new TileCacheHelper({ tileCache });
+const tileCacheHelper = new TileCacheHelper(tileCache);
 
 this.entity.add(tileCacheHelper);
 
@@ -127,52 +124,12 @@ tileCacheHelper.update();
 Visualises agents in a `Crowd`.
 
 ```ts
-import { CrowdHelper } from '@recast-navigation/three';
+import { CrowdHelper } from '@recast-navigation/playcanvas';
 
-const crowdHelper = new CrowdHelper({ crowd });
+const crowdHelper = new CrowdHelper(crowd, graphicsDevice);
 
 this.entity.add(crowdHelper);
 
 // update the helper after updating the crowd
 crowdHelper.update();
-```
-
-#### Custom Materials
-
-You can optionally provide custom materials to the helpers.
-
-```ts
-// NavMeshHelper
-import { StandardMaterial } from 'playcanvas';
-const navMeshMaterial = new StandardMaterial();
-const navMeshHelper = new NavMeshHelper({
-  navMesh,
-  navMeshMaterial,
-});
-
-// OffMeshConnectionsHelper
-const offMeshConnectionEntryCircleMaterial = new StandardMaterial();
-const offMeshConnectionExitCircleMaterial = new StandardMaterial();
-const offMeshConnectionLineMaterial = new StandardMaterial();
-
-const offMeshConnectionsHelper = new OffMeshConnectionsHelper({
-  offMeshConnections,
-  entryCircleMaterial: offMeshConnectionEntryCircleMaterial,
-  exitCircleMaterial: offMeshConnectionExitCircleMaterial,
-  lineMaterial: offMeshConnectionLineMaterial,
-});
-
-// TileCacheHelper
-const obstacleMaterial = new StandardMaterial();
-const tileCacheHelper = new TileCacheHelper({
-  tileCache,
-  obstacleMaterial,
-});
-
-// CrowdHelper
-const agentMaterial = new StandardMaterial();
-const crowdHelper = new CrowdHelper({
-  crowd,
-  agentMaterial,
-});
 ```
