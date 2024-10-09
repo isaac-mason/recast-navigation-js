@@ -2,6 +2,7 @@ import { Obstacle, TileCache } from '@recast-navigation/core';
 import {
   Color,
   Entity,
+  Material,
   RENDERSTYLE_WIREFRAME,
   StandardMaterial,
   Vec3,
@@ -11,7 +12,7 @@ import {
  * Parameters for creating TileCacheHelper.
  */
 export type TileCacheHelperParams = {
-  obstacleMaterial?: StandardMaterial;
+  obstacleMaterial?: Material;
 };
 
 /**
@@ -20,7 +21,7 @@ export type TileCacheHelperParams = {
 export class TileCacheHelper extends Entity {
   tileCache: TileCache;
   obstacleMeshes = new Map<Obstacle, Entity>();
-  obstacleMaterial: StandardMaterial;
+  obstacleMaterial: Material;
 
   constructor(tileCache: TileCache, params?: TileCacheHelperParams) {
     super();
@@ -31,9 +32,10 @@ export class TileCacheHelper extends Entity {
     if (params?.obstacleMaterial) {
       this.obstacleMaterial = params.obstacleMaterial;
     } else {
-      this.obstacleMaterial = new StandardMaterial();
-      this.obstacleMaterial.diffuse = new Color(1, 0, 0); // Red color
-      this.obstacleMaterial.update();
+      const material = new StandardMaterial();
+      material.diffuse = new Color(1, 0, 0); // Red color
+      material.update();
+      this.obstacleMaterial = material;
     }
 
     this.updateHelper();
