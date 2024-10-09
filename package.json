@@ -15,10 +15,10 @@
     "build": "yarn build:packages && yarn build:apps",
     "build:packages": "yarn workspaces foreach -t -A --include @recast-navigation/wasm --include @recast-navigation/core --include @recast-navigation/generators --include recast-navigation --include @recast-navigation/three --include @recast-navigation/playcanvas run build",
     "build:apps": "yarn workspaces foreach -A -t --include navmesh-website --include docs run build",
-    "test": "concurrently --kill-others-on-fail \"yarn test:packages\" \"yarn test:node-smoke-test\" \"yarn test:bundlers-smoke-test\" \"yarn lint\"",
+    "test": "yarn test:packages && yarn test:node-smoke-test && yarn test:bundlers-smoke-test && yarn lint",
     "test:packages": "yarn workspaces foreach -A -t --include recast-navigation --include @recast-navigation/core --include @recast-navigation/generators --include @recast-navigation/three --include @recast-navigation/playcanvas run test",
     "test:node-smoke-test": "(cd ./examples/three-node-cjs-example && yarn start) && (cd ./examples/three-node-esm-example && yarn start)",
-    "test:bundlers-smoke-test": "concurrently --kill-others-on-fail \"(cd ./examples/three-parcel-example && yarn build)\" \"(cd ./examples/three-vite-wasm-example && yarn build)\" \"(cd ./examples/three-vite-worker-example && yarn build)\"",
+    "test:bundlers-smoke-test": "(cd ./examples/three-parcel-example && yarn build) && (cd ./examples/three-vite-wasm-example && yarn build) && (cd ./examples/three-vite-worker-example && yarn build)",
     "lint": "yarn workspaces foreach -A -t run lint",
     "change": "yarn changeset",
     "release": "yarn build && yarn test",
@@ -27,7 +27,6 @@
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.2",
-    "concurrently": "^8.2.2",
     "vercel": "^33.7.0"
   },
   "packageManager": "yarn@4.1.1"
