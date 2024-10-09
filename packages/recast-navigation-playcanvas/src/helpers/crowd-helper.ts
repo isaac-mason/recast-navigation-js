@@ -50,7 +50,6 @@ export class CrowdHelper extends GraphNode {
     } else {
       const material = new StandardMaterial();
       material.diffuse.set(1, 0, 0);
-
       this.agentMaterial = material;
     }
 
