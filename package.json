@@ -18,7 +18,7 @@
     "test": "yarn test:packages && yarn test:node-smoke-test && yarn test:bundlers-smoke-test && yarn lint",
     "test:packages": "yarn workspaces foreach -A -t --include recast-navigation --include @recast-navigation/core --include @recast-navigation/generators --include @recast-navigation/three --include @recast-navigation/playcanvas run test",
     "test:node-smoke-test": "(cd ./examples/three-node-cjs-example && yarn start) && (cd ./examples/three-node-esm-example && yarn start)",
-    "test:bundlers-smoke-test": "(cd ./examples/three-parcel-example && yarn build) && (cd ./examples/three-vite-wasm-example && yarn build) && (cd ./examples/three-vite-worker-example && yarn build)",
+    "test:bundlers-smoke-test": "(cd ./examples/three-parcel-example && yarn build) && (cd ./examples/three-vite-wasm-example && yarn build) && (cd ./examples/three-vite-worker-example && yarn build) && (cd ./examples/playcanvas-vite-example && yarn build)",
     "lint": "yarn workspaces foreach -A -t run lint",
     "change": "yarn changeset",
     "release": "yarn build && yarn test",
