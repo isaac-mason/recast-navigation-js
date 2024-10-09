@@ -71,9 +71,7 @@ const init = async () => {
   );
 
   if (success) {
-    const navMeshHelper = new NavMeshHelper(app.graphicsDevice, {
-      navMesh,
-    });
+    const navMeshHelper = new NavMeshHelper(navMesh, app.graphicsDevice);
 
     app.root.addChild(navMeshHelper);
   }
