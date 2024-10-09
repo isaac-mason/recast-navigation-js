@@ -1,11 +1,15 @@
+import { mergePositionsAndIndices } from '@recast-navigation/generators';
 import { BufferAttribute, Mesh, Vector3 } from 'three';
 
-const tmpVec3 = new Vector3();
+const _position = new Vector3();
 
 export const getPositionsAndIndices = (
   meshes: Mesh[]
 ): [positions: Float32Array, indices: Uint32Array] => {
-  const meshesToMerge: Mesh[] = [];
+  const toMerge: {
+    positions: ArrayLike<number>;
+    indices: ArrayLike<number>;
+  }[] = [];
 
   for (const mesh of meshes) {
     const positionAttribute = mesh.geometry.attributes
@@ -15,59 +19,39 @@ export const getPositionsAndIndices = (
       continue;
     }
 
-    let meshToMerge = mesh;
-    const index: ArrayLike<number> | undefined = mesh.geometry.getIndex()?.array;
+    mesh.updateMatrixWorld();
 
-    if (index === undefined) {
-      meshToMerge = meshToMerge.clone();
-      meshToMerge.geometry = mesh.geometry.clone();
+    const positions = new Float32Array(positionAttribute.array);
 
+    for (let i = 0; i < positions.length; i += 3) {
+      const pos = _position.set(
+        positions[i],
+        positions[i + 1],
+        positions[i + 2]
+      );
+      mesh.localToWorld(pos);
+      positions[i] = pos.x;
+      positions[i + 1] = pos.y;
+      positions[i + 2] = pos.z;
+    }
+
+    let indices: ArrayLike<number> | undefined =
+      mesh.geometry.getIndex()?.array;
+
+    if (indices === undefined) {
       // this will become indexed when merging with other meshes
       const ascendingIndex: number[] = [];
       for (let i = 0; i < positionAttribute.count; i++) {
         ascendingIndex.push(i);
       }
-
-      meshToMerge.geometry.setIndex(ascendingIndex);
+      indices = ascendingIndex;
     }
 
-    meshesToMerge.push(meshToMerge);
+    toMerge.push({
+      positions,
+      indices,
+    });
   }
 
-  const mergedPositions: number[] = [];
-  const mergedIndices: number[] = [];
-
-  const positionToIndex: { [hash: string]: number } = {};
-  let indexCounter = 0;
-
-  for (const mesh of meshesToMerge) {
-    mesh.updateMatrixWorld();
-
-    const positions = mesh.geometry.attributes.position.array;
-    const index = mesh.geometry.getIndex()!.array;
-
-    for (let i = 0; i < index.length; i++) {
-      const pt = index[i] * 3;
-
-      const pos = tmpVec3.set(
-        positions[pt],
-        positions[pt + 1],
-        positions[pt + 2]
-      );
-      mesh.localToWorld(pos);
-
-      const key = `${pos.x}_${pos.y}_${pos.z}`;
-      let idx = positionToIndex[key];
-
-      if (!idx) {
-        positionToIndex[key] = idx = indexCounter;
-        mergedPositions.push(pos.x, pos.y, pos.z);
-        indexCounter++;
-      }
-
-      mergedIndices.push(idx);
-    }
-  }
-
-  return [Float32Array.from(mergedPositions), Uint32Array.from(mergedIndices)];
+  return mergePositionsAndIndices(toMerge);
 };

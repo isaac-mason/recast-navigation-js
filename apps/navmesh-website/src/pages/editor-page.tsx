@@ -9,7 +9,7 @@ import {
   generateSoloNavMesh,
   generateTiledNavMesh,
 } from 'recast-navigation/generators';
-import { getPositionsAndIndices } from 'recast-navigation/three';
+import { getPositionsAndIndices } from '@recast-navigation/three';
 import { suspend } from 'suspend-react';
 import { Mesh } from 'three';
 import { RouterPaths } from '../app';

@@ -9,7 +9,6 @@ import {
 } from 'three';
 
 export type CrowdHelperParams = {
-  crowd: Crowd;
   agentMaterial?: Material;
 };
 
@@ -20,13 +19,13 @@ export class CrowdHelper extends Object3D {
 
   agentMaterial: Material;
 
-  constructor({ crowd, agentMaterial }: CrowdHelperParams) {
+  constructor(crowd: Crowd, params?: CrowdHelperParams) {
     super();
 
     this.recastCrowd = crowd;
 
     this.agentMaterial =
-      agentMaterial ?? new MeshBasicMaterial({ color: 'red' });
+      params?.agentMaterial ?? new MeshBasicMaterial({ color: 'red' });
 
     this.update();
   }

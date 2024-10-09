@@ -2,7 +2,7 @@ import { Line } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { Crowd, CrowdAgent, NavMesh, NavMeshQuery } from 'recast-navigation';
-import { CrowdHelper } from 'recast-navigation/three';
+import { CrowdHelper } from '@recast-navigation/three';
 import { MeshStandardMaterial, Vector3, Vector3Tuple } from 'three';
 
 export type RecastAgentRef = {
@@ -69,20 +69,20 @@ export const RecastAgent = forwardRef<RecastAgentRef, RecastAgentProps>(
         maxAgentRadius: agentRadius,
       });
 
-      const { point: agentPosition } = navMeshQuery.findClosestPoint({ x: 0, y: 0, z: 0 });
+      const { point: agentPosition } = navMeshQuery.findClosestPoint({
+        x: 0,
+        y: 0,
+        z: 0,
+      });
 
-      const agent = crowd.addAgent(
-        agentPosition,
-        {
-          radius: agentRadius,
-          height: agentHeight,
-          maxAcceleration: agentMaxAcceleration,
-          maxSpeed: agentMaxSpeed,
-        }
-      );
+      const agent = crowd.addAgent(agentPosition, {
+        radius: agentRadius,
+        height: agentHeight,
+        maxAcceleration: agentMaxAcceleration,
+        maxSpeed: agentMaxSpeed,
+      });
 
-      const crowdHelper = new CrowdHelper({
-        crowd,
+      const crowdHelper = new CrowdHelper(crowd, {
         agentMaterial: new MeshStandardMaterial({ color: 'red' }),
       });
 

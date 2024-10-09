@@ -12,7 +12,7 @@ import {
   TileCacheGeneratorIntermediates,
   TiledNavMeshGeneratorIntermediates,
 } from 'recast-navigation/generators';
-import { DebugDrawer } from 'recast-navigation/three';
+import { DebugDrawer } from '@recast-navigation/three';
 
 export const DebugDrawerOption = {
   HEIGHTFIELD_SOLID: 'heightfield solid',

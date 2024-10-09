@@ -13,7 +13,6 @@ import {
 } from 'three';
 
 export type OffMeshConnectionsHelperParams = {
-  offMeshConnections?: OffMeshConnectionParams[];
   entryCircleMaterial?: Material;
   exitCircleMaterial?: Material;
   lineMaterial?: LineBasicMaterial;
@@ -28,23 +27,22 @@ export class OffMeshConnectionsHelper extends Object3D {
 
   lineMaterial: LineBasicMaterial;
 
-  constructor({
-    offMeshConnections,
-    entryCircleMaterial,
-    exitCircleMaterial,
-    lineMaterial,
-  }: OffMeshConnectionsHelperParams) {
+  constructor(
+    offMeshConnections: OffMeshConnectionParams[],
+    params?: OffMeshConnectionsHelperParams
+  ) {
     super();
 
     this.offMeshConnections = offMeshConnections ?? [];
 
     this.entryCircleMaterial =
-      entryCircleMaterial ?? new MeshBasicMaterial({ color: 'green' });
+      params?.entryCircleMaterial ?? new MeshBasicMaterial({ color: 'green' });
 
     this.exitCircleMaterial =
-      exitCircleMaterial ?? new MeshBasicMaterial({ color: 'blue' });
+      params?.exitCircleMaterial ?? new MeshBasicMaterial({ color: 'blue' });
 
-    this.lineMaterial = lineMaterial ?? new LineBasicMaterial({ color: 'red' });
+    this.lineMaterial =
+      params?.lineMaterial ?? new LineBasicMaterial({ color: 'red' });
 
     this.update();
   }

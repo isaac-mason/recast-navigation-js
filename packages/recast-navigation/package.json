@@ -38,11 +38,6 @@
       "types": "./generators.d.ts",
       "import": "./generators.mjs",
       "default": "./generators.mjs"
-    },
-    "./three": {
-      "types": "./three.d.ts",
-      "import": "./three.mjs",
-      "default": "./three.mjs"
     }
   },
   "files": [
@@ -52,14 +47,11 @@
     "generators.mjs",
     "generators.mjs.map",
     "generators.d.ts",
-    "three.mjs",
-    "three.mjs.map",
-    "three.d.ts",
     "LICENSE",
     "README.md"
   ],
   "scripts": {
-    "clean": "(rm index.mjs index.d.ts generators.mjs generators.d.ts three.mjs three.d.ts || true)",
+    "clean": "(rm index.mjs index.d.ts generators.mjs generators.d.ts || true)",
     "build": "yarn clean && rollup --config rollup.config.js --bundleConfigAsCjs",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
@@ -68,8 +60,7 @@
   },
   "dependencies": {
     "@recast-navigation/core": "0.34.0",
-    "@recast-navigation/generators": "0.34.0",
-    "@recast-navigation/three": "0.34.0"
+    "@recast-navigation/generators": "0.34.0"
   },
   "devDependencies": {
     "@babel/core": "^7.24.5",
@@ -94,7 +85,7 @@
     "@storybook/react-vite": "^8.0.9",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.2.8",
-    "@types/three": "^0.167.1",
+    "@types/three": "^0.169.0",
     "@vitejs/plugin-react": "^4.2.1",
     "eslint": "^9.6.0",
     "leva": "^0.9.35",
@@ -105,11 +96,11 @@
     "rollup-plugin-filesize": "^10.0.0",
     "storybook": "^8.0.9",
     "suspend-react": "^0.1.3",
-    "three": "^0.167.1",
+    "three": "^0.169.0",
     "three-pathfinding": "^1.2.0",
     "typescript": "^5.4.3",
-    "vite": "^5.2.10",
-    "vitest": "^1.5.2",
+    "vite": "^5.4.8",
+    "vitest": "^2.1.2",
     "zustand": "^4.5.2"
   },
   "packageManager": "yarn@3.2.2"

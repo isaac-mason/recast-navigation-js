@@ -1,0 +1,18 @@
+{
+  "name": "three-node-cjs-example",
+  "private": true,
+  "version": "1.0.0",
+  "description": "example of using recast-navigation in node",
+  "scripts": {
+    "start": "node --experimental-require-module index.cjs"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "recast-navigation": "0.34.0",
+    "three": "^0.167.1"
+  },
+  "devDependencies": {
+    "@types/three": "^0.167.1"
+  }
+}

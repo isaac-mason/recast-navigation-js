@@ -16,7 +16,7 @@ To import the three.js glue, you can either use the `three` entrypoint in `recas
 
 ```ts
 import { init } from 'recast-navigation'
-import { ... } from 'recast-navigation/three';
+import { ... } from '@recast-navigation/three';
 ```
 
 Or you can use the packages directly:
@@ -44,7 +44,7 @@ This package provides convenience functions for generating nav meshes from THREE
 
 ```ts
 import { init } from 'recast-navigation';
-import { threeToSoloNavMesh, threeToTiledNavMesh, threeToTileCache } from 'recast-navigation/three';
+import { threeToSoloNavMesh, threeToTiledNavMesh, threeToTileCache } from '@recast-navigation/three';
 import * as THREE from 'three';
 
 /* initialize the library */
@@ -93,7 +93,7 @@ This library provides helpers that are used in conjunction with the core library
 This package provides a `DebugDrawer` utility that can visualise a navmesh and other generation intermediates.
 
 ```ts
-import { DebugDrawer } from 'recast-navigation/three';
+import { DebugDrawer } from '@recast-navigation/three';
 
 const debugDrawer = new DebugDrawer();
 
@@ -116,9 +116,9 @@ This package provides helpers for visualizing various recast-navigation objects 
 #### `NavMeshHelper`
 
 ```ts
-import { NavMeshHelper } from 'recast-navigation/three';
+import { NavMeshHelper } from '@recast-navigation/three';
 
-const navMeshHelper = new NavMeshHelper({ navMesh });
+const navMeshHelper = new NavMeshHelper(navMesh);
 
 scene.add(navMeshHelper);
 
@@ -129,11 +129,11 @@ navMeshHelper.update();
 #### `OffMeshConnectionsHelper`
 
 ```ts
-import { OffMeshConnectionsHelper } from 'recast-navigation/three';
+import { OffMeshConnectionsHelper } from '@recast-navigation/three';
 
-const offMeshConnectionsHelper = new OffMeshConnectionsHelper({
-  offMeshConnections,
-});
+const offMeshConnectionsHelper = new OffMeshConnectionsHelper(
+  offMeshConnections
+);
 
 scene.add(offMeshConnectionsHelper);
 ```
@@ -143,9 +143,9 @@ scene.add(offMeshConnectionsHelper);
 Visualises obstacles in a `TileCache`.
 
 ```ts
-import { TileCacheHelper } from 'recast-navigation/three';
+import { TileCacheHelper } from '@recast-navigation/three';
 
-const tileCacheHelper = new TileCacheHelper({ tileCache });
+const tileCacheHelper = new TileCacheHelper(tileCache);
 
 scene.add(tileCacheHelper);
 
@@ -158,9 +158,9 @@ tileCacheHelper.update();
 Visualises agents in a `Crowd`.
 
 ```ts
-import { CrowdHelper } from 'recast-navigation/three';
+import { CrowdHelper } from '@recast-navigation/three';
 
-const crowdHelper = new CrowdHelper({ crowd });
+const crowdHelper = new CrowdHelper(crowd);
 
 scene.add(crowdHelper);
 
@@ -175,8 +175,7 @@ You can optionally provide custom materials to the helpers.
 ```ts
 // NavMeshHelper
 const navMeshMaterial = new THREE.MeshBasicMaterial({ color: 'red' });
-const navMeshHelper = new NavMeshHelper({
-  navMesh,
+const navMeshHelper = new NavMeshHelper(navMesh, {
   navMeshMaterial,
 });
 
@@ -190,8 +189,7 @@ const offMeshConnectionExitCircleMaterial = new THREE.MeshBasicMaterial({
 const offMeshConnectionLineMaterial = new THREE.LineBasicMaterial({
   color: 'white',
 });
-const offMeshConnectionsHelper = new OffMeshConnectionsHelper({
-  offMeshConnections,
+const offMeshConnectionsHelper = new OffMeshConnectionsHelper(offMeshConnections, {
   entryCircleMaterial: offMeshConnectionEntryCircleMaterial,
   exitCircleMaterial: offMeshConnectionExitCircleMaterial,
   lineMaterial: offMeshConnectionLineMaterial,
@@ -199,15 +197,13 @@ const offMeshConnectionsHelper = new OffMeshConnectionsHelper({
 
 // TileCacheHelper
 const obstacleMaterial = new THREE.MeshBasicMaterial({ color: 'blue' });
-const tileCacheHelper = new TileCacheHelper({
-  tileCache,
+const tileCacheHelper = new TileCacheHelper(tileCache, {
   obstacleMaterial,
 });
 
 // CrowdHelper
 const agentMaterial = new THREE.MeshBasicMaterial({ color: 'red' });
-const crowdHelper = new CrowdHelper({
-  crowd,
+const crowdHelper = new CrowdHelper(crowd, {
   agentMaterial,
 });
 ```
