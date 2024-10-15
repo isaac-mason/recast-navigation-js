@@ -70,15 +70,15 @@ You can use import maps to use the library without a bundler:
   {
     "imports": {
       // required
-      "@recast-navigation/core": "https://unpkg.com/@recast-navigation/core@0.30.0/dist/index.mjs",
-      "@recast-navigation/wasm": "https://unpkg.com/@recast-navigation/wasm@0.30.0/dist/recast-navigation.wasm-compat.js",
+      "@recast-navigation/core": "https://unpkg.com/@recast-navigation/core@0.35.0/dist/index.mjs",
+      "@recast-navigation/wasm": "https://unpkg.com/@recast-navigation/wasm@0.35.0/dist/recast-navigation.wasm-compat.js",
 
       // easy to use generators
-      "@recast-navigation/generators": "https://unpkg.com/@recast-navigation/generators@0.30.0/dist/index.mjs",
+      "@recast-navigation/generators": "https://unpkg.com/@recast-navigation/generators@0.35.0/dist/index.mjs",
       
       // optional integrations
-      "@recast-navigation/three": "https://unpkg.com/@recast-navigation/three@0.30.0/dist/index.mjs",
-      "@recast-navigation/playcanvas": "https://unpkg.com/@recast-navigation/three@0.30.0/dist/index.mjs",
+      "@recast-navigation/three": "https://unpkg.com/@recast-navigation/three@0.35.0/dist/index.mjs",
+      "@recast-navigation/playcanvas": "https://unpkg.com/@recast-navigation/three@0.35.0/dist/index.mjs",
     }
   }
 </script>
