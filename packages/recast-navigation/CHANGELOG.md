@@ -1,5 +1,21 @@
 # recast-navigation
 
+## 0.35.0
+
+### Minor Changes
+
+- 4916d03: feat: remove 'three' entrypoint from 'recast-navigation' package
+
+  To make way for adding other integration packages without bloating the `recast-navigation` package, the `recast-navigation/three` entrypoint has been removed.
+
+  If you are importing from `recast-navigation/three`, simply install and import from `@recast/navigation-three` instead.
+
+### Patch Changes
+
+- Updated dependencies [4e63338]
+  - @recast-navigation/generators@0.35.0
+  - @recast-navigation/core@0.35.0
+
 ## 0.34.0
 
 ### Patch Changes
@@ -212,7 +228,7 @@
   old usage:
 
   ```ts
-  import { NavMesh, Crowd, NavMeshQuery } from "recast-navigation";
+  import { NavMesh, Crowd, NavMeshQuery } from 'recast-navigation';
 
   const navMesh = new NavMesh();
 
@@ -228,7 +244,7 @@
   new usage:
 
   ```ts
-  import { NavMesh, Crowd, NavMeshQuery } from "recast-navigation";
+  import { NavMesh, Crowd, NavMeshQuery } from 'recast-navigation';
 
   const navMesh = new NavMesh();
 
@@ -253,10 +269,10 @@
   Note that the other `wasm` flavor currently does not support node.js environments.
 
   ```ts
-  import { init } from "recast-navigation";
+  import { init } from 'recast-navigation';
 
   // import the 'wasm' flavor - has a separate wasm file, not inlined
-  import RecastWasm from "@recast-navigation/wasm/wasm";
+  import RecastWasm from '@recast-navigation/wasm/wasm';
 
   await init(RecastWasm);
   ```
@@ -264,7 +280,7 @@
   It's still possible to use the inlined wasm flavor by not passing anything to `init` as before.
 
   ```ts
-  import { init } from "recast-navigation";
+  import { init } from 'recast-navigation';
 
   // internally dynamically imports `@recast-navigation/wasm`
   await init();
@@ -324,7 +340,7 @@
   usage changed from:
 
   ```ts
-  import { Arrays } from "@recast-navigation/core";
+  import { Arrays } from '@recast-navigation/core';
 
   Arrays.VertsArray;
   Arrays.TrisArray;
@@ -342,7 +358,7 @@
     TringleAreasArray,
     ChunkIdsArray,
     TileCacheData,
-  } from "@recast-navigation/core";
+  } from '@recast-navigation/core';
   ```
 
   The `.copy` method now directly copies the data from the source array to the emscripten heap. This should improve performance when copying large arrays.
@@ -420,7 +436,7 @@
   ```ts
   const path = navMeshQuery.computePath(
     { x: 0, y: 0, z: 0 }, // start position
-    { x: 2, y: 0, z: 0 }, // end position
+    { x: 2, y: 0, z: 0 } // end position
   );
   ```
 
@@ -429,7 +445,7 @@
   ```ts
   const { success, error, path } = navMeshQuery.computePath(
     { x: 0, y: 0, z: 0 }, // start position
-    { x: 2, y: 0, z: 0 }, // end position
+    { x: 2, y: 0, z: 0 } // end position
   );
   ```
 
@@ -505,7 +521,7 @@
   const { success, status, obstacle } = tileCache.addBoxObstacle(
     position,
     extent,
-    angle,
+    angle
   );
   ```
 

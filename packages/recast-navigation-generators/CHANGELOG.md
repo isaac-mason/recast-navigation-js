@@ -1,5 +1,13 @@
 # @recast-navigation/generators
 
+## 0.35.0
+
+### Patch Changes
+
+- 4e63338: feat: add mergePositionsAndIndices
+  - @recast-navigation/core@0.35.0
+  - @recast-navigation/wasm@0.35.0
+
 ## 0.34.0
 
 ### Patch Changes
@@ -116,7 +124,7 @@
   usage changed from:
 
   ```ts
-  import { Arrays } from "@recast-navigation/core";
+  import { Arrays } from '@recast-navigation/core';
 
   Arrays.VertsArray;
   Arrays.TrisArray;
@@ -134,7 +142,7 @@
     TringleAreasArray,
     ChunkIdsArray,
     TileCacheData,
-  } from "@recast-navigation/core";
+  } from '@recast-navigation/core';
   ```
 
   The `.copy` method now directly copies the data from the source array to the emscripten heap. This should improve performance when copying large arrays.

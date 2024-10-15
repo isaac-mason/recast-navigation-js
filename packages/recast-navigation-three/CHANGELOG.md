@@ -1,5 +1,18 @@
 # @recast-navigation/three
 
+## 0.35.0
+
+### Minor Changes
+
+- f9a09a2: feat: change three debug helpers to take required params as standalone constructor arguments
+- 4e63338: feat: avoid cloning meshes and geometry in getPositionsAndIndices
+
+### Patch Changes
+
+- Updated dependencies [4e63338]
+  - @recast-navigation/generators@0.35.0
+  - @recast-navigation/core@0.35.0
+
 ## 0.34.0
 
 ### Minor Changes
