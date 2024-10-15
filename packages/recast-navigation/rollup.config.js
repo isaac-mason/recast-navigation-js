@@ -43,8 +43,6 @@ const entrypoint = ({ name, external }) => ({
     {
       file: `./${name}.mjs`,
       format: 'es',
-      sourcemap: true,
-      exports: 'named',
     },
   ],
   plugins,

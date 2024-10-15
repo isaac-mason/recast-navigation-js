@@ -34,10 +34,8 @@ export default [
     ],
     output: [
       {
-        file: `dist/index.mjs`,
+        file: 'dist/index.mjs',
         format: 'es',
-        sourcemap: true,
-        exports: 'named',
       },
     ],
     plugins: [
@@ -45,11 +43,16 @@ export default [
       resolve(),
       commonjs(),
       typescript({
-        tsconfig: path.resolve(__dirname, `tsconfig.json`),
+        tsconfig: path.resolve(__dirname, 'tsconfig.json'),
         emitDeclarationOnly: true,
       }),
       babel(babelOptions),
       filesize(),
     ],
+    onwarn(warning, warn) {
+      // suppress eval warnings
+      if (warning.code === 'EVAL') return;
+      warn(warning);
+    },
   },
 ];

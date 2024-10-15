@@ -6,7 +6,6 @@
     "lib": ["ES2022", "DOM"],
     "moduleResolution": "Bundler",
     "strict": true,
-    "sourceMap": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "esModuleInterop": true,

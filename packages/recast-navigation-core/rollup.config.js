@@ -26,14 +26,12 @@ const babelOptions = {
 
 export default [
   {
-    input: `./src/index.ts`,
+    input: './src/index.ts',
     external: ['@recast-navigation/wasm'],
     output: [
       {
-        file: `dist/index.mjs`,
+        file: 'dist/index.mjs',
         format: 'es',
-        sourcemap: true,
-        exports: 'named',
       },
     ],
     plugins: [
@@ -41,7 +39,7 @@ export default [
       resolve(),
       commonjs(),
       typescript({
-        tsconfig: path.resolve(__dirname, `tsconfig.json`),
+        tsconfig: path.resolve(__dirname, 'tsconfig.json'),
         emitDeclarationOnly: true,
       }),
       babel(babelOptions),
