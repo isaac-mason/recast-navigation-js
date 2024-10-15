@@ -49,6 +49,18 @@ export default defineConfig(() => ({
 )}
 ```
 
+If you are planning to use the library with three.js, install the `@recast-navigation/three` package for three.js helpers:
+
+```sh
+npm install @recast-navigation/three
+```
+
+If you are planning to use the library with playcanvas, install the `@recast-navigation/playcanvas` package for playcanvas helpers:
+
+```sh
+npm install @recast-navigation/playcanvas
+```
+
 **Usage without bundlers**
 
 You can use import maps to use the library without a bundler:
@@ -57,10 +69,16 @@ You can use import maps to use the library without a bundler:
 <script type="importmap">
   {
     "imports": {
-      "@recast-navigation/core": "https://unpkg.com/@recast-navigation/core@0.29.0/dist/index.mjs",
-      "@recast-navigation/wasm": "https://unpkg.com/@recast-navigation/wasm@0.29.0/dist/recast-navigation.wasm-compat.js",
-      "@recast-navigation/generators": "https://unpkg.com/@recast-navigation/generators@0.29.0/dist/index.mjs",
-      "@recast-navigation/three": "https://unpkg.com/@recast-navigation/three@0.29.0/dist/index.mjs"
+      // required
+      "@recast-navigation/core": "https://unpkg.com/@recast-navigation/core@0.30.0/dist/index.mjs",
+      "@recast-navigation/wasm": "https://unpkg.com/@recast-navigation/wasm@0.30.0/dist/recast-navigation.wasm-compat.js",
+
+      // easy to use generators
+      "@recast-navigation/generators": "https://unpkg.com/@recast-navigation/generators@0.30.0/dist/index.mjs",
+      
+      // optional integrations
+      "@recast-navigation/three": "https://unpkg.com/@recast-navigation/three@0.30.0/dist/index.mjs",
+      "@recast-navigation/playcanvas": "https://unpkg.com/@recast-navigation/three@0.30.0/dist/index.mjs",
     }
   }
 </script>
