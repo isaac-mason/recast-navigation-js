@@ -89,7 +89,7 @@ You can use import maps to use the library without a bundler:
 </script>
 ```
 
-A full example can be found here: https://github.com/isaac-mason/recast-navigation-js/tree/main/examples/no-bundler/index.html
+A full example can be found here: https://github.com/isaac-mason/recast-navigation-js/tree/main/examples/three-vanilla-example/index.html
 
 ## Documentation
 
