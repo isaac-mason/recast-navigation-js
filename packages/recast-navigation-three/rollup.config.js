@@ -30,7 +30,8 @@ export default [
       '@recast-navigation/core',
       '@recast-navigation/generators',
       'three',
-      'three/addons',
+      /three\/addons\/.*/
+      
     ],
     output: [
       {

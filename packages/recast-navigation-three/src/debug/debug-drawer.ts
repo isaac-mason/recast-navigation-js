@@ -12,11 +12,9 @@ import {
   RecastPolyMeshDetail,
 } from '@recast-navigation/core';
 import * as THREE from 'three';
-import {
-  LineMaterial,
-  LineSegments2,
-  LineSegmentsGeometry,
-} from 'three/addons';
+import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
+import { LineSegments2 } from 'three/addons/lines/LineSegments2.js';
+import { LineSegmentsGeometry } from 'three/addons/lines/LineSegmentsGeometry.js';
 
 const _color = new THREE.Color();
 
