@@ -3957,7 +3957,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@recast-navigation/core@npm:0.35.1, @recast-navigation/core@workspace:packages/recast-navigation-core":
+"@recast-navigation/core@npm:0.35.2, @recast-navigation/core@workspace:packages/recast-navigation-core":
   version: 0.0.0-use.local
   resolution: "@recast-navigation/core@workspace:packages/recast-navigation-core"
   dependencies:
@@ -3965,7 +3965,7 @@ __metadata:
     "@babel/preset-env": "npm:^7.24.5"
     "@babel/preset-typescript": "npm:^7.24.1"
     "@isaac-mason/eslint-config-typescript": "npm:^0.0.9"
-    "@recast-navigation/wasm": "npm:0.35.1"
+    "@recast-navigation/wasm": "npm:0.35.2"
     "@rollup/plugin-babel": "npm:^6.0.4"
     "@rollup/plugin-commonjs": "npm:^25.0.7"
     "@rollup/plugin-node-resolve": "npm:^15.0.1"
@@ -3981,7 +3981,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@recast-navigation/generators@npm:0.35.1, @recast-navigation/generators@workspace:packages/recast-navigation-generators":
+"@recast-navigation/generators@npm:0.35.2, @recast-navigation/generators@workspace:packages/recast-navigation-generators":
   version: 0.0.0-use.local
   resolution: "@recast-navigation/generators@workspace:packages/recast-navigation-generators"
   dependencies:
@@ -3989,8 +3989,8 @@ __metadata:
     "@babel/preset-env": "npm:^7.24.5"
     "@babel/preset-typescript": "npm:^7.24.1"
     "@isaac-mason/eslint-config-typescript": "npm:^0.0.9"
-    "@recast-navigation/core": "npm:0.35.1"
-    "@recast-navigation/wasm": "npm:0.35.1"
+    "@recast-navigation/core": "npm:0.35.2"
+    "@recast-navigation/wasm": "npm:0.35.2"
     "@rollup/plugin-babel": "npm:^6.0.4"
     "@rollup/plugin-commonjs": "npm:^25.0.7"
     "@rollup/plugin-node-resolve": "npm:^15.0.1"
@@ -4012,8 +4012,8 @@ __metadata:
     "@babel/preset-env": "npm:^7.24.5"
     "@babel/preset-typescript": "npm:^7.24.1"
     "@isaac-mason/eslint-config-typescript": "npm:^0.0.9"
-    "@recast-navigation/core": "npm:0.35.1"
-    "@recast-navigation/generators": "npm:0.35.1"
+    "@recast-navigation/core": "npm:0.35.2"
+    "@recast-navigation/generators": "npm:0.35.2"
     "@rollup/plugin-babel": "npm:^6.0.4"
     "@rollup/plugin-commonjs": "npm:^25.0.7"
     "@rollup/plugin-node-resolve": "npm:^15.0.1"
@@ -4038,8 +4038,8 @@ __metadata:
     "@babel/preset-env": "npm:^7.24.5"
     "@babel/preset-typescript": "npm:^7.24.1"
     "@isaac-mason/eslint-config-typescript": "npm:^0.0.9"
-    "@recast-navigation/core": "npm:0.35.1"
-    "@recast-navigation/generators": "npm:0.35.1"
+    "@recast-navigation/core": "npm:0.35.2"
+    "@recast-navigation/generators": "npm:0.35.2"
     "@rollup/plugin-babel": "npm:^6.0.4"
     "@rollup/plugin-commonjs": "npm:^25.0.7"
     "@rollup/plugin-node-resolve": "npm:^15.0.1"
@@ -4058,7 +4058,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@recast-navigation/wasm@npm:0.35.1, @recast-navigation/wasm@workspace:packages/recast-navigation-wasm":
+"@recast-navigation/wasm@npm:0.35.2, @recast-navigation/wasm@workspace:packages/recast-navigation-wasm":
   version: 0.0.0-use.local
   resolution: "@recast-navigation/wasm@workspace:packages/recast-navigation-wasm"
   dependencies:
@@ -13531,7 +13531,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"recast-navigation@npm:0.35.1, recast-navigation@workspace:*, recast-navigation@workspace:^, recast-navigation@workspace:packages/recast-navigation":
+"recast-navigation@npm:0.35.2, recast-navigation@workspace:*, recast-navigation@workspace:^, recast-navigation@workspace:packages/recast-navigation":
   version: 0.0.0-use.local
   resolution: "recast-navigation@workspace:packages/recast-navigation"
   dependencies:
@@ -13543,8 +13543,8 @@ __metadata:
     "@pmndrs/assets": "npm:^1.6.0"
     "@react-three/drei": "npm:^9.105.4"
     "@react-three/fiber": "npm:^8.16.3"
-    "@recast-navigation/core": "npm:0.35.1"
-    "@recast-navigation/generators": "npm:0.35.1"
+    "@recast-navigation/core": "npm:0.35.2"
+    "@recast-navigation/generators": "npm:0.35.2"
     "@rollup/plugin-babel": "npm:^6.0.4"
     "@rollup/plugin-commonjs": "npm:^25.0.7"
     "@rollup/plugin-node-resolve": "npm:^15.0.1"
@@ -14785,7 +14785,7 @@ __metadata:
   resolution: "three-node-cjs-example@workspace:examples/three-node-cjs-example"
   dependencies:
     "@types/three": "npm:^0.167.1"
-    recast-navigation: "npm:0.35.1"
+    recast-navigation: "npm:0.35.2"
     three: "npm:^0.167.1"
   languageName: unknown
   linkType: soft
@@ -14795,7 +14795,7 @@ __metadata:
   resolution: "three-node-esm-example@workspace:examples/three-node-esm-example"
   dependencies:
     "@types/three": "npm:^0.167.1"
-    recast-navigation: "npm:0.35.1"
+    recast-navigation: "npm:0.35.2"
     three: "npm:^0.167.1"
   languageName: unknown
   linkType: soft
@@ -14841,7 +14841,7 @@ __metadata:
   resolution: "three-vite-example@workspace:examples/three-vite-example"
   dependencies:
     "@types/three": "npm:^0.169.0"
-    recast-navigation: "npm:0.35.1"
+    recast-navigation: "npm:0.35.2"
     three: "npm:^0.169.0"
     typescript: "npm:^5.4.3"
     vite: "npm:^5.4.8"
@@ -14853,7 +14853,7 @@ __metadata:
   resolution: "three-vite-worker-example@workspace:examples/three-vite-worker-example"
   dependencies:
     "@types/three": "npm:^0.169.0"
-    recast-navigation: "npm:0.35.1"
+    recast-navigation: "npm:0.35.2"
     three: "npm:^0.167.1"
     typescript: "npm:^5.4.3"
     vite: "npm:^5.4.8"

@@ -9,7 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "recast-navigation": "0.35.1",
+    "recast-navigation": "0.35.2",
     "three": "^0.167.1"
   },
   "devDependencies": {

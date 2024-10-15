@@ -1,5 +1,13 @@
 # @recast-navigation/three
 
+## 0.35.2
+
+### Patch Changes
+
+- 4141298: fix: import three/addons directly to avoid issues with vite dev mode
+  - @recast-navigation/core@0.35.2
+  - @recast-navigation/generators@0.35.2
+
 ## 0.35.1
 
 ### Patch Changes
