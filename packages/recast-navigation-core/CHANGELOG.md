@@ -1,5 +1,12 @@
 # @recast-navigation/core
 
+## 0.35.1
+
+### Patch Changes
+
+- 4574e65: feat: remove terser, ship human readable javascript to npm
+  - @recast-navigation/wasm@0.35.1
+
 ## 0.35.0
 
 ### Patch Changes
