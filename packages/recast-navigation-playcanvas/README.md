@@ -5,7 +5,7 @@ PlayCanvas nav mesh generation and visualisation helpers for [`recast-navigation
 ## Installation
 
 ```bash
-> npm install @recast-navigation/playcanas recast-navigation
+> npm install @recast-navigation/playcanvas recast-navigation
 ```
 
 ## Usage
@@ -82,7 +82,7 @@ This package provides helpers for visualizing various recast-navigation objects 
 #### `NavMeshHelper`
 
 ```ts
-import { NavMeshHelper } from '@recast-navigation/playcanas';
+import { NavMeshHelper } from '@recast-navigation/playcanvas';
 
 const navMeshHelper = new NavMeshHelper(navMesh, graphicsDevice);
 
