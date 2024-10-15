@@ -41,7 +41,7 @@ export default [
       },
     ],
     plugins: [
-      // terser(),
+      terser(),
       resolve(),
       commonjs(),
       typescript({
