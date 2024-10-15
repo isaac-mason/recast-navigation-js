@@ -14,7 +14,7 @@
 - 🚧 ‎ Temporary obstacles
 - 🌐 ‎ Web and Node support
 - 💙 ‎ TypeScript friendly
-- 🖇 ‎ [Easy integration with three.js via @recast-navigation/three](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-three)
+- 🖇 ‎ Easy integration with [three.js via @recast-navigation/three](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-three) and [playcanvas via @recast-navigation/playcanvas](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-playcanvas)
 
 ## Overview
 
@@ -29,7 +29,7 @@ Go to the [examples website](https://recast-navigation-js.isaacmason.com) to see
 - live: [https://recast-navigation-js.isaacmason.com](https://recast-navigation-js.isaacmason.com).
 - examples source code: [./packages/recast-navigation/.storybook/stories](./packages/recast-navigation/.storybook/stories).
 
-Demonstrations of how to use the library in different environments (such as NodeJS, CommonJS) can be found in the [examples](./examples) directory.
+Demonstrations of how to use the recast-navigation-js with different libraries and environments can be found in the [examples](./examples) directory.
 
 ## Installation
 
@@ -153,7 +153,7 @@ See the docs for more information on generator options: https://docs.recast-navi
 
 It's possible to build a NavMesh in a Web Worker. This can be useful for offloading heavy computation from the main thread.
 
-The library doesn't include a web worker, but it's straightforward to create your own. An example of solo nav mesh generation in a web worker can be found here: https://github.com/isaac-mason/recast-navigation-js/tree/next/examples/vite-worker-example
+The library doesn't include a web worker, but it's straightforward to create your own. An example of solo nav mesh generation in a web worker can be found here: https://github.com/isaac-mason/recast-navigation-js/tree/next/examples/three-vite-worker-example
 
 The example uses `importNavMesh` and `exportNavMesh` to serialize and deserialize a NavMesh for transfer between the main thread and the web worker.
 
@@ -486,7 +486,7 @@ const debugNavMesh = navMesh.getDebugNavMesh();
 const { positions, indices } = debugNavMesh;
 ```
 
-If you are using three.js, you can use built-in helpers from the [`@recast-navigation/three` package](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-three/README.md).
+If you are using three.js or playcanvas, you can use built-in helpers from the integration libraries [`@recast-navigation/three`](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-three/README.md) / [`@recast-navigation/playcanvas`](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-playcanvas/README.md).
 
 #### Detour Status Codes
 
@@ -649,7 +649,7 @@ Helpers for playcanvas.
 
 The WebAssembly build of the Recast and Detour libraries.
 
-You regularly won't need to use this package directly, as `@recast-navigation/core` uses it internally.
+You regularly won't need to use this package directly, `@recast-navigation/core` uses it internally.
 
 ```bash
 > npm install @recast-navigation/wasm
