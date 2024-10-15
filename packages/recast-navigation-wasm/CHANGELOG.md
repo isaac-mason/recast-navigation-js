@@ -1,5 +1,7 @@
 # @recast-navigation/wasm
 
+## 0.35.0
+
 ## 0.34.0
 
 ## 0.33.0
@@ -88,7 +90,7 @@
   const { success, status, obstacle } = tileCache.addBoxObstacle(
     position,
     extent,
-    angle,
+    angle
   );
   ```
 
