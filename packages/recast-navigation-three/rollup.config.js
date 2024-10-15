@@ -1,7 +1,6 @@
 import babel from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
-import terser from '@rollup/plugin-terser';
 import typescript from '@rollup/plugin-typescript';
 import path from 'path';
 import filesize from 'rollup-plugin-filesize';
@@ -31,6 +30,7 @@ export default [
       '@recast-navigation/core',
       '@recast-navigation/generators',
       'three',
+      'three/addons',
     ],
     output: [
       {
@@ -39,7 +39,6 @@ export default [
       },
     ],
     plugins: [
-      terser(),
       resolve(),
       commonjs(),
       typescript({
