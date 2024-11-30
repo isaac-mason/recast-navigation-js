@@ -18,7 +18,7 @@
     "email": "isaac@isaacmason.com",
     "url": "https://isaacmason.com/"
   },
-  "version": "0.35.2",
+  "version": "0.36.0",
   "license": "MIT",
   "homepage": "https://github.com/isaac-mason/recast-navigation-js",
   "bugs": {
@@ -59,8 +59,8 @@
     "lint": "eslint src"
   },
   "dependencies": {
-    "@recast-navigation/core": "0.35.2",
-    "@recast-navigation/generators": "0.35.2"
+    "@recast-navigation/core": "0.36.0",
+    "@recast-navigation/generators": "0.36.0"
   },
   "devDependencies": {
     "@babel/core": "^7.24.5",

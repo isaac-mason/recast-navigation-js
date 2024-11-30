@@ -8,7 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "recast-navigation": "0.35.2",
+    "recast-navigation": "0.36.0",
     "three": "^0.167.1"
   },
   "devDependencies": {
