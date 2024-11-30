@@ -292,14 +292,13 @@ export class NavMeshQuery {
     const polyCount = polyCountRef.value;
     Raw.destroy(polyCountRef);
 
-    const polyRefs = [...polysRefsArray.getHeapView()];
+    const polyRefs = [...polysRefsArray.getHeapView()].slice(0, polyCount);
     polysRefsArray.destroy();
 
     return {
       success: statusSucceed(status),
       status,
       polyRefs,
-      polyCount,
     };
   }
 

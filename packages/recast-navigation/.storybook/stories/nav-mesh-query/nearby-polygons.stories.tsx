@@ -180,10 +180,7 @@ export function ClickNearbyPolygons() {
         findPolysAroundCircleResult.resultCount
       );
     } else {
-      polyRefs = queryPolygonsResult.polyRefs.slice(
-        0,
-        queryPolygonsResult.polyCount
-      );
+      polyRefs = queryPolygonsResult.polyRefs;
     }
 
     const decodedPolyRefs = polyRefs.map((polyRef) =>
@@ -355,7 +352,7 @@ function polyRefToGeom(
  */
 function range(n: number) {
   return [...Array(n)].map((_, i) => i);
-};
+}
 
 const navMeshMaterial = new THREE.MeshBasicMaterial({
   wireframe: true,
