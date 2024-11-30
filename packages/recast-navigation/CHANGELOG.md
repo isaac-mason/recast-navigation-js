@@ -2,6 +2,10 @@
 
 ## 0.36.0
 
+### Minor Changes
+
+- 753e4e2: feat(NavMeshQuery): don't return 'polyCount' from queryPolygons, only incldue 'polyRefs' from 0 to 'polyCount'
+
 ### Patch Changes
 
 - Updated dependencies [753e4e2]
