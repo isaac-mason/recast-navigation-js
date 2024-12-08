@@ -1,5 +1,11 @@
 # @recast-navigation/wasm
 
+## 0.36.1
+
+### Patch Changes
+
+- c726f1a: fix: memory cleanup for some result classes and structs
+
 ## 0.36.0
 
 ## 0.35.2
