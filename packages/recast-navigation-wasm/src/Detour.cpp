@@ -64,8 +64,8 @@ CreateNavMeshDataResult *DetourNavMeshBuilder::createNavMeshData(dtNavMeshCreate
     if (!dtCreateNavMeshData(&params, &navMeshData->data, &navMeshData->size))
     {
         result->success = false;
-        navMeshData->data = 0;
-        navMeshData->size = 0;
+        delete navMeshData;
+        result->navMeshData = nullptr;
     }
     else
     {

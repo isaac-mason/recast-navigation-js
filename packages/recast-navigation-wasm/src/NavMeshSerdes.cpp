@@ -37,8 +37,8 @@ struct NavMeshTileHeader
 
 NavMeshImporterResult NavMeshImporter::importNavMesh(NavMeshExport *navMeshExport, TileCacheMeshProcessJsImpl &meshProcess)
 {
-    NavMeshImporterResult *result = new NavMeshImporterResult;
-    result->success = false;
+    NavMeshImporterResult result;
+    result.success = false;
 
     unsigned char *bits = (unsigned char *)navMeshExport->dataPointer;
 
@@ -51,19 +51,19 @@ NavMeshImporterResult NavMeshImporter::importNavMesh(NavMeshExport *navMeshExpor
     if (recastHeader.magic == NAVMESHSET_MAGIC)
     {
         NavMeshSetHeader header;
-        size_t readLen = sizeof(NavMeshSetHeader);
+        readLen = sizeof(NavMeshSetHeader);
         memcpy(&header, bits, readLen);
         bits += readLen;
 
         if (recastHeader.version != NAVMESHSET_VERSION)
         {
-            return *result;
+            return result;
         }
 
         NavMesh *navMesh = new NavMesh;
         if (!navMesh->initTiled(&header.params))
         {
-            return *result;
+            return result;
         }
 
         // Read tiles.
@@ -96,24 +96,24 @@ NavMeshImporterResult NavMeshImporter::importNavMesh(NavMeshExport *navMeshExpor
             navMesh->addTile(navMeshData, DT_TILE_FREE_DATA, tileHeader.tileRef, nullptr);
         }
 
-        result->navMesh = navMesh;
+        result.navMesh = navMesh;
     }
     else if (recastHeader.magic == TILECACHESET_MAGIC)
     {
         if (recastHeader.version != TILECACHESET_VERSION)
         {
-            return *result;
+            return result;
         }
 
         TileCacheSetHeader header;
-        size_t readLen = sizeof(TileCacheSetHeader);
+        readLen = sizeof(TileCacheSetHeader);
         memcpy(&header, bits, readLen);
         bits += readLen;
 
         NavMesh *navMesh = new NavMesh;
         if (!navMesh->initTiled(&header.meshParams))
         {
-            return *result;
+            return result;
         }
 
         RecastLinearAllocator *allocator = new RecastLinearAllocator(32000);
@@ -122,14 +122,14 @@ NavMeshImporterResult NavMeshImporter::importNavMesh(NavMeshExport *navMeshExpor
         TileCache *tileCache = new TileCache;
         if (!tileCache->init(&header.cacheParams, allocator, compressor, meshProcess))
         {
-            return *result;
+            return result;
         }
 
         // Read tiles.
         for (int i = 0; i < recastHeader.numTiles; ++i)
         {
             TileCacheTileHeader tileHeader;
-            size_t readLen = sizeof(tileHeader);
+            readLen = sizeof(tileHeader);
             memcpy(&tileHeader, bits, readLen);
             bits += readLen;
 
@@ -154,26 +154,26 @@ NavMeshImporterResult NavMeshImporter::importNavMesh(NavMeshExport *navMeshExpor
             tileCacheData->data = data;
             tileCacheData->size = tileHeader.dataSize;
 
-            TileCacheAddTileResult result = tileCache->addTile(tileCacheData, DT_COMPRESSEDTILE_FREE_DATA);
-            if (dtStatusFailed(result.status))
+            TileCacheAddTileResult addTileResult = tileCache->addTile(tileCacheData, DT_COMPRESSEDTILE_FREE_DATA);
+            if (dtStatusFailed(addTileResult.status))
             {
                 dtFree(data);
             }
 
-            if (result.tileRef)
+            if (addTileResult.tileRef)
             {
-                tileCache->buildNavMeshTile(&result.tileRef, navMesh);
+                tileCache->buildNavMeshTile(&addTileResult.tileRef, navMesh);
             }
         }
 
-        result->navMesh = navMesh;
-        result->tileCache = tileCache;
-        result->allocator = allocator;
-        result->compressor = compressor;
+        result.navMesh = navMesh;
+        result.tileCache = tileCache;
+        result.allocator = allocator;
+        result.compressor = compressor;
     }
 
-    result->success = true;
-    return *result;
+    result.success = true;
+    return result;
 }
 
 NavMeshExport NavMeshExporter::exportNavMesh(NavMesh *navMesh, TileCache *tileCache) const

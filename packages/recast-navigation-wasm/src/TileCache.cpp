@@ -24,11 +24,11 @@ bool TileCache::init(const dtTileCacheParams *params, RecastLinearAllocator *all
 
 TileCacheAddTileResult TileCache::addTile(UnsignedCharArray *tileCacheData, unsigned char flags)
 {
-    TileCacheAddTileResult *result = new TileCacheAddTileResult;
+    TileCacheAddTileResult result;
 
-    result->status = m_tileCache->addTile(tileCacheData->data, tileCacheData->size, flags, &result->tileRef);
+    result.status = m_tileCache->addTile(tileCacheData->data, tileCacheData->size, flags, &result.tileRef);
 
-    return *result;
+    return result;
 }
 
 dtStatus TileCache::buildNavMeshTile(const dtCompressedTileRef *ref, NavMesh *navMesh)
@@ -43,53 +43,53 @@ dtStatus TileCache::buildNavMeshTilesAt(const int tx, const int ty, NavMesh *nav
 
 TileCacheUpdateResult TileCache::update(NavMesh *navMesh)
 {
-    TileCacheUpdateResult *result = new TileCacheUpdateResult;
+    TileCacheUpdateResult result;
 
-    result->status = m_tileCache->update(0, navMesh->getNavMesh(), &result->upToDate);
+    result.status = m_tileCache->update(0, navMesh->getNavMesh(), &result.upToDate);
 
-    return *result;
-};
+    return result;
+}
 
 TileCacheAddObstacleResult TileCache::addCylinderObstacle(const Vec3 &position, float radius, float height)
 {
     dtObstacleRef ref(-1);
 
-    TileCacheAddObstacleResult *result = new TileCacheAddObstacleResult;
+    TileCacheAddObstacleResult result;
 
     if (!m_tileCache)
     {
-        result->status = DT_FAILURE;
-        return *result;
+        result.status = DT_FAILURE;
+        return result;
     }
 
-    result->status = m_tileCache->addObstacle(&position.x, radius, height, &ref);
+    result.status = m_tileCache->addObstacle(&position.x, radius, height, &ref);
     
     m_obstacles.push_back(ref);
 
-    result->ref = &m_obstacles.back();
+    result.ref = &m_obstacles.back();
 
-    return *result;
+    return result;
 }
 
 TileCacheAddObstacleResult TileCache::addBoxObstacle(const Vec3 &position, const Vec3 &extent, float angle)
 {
     dtObstacleRef ref(-1);
 
-    TileCacheAddObstacleResult *result = new TileCacheAddObstacleResult;
+    TileCacheAddObstacleResult result;
 
     if (!m_tileCache)
     {
-        result->status = DT_FAILURE; 
-        return *result;
+        result.status = DT_FAILURE; 
+        return result;
     }
 
-    result->status = m_tileCache->addBoxObstacle(&position.x, &extent.x, angle, &ref);
+    result.status = m_tileCache->addBoxObstacle(&position.x, &extent.x, angle, &ref);
 
     m_obstacles.push_back(ref);
 
-    result->ref = &m_obstacles.back();
+    result.ref = &m_obstacles.back();
 
-    return *result;
+    return result;
 }
 
 dtStatus TileCache::removeObstacle(dtObstacleRef *obstacle)

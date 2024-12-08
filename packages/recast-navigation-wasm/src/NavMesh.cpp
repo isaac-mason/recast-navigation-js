@@ -21,20 +21,20 @@ dtStatus NavMesh::addTile(UnsignedCharArray *navMeshData, int flags, dtTileRef l
 
 NavMeshRemoveTileResult NavMesh::removeTile(dtTileRef ref)
 {
-    NavMeshRemoveTileResult *result = new NavMeshRemoveTileResult;
+    NavMeshRemoveTileResult result;
 
-    result->status = m_navMesh->removeTile(ref, &result->data, &result->dataSize);
+    result.status = m_navMesh->removeTile(ref, &result.data, &result.dataSize);
 
-    return *result;
+    return result;
 }
 
 NavMeshCalcTileLocResult NavMesh::calcTileLoc(const float *pos) const
 {
-    NavMeshCalcTileLocResult *result = new NavMeshCalcTileLocResult;
+    NavMeshCalcTileLocResult result;
 
-    m_navMesh->calcTileLoc(pos, &result->tileX, &result->tileY);
+    m_navMesh->calcTileLoc(pos, &result.tileX, &result.tileY);
 
-    return *result;
+    return result;
 }
 
 void NavMesh::decodePolyId(dtPolyRef ref, UnsignedIntRef *salt, UnsignedIntRef *it, UnsignedIntRef *ip) {
@@ -52,14 +52,14 @@ const dtMeshTile *NavMesh::getTileAt(const int x, const int y, const int tlayer)
 
 NavMeshGetTilesAtResult NavMesh::getTilesAt(const int x, const int y, const int maxTiles) const
 {
-    NavMeshGetTilesAtResult *result = new NavMeshGetTilesAtResult;
+    NavMeshGetTilesAtResult result;
 
     const dtMeshTile *tiles[maxTiles];
 
-    result->tileCount = m_navMesh->getTilesAt(x, y, tiles, maxTiles);
-    result->tiles = *tiles;
+    result.tileCount = m_navMesh->getTilesAt(x, y, tiles, maxTiles);
+    result.tiles = *tiles;
 
-    return *result;
+    return result;
 }
 
 dtTileRef NavMesh::getTileRefAt(int x, int y, int layer) const
@@ -84,32 +84,32 @@ int NavMesh::getMaxTiles() const
 
 NavMeshGetTileAndPolyByRefResult NavMesh::getTileAndPolyByRef(dtPolyRef ref) const
 {
-    NavMeshGetTileAndPolyByRefResult *result = new NavMeshGetTileAndPolyByRefResult;
+    NavMeshGetTileAndPolyByRefResult result;
 
     const dtMeshTile *tile;
     const dtPoly *poly;
 
-    result->status = m_navMesh->getTileAndPolyByRef(ref, &tile, &poly);
+    result.status = m_navMesh->getTileAndPolyByRef(ref, &tile, &poly);
 
-    result->tile = tile;
-    result->poly = poly;
+    result.tile = tile;
+    result.poly = poly;
 
-    return *result;
+    return result;
 }
 
 NavMeshGetTileAndPolyByRefResult NavMesh::getTileAndPolyByRefUnsafe(dtPolyRef ref) const
 {
-    NavMeshGetTileAndPolyByRefResult *result = new NavMeshGetTileAndPolyByRefResult;
+    NavMeshGetTileAndPolyByRefResult result;
 
     const dtMeshTile *tile;
     const dtPoly *poly;
 
     m_navMesh->getTileAndPolyByRefUnsafe(ref, &tile, &poly);
 
-    result->tile = tile;
-    result->poly = poly;
+    result.tile = tile;
+    result.poly = poly;
 
-    return *result;
+    return result;
 }
 
 bool NavMesh::isValidPolyRef(dtPolyRef ref) const
@@ -159,12 +159,12 @@ int NavMesh::getTileStateSize(const dtMeshTile *tile) const
 
 NavMeshStoreTileStateResult NavMesh::storeTileState(const dtMeshTile *tile, const int maxDataSize) const
 {
-    NavMeshStoreTileStateResult *result = new NavMeshStoreTileStateResult;
+    NavMeshStoreTileStateResult result;
 
-    result->status = m_navMesh->storeTileState(tile, result->data, maxDataSize);
-    result->dataSize = maxDataSize;
+    result.status = m_navMesh->storeTileState(tile, result.data, maxDataSize);
+    result.dataSize = maxDataSize;
 
-    return *result;
+    return result;
 }
 
 dtStatus NavMesh::restoreTileState(dtMeshTile *tile, const unsigned char *data, const int maxDataSize)

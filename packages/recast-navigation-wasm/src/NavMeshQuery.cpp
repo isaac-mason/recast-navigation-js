@@ -24,6 +24,8 @@ dtStatus NavMeshQuery::findPath(dtPolyRef startRef, dtPolyRef endRef, const floa
     dtStatus status = m_navQuery->findPath(startRef, endRef, startPos, endPos, filter, pathArray, &pathCount, maxPath);
 
     path->copy(pathArray, pathCount);
+    delete[] pathArray;
+
     return status;
 }
 
@@ -109,6 +111,7 @@ dtStatus NavMeshQuery::moveAlongSurface(dtPolyRef startRef, const float *startPo
     dtStatus status = m_navQuery->moveAlongSurface(startRef, startPos, endPos, filter, &resultPos->x, visitedArray, &size, maxVisitedSize);
 
     visited->copy(visitedArray, size);
+    delete[] visitedArray;
 
     return status;
 }
