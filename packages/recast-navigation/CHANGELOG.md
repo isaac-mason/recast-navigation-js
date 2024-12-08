@@ -1,5 +1,13 @@
 # recast-navigation
 
+## 0.36.1
+
+### Patch Changes
+
+- c726f1a: fix: memory cleanup for some result classes and structs
+  - @recast-navigation/core@0.36.1
+  - @recast-navigation/generators@0.36.1
+
 ## 0.36.0
 
 ### Minor Changes
