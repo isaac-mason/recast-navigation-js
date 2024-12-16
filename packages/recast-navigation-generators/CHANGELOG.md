@@ -1,5 +1,18 @@
 # @recast-navigation/generators
 
+## 0.37.0
+
+### Minor Changes
+
+- f8968fc: fix: pass world units to dtNavMeshCreateParams instead of voxel units (@yelouafi)
+
+  fixes https://github.com/isaac-mason/recast-navigation-js/issues/453
+
+### Patch Changes
+
+- @recast-navigation/core@0.37.0
+- @recast-navigation/wasm@0.37.0
+
 ## 0.36.1
 
 ### Patch Changes
