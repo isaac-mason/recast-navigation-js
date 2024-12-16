@@ -69,9 +69,9 @@ export class DetourTileCacheParams {
     tileCacheParams.set_ch(config.ch);
     tileCacheParams.set_width(config.width);
     tileCacheParams.set_height(config.height);
-    tileCacheParams.set_walkableHeight(config.walkableHeight);
-    tileCacheParams.set_walkableRadius(config.walkableRadius);
-    tileCacheParams.set_walkableClimb(config.walkableClimb);
+    tileCacheParams.set_walkableHeight(config.walkableHeight * config.ch);
+    tileCacheParams.set_walkableRadius(config.walkableRadius * config.cs);
+    tileCacheParams.set_walkableClimb(config.walkableClimb * config.ch);
     tileCacheParams.set_maxSimplificationError(config.maxSimplificationError);
     tileCacheParams.set_maxTiles(config.maxTiles);
     tileCacheParams.set_maxObstacles(config.maxObstacles);
