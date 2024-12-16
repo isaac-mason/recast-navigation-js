@@ -12,6 +12,7 @@ import {
   RecastPolyMeshDetail,
   TriangleAreasArray,
   TrianglesArray,
+  UnsignedCharArray,
   VerticesArray,
   allocCompactHeightfield,
   allocContourSet,
@@ -45,7 +46,10 @@ import { Pretty } from '../types';
 import { OffMeshConnectionGeneratorParams, getBoundingBox } from './common';
 
 export type SoloNavMeshGeneratorConfig = Pretty<
-  Omit<RecastConfig, 'tileSize'> & OffMeshConnectionGeneratorParams
+  Omit<RecastConfig, 'tileSize'> &
+    OffMeshConnectionGeneratorParams & {
+      buildBvTree?: boolean;
+    }
 >;
 
 export const soloNavMeshGeneratorConfigDefaults: SoloNavMeshGeneratorConfig = {
@@ -62,50 +66,42 @@ export type SoloNavMeshGeneratorIntermediates = {
   polyMeshDetail?: RecastPolyMeshDetail;
 };
 
-type SoloNavMeshGeneratorSuccessResult = {
-  navMesh: NavMesh;
+type GenerateSoloNavMeshDataSuccessResult = {
+  navMeshData: UnsignedCharArray;
   success: true;
   intermediates: SoloNavMeshGeneratorIntermediates;
 };
 
-type SoloNavMeshGeneratorFailResult = {
-  navMesh: undefined;
+type GenerateSoloNavMeshDataFailResult = {
+  navMeshData: undefined;
   success: false;
   intermediates: SoloNavMeshGeneratorIntermediates;
   error: string;
 };
 
-export type SoloNavMeshGeneratorResult =
-  | SoloNavMeshGeneratorSuccessResult
-  | SoloNavMeshGeneratorFailResult;
+export type GenerateSoloNavMeshDataResult =
+  | GenerateSoloNavMeshDataSuccessResult
+  | GenerateSoloNavMeshDataFailResult;
 
 /**
- * Builds a Solo NavMesh from the given positions and indices.
+ * Builds Solo NavMesh data from the given positions and indices.
  * @param positions a flat array of positions
  * @param indices a flat array of indices
  * @param navMeshGeneratorConfig optional configuration for the NavMesh generator
  * @param keepIntermediates if true intermediates will be returned
  */
-export const generateSoloNavMesh = (
+export const generateSoloNavMeshData = (
   positions: ArrayLike<number>,
   indices: ArrayLike<number>,
   navMeshGeneratorConfig: Partial<SoloNavMeshGeneratorConfig> = {},
   keepIntermediates = false
-): SoloNavMeshGeneratorResult => {
-  if (!Raw.Module) {
-    throw new Error(
-      '"init" must be called before using any recast-navigation-js APIs. See: https://github.com/isaac-mason/recast-navigation-js?tab=readme-ov-file#initialization'
-    );
-  }
-
+): GenerateSoloNavMeshDataResult => {
   const buildContext = new RecastBuildContext();
 
   const intermediates: SoloNavMeshGeneratorIntermediates = {
     type: 'solo',
     buildContext,
   };
-
-  const navMesh = new NavMesh();
 
   const cleanup = () => {
     if (keepIntermediates) return;
@@ -136,13 +132,11 @@ export const generateSoloNavMesh = (
     }
   };
 
-  const fail = (error: string): SoloNavMeshGeneratorFailResult => {
+  const fail = (error: string): GenerateSoloNavMeshDataFailResult => {
     cleanup();
 
-    navMesh.destroy();
-
     return {
-      navMesh: undefined,
+      navMeshData: undefined,
       success: false,
       intermediates,
       error,
@@ -394,7 +388,9 @@ export const generateSoloNavMesh = (
   navMeshCreateParams.setCellSize(config.cs);
   navMeshCreateParams.setCellHeight(config.ch);
 
-  navMeshCreateParams.setBuildBvTree(true);
+  navMeshCreateParams.setBuildBvTree(
+    navMeshGeneratorConfig.buildBvTree ?? true
+  );
 
   if (navMeshGeneratorConfig.offMeshConnections) {
     navMeshCreateParams.setOffMeshConnections(
@@ -408,15 +404,85 @@ export const generateSoloNavMesh = (
     return fail('Failed to create Detour navmesh data');
   }
 
+  cleanup();
+
+  return {
+    navMeshData: createNavMeshDataResult.navMeshData,
+    success: true,
+    intermediates,
+  };
+};
+
+type GenerateSoloNavMeshSuccessResult = {
+  navMesh: NavMesh;
+  success: true;
+  intermediates: SoloNavMeshGeneratorIntermediates;
+};
+
+type GenerateSoloNavMeshFailResult = {
+  navMesh: undefined;
+  success: false;
+  intermediates: SoloNavMeshGeneratorIntermediates;
+  error: string;
+};
+
+export type GenerateSoloNavMeshResult =
+  | GenerateSoloNavMeshSuccessResult
+  | GenerateSoloNavMeshFailResult;
+
+/**
+ * Builds a Solo NavMesh from the given positions and indices.
+ * @param positions a flat array of positions
+ * @param indices a flat array of indices
+ * @param navMeshGeneratorConfig optional configuration for the NavMesh generator
+ * @param keepIntermediates if true intermediates will be returned
+ */
+export const generateSoloNavMesh = (
+  positions: ArrayLike<number>,
+  indices: ArrayLike<number>,
+  navMeshGeneratorConfig: Partial<SoloNavMeshGeneratorConfig> = {},
+  keepIntermediates = false
+): GenerateSoloNavMeshResult => {
+  if (!Raw.Module) {
+    throw new Error(
+      '"init" must be called before using any recast-navigation-js APIs. See: https://github.com/isaac-mason/recast-navigation-js?tab=readme-ov-file#initialization'
+    );
+  }
+
+  const createNavMeshDataResult = generateSoloNavMeshData(
+    positions,
+    indices,
+    navMeshGeneratorConfig,
+    keepIntermediates
+  );
+
+  if (!createNavMeshDataResult.success) {
+    return {
+      navMesh: undefined,
+      success: false,
+      intermediates: createNavMeshDataResult.intermediates,
+      error: createNavMeshDataResult.error,
+    };
+  }
+
   const { navMeshData } = createNavMeshDataResult;
 
+  const navMesh = new NavMesh();
+
   if (!navMesh.initSolo(navMeshData)) {
-    return fail('Failed to create Detour navmesh');
+    navMeshData.destroy();
+
+    return {
+      navMesh: undefined,
+      success: false,
+      intermediates: createNavMeshDataResult.intermediates,
+      error: 'Failed to initialize solo NavMesh',
+    };
   }
 
   return {
     success: true,
     navMesh,
-    intermediates,
+    intermediates: createNavMeshDataResult.intermediates,
   };
 };
