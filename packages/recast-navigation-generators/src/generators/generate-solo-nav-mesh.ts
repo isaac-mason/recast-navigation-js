@@ -387,9 +387,9 @@ export const generateSoloNavMesh = (
   navMeshCreateParams.setPolyMeshCreateParams(polyMesh);
   navMeshCreateParams.setPolyMeshDetailCreateParams(polyMeshDetail);
 
-  navMeshCreateParams.setWalkableHeight(config.walkableHeight);
-  navMeshCreateParams.setWalkableRadius(config.walkableRadius);
-  navMeshCreateParams.setWalkableClimb(config.walkableClimb);
+  navMeshCreateParams.setWalkableHeight(config.walkableHeight * config.ch);
+  navMeshCreateParams.setWalkableRadius(config.walkableRadius * config.cs);
+  navMeshCreateParams.setWalkableClimb(config.walkableClimb * config.ch);
 
   navMeshCreateParams.setCellSize(config.cs);
   navMeshCreateParams.setCellHeight(config.ch);

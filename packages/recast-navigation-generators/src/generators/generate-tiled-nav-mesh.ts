@@ -585,9 +585,9 @@ export const generateTiledNavMesh = (
     navMeshCreateParams.setPolyMeshCreateParams(polyMesh);
     navMeshCreateParams.setPolyMeshDetailCreateParams(polyMeshDetail);
 
-    navMeshCreateParams.setWalkableHeight(tileConfig.walkableHeight);
-    navMeshCreateParams.setWalkableRadius(tileConfig.walkableRadius);
-    navMeshCreateParams.setWalkableClimb(tileConfig.walkableClimb);
+    navMeshCreateParams.setWalkableHeight(tileConfig.walkableHeight * tileConfig.ch);
+    navMeshCreateParams.setWalkableRadius(tileConfig.walkableRadius * tileConfig.cs);
+    navMeshCreateParams.setWalkableClimb(tileConfig.walkableClimb * tileConfig.ch);
 
     navMeshCreateParams.setCellSize(tileConfig.cs);
     navMeshCreateParams.setCellHeight(tileConfig.ch);
