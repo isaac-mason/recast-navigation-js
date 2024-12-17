@@ -1,5 +1,26 @@
 # @recast-navigation/generators
 
+## 0.38.0
+
+### Minor Changes
+
+- b54ae16: feat: add utils for generating solo and tiled navmesh tiles
+
+  Added `generateSoloNavMeshData` and `generateTileNavMeshData` to the `@recast-navigation/generators` package.
+
+  The logic for generating navmesh data was previously within the `generateSoloNavMesh` and `generateTiledNavMesh` utils.
+
+  These utils make it easier to use the default navmesh generators for more use cases. For example, generating navmesh data for a single tile in a web worker, and sending the data back to the main thread where the `NavMesh` is created.
+
+- 93d383e: feat: add optional 'bounds' config to navmesh generators
+
+  If provided, it will be used as the bounds for the navmesh heightfield during generation. If not provided, the bounds will be calculated from the input geometry. If the bounds are known ahead of time, providing them can save some time during generation.
+
+### Patch Changes
+
+- @recast-navigation/core@0.38.0
+- @recast-navigation/wasm@0.38.0
+
 ## 0.37.0
 
 ### Minor Changes
