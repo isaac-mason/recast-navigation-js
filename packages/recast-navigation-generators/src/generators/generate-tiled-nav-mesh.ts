@@ -129,6 +129,12 @@ export type TiledNavMeshGeneratorConfig = Pretty<
   RecastConfig &
     OffMeshConnectionGeneratorParams & {
       /**
+       * The minimum and maximum bounds of the heightfield's AABB in world units.
+       * If not provided, the bounding box will be calculated from the input positions and indices
+       */
+      bounds?: [bbMin: Vector3Tuple, bbMax: Vector3Tuple];
+
+      /**
        * @default 128
        */
       chunkyTriMeshTrisPerChunk?: number;
@@ -669,8 +675,17 @@ export const generateTiledNavMesh = (
     ...navMeshGeneratorConfig,
   };
 
-  /* get input bounding box */
-  const { bbMin, bbMax } = getBoundingBox(positions, indices);
+  let bbMin: Vector3Tuple;
+  let bbMax: Vector3Tuple;
+
+  if (navMeshGeneratorConfig.bounds) {
+    bbMin = navMeshGeneratorConfig.bounds[0];
+    bbMax = navMeshGeneratorConfig.bounds[1];
+  } else {
+    const boundingBox = getBoundingBox(positions, indices);
+    bbMin = boundingBox.bbMin;
+    bbMax = boundingBox.bbMax;
+  }
 
   const {
     config: rcConfig,

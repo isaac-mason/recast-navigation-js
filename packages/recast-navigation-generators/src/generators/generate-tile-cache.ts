@@ -55,6 +55,12 @@ type TileCacheRecastConfig = Omit<RecastConfig, 'minRegionArea' | 'maxEdgeLen'>;
 export type TileCacheGeneratorConfig = Pretty<
   TileCacheRecastConfig & {
     /**
+     * The minimum and maximum bounds of the heightfield's AABB in world units.
+     * If not provided, the bounding box will be calculated from the input positions and indices
+     */
+    bounds?: [bbMin: Vector3Tuple, bbMax: Vector3Tuple];
+
+    /**
      * How many layers (or "floors") each navmesh tile is expected to have.
      */
     expectedLayersPerTile: number;
@@ -165,7 +171,17 @@ export const generateTileCache = (
   const trianglesArray = new TrianglesArray();
   trianglesArray.copy(triangles);
 
-  const { bbMin, bbMax } = getBoundingBox(positions, indices);
+  let bbMin: Vector3Tuple;
+  let bbMax: Vector3Tuple;
+
+  if (navMeshGeneratorConfig.bounds) {
+    bbMin = navMeshGeneratorConfig.bounds[0];
+    bbMax = navMeshGeneratorConfig.bounds[1];
+  } else {
+    const boundingBox = getBoundingBox(positions, indices);
+    bbMin = boundingBox.bbMin;
+    bbMax = boundingBox.bbMax;
+  }
 
   const { expectedLayersPerTile, maxObstacles, ...recastConfig } = {
     ...tileCacheGeneratorConfigDefaults,
