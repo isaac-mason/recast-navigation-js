@@ -1,5 +1,5 @@
 import { OrbitControls } from '@react-three/drei';
-import { NavMesh, NavMeshQuery, Vector3Tuple } from '@recast-navigation/core';
+import { NavMesh, NavMeshQuery } from '@recast-navigation/core';
 import { threeToSoloNavMesh } from '@recast-navigation/three';
 import React, { useEffect, useState } from 'react';
 import { Box3, Group, Mesh } from 'three';
