@@ -3,4 +3,10 @@
 'recast-navigation': minor
 ---
 
-feat: utils for generating solo and tiled navmesh tiles
+feat: add utils for generating solo and tiled navmesh tiles
+
+Added `generateSoloNavMeshData` and `generateTileNavMeshData` to the `@recast-navigation/generators` package.
+
+The logic for generating navmesh data was previously within the `generateSoloNavMesh` and `generateTiledNavMesh` utils.
+
+Providing a util that just creates NavMesh data makes it easier to use the default navmesh generation logic for more use cases. For example, generating navmesh data for a single tile in a web worker, and sending the data back to the main thread where the `NavMesh` is created.
