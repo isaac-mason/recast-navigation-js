@@ -175,8 +175,6 @@ export const generateSoloNavMeshData = (
     const boundingBox = getBoundingBox(positions, indices);
     bbMin = boundingBox.bbMin;
     bbMax = boundingBox.bbMax;
-    console.log('bbMin', bbMin);
-    console.log('bbMax', bbMax);
   }
 
   //
