@@ -48,13 +48,17 @@ import { OffMeshConnectionGeneratorParams, getBoundingBox } from './common';
 export type SoloNavMeshGeneratorConfig = Pretty<
   Omit<RecastConfig, 'tileSize'> &
     OffMeshConnectionGeneratorParams & {
+      /**
+       * @default true
+       */
       buildBvTree?: boolean;
     }
 >;
 
-export const soloNavMeshGeneratorConfigDefaults: SoloNavMeshGeneratorConfig = {
+export const soloNavMeshGeneratorConfigDefaults = {
   ...recastConfigDefaults,
-};
+  buildBvTree: true,
+} satisfies SoloNavMeshGeneratorConfig;
 
 export type SoloNavMeshGeneratorIntermediates = {
   type: 'solo';
@@ -159,20 +163,24 @@ export const generateSoloNavMeshData = (
   //
   // Step 1. Initialize build config.
   //
-  const config = createRcConfig({
+  const config = {
     ...soloNavMeshGeneratorConfigDefaults,
     ...navMeshGeneratorConfig,
-  });
+  };
+  const rcConfig = createRcConfig(config);
 
-  config.minRegionArea = config.minRegionArea * config.minRegionArea; // Note: area = size*size
-  config.mergeRegionArea = config.mergeRegionArea * config.mergeRegionArea; // Note: area = size*size
-  config.detailSampleDist =
-    config.detailSampleDist < 0.9 ? 0 : config.cs * config.detailSampleDist;
-  config.detailSampleMaxError = config.ch * config.detailSampleMaxError;
+  rcConfig.minRegionArea = rcConfig.minRegionArea * rcConfig.minRegionArea; // Note: area = size*size
+  rcConfig.mergeRegionArea =
+    rcConfig.mergeRegionArea * rcConfig.mergeRegionArea; // Note: area = size*size
+  rcConfig.detailSampleDist =
+    rcConfig.detailSampleDist < 0.9
+      ? 0
+      : rcConfig.cs * rcConfig.detailSampleDist;
+  rcConfig.detailSampleMaxError = rcConfig.ch * rcConfig.detailSampleMaxError;
 
-  const gridSize = calcGridSize(bbMin, bbMax, config.cs);
-  config.width = gridSize.width;
-  config.height = gridSize.height;
+  const gridSize = calcGridSize(bbMin, bbMax, rcConfig.cs);
+  rcConfig.width = gridSize.width;
+  rcConfig.height = gridSize.height;
 
   //
   // Step 2. Rasterize input polygon soup.
@@ -185,12 +193,12 @@ export const generateSoloNavMeshData = (
     !createHeightfield(
       buildContext,
       heightfield,
-      config.width,
-      config.height,
+      rcConfig.width,
+      rcConfig.height,
       bbMin,
       bbMax,
-      config.cs,
-      config.ch
+      rcConfig.cs,
+      rcConfig.ch
     )
   ) {
     return fail('Could not create heightfield');
@@ -204,7 +212,7 @@ export const generateSoloNavMeshData = (
 
   markWalkableTriangles(
     buildContext,
-    config.walkableSlopeAngle,
+    rcConfig.walkableSlopeAngle,
     verticesArray,
     numVertices,
     trianglesArray,
@@ -221,7 +229,7 @@ export const generateSoloNavMeshData = (
       triangleAreasArray,
       numTriangles,
       heightfield,
-      config.walkableClimb
+      rcConfig.walkableClimb
     )
   ) {
     return fail('Could not rasterize triangles');
@@ -239,18 +247,18 @@ export const generateSoloNavMeshData = (
   // as well as filter spans where the character cannot possibly stand.
   filterLowHangingWalkableObstacles(
     buildContext,
-    config.walkableClimb,
+    rcConfig.walkableClimb,
     heightfield
   );
   filterLedgeSpans(
     buildContext,
-    config.walkableHeight,
-    config.walkableClimb,
+    rcConfig.walkableHeight,
+    rcConfig.walkableClimb,
     heightfield
   );
   filterWalkableLowHeightSpans(
     buildContext,
-    config.walkableHeight,
+    rcConfig.walkableHeight,
     heightfield
   );
 
@@ -266,8 +274,8 @@ export const generateSoloNavMeshData = (
   if (
     !buildCompactHeightfield(
       buildContext,
-      config.walkableHeight,
-      config.walkableClimb,
+      rcConfig.walkableHeight,
+      rcConfig.walkableClimb,
       heightfield,
       compactHeightfield
     )
@@ -282,7 +290,11 @@ export const generateSoloNavMeshData = (
 
   // Erode the walkable area by agent radius.
   if (
-    !erodeWalkableArea(buildContext, config.walkableRadius, compactHeightfield)
+    !erodeWalkableArea(
+      buildContext,
+      rcConfig.walkableRadius,
+      compactHeightfield
+    )
   ) {
     return fail('Failed to erode walkable area');
   }
@@ -300,9 +312,9 @@ export const generateSoloNavMeshData = (
     !buildRegions(
       buildContext,
       compactHeightfield,
-      config.borderSize,
-      config.minRegionArea,
-      config.mergeRegionArea
+      rcConfig.borderSize,
+      rcConfig.minRegionArea,
+      rcConfig.mergeRegionArea
     )
   ) {
     return fail('Failed to build regions');
@@ -318,8 +330,8 @@ export const generateSoloNavMeshData = (
     !buildContours(
       buildContext,
       compactHeightfield,
-      config.maxSimplificationError,
-      config.maxEdgeLen,
+      rcConfig.maxSimplificationError,
+      rcConfig.maxEdgeLen,
       contourSet,
       Recast.RC_CONTOUR_TESS_WALL_EDGES
     )
@@ -333,7 +345,7 @@ export const generateSoloNavMeshData = (
   const polyMesh = allocPolyMesh();
   intermediates.polyMesh = polyMesh;
   if (
-    !buildPolyMesh(buildContext, contourSet, config.maxVertsPerPoly, polyMesh)
+    !buildPolyMesh(buildContext, contourSet, rcConfig.maxVertsPerPoly, polyMesh)
   ) {
     return fail('Failed to triangulate contours');
   }
@@ -348,8 +360,8 @@ export const generateSoloNavMeshData = (
       buildContext,
       polyMesh,
       compactHeightfield,
-      config.detailSampleDist,
-      config.detailSampleMaxError,
+      rcConfig.detailSampleDist,
+      rcConfig.detailSampleMaxError,
       polyMeshDetail
     )
   ) {
@@ -381,16 +393,14 @@ export const generateSoloNavMeshData = (
   navMeshCreateParams.setPolyMeshCreateParams(polyMesh);
   navMeshCreateParams.setPolyMeshDetailCreateParams(polyMeshDetail);
 
-  navMeshCreateParams.setWalkableHeight(config.walkableHeight * config.ch);
-  navMeshCreateParams.setWalkableRadius(config.walkableRadius * config.cs);
-  navMeshCreateParams.setWalkableClimb(config.walkableClimb * config.ch);
+  navMeshCreateParams.setWalkableHeight(rcConfig.walkableHeight * rcConfig.ch);
+  navMeshCreateParams.setWalkableRadius(rcConfig.walkableRadius * rcConfig.cs);
+  navMeshCreateParams.setWalkableClimb(rcConfig.walkableClimb * rcConfig.ch);
 
-  navMeshCreateParams.setCellSize(config.cs);
-  navMeshCreateParams.setCellHeight(config.ch);
+  navMeshCreateParams.setCellSize(rcConfig.cs);
+  navMeshCreateParams.setCellHeight(rcConfig.ch);
 
-  navMeshCreateParams.setBuildBvTree(
-    navMeshGeneratorConfig.buildBvTree ?? true
-  );
+  navMeshCreateParams.setBuildBvTree(config.buildBvTree);
 
   if (navMeshGeneratorConfig.offMeshConnections) {
     navMeshCreateParams.setOffMeshConnections(

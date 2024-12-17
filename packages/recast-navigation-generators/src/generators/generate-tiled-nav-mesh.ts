@@ -95,8 +95,24 @@ const buildTileRcConfig = ({
 
 export type TiledNavMeshGeneratorConfig = Pretty<
   RecastConfig &
-    OffMeshConnectionGeneratorParams & { chunkyTriMeshTrisPerChunk?: number }
+    OffMeshConnectionGeneratorParams & {
+      /**
+       * @default 128
+       */
+      chunkyTriMeshTrisPerChunk?: number;
+
+      /**
+       * @default true
+       */
+      buildBvTree?: boolean;
+    }
 >;
+
+export const tiledNavMeshGeneratorConfigDefaults = {
+  ...recastConfigDefaults,
+  chunkyTriMeshTrisPerChunk: 256,
+  buildBvTree: true,
+} satisfies TiledNavMeshGeneratorConfig;
 
 type TileIntermediates = {
   x: number;
@@ -495,7 +511,9 @@ export const generateTileNavMeshData = (
   navMeshCreateParams.setCellSize(tileConfig.cs);
   navMeshCreateParams.setCellHeight(tileConfig.ch);
 
-  navMeshCreateParams.setBuildBvTree(true);
+  navMeshCreateParams.setBuildBvTree(
+    config.buildBvTree ?? tiledNavMeshGeneratorConfigDefaults.buildBvTree
+  );
 
   if (config.offMeshConnections) {
     navMeshCreateParams.setOffMeshConnections(config.offMeshConnections);
@@ -521,11 +539,6 @@ export const generateTileNavMeshData = (
     intermediates: tileIntermediate,
   };
 };
-
-export const tiledNavMeshGeneratorConfigDefaults = {
-  ...recastConfigDefaults,
-  chunkyTriMeshTrisPerChunk: 256,
-} satisfies TiledNavMeshGeneratorConfig;
 
 export type TiledNavMeshGeneratorIntermediates = {
   type: 'tiled';
