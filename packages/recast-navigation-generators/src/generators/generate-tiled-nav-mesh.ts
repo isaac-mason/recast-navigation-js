@@ -6,7 +6,9 @@ import {
   NavMesh,
   NavMeshCreateParams,
   NavMeshParams,
+  OffMeshConnectionParams,
   Raw,
+  RawModule,
   Recast,
   RecastBuildContext,
   RecastChunkyTriMesh,
@@ -34,6 +36,7 @@ import {
   buildPolyMeshDetail,
   buildRegions,
   calcGridSize,
+  cloneRcConfig,
   createHeightfield,
   createNavMeshData,
   createRcConfig,
@@ -61,15 +64,13 @@ import {
   getBoundingBox,
 } from './common';
 
-type BuildTileRcConfigProps = {
-  recastConfig: RecastConfig;
-  navMeshBounds: [min: Vector3Tuple, max: Vector3Tuple];
-};
-
-const buildTileRcConfig = ({
+export const buildTiledNavMeshRcConfig = ({
   recastConfig,
   navMeshBounds: [navMeshBoundsMin, navMeshBoundsMax],
-}: BuildTileRcConfigProps) => {
+}: {
+  recastConfig: RecastConfig;
+  navMeshBounds: [min: Vector3Tuple, max: Vector3Tuple];
+}) => {
   //
   // Initialize build config.
   //
@@ -90,7 +91,38 @@ const buildTileRcConfig = ({
     config.detailSampleDist < 0.9 ? 0 : config.cs * config.detailSampleDist;
   config.detailSampleMaxError = config.ch * config.detailSampleMaxError;
 
-  return config;
+  // tile size
+  const tileSize = Math.floor(config.tileSize);
+  const tileWidth = Math.floor((gridSize.width + tileSize - 1) / tileSize);
+  const tileHeight = Math.floor((gridSize.height + tileSize - 1) / tileSize);
+  const tcs = config.tileSize * config.cs;
+
+  /* Create dtNavMeshParams, initialise nav mesh for tiled use */
+  const orig = vec3.fromArray(navMeshBoundsMin);
+
+  // Max tiles and max polys affect how the tile IDs are caculated.
+  // There are 22 bits available for identifying a tile and a polygon.
+  let tileBits = Math.min(
+    Math.floor(dtIlog2(dtNextPow2(tileWidth * tileHeight))),
+    14
+  );
+  if (tileBits > 14) tileBits = 14;
+  const polyBits = 22 - tileBits;
+
+  const maxTiles = 1 << tileBits;
+  const maxPolysPerTile = 1 << polyBits;
+
+  return {
+    config,
+    gridSize,
+    tileSize,
+    tileWidth,
+    tileHeight,
+    tcs,
+    orig,
+    maxTiles,
+    maxPolysPerTile,
+  };
 };
 
 export type TiledNavMeshGeneratorConfig = Pretty<
@@ -143,7 +175,7 @@ export type GenerateTileNavMeshDataResult =
 export const generateTileNavMeshData = (
   positions: FloatArray,
   indices: IntArray,
-  config: TiledNavMeshGeneratorConfig,
+  rcConfig: RawModule.rcConfig,
   chunkyTriMesh: RecastChunkyTriMesh,
   tile: {
     x: number;
@@ -151,6 +183,10 @@ export const generateTileNavMeshData = (
     bmin: Vector3Tuple;
     bmax: Vector3Tuple;
   },
+  options: {
+    offMeshConnections?: OffMeshConnectionParams[];
+    buildBvTree?: boolean;
+  } = {},
   keepIntermediates: boolean = false,
   buildContext: RecastBuildContext = new RecastBuildContext()
 ): GenerateTileNavMeshDataResult => {
@@ -193,10 +229,7 @@ export const generateTileNavMeshData = (
     return { success: false as const, error, intermediates: tileIntermediate };
   };
 
-  const tileConfig = buildTileRcConfig({
-    recastConfig: config,
-    navMeshBounds: [tile.bmin, tile.bmax],
-  });
+  const tileConfig = cloneRcConfig(rcConfig);
 
   // Expand the heightfield bounding box by border size to find the extents of geometry we need to build this tile.
   //
@@ -512,11 +545,11 @@ export const generateTileNavMeshData = (
   navMeshCreateParams.setCellHeight(tileConfig.ch);
 
   navMeshCreateParams.setBuildBvTree(
-    config.buildBvTree ?? tiledNavMeshGeneratorConfigDefaults.buildBvTree
+    options.buildBvTree ?? tiledNavMeshGeneratorConfigDefaults.buildBvTree
   );
 
-  if (config.offMeshConnections) {
-    navMeshCreateParams.setOffMeshConnections(config.offMeshConnections);
+  if (options.offMeshConnections) {
+    navMeshCreateParams.setOffMeshConnections(options.offMeshConnections);
   }
 
   navMeshCreateParams.setTileX(tile.x);
@@ -631,7 +664,7 @@ export const generateTiledNavMesh = (
   //
   // Initialize build config.
   //
-  const config = {
+  const generatorConfig = {
     ...tiledNavMeshGeneratorConfigDefaults,
     ...navMeshGeneratorConfig,
   };
@@ -639,34 +672,23 @@ export const generateTiledNavMesh = (
   /* get input bounding box */
   const { bbMin, bbMax } = getBoundingBox(positions, indices);
 
-  /* grid size */
-  const gridSize = calcGridSize(bbMin, bbMax, config.cs);
-
-  // tile size
-  const tileSize = Math.floor(config.tileSize);
-  const tileWidth = Math.floor((gridSize.width + tileSize - 1) / tileSize);
-  const tileHeight = Math.floor((gridSize.height + tileSize - 1) / tileSize);
-  const tcs = config.tileSize * config.cs;
-
-  /* Create dtNavMeshParams, initialise nav mesh for tiled use */
-  const orig = vec3.fromArray(bbMin);
-
-  // Max tiles and max polys affect how the tile IDs are caculated.
-  // There are 22 bits available for identifying a tile and a polygon.
-  let tileBits = Math.min(
-    Math.floor(dtIlog2(dtNextPow2(tileWidth * tileHeight))),
-    14
-  );
-  if (tileBits > 14) tileBits = 14;
-  const polyBits = 22 - tileBits;
-
-  const maxTiles = 1 << tileBits;
-  const maxPolysPerTile = 1 << polyBits;
+  const {
+    config: rcConfig,
+    tileWidth,
+    tileHeight,
+    tcs,
+    orig,
+    maxTiles,
+    maxPolysPerTile,
+  } = buildTiledNavMeshRcConfig({
+    recastConfig: generatorConfig,
+    navMeshBounds: [bbMin, bbMax],
+  });
 
   const navMeshParams = NavMeshParams.create({
     orig,
-    tileWidth: config.tileSize * config.cs,
-    tileHeight: config.tileSize * config.cs,
+    tileWidth: generatorConfig.tileSize * generatorConfig.cs,
+    tileHeight: generatorConfig.tileSize * generatorConfig.cs,
     maxTiles,
     maxPolys: maxPolysPerTile,
   });
@@ -684,7 +706,7 @@ export const generateTiledNavMesh = (
       verticesArray,
       trianglesArray,
       numTriangles,
-      config.chunkyTriMeshTrisPerChunk
+      generatorConfig.chunkyTriMeshTrisPerChunk
     )
   ) {
     return fail('Failed to build chunky triangle mesh');
@@ -712,12 +734,18 @@ export const generateTiledNavMesh = (
         bmax: lastBuiltTileBmax,
       };
 
+      const generatorOptions = {
+        offMeshConnections: generatorConfig.offMeshConnections,
+        buildBvTree: generatorConfig.buildBvTree,
+      };
+
       const result = generateTileNavMeshData(
         verticesArray,
         trianglesArray,
-        config,
+        rcConfig,
         chunkyTriMesh,
         tile,
+        generatorOptions,
         keepIntermediates,
         buildContext
       );
