@@ -15,8 +15,10 @@ mkdir -p ./build
 mkdir -p dist
 
 # clone recast navigation library
-[ ! -d "recastnavigation" ] && git clone https://github.com/isaac-mason/recastnavigation.git
-(cd recastnavigation && git checkout '599fd0f023181c0a484df2a18cf1d75a3553852e')
+# [ ! -d "recastnavigation" ] && git clone https://github.com/isaac-mason/recastnavigation.git
+# (cd recastnavigation && git checkout '599fd0f023181c0a484df2a18cf1d75a3553852e')
+[ ! -d "recastnavigation" ] && git clone https://github.com/rob-myers/recastnavigation.git
+(cd recastnavigation && git checkout 'feat/expose-off-mesh-anim')
 
 # emscripten builds
 emcmake cmake -B build -DCMAKE_BUILD_TYPE=$BUILD_TYPE
