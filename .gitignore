@@ -13,3 +13,4 @@ dist
 .vercel
 emsdk
 .parcel-cache
+.DS_Store

@@ -695,6 +695,18 @@ interface dtCrowdAgentDebugInfo {
     attribute dtObstacleAvoidanceDebugData vod;
 };
 
+interface dtCrowdAgentAnimation {
+    
+    attribute boolean active;
+    attribute float[] initPos;
+    attribute float[] startPos;
+    attribute float[] endPos;
+    attribute unsigned long polyRef;
+    attribute float t;
+    attribute float tmax;
+
+};
+
 interface dtQueryFilter {
     void dtQueryFilter();
 
@@ -754,6 +766,8 @@ interface dtCrowd {
     dtQueryFilter getEditableFilter([Const] long i);
 
     [Const] dtNavMeshQuery getNavMeshQuery();
+
+    dtCrowdAgentAnimation getAgentAnimation([Const] long idx);
 };
 
 enum rcBuildContoursFlags {
