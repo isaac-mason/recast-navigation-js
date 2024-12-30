@@ -1,5 +1,5 @@
 {
-  "name": "@recast-navigation/generators",
+  "name": "@rob-myers/recast-navigation__generators",
   "description": "NavMesh generator implementations for @recast-navigation/core",
   "author": {
     "name": "Isaac Mason",

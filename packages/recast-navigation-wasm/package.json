@@ -1,5 +1,5 @@
 {
-  "name": "@recast-navigation/wasm",
+  "name": "@rob-myers/recast-navigation__wasm",
   "description": "A webassembly port of Recast Navigation",
   "author": {
     "name": "Isaac Mason",
