@@ -4257,52 +4257,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@recast-navigation/core@npm:0.38.0, @recast-navigation/core@workspace:packages/recast-navigation-core":
-  version: 0.0.0-use.local
-  resolution: "@recast-navigation/core@workspace:packages/recast-navigation-core"
+"@recast-navigation/core@npm:0.38.0":
+  version: 0.38.0
+  resolution: "@recast-navigation/core@npm:0.38.0"
   dependencies:
-    "@babel/core": "npm:^7.24.5"
-    "@babel/preset-env": "npm:^7.24.5"
-    "@babel/preset-typescript": "npm:^7.24.1"
-    "@isaac-mason/eslint-config-typescript": "npm:^0.0.9"
     "@recast-navigation/wasm": "npm:0.38.0"
-    "@rollup/plugin-babel": "npm:^6.0.4"
-    "@rollup/plugin-commonjs": "npm:^25.0.7"
-    "@rollup/plugin-node-resolve": "npm:^15.0.1"
-    "@rollup/plugin-typescript": "npm:^11.1.6"
-    "@types/three": "npm:^0.169.0"
-    babel-loader: "npm:^9.1.3"
-    eslint: "npm:^9.6.0"
-    prettier: "npm:^3.1.0"
-    rollup: "npm:^4.14.0"
-    rollup-plugin-copy: "npm:^3.4.0"
-    rollup-plugin-filesize: "npm:^10.0.0"
-    typescript: "npm:^5.4.3"
-  languageName: unknown
-  linkType: soft
+  checksum: 10/ce2e78f0166585378f5cb52852931fd44fa903079719695b6a82b523b349fe079093214053c7e0c0f0cccefbcfc69f604421763b08645d64750136b51534726a
+  languageName: node
+  linkType: hard
 
-"@recast-navigation/generators@npm:0.38.0, @recast-navigation/generators@workspace:packages/recast-navigation-generators":
-  version: 0.0.0-use.local
-  resolution: "@recast-navigation/generators@workspace:packages/recast-navigation-generators"
+"@recast-navigation/generators@npm:0.38.0":
+  version: 0.38.0
+  resolution: "@recast-navigation/generators@npm:0.38.0"
   dependencies:
-    "@babel/core": "npm:^7.24.5"
-    "@babel/preset-env": "npm:^7.24.5"
-    "@babel/preset-typescript": "npm:^7.24.1"
-    "@isaac-mason/eslint-config-typescript": "npm:^0.0.9"
     "@recast-navigation/core": "npm:0.38.0"
     "@recast-navigation/wasm": "npm:0.38.0"
-    "@rollup/plugin-babel": "npm:^6.0.4"
-    "@rollup/plugin-commonjs": "npm:^25.0.7"
-    "@rollup/plugin-node-resolve": "npm:^15.0.1"
-    "@rollup/plugin-typescript": "npm:^11.1.6"
-    eslint: "npm:^9.6.0"
-    prettier: "npm:^3.1.0"
-    rollup: "npm:^4.14.0"
-    rollup-plugin-copy: "npm:^3.4.0"
-    rollup-plugin-filesize: "npm:^10.0.0"
-    typescript: "npm:^5.4.3"
-  languageName: unknown
-  linkType: soft
+  checksum: 10/738b33f21376cc621ab3b7f61751b4e417318c628a4671b5362414e64e4759de873956d3515917e6be35615c5b75df53e906fbe39079f453bfacfb5ab67faa25
+  languageName: node
+  linkType: hard
 
 "@recast-navigation/playcanvas@workspace:^, @recast-navigation/playcanvas@workspace:packages/recast-navigation-playcanvas":
   version: 0.0.0-use.local
@@ -4330,9 +4302,70 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@recast-navigation/three@workspace:packages/recast-navigation-three":
+"@recast-navigation/wasm@npm:0.38.0":
+  version: 0.38.0
+  resolution: "@recast-navigation/wasm@npm:0.38.0"
+  checksum: 10/a29e71750b20bb5d0dfb5bc5fbd863ec2708f1b20928be9f34231e090494f257f8d99af3b86c74c42f33bf0b9b64ddcf05195363a54d860c9d02633ed3dec039
+  languageName: node
+  linkType: hard
+
+"@remix-run/router@npm:1.20.0":
+  version: 1.20.0
+  resolution: "@remix-run/router@npm:1.20.0"
+  checksum: 10/e1d2420db94a1855b97f1784898d0ae389cf3b77129b8f419e51d4833b77ca2c92ac09e2cb558015324d64580a138fd6faa31e52fcc3ba90e3cc382a1a324d4a
+  languageName: node
+  linkType: hard
+
+"@rob-myers/recast-navigation__core@workspace:packages/recast-navigation-core":
   version: 0.0.0-use.local
-  resolution: "@recast-navigation/three@workspace:packages/recast-navigation-three"
+  resolution: "@rob-myers/recast-navigation__core@workspace:packages/recast-navigation-core"
+  dependencies:
+    "@babel/core": "npm:^7.24.5"
+    "@babel/preset-env": "npm:^7.24.5"
+    "@babel/preset-typescript": "npm:^7.24.1"
+    "@isaac-mason/eslint-config-typescript": "npm:^0.0.9"
+    "@recast-navigation/wasm": "npm:0.38.0"
+    "@rollup/plugin-babel": "npm:^6.0.4"
+    "@rollup/plugin-commonjs": "npm:^25.0.7"
+    "@rollup/plugin-node-resolve": "npm:^15.0.1"
+    "@rollup/plugin-typescript": "npm:^11.1.6"
+    "@types/three": "npm:^0.169.0"
+    babel-loader: "npm:^9.1.3"
+    eslint: "npm:^9.6.0"
+    prettier: "npm:^3.1.0"
+    rollup: "npm:^4.14.0"
+    rollup-plugin-copy: "npm:^3.4.0"
+    rollup-plugin-filesize: "npm:^10.0.0"
+    typescript: "npm:^5.4.3"
+  languageName: unknown
+  linkType: soft
+
+"@rob-myers/recast-navigation__generators@workspace:packages/recast-navigation-generators":
+  version: 0.0.0-use.local
+  resolution: "@rob-myers/recast-navigation__generators@workspace:packages/recast-navigation-generators"
+  dependencies:
+    "@babel/core": "npm:^7.24.5"
+    "@babel/preset-env": "npm:^7.24.5"
+    "@babel/preset-typescript": "npm:^7.24.1"
+    "@isaac-mason/eslint-config-typescript": "npm:^0.0.9"
+    "@recast-navigation/core": "npm:0.38.0"
+    "@recast-navigation/wasm": "npm:0.38.0"
+    "@rollup/plugin-babel": "npm:^6.0.4"
+    "@rollup/plugin-commonjs": "npm:^25.0.7"
+    "@rollup/plugin-node-resolve": "npm:^15.0.1"
+    "@rollup/plugin-typescript": "npm:^11.1.6"
+    eslint: "npm:^9.6.0"
+    prettier: "npm:^3.1.0"
+    rollup: "npm:^4.14.0"
+    rollup-plugin-copy: "npm:^3.4.0"
+    rollup-plugin-filesize: "npm:^10.0.0"
+    typescript: "npm:^5.4.3"
+  languageName: unknown
+  linkType: soft
+
+"@rob-myers/recast-navigation__three@workspace:packages/recast-navigation-three":
+  version: 0.0.0-use.local
+  resolution: "@rob-myers/recast-navigation__three@workspace:packages/recast-navigation-three"
   dependencies:
     "@babel/core": "npm:^7.24.5"
     "@babel/preset-env": "npm:^7.24.5"
@@ -4358,20 +4391,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@recast-navigation/wasm@npm:0.38.0, @recast-navigation/wasm@workspace:packages/recast-navigation-wasm":
+"@rob-myers/recast-navigation__wasm@workspace:packages/recast-navigation-wasm":
   version: 0.0.0-use.local
-  resolution: "@recast-navigation/wasm@workspace:packages/recast-navigation-wasm"
+  resolution: "@rob-myers/recast-navigation__wasm@workspace:packages/recast-navigation-wasm"
   dependencies:
     webidl-dts-gen: "npm:^1.11.0"
   languageName: unknown
   linkType: soft
-
-"@remix-run/router@npm:1.20.0":
-  version: 1.20.0
-  resolution: "@remix-run/router@npm:1.20.0"
-  checksum: 10/e1d2420db94a1855b97f1784898d0ae389cf3b77129b8f419e51d4833b77ca2c92ac09e2cb558015324d64580a138fd6faa31e52fcc3ba90e3cc382a1a324d4a
-  languageName: node
-  linkType: hard
 
 "@rollup/plugin-babel@npm:^6.0.4":
   version: 6.0.4

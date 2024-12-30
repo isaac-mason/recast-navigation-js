@@ -703,6 +703,7 @@ interface dtCrowdAgentAnimation {
     attribute float[] endPos;
     attribute unsigned long polyRef;
     attribute float t;
+    attribute float tmid;
     attribute float tmax;
 
 };
