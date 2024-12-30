@@ -1,5 +1,5 @@
 {
-  "name": "@recast-navigation/three",
+  "name": "@rob-myers/recast-navigation__three",
   "description": "Utilities for using recast-navigation with Three.js",
   "author": {
     "name": "Isaac Mason",
