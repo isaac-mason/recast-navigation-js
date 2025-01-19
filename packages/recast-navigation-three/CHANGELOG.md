@@ -1,5 +1,11 @@
 # @recast-navigation/three
 
+## 0.38.3
+
+### Patch Changes
+
+- Sync with feat/expose-off-mesh-anim i.e. compute neighbours in offMeshConnections too
+
 ## 0.38.0
 
 ### Patch Changes
