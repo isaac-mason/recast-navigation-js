@@ -1,5 +1,11 @@
 # @recast-navigation/three
 
+## 0.38.4
+
+### Patch Changes
+
+- Try fix previous version e.g. dependencies of 'three' package should have same version
+
 ## 0.38.3
 
 ### Patch Changes
