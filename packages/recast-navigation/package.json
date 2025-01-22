@@ -102,5 +102,9 @@
     "vitest": "^2.1.2",
     "zustand": "^4.5.2"
   },
-  "packageManager": "yarn@3.2.2"
+  "packageManager": "yarn@3.2.2",
+  "overrides": {
+    "@recast-navigation/core": "npm:@rob-myers/recast-navigation__core@latest",
+    "@recast-navigation/generators": "npm:@rob-myers/recast-navigation__generators@latest"
+  }
 }

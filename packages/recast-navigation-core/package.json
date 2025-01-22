@@ -27,7 +27,7 @@
     "lint": "eslint src"
   },
   "dependencies": {
-    "@recast-navigation/wasm": "0.38.4"
+    "@recast-navigation/wasm": "0.38.0"
   },
   "devDependencies": {
     "@babel/core": "^7.24.5",
@@ -47,5 +47,8 @@
     "rollup-plugin-filesize": "^10.0.0",
     "typescript": "^5.4.3"
   },
-  "packageManager": "yarn@3.2.1"
+  "packageManager": "yarn@3.2.1",
+  "overrides": {
+    "@recast-navigation/wasm": "npm:@rob-myers/recast-navigation__wasm@latest"
+  }
 }

@@ -45,5 +45,9 @@
   "packageManager": "yarn@3.2.1",
   "peerDependencies": {
     "playcanvas": "^2.0.0"
+  },
+  "overrides": {
+    "@recast-navigation/core": "npm:@rob-myers/recast-navigation__core@latest",
+    "@recast-navigation/generators": "npm:@rob-myers/recast-navigation__generators@latest"
   }
 }
