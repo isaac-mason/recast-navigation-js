@@ -1,5 +1,11 @@
 # @recast-navigation/wasm
 
+## 0.38.5
+
+### Patch Changes
+
+- Ignore collisions from neighbours traverse initial segment of offMeshConnection. We want to avoid jerk nearby npcs stuck inside corners.
+
 ## 0.38.4
 
 ### Patch Changes

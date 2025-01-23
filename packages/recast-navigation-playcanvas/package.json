@@ -22,8 +22,8 @@
     "lint": "eslint src"
   },
   "dependencies": {
-    "@recast-navigation/core": "0.38.0",
-    "@recast-navigation/generators": "0.38.0"
+    "@recast-navigation/core": "npm:@rob-myers/recast-navigation__core@0.38.6",
+    "@recast-navigation/generators": "npm:@rob-myers/recast-navigation__generators@0.38.6"
   },
   "devDependencies": {
     "@babel/core": "^7.24.5",
@@ -45,9 +45,5 @@
   "packageManager": "yarn@3.2.1",
   "peerDependencies": {
     "playcanvas": "^2.0.0"
-  },
-  "overrides": {
-    "@recast-navigation/core": "npm:@rob-myers/recast-navigation__core@latest",
-    "@recast-navigation/generators": "npm:@rob-myers/recast-navigation__generators@latest"
   }
 }
