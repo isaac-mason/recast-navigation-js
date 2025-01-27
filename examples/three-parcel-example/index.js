@@ -2,6 +2,7 @@ import { NavMeshHelper, threeToSoloNavMesh } from '@recast-navigation/three';
 import { init as initRecast } from 'recast-navigation';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+
 import './styles.css';
 
 const init = async () => {

@@ -9,7 +9,7 @@
   "dependencies": {
     "react": "18.3.1",
     "recast-navigation": "workspace:^",
-    "three": "^0.169.0"
+    "three": "^0.172.0"
   },
   "devDependencies": {
     "parcel": "^2.11.0"

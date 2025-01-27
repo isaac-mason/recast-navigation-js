@@ -9,10 +9,10 @@
   },
   "dependencies": {
     "recast-navigation": "0.38.0",
-    "three": "^0.169.0"
+    "three": "^0.172.0"
   },
   "devDependencies": {
-    "@types/three": "^0.169.0",
+    "@types/three": "^0.172.0",
     "typescript": "^5.4.3",
     "vite": "^5.4.8"
   }
