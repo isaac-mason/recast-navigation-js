@@ -1,5 +1,18 @@
 # @recast-navigation/three
 
+## 0.39.0
+
+### Minor Changes
+
+- da46c6c: feat: remove OffMeshConnectionsHelper in favour of DebugDrawer off mesh connection debug drawing
+
+### Patch Changes
+
+- Updated dependencies [fe172f7]
+- Updated dependencies [fe172f7]
+  - @recast-navigation/core@0.39.0
+  - @recast-navigation/generators@0.39.0
+
 ## 0.38.0
 
 ### Patch Changes

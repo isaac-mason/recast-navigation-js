@@ -1,5 +1,19 @@
 # recast-navigation
 
+## 0.39.0
+
+### Minor Changes
+
+- fe172f7: feat: add floodFillPruneNavMesh utility
+- fe172f7: feat: remove navMesh.getDebugNavMesh, add getNavMeshPositionsAndIndices utility
+
+### Patch Changes
+
+- Updated dependencies [fe172f7]
+- Updated dependencies [fe172f7]
+  - @recast-navigation/core@0.39.0
+  - @recast-navigation/generators@0.39.0
+
 ## 0.38.0
 
 ### Minor Changes
