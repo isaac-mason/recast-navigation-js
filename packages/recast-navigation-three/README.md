@@ -126,18 +126,6 @@ scene.add(navMeshHelper);
 navMeshHelper.update();
 ```
 
-#### `OffMeshConnectionsHelper`
-
-```ts
-import { OffMeshConnectionsHelper } from '@recast-navigation/three';
-
-const offMeshConnectionsHelper = new OffMeshConnectionsHelper(
-  offMeshConnections
-);
-
-scene.add(offMeshConnectionsHelper);
-```
-
 #### `TileCacheHelper`
 
 Visualises obstacles in a `TileCache`.
@@ -177,22 +165,6 @@ You can optionally provide custom materials to the helpers.
 const navMeshMaterial = new THREE.MeshBasicMaterial({ color: 'red' });
 const navMeshHelper = new NavMeshHelper(navMesh, {
   navMeshMaterial,
-});
-
-// OffMeshConnectionsHelper
-const offMeshConnectionEntryCircleMaterial = new THREE.MeshBasicMaterial({
-  color: 'green',
-});
-const offMeshConnectionExitCircleMaterial = new THREE.MeshBasicMaterial({
-  color: 'yellow',
-});
-const offMeshConnectionLineMaterial = new THREE.LineBasicMaterial({
-  color: 'white',
-});
-const offMeshConnectionsHelper = new OffMeshConnectionsHelper(offMeshConnections, {
-  entryCircleMaterial: offMeshConnectionEntryCircleMaterial,
-  exitCircleMaterial: offMeshConnectionExitCircleMaterial,
-  lineMaterial: offMeshConnectionLineMaterial,
 });
 
 // TileCacheHelper

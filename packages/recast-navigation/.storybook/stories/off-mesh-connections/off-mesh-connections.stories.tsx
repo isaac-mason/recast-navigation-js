@@ -2,6 +2,7 @@ import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { ThreeEvent, useFrame } from '@react-three/fiber';
 import {
   Crowd,
+  NavMesh,
   NavMeshQuery,
   OffMeshConnectionParams,
 } from '@recast-navigation/core';
@@ -76,6 +77,7 @@ const offMeshConnections: OffMeshConnectionParams[] = [
 export const SoloNavMeshOffMeshConnections = () => {
   const [group, setGroup] = useState<Group | null>(null);
 
+  const [navMesh, setNavMesh] = useState<NavMesh>();
   const [navMeshQuery, setNavMeshQuery] = useState<NavMeshQuery>();
   const [crowd, setCrowd] = useState<Crowd>();
 
@@ -117,10 +119,12 @@ export const SoloNavMeshOffMeshConnections = () => {
       maxSpeed: 2,
     });
 
+    setNavMesh(navMesh);
     setNavMeshQuery(navMeshQuery);
     setCrowd(crowd);
 
     return () => {
+      setNavMesh(undefined);
       setNavMeshQuery(undefined);
       setCrowd(undefined);
 
@@ -154,11 +158,7 @@ export const SoloNavMeshOffMeshConnections = () => {
         <NavTestEnvironment />
       </group>
 
-      <Debug
-        crowd={crowd}
-        agentMaterial={agentMaterial}
-        offMeshConnections={offMeshConnections}
-      />
+      <Debug navMesh={navMesh} crowd={crowd} agentMaterial={agentMaterial} />
 
       <PerspectiveCamera makeDefault position={[7, 10, 7]} fov={50} />
       <OrbitControls target={[3, 3, 3]} />
