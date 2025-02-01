@@ -54,9 +54,15 @@ export const Debug = ({
   useEffect(() => {
     if (!navMesh) return;
 
-    const interval = setInterval(() => {
+    const update = () => {
       debugDrawer.clear();
       debugDrawer.drawNavMeshPolysWithFlags(navMesh, 1, 0x0000ff);
+    };
+
+    update();
+
+    const interval = setInterval(() => {
+      update();
     }, 1000);
 
     return () => {
