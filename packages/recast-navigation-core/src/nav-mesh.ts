@@ -5,7 +5,7 @@ import {
   DetourPoly,
   statusSucceed,
 } from './detour';
-import { Raw, type RawModule } from './raw';
+import { Detour, Raw, type RawModule } from './raw';
 import { Vector3, array, vec3 } from './utils';
 
 export class NavMeshGetTilesAtResult {
@@ -515,84 +515,6 @@ export class NavMesh {
   }
 
   /**
-   * Returns a triangle mesh that can be used to visualize the NavMesh.
-   */
-  getDebugNavMesh(): [positions: number[], indices: number[]] {
-    const positions: number[] = [];
-    const indices: number[] = [];
-    let tri = 0;
-
-    const maxTiles = this.getMaxTiles();
-
-    for (let tileIndex = 0; tileIndex < maxTiles; tileIndex++) {
-      const tile = this.getTile(tileIndex);
-      const tileHeader = tile.header();
-
-      if (!tileHeader) continue;
-
-      const tilePolyCount = tileHeader.polyCount();
-
-      for (
-        let tilePolyIndex = 0;
-        tilePolyIndex < tilePolyCount;
-        ++tilePolyIndex
-      ) {
-        const poly = tile.polys(tilePolyIndex);
-
-        if (poly.getType() === 1) continue;
-
-        const polyVertCount = poly.vertCount();
-        const polyDetail = tile.detailMeshes(tilePolyIndex);
-        const polyDetailTriBase = polyDetail.triBase();
-        const polyDetailTriCount = polyDetail.triCount();
-
-        for (
-          let polyDetailTriIndex = 0;
-          polyDetailTriIndex < polyDetailTriCount;
-          ++polyDetailTriIndex
-        ) {
-          const detailTrisBaseIndex =
-            (polyDetailTriBase + polyDetailTriIndex) * 4;
-
-          for (let trianglePoint = 0; trianglePoint < 3; ++trianglePoint) {
-            if (
-              tile.detailTris(detailTrisBaseIndex + trianglePoint) <
-              polyVertCount
-            ) {
-              const tileVertsBaseIndex =
-                poly.verts(
-                  tile.detailTris(detailTrisBaseIndex + trianglePoint)
-                ) * 3;
-
-              positions.push(
-                tile.verts(tileVertsBaseIndex),
-                tile.verts(tileVertsBaseIndex + 1),
-                tile.verts(tileVertsBaseIndex + 2)
-              );
-            } else {
-              const tileVertsBaseIndex =
-                (polyDetail.vertBase() +
-                  tile.detailTris(detailTrisBaseIndex + trianglePoint) -
-                  poly.vertCount()) *
-                3;
-
-              positions.push(
-                tile.detailVerts(tileVertsBaseIndex),
-                tile.detailVerts(tileVertsBaseIndex + 1),
-                tile.detailVerts(tileVertsBaseIndex + 2)
-              );
-            }
-
-            indices.push(tri++);
-          }
-        }
-      }
-    }
-
-    return [positions, indices];
-  }
-
-  /**
    * Destroys the NavMesh.
    */
   destroy(): void {
@@ -600,3 +522,165 @@ export class NavMesh {
     Raw.Module.destroy(this.raw);
   }
 }
+
+/**
+ * Gets the positions and indices of the nav mesh.
+ * @param navMesh the nav mesh
+ * @param flags poly flags to filter by, defaults to undefined to include all polys
+ * @returns the positions and indices of the nav mesh
+ */
+export const getNavMeshPositionsAndIndices = (
+  navMesh: NavMesh,
+  flags?: number
+): [positions: number[], indices: number[]] => {
+  const positions: number[] = [];
+  const indices: number[] = [];
+  let tri = 0;
+
+  const maxTiles = navMesh.getMaxTiles();
+
+  for (let tileIndex = 0; tileIndex < maxTiles; tileIndex++) {
+    const tile = navMesh.getTile(tileIndex);
+    const tileHeader = tile.header();
+
+    if (!tileHeader) continue;
+
+    const tilePolyCount = tileHeader.polyCount();
+
+    for (
+      let tilePolyIndex = 0;
+      tilePolyIndex < tilePolyCount;
+      ++tilePolyIndex
+    ) {
+      const poly = tile.polys(tilePolyIndex);
+
+      if (flags !== undefined && (poly.flags() & flags) === 0) continue;
+
+      if (poly.getType() === 1) continue;
+
+      const polyVertCount = poly.vertCount();
+      const polyDetail = tile.detailMeshes(tilePolyIndex);
+      const polyDetailTriBase = polyDetail.triBase();
+      const polyDetailTriCount = polyDetail.triCount();
+
+      for (
+        let polyDetailTriIndex = 0;
+        polyDetailTriIndex < polyDetailTriCount;
+        ++polyDetailTriIndex
+      ) {
+        const detailTrisBaseIndex =
+          (polyDetailTriBase + polyDetailTriIndex) * 4;
+
+        for (let trianglePoint = 0; trianglePoint < 3; ++trianglePoint) {
+          if (
+            tile.detailTris(detailTrisBaseIndex + trianglePoint) < polyVertCount
+          ) {
+            const tileVertsBaseIndex =
+              poly.verts(tile.detailTris(detailTrisBaseIndex + trianglePoint)) *
+              3;
+
+            positions.push(
+              tile.verts(tileVertsBaseIndex),
+              tile.verts(tileVertsBaseIndex + 1),
+              tile.verts(tileVertsBaseIndex + 2)
+            );
+          } else {
+            const tileVertsBaseIndex =
+              (polyDetail.vertBase() +
+                tile.detailTris(detailTrisBaseIndex + trianglePoint) -
+                poly.vertCount()) *
+              3;
+
+            positions.push(
+              tile.detailVerts(tileVertsBaseIndex),
+              tile.detailVerts(tileVertsBaseIndex + 1),
+              tile.detailVerts(tileVertsBaseIndex + 2)
+            );
+          }
+
+          indices.push(tri++);
+        }
+      }
+    }
+  }
+
+  return [positions, indices];
+};
+
+/**
+ * Disables all polys not connected to provided start poly refs.
+ * @param navMesh the nav mesh to prune
+ * @param startPolyRefs poly refs to start the flood fill from, can be retrieved with `navMeshQuery.findNearestPoly`
+ *
+ * @example
+ * ```ts
+ * const navMeshQuery = new NavMeshQuery(navMesh);
+ *
+ * const nearestPolyResult = navMeshQuery.findNearestPoly(point, {
+ *   halfExtents: { x: 2, y: 2, z: 2 },
+ * });
+ *
+ * if (!nearestPolyResult.success) return;
+ *
+ * floodFillPruneNavMesh(navMesh, [nearestPolyResult.nearestRef]);
+ * ```
+ */
+export const floodFillPruneNavMesh = (
+  navMesh: NavMesh,
+  startPolyRefs: number[]
+) => {
+  /* find all polys connected to the nearest poly */
+  const visited = new Set<number>();
+  const openList: number[] = [];
+
+  for (const startPolyRef of startPolyRefs) {
+    visited.add(startPolyRef);
+    openList.push(startPolyRef);
+  }
+
+  while (openList.length > 0) {
+    const ref = openList.pop()!;
+
+    // get current poly and tile
+    const { poly, tile } = navMesh.getTileAndPolyByRefUnsafe(ref);
+
+    // visit linked polys
+    for (
+      let i = poly.firstLink();
+      i !== Detour.DT_NULL_LINK;
+      i = tile.links(i).next()
+    ) {
+      const neiRef = tile.links(i).ref();
+
+      // skip invalid and already visited
+      if (!neiRef || visited.has(neiRef)) continue;
+
+      // mark as visited
+      visited.add(neiRef);
+
+      // visit neighbours
+      openList.push(neiRef);
+    }
+  }
+
+  /* disable unvisited polys */
+  for (let tileIndex = 0; tileIndex < navMesh.getMaxTiles(); tileIndex++) {
+    const tile = navMesh.getTile(tileIndex);
+
+    if (!tile || !tile.header()) continue;
+
+    const tileHeader = tile.header()!;
+
+    const base = navMesh.getPolyRefBase(tile);
+
+    for (let i = 0; i < tileHeader.polyCount(); i++) {
+      const ref = base | i;
+
+      if (!visited.has(ref)) {
+        // set flag to 0
+        // this could also be a custom 'disabled' area flag if using custom areas
+        navMesh.setPolyFlags(ref, 0);
+      }
+    }
+  }
+};

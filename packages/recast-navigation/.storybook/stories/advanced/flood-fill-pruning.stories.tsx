@@ -1,6 +1,6 @@
 import { OrbitControls } from '@react-three/drei';
 import { ThreeEvent } from '@react-three/fiber';
-import { Detour, NavMeshQuery } from '@recast-navigation/core';
+import { floodFillPruneNavMesh, NavMeshQuery } from '@recast-navigation/core';
 import { DebugDrawer, threeToSoloNavMesh } from '@recast-navigation/three';
 import React, { useEffect, useState } from 'react';
 import * as THREE from 'three';
@@ -54,60 +54,7 @@ export const FloodFillPruning = () => {
 
     if (!nearestPolyResult.success) return;
 
-    /* find all polys connected to the nearest poly */
-    const visited = new Set<number>();
-    visited.add(nearestPolyResult.nearestRef);
-
-    const openList: number[] = [];
-
-    openList.push(nearestPolyResult.nearestRef);
-
-    while (openList.length > 0) {
-      const ref = openList.pop()!;
-
-      // get current poly and tile
-      const { poly, tile } = navMesh.getTileAndPolyByRefUnsafe(ref);
-
-      // visit linked polys
-      for (
-        let i = poly.firstLink();
-        // https://github.com/emscripten-core/emscripten/issues/22134
-        i !== Detour.DT_NULL_LINK;
-        i = tile.links(i).next()
-      ) {
-        const neiRef = tile.links(i).ref();
-
-        // skip invalid and already visited
-        if (!neiRef || visited.has(neiRef)) continue;
-
-        // mark as visited
-        visited.add(neiRef);
-
-        // visit neighbours
-        openList.push(neiRef);
-      }
-    }
-
-    /* disable unvisited polys */
-    for (let tileIndex = 0; tileIndex < navMesh.getMaxTiles(); tileIndex++) {
-      const tile = navMesh.getTile(tileIndex);
-
-      if (!tile || !tile.header()) continue;
-
-      const tileHeader = tile.header()!;
-
-      const base = navMesh.getPolyRefBase(tile);
-
-      for (let i = 0; i < tileHeader.polyCount(); i++) {
-        const ref = base | i;
-
-        if (!visited.has(ref)) {
-          // set flag to 0
-          // this could also be a custom 'disabled' area flag if using custom areas
-          navMesh.setPolyFlags(ref, 0);
-        }
-      }
-    }
+    floodFillPruneNavMesh(navMesh, [nearestPolyResult.nearestRef]);
 
     /* debug draw */
     const debug = new DebugDrawer();

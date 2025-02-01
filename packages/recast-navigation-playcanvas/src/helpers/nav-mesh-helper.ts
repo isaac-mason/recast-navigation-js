@@ -1,4 +1,4 @@
-import { NavMesh } from '@recast-navigation/core';
+import { NavMesh, getNavMeshPositionsAndIndices } from '@recast-navigation/core';
 import {
   BLEND_NORMAL,
   Entity,
@@ -71,7 +71,7 @@ export class NavMeshHelper extends Entity {
    * @private
    */
   updateMesh(graphicsDevice: GraphicsDevice) {
-    const [positions, indices] = this.navMesh.getDebugNavMesh();
+    const [positions, indices] = getNavMeshPositionsAndIndices(this.navMesh);
     const normals = calculateNormals(positions, indices);
 
     // Create the mesh
