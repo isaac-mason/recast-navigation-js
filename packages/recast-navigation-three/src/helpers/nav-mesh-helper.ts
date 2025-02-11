@@ -1,4 +1,4 @@
-import { NavMesh } from '@recast-navigation/core';
+import { getNavMeshPositionsAndIndices, NavMesh } from '@recast-navigation/core';
 import {
   BufferAttribute,
   BufferGeometry,
@@ -50,7 +50,7 @@ export class NavMeshHelper extends Object3D {
    * This should be called after updating the nav mesh.
    */
   update() {
-    const [positions, indices] = this.navMesh.getDebugNavMesh();
+    const [positions, indices] = getNavMeshPositionsAndIndices(this.navMesh);
 
     this.navMeshGeometry.setAttribute(
       'position',

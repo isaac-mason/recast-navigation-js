@@ -92,18 +92,6 @@ this.entity.add(navMeshHelper);
 navMeshHelper.update();
 ```
 
-#### `OffMeshConnectionsHelper`
-
-```ts
-import { OffMeshConnectionsHelper } from '@recast-navigation/playcanvas';
-
-const offMeshConnectionsHelper = new OffMeshConnectionsHelper(
-  offMeshConnections
-);
-
-this.entity.add(offMeshConnectionsHelper);
-```
-
 #### `TileCacheHelper`
 
 Visualises obstacles in a `TileCache`.

@@ -1,22 +1,17 @@
 # @recast-navigation/three
 
-## 0.38.5
+## 0.39.0
+
+### Minor Changes
+
+- da46c6c: feat: remove OffMeshConnectionsHelper in favour of DebugDrawer off mesh connection debug drawing
 
 ### Patch Changes
 
-- Ignore collisions from neighbours traverse initial segment of offMeshConnection. We want to avoid jerk nearby npcs stuck inside corners.
-
-## 0.38.4
-
-### Patch Changes
-
-- Try fix previous version e.g. dependencies of 'three' package should have same version
-
-## 0.38.3
-
-### Patch Changes
-
-- Sync with feat/expose-off-mesh-anim i.e. compute neighbours in offMeshConnections too
+- Updated dependencies [fe172f7]
+- Updated dependencies [fe172f7]
+  - @recast-navigation/core@0.39.0
+  - @recast-navigation/generators@0.39.0
 
 ## 0.38.0
 

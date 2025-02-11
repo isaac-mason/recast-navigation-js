@@ -43,13 +43,13 @@
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@rollup/plugin-typescript": "^11.1.6",
-    "@types/three": "^0.169.0",
+    "@types/three": "^0.172.0",
     "eslint": "^9.6.0",
     "prettier": "^3.1.0",
     "rollup": "^4.14.0",
     "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-filesize": "^10.0.0",
-    "three": "^0.169.0",
+    "three": "^0.172.0",
     "typescript": "^5.4.3"
   },
   "packageManager": "yarn@3.2.1"

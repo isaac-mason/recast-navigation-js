@@ -1,22 +1,15 @@
 # @recast-navigation/core
 
-## 0.38.5
+## 0.39.0
+
+### Minor Changes
+
+- fe172f7: feat: add floodFillPruneNavMesh utility
+- fe172f7: feat: remove navMesh.getDebugNavMesh, add getNavMeshPositionsAndIndices utility
 
 ### Patch Changes
 
-- Ignore collisions from neighbours traverse initial segment of offMeshConnection. We want to avoid jerk nearby npcs stuck inside corners.
-
-## 0.38.4
-
-### Patch Changes
-
-- Try fix previous version e.g. dependencies of 'three' package should have same version
-
-## 0.38.3
-
-### Patch Changes
-
-- Sync with feat/expose-off-mesh-anim i.e. compute neighbours in offMeshConnections too
+- @recast-navigation/wasm@0.39.0
 
 ## 0.38.0
 

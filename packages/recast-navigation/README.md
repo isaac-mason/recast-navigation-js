@@ -496,12 +496,10 @@ const { success, navMesh, tileCache } = generateTileCache(
 
 #### Debug Nav Mesh
 
-You can use `getDebugNavMesh` to get a debug representation of the NavMesh.
+You can use `getNavMeshPositionsAndIndices` to get positions and indices that can be used to visualise the NavMesh.
 
 ```ts
-const debugNavMesh = navMesh.getDebugNavMesh();
-
-const { positions, indices } = debugNavMesh;
+const [positions, indices] = getNavMeshPositionsAndIndices(navMesh);
 ```
 
 If you are using three.js or playcanvas, you can use built-in helpers from the integration libraries [`@recast-navigation/three`](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-three/README.md) / [`@recast-navigation/playcanvas`](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-playcanvas/README.md).

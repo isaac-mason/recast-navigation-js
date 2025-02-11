@@ -9,10 +9,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "recast-navigation": "0.38.0",
-    "three": "^0.167.1"
+    "recast-navigation": "0.39.0",
+    "three": "^0.172.0"
   },
   "devDependencies": {
-    "@types/three": "^0.167.1"
+    "@types/three": "^0.172.0"
   }
 }

@@ -4270,7 +4270,6 @@ __metadata:
     "@rollup/plugin-commonjs": "npm:^25.0.7"
     "@rollup/plugin-node-resolve": "npm:^15.0.1"
     "@rollup/plugin-typescript": "npm:^11.1.6"
-    "@types/three": "npm:^0.169.0"
     babel-loader: "npm:^9.1.3"
     eslint: "npm:^9.6.0"
     prettier: "npm:^3.1.0"
@@ -4359,13 +4358,13 @@ __metadata:
     "@rollup/plugin-commonjs": "npm:^25.0.7"
     "@rollup/plugin-node-resolve": "npm:^15.0.1"
     "@rollup/plugin-typescript": "npm:^11.1.6"
-    "@types/three": "npm:^0.169.0"
+    "@types/three": "npm:^0.172.0"
     eslint: "npm:^9.6.0"
     prettier: "npm:^3.1.0"
     rollup: "npm:^4.14.0"
     rollup-plugin-copy: "npm:^3.4.0"
     rollup-plugin-filesize: "npm:^10.0.0"
-    three: "npm:^0.169.0"
+    three: "npm:^0.172.0"
     typescript: "npm:^5.4.3"
   peerDependencies:
     "@types/three": 0.x.x
@@ -5340,7 +5339,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tweenjs/tween.js@npm:~23.1.1, @tweenjs/tween.js@npm:~23.1.2, @tweenjs/tween.js@npm:~23.1.3":
+"@tweenjs/tween.js@npm:~23.1.1, @tweenjs/tween.js@npm:~23.1.3":
   version: 23.1.3
   resolution: "@tweenjs/tween.js@npm:23.1.3"
   checksum: 10/10ecaf311c975162459bd016ef7eb1f3118a257050c4886de9737dee823fc829100a0887f3fc298f7a5577140eac054f9609b823eb0748ca7b653ec85ffba75e
@@ -5772,22 +5771,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:^0.167.1":
-  version: 0.167.2
-  resolution: "@types/three@npm:0.167.2"
-  dependencies:
-    "@tweenjs/tween.js": "npm:~23.1.2"
-    "@types/stats.js": "npm:*"
-    "@types/webxr": "npm:*"
-    fflate: "npm:~0.8.2"
-    meshoptimizer: "npm:~0.18.1"
-  checksum: 10/0e316af5ca2b988bbe03d8d8489569a61ce81e1a93426b193cfb9252175b77b70a547005c3b4bedb8007bd84d56b6b5e64d36c95513622130f126e144e7af3d9
-  languageName: node
-  linkType: hard
-
-"@types/three@npm:^0.169.0":
-  version: 0.169.0
-  resolution: "@types/three@npm:0.169.0"
+"@types/three@npm:^0.172.0":
+  version: 0.172.0
+  resolution: "@types/three@npm:0.172.0"
   dependencies:
     "@tweenjs/tween.js": "npm:~23.1.3"
     "@types/stats.js": "npm:*"
@@ -5795,7 +5781,7 @@ __metadata:
     "@webgpu/types": "npm:*"
     fflate: "npm:~0.8.2"
     meshoptimizer: "npm:~0.18.1"
-  checksum: 10/cb863c8b247eedbdc04301b4e8f17ccd33f1fbd517e8dcc8cfff4f60300cb3be40ef5ffa130c1d0263c4da38a257a1f35fc1d9390d5529fd72b91c2d1ec08a7e
+  checksum: 10/0f7a7154ba4a4cbc5046b1e458cbd03f0601bf333e952e5b3ca6dfe283130558f2448626fb39163edba82b6289297f9a0f3d243ff36f70f869498bad43d0e982
   languageName: node
   linkType: hard
 
@@ -12397,7 +12383,7 @@ __metadata:
     "@react-three/fiber": "npm:^8.17.10"
     "@types/react": "npm:^18.3.11"
     "@types/react-dom": "npm:^18.3.1"
-    "@types/three": "npm:^0.169.0"
+    "@types/three": "npm:^0.172.0"
     "@vitejs/plugin-react": "npm:^4.3.2"
     leva: "npm:^0.9.35"
     react: "npm:^18.3.1"
@@ -12407,7 +12393,7 @@ __metadata:
     recast-navigation: "workspace:*"
     styled-components: "npm:^6.1.13"
     suspend-react: "npm:^0.1.3"
-    three: "npm:^0.169.0"
+    three: "npm:^0.172.0"
     tunnel-rat: "npm:^0.1.2"
     typescript: "npm:^5.6.3"
     vite: "npm:^5.4.9"
@@ -13874,7 +13860,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"recast-navigation@npm:0.38.0, recast-navigation@workspace:*, recast-navigation@workspace:^, recast-navigation@workspace:packages/recast-navigation":
+"recast-navigation@npm:0.39.0, recast-navigation@workspace:*, recast-navigation@workspace:^, recast-navigation@workspace:packages/recast-navigation":
   version: 0.0.0-use.local
   resolution: "recast-navigation@workspace:packages/recast-navigation"
   dependencies:
@@ -13901,7 +13887,7 @@ __metadata:
     "@storybook/react-vite": "npm:^8.0.9"
     "@types/react": "npm:^18.3.1"
     "@types/react-dom": "npm:^18.2.8"
-    "@types/three": "npm:^0.169.0"
+    "@types/three": "npm:^0.172.0"
     "@vitejs/plugin-react": "npm:^4.2.1"
     eslint: "npm:^9.6.0"
     leva: "npm:^0.9.35"
@@ -13912,7 +13898,7 @@ __metadata:
     rollup-plugin-filesize: "npm:^10.0.0"
     storybook: "npm:^8.0.9"
     suspend-react: "npm:^0.1.3"
-    three: "npm:^0.169.0"
+    three: "npm:^0.172.0"
     three-pathfinding: "npm:^1.2.0"
     typescript: "npm:^5.4.3"
     vite: "npm:^5.4.8"
@@ -15127,9 +15113,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "three-node-cjs-example@workspace:examples/three-node-cjs-example"
   dependencies:
-    "@types/three": "npm:^0.167.1"
-    recast-navigation: "npm:0.38.0"
-    three: "npm:^0.167.1"
+    "@types/three": "npm:^0.172.0"
+    recast-navigation: "npm:0.39.0"
+    three: "npm:^0.172.0"
   languageName: unknown
   linkType: soft
 
@@ -15137,9 +15123,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "three-node-esm-example@workspace:examples/three-node-esm-example"
   dependencies:
-    "@types/three": "npm:^0.167.1"
-    recast-navigation: "npm:0.38.0"
-    three: "npm:^0.167.1"
+    "@types/three": "npm:^0.172.0"
+    recast-navigation: "npm:0.39.0"
+    three: "npm:^0.172.0"
   languageName: unknown
   linkType: soft
 
@@ -15150,7 +15136,7 @@ __metadata:
     parcel: "npm:^2.11.0"
     react: "npm:18.3.1"
     recast-navigation: "workspace:^"
-    three: "npm:^0.169.0"
+    three: "npm:^0.172.0"
   languageName: unknown
   linkType: soft
 
@@ -15183,9 +15169,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "three-vite-example@workspace:examples/three-vite-example"
   dependencies:
-    "@types/three": "npm:^0.169.0"
-    recast-navigation: "npm:0.38.0"
-    three: "npm:^0.169.0"
+    "@types/three": "npm:^0.172.0"
+    recast-navigation: "npm:0.39.0"
+    three: "npm:^0.172.0"
     typescript: "npm:^5.4.3"
     vite: "npm:^5.4.8"
   languageName: unknown
@@ -15195,25 +15181,18 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "three-vite-worker-example@workspace:examples/three-vite-worker-example"
   dependencies:
-    "@types/three": "npm:^0.169.0"
-    recast-navigation: "npm:0.38.0"
-    three: "npm:^0.167.1"
+    "@types/three": "npm:^0.172.0"
+    recast-navigation: "npm:0.39.0"
+    three: "npm:^0.172.0"
     typescript: "npm:^5.4.3"
     vite: "npm:^5.4.8"
   languageName: unknown
   linkType: soft
 
-"three@npm:^0.167.1":
-  version: 0.167.1
-  resolution: "three@npm:0.167.1"
-  checksum: 10/48022352c7feaba61b217958919f93556030b832a90c47661c8c57874ce7120116ca157eec7993755d54881a6135c952435e842541bd6b0972cd66c3add203ad
-  languageName: node
-  linkType: hard
-
-"three@npm:^0.169.0":
-  version: 0.169.0
-  resolution: "three@npm:0.169.0"
-  checksum: 10/5d0a5a4c8aeff37877132c4cb633989dba0749891fd1bf6414c551b16ef46ddb3529954901cbcbe4b493698d93c915c1cff9145157adcaa69f122c1fc2d1538f
+"three@npm:^0.172.0":
+  version: 0.172.0
+  resolution: "three@npm:0.172.0"
+  checksum: 10/ad166a56290258331b358ab70e57fccc25eece7879cdf5638f209709b77b7277002e8653ce517c28566d6529908f08c9ba96d4fbb4a1a553a3ffcc0f57c21b1a
   languageName: node
   linkType: hard
 

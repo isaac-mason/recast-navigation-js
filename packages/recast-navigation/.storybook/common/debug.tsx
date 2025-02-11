@@ -1,47 +1,33 @@
 import { useFrame } from '@react-three/fiber';
-import {
-  Crowd,
-  NavMesh,
-  OffMeshConnectionParams,
-  TileCache,
-} from '@recast-navigation/core';
+import { Crowd, NavMesh, TileCache } from '@recast-navigation/core';
 import {
   CrowdHelper,
-  NavMeshHelper,
+  DebugDrawer,
   TileCacheHelper,
 } from '@recast-navigation/three';
-import { OffMeshConnectionsHelper } from '@recast-navigation/three/src/helpers/off-mesh-connections-helper';
 import React, { useEffect, useMemo } from 'react';
 import { Material } from 'three';
 
 export type DebugProps = {
   autoUpdate?: boolean;
   navMesh?: NavMesh;
-  navMeshMaterial?: Material;
   tileCache?: TileCache;
   obstacleMaterial?: Material;
   crowd?: Crowd;
   agentMaterial?: Material;
-  offMeshConnections?: OffMeshConnectionParams[];
 };
 
 export const Debug = ({
   autoUpdate,
   navMesh,
-  navMeshMaterial,
   tileCache,
   obstacleMaterial,
   crowd,
   agentMaterial,
-  offMeshConnections,
 }: DebugProps) => {
-  const navMeshHelper = useMemo(() => {
-    if (!navMesh) return null;
-
-    return new NavMeshHelper(navMesh, {
-      navMeshMaterial,
-    });
-  }, [navMesh, navMeshMaterial]);
+  const debugDrawer = useMemo(() => {
+    return new DebugDrawer();
+  }, []);
 
   const tileCacheHelper = useMemo(() => {
     if (!tileCache) return null;
@@ -59,12 +45,6 @@ export const Debug = ({
     });
   }, [crowd, agentMaterial]);
 
-  const offMeshConnectionsHelper = useMemo(() => {
-    if (!offMeshConnections) return null;
-
-    return new OffMeshConnectionsHelper(offMeshConnections);
-  }, [offMeshConnections]);
-
   useFrame(() => {
     if (crowdHelper) {
       crowdHelper.update();
@@ -72,16 +52,23 @@ export const Debug = ({
   });
 
   useEffect(() => {
-    if (!navMeshHelper || !autoUpdate) return;
+    if (!navMesh) return;
+
+    const update = () => {
+      debugDrawer.clear();
+      debugDrawer.drawNavMeshPolysWithFlags(navMesh, 1, 0x0000ff);
+    };
+
+    update();
 
     const interval = setInterval(() => {
-      navMeshHelper.update();
+      update();
     }, 1000);
 
     return () => {
       clearInterval(interval);
     };
-  }, [navMeshHelper]);
+  }, [navMesh]);
 
   useEffect(() => {
     if (!tileCacheHelper || !autoUpdate) return;
@@ -97,17 +84,13 @@ export const Debug = ({
 
   return (
     <>
-      {navMeshHelper && <primitive object={navMeshHelper} />}
+      {debugDrawer && <primitive object={debugDrawer} />}
 
       <group position={[0, 0.01, 0]}>
         {tileCacheHelper && <primitive object={tileCacheHelper} />}
       </group>
 
       {crowdHelper && <primitive object={crowdHelper} />}
-
-      {offMeshConnectionsHelper && (
-        <primitive object={offMeshConnectionsHelper} />
-      )}
     </>
   );
 };
