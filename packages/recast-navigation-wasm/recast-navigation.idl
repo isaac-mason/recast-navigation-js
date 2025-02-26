@@ -705,6 +705,7 @@ interface dtCrowdAgentAnimation {
     attribute float t;
     attribute float tmid;
     attribute float tmax;
+    attribute float[] unitExitVel;
 
 };
 
