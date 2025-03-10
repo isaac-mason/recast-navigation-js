@@ -171,7 +171,7 @@ See the docs for more information on generator options: https://docs.recast-navi
 
 It's possible to build a NavMesh in a Web Worker. This can be useful for offloading heavy computation from the main thread.
 
-The library doesn't include a web worker, but it's straightforward to create your own. An example of solo nav mesh generation in a web worker can be found here: https://github.com/isaac-mason/recast-navigation-js/tree/next/examples/three-vite-worker-example
+The library doesn't include a web worker, but it's straightforward to create your own. An example of solo nav mesh generation in a web worker can be found here: https://github.com/isaac-mason/recast-navigation-js/tree/main/examples/three-vite-worker-example
 
 The example uses `importNavMesh` and `exportNavMesh` to serialize and deserialize a NavMesh for transfer between the main thread and the web worker.
 
