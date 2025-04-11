@@ -4257,7 +4257,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@recast-navigation/core@npm:@rob-myers/recast-navigation__core@0.39.4, @rob-myers/recast-navigation__core@workspace:packages/recast-navigation-core":
+"@recast-navigation/core@npm:@rob-myers/recast-navigation__core@0.39.5, @rob-myers/recast-navigation__core@workspace:packages/recast-navigation-core":
   version: 0.0.0-use.local
   resolution: "@rob-myers/recast-navigation__core@workspace:packages/recast-navigation-core"
   dependencies:
@@ -4265,7 +4265,7 @@ __metadata:
     "@babel/preset-env": "npm:^7.24.5"
     "@babel/preset-typescript": "npm:^7.24.1"
     "@isaac-mason/eslint-config-typescript": "npm:^0.0.9"
-    "@recast-navigation/wasm": "npm:@rob-myers/recast-navigation__wasm@0.39.4"
+    "@recast-navigation/wasm": "npm:@rob-myers/recast-navigation__wasm@0.39.5"
     "@rollup/plugin-babel": "npm:^6.0.4"
     "@rollup/plugin-commonjs": "npm:^25.0.7"
     "@rollup/plugin-node-resolve": "npm:^15.0.1"
@@ -4280,7 +4280,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@recast-navigation/generators@npm:@rob-myers/recast-navigation__generators@0.39.4, @rob-myers/recast-navigation__generators@workspace:packages/recast-navigation-generators":
+"@recast-navigation/generators@npm:@rob-myers/recast-navigation__generators@0.39.5, @rob-myers/recast-navigation__generators@workspace:packages/recast-navigation-generators":
   version: 0.0.0-use.local
   resolution: "@rob-myers/recast-navigation__generators@workspace:packages/recast-navigation-generators"
   dependencies:
@@ -4288,8 +4288,8 @@ __metadata:
     "@babel/preset-env": "npm:^7.24.5"
     "@babel/preset-typescript": "npm:^7.24.1"
     "@isaac-mason/eslint-config-typescript": "npm:^0.0.9"
-    "@recast-navigation/core": "npm:@rob-myers/recast-navigation__core@0.39.4"
-    "@recast-navigation/wasm": "npm:@rob-myers/recast-navigation__wasm@0.39.4"
+    "@recast-navigation/core": "npm:@rob-myers/recast-navigation__core@0.39.5"
+    "@recast-navigation/wasm": "npm:@rob-myers/recast-navigation__wasm@0.39.5"
     "@rollup/plugin-babel": "npm:^6.0.4"
     "@rollup/plugin-commonjs": "npm:^25.0.7"
     "@rollup/plugin-node-resolve": "npm:^15.0.1"
@@ -4311,8 +4311,8 @@ __metadata:
     "@babel/preset-env": "npm:^7.24.5"
     "@babel/preset-typescript": "npm:^7.24.1"
     "@isaac-mason/eslint-config-typescript": "npm:^0.0.9"
-    "@recast-navigation/core": "npm:@rob-myers/recast-navigation__core@0.39.4"
-    "@recast-navigation/generators": "npm:@rob-myers/recast-navigation__generators@0.39.4"
+    "@recast-navigation/core": "npm:@rob-myers/recast-navigation__core@0.39.5"
+    "@recast-navigation/generators": "npm:@rob-myers/recast-navigation__generators@0.39.5"
     "@rollup/plugin-babel": "npm:^6.0.4"
     "@rollup/plugin-commonjs": "npm:^25.0.7"
     "@rollup/plugin-node-resolve": "npm:^15.0.1"
@@ -4329,7 +4329,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@recast-navigation/wasm@npm:@rob-myers/recast-navigation__wasm@0.39.4, @rob-myers/recast-navigation__wasm@workspace:packages/recast-navigation-wasm":
+"@recast-navigation/wasm@npm:@rob-myers/recast-navigation__wasm@0.39.5, @rob-myers/recast-navigation__wasm@workspace:packages/recast-navigation-wasm":
   version: 0.0.0-use.local
   resolution: "@rob-myers/recast-navigation__wasm@workspace:packages/recast-navigation-wasm"
   dependencies:
@@ -4352,8 +4352,8 @@ __metadata:
     "@babel/preset-env": "npm:^7.24.5"
     "@babel/preset-typescript": "npm:^7.24.1"
     "@isaac-mason/eslint-config-typescript": "npm:^0.0.9"
-    "@recast-navigation/core": "npm:@rob-myers/recast-navigation__core@0.39.4"
-    "@recast-navigation/generators": "npm:@rob-myers/recast-navigation__generators@0.39.4"
+    "@recast-navigation/core": "npm:@rob-myers/recast-navigation__core@0.39.5"
+    "@recast-navigation/generators": "npm:@rob-myers/recast-navigation__generators@0.39.5"
     "@rollup/plugin-babel": "npm:^6.0.4"
     "@rollup/plugin-commonjs": "npm:^25.0.7"
     "@rollup/plugin-node-resolve": "npm:^15.0.1"
@@ -13872,8 +13872,8 @@ __metadata:
     "@pmndrs/assets": "npm:^1.6.0"
     "@react-three/drei": "npm:^9.105.4"
     "@react-three/fiber": "npm:^8.16.3"
-    "@recast-navigation/core": "npm:@rob-myers/recast-navigation__core@0.39.4"
-    "@recast-navigation/generators": "npm:@rob-myers/recast-navigation__generators@0.39.4"
+    "@recast-navigation/core": "npm:@rob-myers/recast-navigation__core@0.39.5"
+    "@recast-navigation/generators": "npm:@rob-myers/recast-navigation__generators@0.39.5"
     "@rollup/plugin-babel": "npm:^6.0.4"
     "@rollup/plugin-commonjs": "npm:^25.0.7"
     "@rollup/plugin-node-resolve": "npm:^15.0.1"
