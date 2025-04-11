@@ -6,7 +6,7 @@
     "email": "isaac@isaacmason.com",
     "url": "https://isaacmason.com/"
   },
-  "version": "0.39.2",
+  "version": "0.39.3",
   "license": "MIT",
   "homepage": "https://github.com/isaac-mason/recast-navigation-js",
   "bugs": {
@@ -27,8 +27,8 @@
     "lint": "eslint src"
   },
   "dependencies": {
-    "@recast-navigation/core": "npm:@rob-myers/recast-navigation__core@0.39.2",
-    "@recast-navigation/generators": "npm:@rob-myers/recast-navigation__generators@0.39.2"
+    "@recast-navigation/core": "npm:@rob-myers/recast-navigation__core@0.39.3",
+    "@recast-navigation/generators": "npm:@rob-myers/recast-navigation__generators@0.39.3"
   },
   "peerDependencies": {
     "@types/three": "0.x.x",

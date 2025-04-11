@@ -10,8 +10,10 @@ else
 	shift
 fi
 
+rm -rf build dist
+
 # create directories
-mkdir -p ./build
+mkdir -p build
 mkdir -p dist
 
 # clone recast navigation library
