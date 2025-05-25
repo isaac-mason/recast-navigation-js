@@ -177,6 +177,9 @@ interface dtCrowdAgentParams {
 
     /// Agent radius. [Limit: >= 0]
     attribute float radius;                        
+
+    /// Agent slow down radius. [Limit: >= 0]
+    attribute float slowDownRadius;                        
     
     /// Agent height. [Limit: > 0]
     attribute float height;                        
