@@ -24,15 +24,24 @@ This library provides high level APIs that make it easy to get started creating 
 
 There are a few common ways you can make use of recast-navigation-js, depending on your needs:
 
-- **Runtime NavMesh Generation, NavMesh querying with Detour APIs**
-  - This library provides APIs that can be used to dynamically generate NavMeshes at runtime. This is useful when  environments are procedurally generated or change frequently. Recast's NavMesh generation process is fast enough to be used at runtime in many cases, and the Detour APIs provide a powerful way to query the NavMesh for pathfinding and spatial reasoning.
-- **Precomputed NavMesh Generation, export to recast format, NavMesh querying with Detour APIs**
-  - You can pre-compute a NavMesh, persist the recast format NavMesh to a file, then import it at runtime. This is useful when environments are largely static and you want to avoid the overhead of generating the NavMesh at runtime, but still want to use the Detour APIs for pathfinding and spatial reasoning.
-- **Precomputed NavMesh Generation, export to GLTF or custom format**
-  - You can generate a NavMesh and export it in a format such as GLTF, then use it with a seperate pathfinding library such as [three-pathfinding](https://github.com/donmccurdy/three-pathfinding) [(see example)](https://recast-navigation-js.isaacmason.com/?path=/story/external-use-three-pathfinding--three-pathfinding) or similar.
-  - This is worth considering in situations where you need more flexibility than the detour wasm API affords, or do not benefit from dynamic NavMesh generation, and don't require more complex functionality in detour such as temporary obstacles and crowd simulation.
-  - You may also want to consider using the [NavMesh Generator](https://navmesh.isaacmason.com/) website, which allows you to generate NavMeshes from uploaded models and export them in GLTF format.
-  - Also see [glTF-Transform-Recast-Config](https://github.com/donmccurdy/glTF-Transform-Recast-Config), a demonstration of how to create a custom config file for the glTF Transform CLI, and implement Recast NavMesh generation as a custom command.
+### 1. **Runtime NavMesh Generation, NavMesh querying with Detour APIs**
+- Dynamically generate NavMeshes at runtime for procedurally generated or frequently changing environments.
+- Use Detour APIs for pathfinding and spatial reasoning.
+
+### 2. **Precomputed NavMesh (Recast Format), NavMesh querying with Detour APIs**
+- Generate and save NavMeshes in Recast format for largely static environments.
+- Import pre-generated NavMeshes at runtime to avoid generation
+- Use Detour APIs for pathfinding and spatial reasoning, use temporary obstacles to facilitate semi-dynamic environments.
+
+### 3. **Precomputed NavMesh (GLTF or Custom Format), external NavMesh querying solution**
+- Export NavMeshes in formats like GLTF for use with external libraries (e.g., [three-pathfinding](https://github.com/donmccurdy/three-pathfinding)).
+  - This is worth considering if:
+    - you need more flexibility than the detour WASM API affords
+    - you do not benefit from dynamic NavMesh generation
+    - you don't require more complex functionality in detour such as temporary obstacles and crowd simulation
+    - minimising your bundle size is important, and the WASM library file size doesn't fit within your budget
+- For simpler projects your NavMesh generation needs may be entirely served by the [NavMesh Generator](https://navmesh.isaacmason.com/) website, which allows you to generate a NavMesh from an uploaded model and export it in a GLTF format.
+- If you want to integrate NavMesh generation into your project's asset pipeline, see this demonstration of how to create a custom config file for the glTF Transform CLI, and implement Recast NavMesh generation as a custom command: https://github.com/donmccurdy/glTF-Transform-Recast-Config
 
 ## Examples
 
