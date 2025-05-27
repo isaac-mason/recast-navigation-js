@@ -2,6 +2,90 @@
 
 The `recast-navigation-js` repository is structured as a yarn monorepo. You will find all published packages inside `./packages`, reference examples in `./examples`, and deployed applications in `./apps`.
 
+
+## Packages
+
+Functionality is spread across packages in the `@recast-navigation/*` organization.
+
+The `recast-navigation` package is the umbrella package for core packages, and has entrypoints for `@recast-navigation/core` and `@recast-navigation/generators`.
+
+All packages ship as ECMAScript modules, and are compatible with Node.js and browser environments.
+
+### [**`recast-navigation`**](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation)
+
+[![Version](https://img.shields.io/npm/v/recast-navigation)](https://www.npmjs.com/package/recast-navigation)
+
+The umbrella package for `recast-navigation`.
+
+```bash
+> npm install recast-navigation
+```
+
+```ts
+import { init } from 'recast-navigation';
+import { generateSoloNavMesh } from 'recast-navigation/generators';
+```
+
+### [**`@recast-navigation/core`**](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-core)
+
+[![Version](https://img.shields.io/npm/v/@recast-navigation/core)](https://www.npmjs.com/package/@recast-navigation/core)
+
+The core library!
+
+```bash
+> npm install @recast-navigation/core
+```
+
+### [**`@recast-navigation/generators`**](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-generators)
+
+[![Version](https://img.shields.io/npm/v/@recast-navigation/generators)](https://www.npmjs.com/package/@recast-navigation/generators)
+
+NavMesh generator implementations. Use these to get started, and as a basis for your own NavMesh generator.
+
+```bash
+> npm install @recast-navigation/generators
+```
+
+### [**`@recast-navigation/three`**](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-three)
+
+[![Version](https://img.shields.io/npm/v/@recast-navigation/three)](https://www.npmjs.com/package/@recast-navigation/three)
+
+Helpers for three.js.
+
+```bash
+> npm install @recast-navigation/three
+```
+
+### [**`@recast-navigation/playcanvas`**](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-playcanvas)
+
+[![Version](https://img.shields.io/npm/v/@recast-navigation/playcanvas)](https://www.npmjs.com/package/@recast-navigation/playcanvas)
+
+Helpers for playcanvas.
+
+```bash
+> npm install @recast-navigation/playcanvas
+```
+
+### [**`@recast-navigation/wasm`**](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-wasm)
+
+[![Version](https://img.shields.io/npm/v/@recast-navigation/wasm)](https://www.npmjs.com/package/@recast-navigation/wasm)
+
+The WebAssembly build of the Recast and Detour libraries.
+
+You regularly won't need to use this package directly, `@recast-navigation/core` uses it internally.
+
+```bash
+> npm install @recast-navigation/wasm
+```
+
+## Apps
+
+### [NavMesh Generator](https://navmesh.isaacmason.com/)
+
+A website for generating navmeshes for your game. Drag 'n' drop your GLTF, fine tune your settings, and download your navmesh!
+
+([source](./apps/navmesh-website/))
+
 ## Prerequisites
 
 ### Node Installation
