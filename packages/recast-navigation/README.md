@@ -38,17 +38,17 @@ The TileCache Detour API provides support for temporary obstacles, which can be 
 
 #### 3. **Offline NavMesh Generation (GLTF or Custom Format), external NavMesh querying solution**
 
-You can opt to only use the navigation mesh generation capabilities of this library, and export the generated NavMesh in a GLTF format or a custom format. You can then use an external pathfinding solution (for example, [three-pathfinding](https://github.com/donmccurdy/three-pathfinding)) for querying the generated navigation mesh. ([See recast-navigation-js & three-pathfinding example](https://github.com/isaac-mason/recast-navigation-js/blob/main/packages/recast-navigation/.storybook/stories/external-use/three-pathfinding.stories.tsx))
+You can opt to only use the navigation mesh generation capabilities of this library, and export the generated navigation mesh in a GLTF or custom format. You can then use an external pathfinding solution (for example, [three-pathfinding](https://github.com/donmccurdy/three-pathfinding)) for querying the generated navigation mesh. ([See recast-navigation-js & three-pathfinding example](https://github.com/isaac-mason/recast-navigation-js/blob/main/packages/recast-navigation/.storybook/stories/external-use/three-pathfinding.stories.tsx))
 
 This is worth considering if:
   - you need more flexibility than the detour WASM API affords
-  - you do not benefit from dynamic NavMesh generation
+  - you do have a dynamic environment
   - you don't require more complex functionality in detour such as temporary obstacles and crowd simulation
   - minimising your bundle size is important, and the WASM library file size doesn't fit within your budget
 
-For simpler projects your NavMesh generation needs may be entirely served by the [NavMesh Generator](https://navmesh.isaacmason.com/) website, which allows you to generate a NavMesh from an uploaded model and export it in a GLTF format.
+For simpler projects your navigation mesh generation needs may be entirely served by the [NavMesh Generator](https://navmesh.isaacmason.com/) website, which allows you to generate a navigation mesh from an uploaded model and export it in a GLTF format.
 
-If you want to integrate NavMesh generation into your project's asset pipeline, see this demonstration of how to create a custom config file for the glTF Transform CLI, and implement Recast NavMesh generation as a custom command: https://github.com/donmccurdy/glTF-Transform-Recast-Config
+If you want to integrate navigation mesh generation into your project's asset pipeline, see this demonstration of how to create a custom config file for the glTF Transform CLI, and implement navmesh generation as a custom command: https://github.com/donmccurdy/glTF-Transform-Recast-Config
 
 ## Examples
 
@@ -90,7 +90,6 @@ The `@recast-navigation` npm organization contains some packages that simplify i
 There are also some community maintained packages that provide integrations with other libraries:
 
 - [`babylonjs-recast-navigation-js`](https://github.com/RolandCsibrei/babylonjs-recast-navigation-js) - A drop-in implementation for the Babylon.js navigation interface implemented with recast-navigation-js.
-
 
 **Usage without bundlers**
 
