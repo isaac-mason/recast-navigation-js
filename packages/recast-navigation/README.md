@@ -34,7 +34,7 @@ There are a few common ways you can make use of recast-navigation-js, depending 
 - Use Detour APIs for pathfinding and spatial reasoning, use temporary obstacles to facilitate semi-dynamic environments.
 
 ### 3. **Precomputed NavMesh (GLTF or Custom Format), external NavMesh querying solution**
-- Export NavMeshes in formats like GLTF for use with external libraries (e.g., [three-pathfinding](https://github.com/donmccurdy/three-pathfinding)).
+- Generate and export a NavMesh to GLTF or a custom format for use with external NavMesh querying / pathfinding solutions such as [three-pathfinding](https://github.com/donmccurdy/three-pathfinding). ([See recast-navigation-js & three-pathfinding example](https://github.com/isaac-mason/recast-navigation-js/blob/main/packages/recast-navigation/.storybook/stories/external-use/three-pathfinding.stories.tsx)) 
   - This is worth considering if:
     - you need more flexibility than the detour WASM API affords
     - you do not benefit from dynamic NavMesh generation
