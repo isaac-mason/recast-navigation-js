@@ -22,26 +22,33 @@
 
 This library provides high level APIs that make it easy to get started creating navigation meshes, querying them, and simulating crowds. It also provides lower-level APIs that give you fine-grained control over the navmesh generation process.
 
+### Usage
+
 There are a few common ways you can make use of recast-navigation-js, depending on your needs:
 
-### 1. **Runtime NavMesh Generation, NavMesh querying with Detour APIs**
-- Dynamically generate NavMeshes at runtime for procedurally generated or frequently changing environments.
-- Use Detour APIs for pathfinding and spatial reasoning.
+#### 1. **Runtime NavMesh Generation, NavMesh querying with Detour APIs**
 
-### 2. **Offline NavMesh Generation (Recast Format), NavMesh querying with Detour APIs**
-- Generate and save NavMeshes in Recast format for largely static environments.
-- Import pre-generated NavMeshes at runtime to avoid generation
-- Use Detour APIs for pathfinding and spatial reasoning, use temporary obstacles to facilitate semi-dynamic environments.
+You can use this library to generate a navigation mesh at runtime for procedurally generated or frequently changing environments, and use Detour APIs for pathfinding and spatial reasoning on the navigation mesh.
 
-### 3. **Offline NavMesh Generation (GLTF or Custom Format), external NavMesh querying solution**
-- Generate and export a NavMesh to GLTF or a custom format for use with external NavMesh querying / pathfinding solutions such as [three-pathfinding](https://github.com/donmccurdy/three-pathfinding). ([See recast-navigation-js & three-pathfinding example](https://github.com/isaac-mason/recast-navigation-js/blob/main/packages/recast-navigation/.storybook/stories/external-use/three-pathfinding.stories.tsx)) 
-  - This is worth considering if:
-    - you need more flexibility than the detour WASM API affords
-    - you do not benefit from dynamic NavMesh generation
-    - you don't require more complex functionality in detour such as temporary obstacles and crowd simulation
-    - minimising your bundle size is important, and the WASM library file size doesn't fit within your budget
-- For simpler projects your NavMesh generation needs may be entirely served by the [NavMesh Generator](https://navmesh.isaacmason.com/) website, which allows you to generate a NavMesh from an uploaded model and export it in a GLTF format.
-- If you want to integrate NavMesh generation into your project's asset pipeline, see this demonstration of how to create a custom config file for the glTF Transform CLI, and implement Recast NavMesh generation as a custom command: https://github.com/donmccurdy/glTF-Transform-Recast-Config
+#### 2. **Offline NavMesh Generation (Recast Format), NavMesh querying with Detour APIs**
+
+If your environment is largely static, you can generate a navigation mesh offline and import it at runtime. This is useful for larger environments where runtime generation would be too slow, or if you want to avoid the overhead of runtime generation.
+
+The TileCache Detour API provides support for temporary obstacles, which can be used to create semi-dynamic environments.
+
+#### 3. **Offline NavMesh Generation (GLTF or Custom Format), external NavMesh querying solution**
+
+You can opt to only use the navigation mesh generation capabilities of this library, and export the generated NavMesh in a GLTF format or a custom format. You can then use an external pathfinding solution (for example, [three-pathfinding](https://github.com/donmccurdy/three-pathfinding)) for querying the generated navigation mesh. ([See recast-navigation-js & three-pathfinding example](https://github.com/isaac-mason/recast-navigation-js/blob/main/packages/recast-navigation/.storybook/stories/external-use/three-pathfinding.stories.tsx))
+
+This is worth considering if:
+  - you need more flexibility than the detour WASM API affords
+  - you do not benefit from dynamic NavMesh generation
+  - you don't require more complex functionality in detour such as temporary obstacles and crowd simulation
+  - minimising your bundle size is important, and the WASM library file size doesn't fit within your budget
+
+For simpler projects your NavMesh generation needs may be entirely served by the [NavMesh Generator](https://navmesh.isaacmason.com/) website, which allows you to generate a NavMesh from an uploaded model and export it in a GLTF format.
+
+If you want to integrate NavMesh generation into your project's asset pipeline, see this demonstration of how to create a custom config file for the glTF Transform CLI, and implement Recast NavMesh generation as a custom command: https://github.com/donmccurdy/glTF-Transform-Recast-Config
 
 ## Examples
 
@@ -125,10 +132,7 @@ API Documentation can be found at [https://docs.recast-navigation-js.isaacmason.
 
 For information on changes between versions, see [CHANGELOG.md](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation/CHANGELOG.md)
 
-## Resources
-
-To get the most out of this library, you should have some familiarity with the Recast and Detour libraries. These are some good resources to get started:
-
+These are useful resources for understanding the recast navmesh generation process, which will help you understand how to use this library effectively:
 - https://recastnav.com/md_Docs__1_Introducation.html
 - https://www.unrealdoc.com/p/navigation-mesh
 
@@ -138,7 +142,7 @@ Documentation and resources for the Recast and Detour c++ libraries can be found
 - [Recast Navigation GitHub](https://github.com/recastnavigation/recastnavigation)
 - [Recast Navigation Google Discussions](https://groups.google.com/g/recastnavigation)
 
-## Usage
+## Getting Started
 
 ### Initialization
 
