@@ -1208,6 +1208,34 @@ interface duDebugDraw {
 };
 
 interface DebugDraw {
+    unsigned long RGBA(long r, long g, long b, long a);
+    unsigned long RGBAf(float fr, float fg, float fb, float fa);
+    unsigned long IntToCol(long i, long a);
+    void IntToColVector(long i, float[] col);
+    unsigned long MultCol([Const] unsigned long col, [Const] unsigned long d);
+    unsigned long DarkenCol(unsigned long col);
+    unsigned long LerpCol(unsigned long ca, unsigned long cb, unsigned long u);
+    unsigned long TransCol(unsigned long c, unsigned long a);
+
+    void CalcBoxColors(unsigned long[] colors, unsigned long colTop, unsigned long colSide);
+    void DebugDrawCylinderWire(duDebugDraw dd, float minx, float miny, float minz, float maxx, float maxy, float maxz, unsigned long col, [Const] float lineWidth);
+    void DebugDrawBoxWire(duDebugDraw dd, float minx, float miny, float minz, float maxx, float maxy, float maxz, unsigned long col, [Const] float lineWidth);
+    void DebugDrawArc(duDebugDraw dd, [Const] float x0, [Const] float y0, [Const] float z0, [Const] float x1, [Const] float y1, [Const] float z1, [Const] float h, [Const] float as0, [Const] float as1, unsigned long col, [Const] float lineWidth);
+    void DebugDrawArrow(duDebugDraw dd, [Const] float x0, [Const] float y0, [Const] float z0, [Const] float x1, [Const] float y1, [Const] float z1, [Const] float as0, [Const] float as1, unsigned long col, [Const] float lineWidth);
+    void DebugDrawCircle(duDebugDraw dd, [Const] float x, [Const] float y, [Const] float z, [Const] float r, unsigned long col, [Const] float lineWidth);
+    void DebugDrawCross(duDebugDraw dd, [Const] float x, [Const] float y, [Const] float z, [Const] float size, unsigned long col, [Const] float lineWidth);
+    void DebugDrawBox(duDebugDraw dd, float minx, float miny, float minz, float maxx, float maxy, float maxz, [Const] unsigned long[] fcol);
+    void DebugDrawCylinder(duDebugDraw dd, float minx, float miny, float minz, float maxx, float maxy, float maxz, unsigned long col);
+    void DebugDrawGridXZ(duDebugDraw dd, [Const] float ox, [Const] float oy, [Const] float oz, [Const] long w, [Const] long h, [Const] float size, [Const] unsigned long col, [Const] float lineWidth);
+    void AppendCylinderWire(duDebugDraw dd, float minx, float miny, float minz, float maxx, float maxy, float maxz, unsigned long col);
+    void AppendBoxWire(duDebugDraw dd, float minx, float miny, float minz, float maxx, float maxy, float maxz, unsigned long col);
+    void AppendBoxPoints(duDebugDraw dd, float minx, float miny, float minz, float maxx, float maxy, float maxz, unsigned long col);
+    void AppendArc(duDebugDraw dd, [Const] float x0, [Const] float y0, [Const] float z0, [Const] float x1, [Const] float y1, [Const] float z1, [Const] float h, [Const] float as0, [Const] float as1, unsigned long col);
+    void AppendArrow(duDebugDraw dd, [Const] float x0, [Const] float y0, [Const] float z0, [Const] float x1, [Const] float y1, [Const] float z1, [Const] float as0, [Const] float as1, unsigned long col);
+    void AppendCircle(duDebugDraw dd, [Const] float x, [Const] float y, [Const] float z, [Const] float r, unsigned long col);
+    void AppendCross(duDebugDraw dd, [Const] float x, [Const] float y, [Const] float z, [Const] float size, unsigned long col);
+    void AppendBox(duDebugDraw dd, float minx, float miny, float minz, float maxx, float maxy, float maxz, [Const] unsigned long[] fcol);
+    void AppendCylinder(duDebugDraw dd, float minx, float miny, float minz, float maxx, float maxy, float maxz, unsigned long col);
 };
 DebugDraw implements duDebugDraw;
 
@@ -1225,6 +1253,10 @@ interface DebugDrawImpl {
 
 interface RecastDebugDraw {
     void RecastDebugDraw();
+
+    void debugDrawTriMesh(duDebugDraw dd, [Const] FloatArray verts, long nverts, [Const] IntArray tris, [Const] FloatArray normals, long ntris, [Const] UnsignedCharArray flags, float texScale);
+    void debugDrawTriMeshNoFlags(duDebugDraw dd, [Const] FloatArray verts, long nverts, [Const] IntArray tris, [Const] FloatArray normals, long ntris, float texScale);
+    void debugDrawTriMeshSlope(duDebugDraw dd, [Const] FloatArray verts, long nverts, [Const] IntArray tris, [Const] FloatArray normals, long ntris, float walkableSlopeAngle, float texScale);
 
     void debugDrawHeightfieldSolid(duDebugDraw dd, [Const, Ref] rcHeightfield hf);
     void debugDrawHeightfieldWalkable(duDebugDraw dd, [Const, Ref] rcHeightfield hf);
@@ -1259,4 +1291,10 @@ interface DetourDebugDraw {
     void debugDrawTileCacheLayerRegions(duDebugDraw dd, [Const, Ref] dtTileCacheLayer layer, [Const] float cs, [Const] float ch);
     void debugDrawTileCacheContours(duDebugDraw dd, [Const, Ref] dtTileCacheContourSet lcset, [Const] float[] orig, [Const] float cs, [Const] float ch);
     void debugDrawTileCachePolyMesh(duDebugDraw dd, [Const, Ref] dtTileCachePolyMesh pmesh, [Const] float[] orig, [Const] float cs, [Const] float ch);
+};
+
+enum DrawNavMeshFlags {
+    "DrawNavMeshFlags::DU_DRAWNAVMESH_OFFMESHCONS",
+    "DrawNavMeshFlags::DU_DRAWNAVMESH_CLOSEDLIST",
+    "DrawNavMeshFlags::DU_DRAWNAVMESH_COLOR_TILES"
 };
