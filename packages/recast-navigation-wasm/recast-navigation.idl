@@ -570,34 +570,34 @@ enum dtTileFlags {
 interface Detour {
     void Detour();
 
-    attribute long FAILURE;
-    attribute long SUCCESS;
-    attribute long IN_PROGRESS;
-    attribute long STATUS_DETAIL_MASK;
-    attribute long WRONG_MAGIC;
-    attribute long WRONG_VERSION;
-    attribute long OUT_OF_MEMORY;
-    attribute long INVALID_PARAM;
-    attribute long BUFFER_TOO_SMALL;
-    attribute long OUT_OF_NODES;
-    attribute long PARTIAL_RESULT;
-    attribute long ALREADY_OCCUPIED;
+    static readonly attribute unsigned long FAILURE;
+    static readonly attribute unsigned long SUCCESS;
+    static readonly attribute unsigned long IN_PROGRESS;
+    static readonly attribute unsigned long STATUS_DETAIL_MASK;
+    static readonly attribute unsigned long WRONG_MAGIC;
+    static readonly attribute unsigned long WRONG_VERSION;
+    static readonly attribute unsigned long OUT_OF_MEMORY;
+    static readonly attribute unsigned long INVALID_PARAM;
+    static readonly attribute unsigned long BUFFER_TOO_SMALL;
+    static readonly attribute unsigned long OUT_OF_NODES;
+    static readonly attribute unsigned long PARTIAL_RESULT;
+    static readonly attribute unsigned long ALREADY_OCCUPIED;
 
-    attribute long VERTS_PER_POLYGON;
-    attribute long NAVMESH_MAGIC;
-    attribute long NAVMESH_VERSION;
-    attribute long NAVMESH_STATE_MAGIC;
-    attribute long NAVMESH_STATE_VERSION;
+    static readonly attribute long VERTS_PER_POLYGON;
+    static readonly attribute long NAVMESH_MAGIC;
+    static readonly attribute long NAVMESH_VERSION;
+    static readonly attribute long NAVMESH_STATE_MAGIC;
+    static readonly attribute long NAVMESH_STATE_VERSION;
 
-    attribute long TILECACHE_MAGIC;
-    attribute long TILECACHE_VERSION;
-    attribute octet TILECACHE_NULL_AREA;
-    attribute octet TILECACHE_WALKABLE_AREA;
-    attribute unsigned short TILECACHE_NULL_IDX;
+    static readonly attribute long TILECACHE_MAGIC;
+    static readonly attribute long TILECACHE_VERSION;
+    static readonly attribute octet TILECACHE_NULL_AREA;
+    static readonly attribute octet TILECACHE_WALKABLE_AREA;
+    static readonly attribute unsigned short TILECACHE_NULL_IDX;
 
-    attribute unsigned long NULL_LINK;
-    attribute unsigned short EXT_LINK;
-    attribute unsigned long OFFMESH_CON_BIDIR;
+    static readonly attribute unsigned long NULL_LINK;
+    static readonly attribute unsigned short EXT_LINK;
+    static readonly attribute unsigned long OFFMESH_CON_BIDIR;
 
     boolean statusSucceed(unsigned long status);
     boolean statusFailed(unsigned long status);
