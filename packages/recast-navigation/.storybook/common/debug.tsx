@@ -56,7 +56,8 @@ export const Debug = ({
 
     const update = () => {
       debugDrawer.clear();
-      debugDrawer.drawNavMeshPolysWithFlags(navMesh, 1, 0x0000ff);
+      const color = (0) | (0 << 8) | (255 << 16) | (128 << 24);
+      debugDrawer.drawNavMeshPolysWithFlags(navMesh, 1, color);
     };
 
     update();
