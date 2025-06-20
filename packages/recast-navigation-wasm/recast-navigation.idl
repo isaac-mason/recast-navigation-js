@@ -1249,6 +1249,13 @@ interface DebugDrawImpl {
     void handleVertexWithColor([Const] float x, [Const] float y, [Const] float z, [Const] unsigned long color);
     void handleVertexWithColorAndUV([Const] float x, [Const] float y, [Const] float z, [Const] unsigned long color, [Const] float u, [Const] float v);
     void handleEnd();
+
+    /*
+        Uncomment this line after the JS examples implement this function, otherwise the error will be thrown:
+
+        "a JSImplementation must implement all functions, you forgot DebugDrawImpl::handleAreaToCol."
+    */
+    // unsigned long handleAreaToCol(unsigned long area);
 };
 
 interface RecastDebugDraw {
