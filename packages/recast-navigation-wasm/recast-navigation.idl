@@ -1254,6 +1254,10 @@ interface DebugDrawImpl {
         Uncomment this line after the JS examples implement this function, otherwise the error will be thrown:
 
         "a JSImplementation must implement all functions, you forgot DebugDrawImpl::handleAreaToCol."
+
+        Also uncomment the `handleAreaToCol()` code in
+        - `./src/DebugDraw.h`
+        - `./src/DebugDraw.cpp`
     */
     // unsigned long handleAreaToCol(unsigned long area);
 };
