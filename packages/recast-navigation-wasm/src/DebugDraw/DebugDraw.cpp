@@ -40,10 +40,10 @@ void DebugDraw::end()
     handleEnd();
 }
 
-// unsigned int DebugDraw::areaToCol(unsigned int area)
-// {
-//     return handleAreaToCol(area);
-// }
+unsigned int DebugDraw::areaToCol(unsigned int area)
+{
+    return handleAreaToCol(area);
+}
 
 unsigned int DebugDraw::RGBA(int r, int g, int b, int a)
 {
