@@ -1,5 +1,20 @@
 #include "RecastDebugDraw.h"
 
+void RecastDebugDraw::debugDrawTriMesh(duDebugDraw *dd, const FloatArray *verts, int nverts, const IntArray *tris, const FloatArray *normals, int ntris, const UnsignedCharArray *flags, const float texScale)
+{
+    duDebugDrawTriMesh(dd, verts->data, nverts, tris->data, normals->data, ntris, flags->data, texScale);
+}
+
+void RecastDebugDraw::debugDrawTriMeshNoFlags(duDebugDraw *dd, const FloatArray *verts, int nverts, const IntArray *tris, const FloatArray *normals, int ntris, const float texScale)
+{
+    duDebugDrawTriMesh(dd, verts->data, nverts, tris->data, normals->data, ntris, nullptr, texScale);
+}
+
+void RecastDebugDraw::debugDrawTriMeshSlope(duDebugDraw *dd, const FloatArray *verts, int nverts, const IntArray *tris, const FloatArray *normals, int ntris, const float walkableSlopeAngle, const float texScale)
+{
+    duDebugDrawTriMeshSlope(dd, verts->data, nverts, tris->data, normals->data, ntris, walkableSlopeAngle, texScale);
+}
+
 void RecastDebugDraw::debugDrawHeightfieldSolid(duDebugDraw *dd, const rcHeightfield &hf)
 {
     duDebugDrawHeightfieldSolid(dd, hf);
