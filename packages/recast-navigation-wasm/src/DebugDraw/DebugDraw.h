@@ -15,7 +15,7 @@ public:
     virtual void vertex(const float *pos, unsigned int color, const float *uv);
     virtual void vertex(const float x, const float y, const float z, unsigned int color, const float u, const float v);
     virtual void end();
-    // virtual unsigned int areaToCol(unsigned int area);
+    virtual unsigned int areaToCol(unsigned int area);
 
     virtual void handleDepthMask(bool state) = 0;
     virtual void handleTexture(bool state) = 0;
@@ -23,7 +23,7 @@ public:
     virtual void handleVertexWithColor(const float x, const float y, const float z, unsigned int color) = 0;
     virtual void handleVertexWithColorAndUV(const float x, const float y, const float z, unsigned int color, const float u, const float v) = 0;
     virtual void handleEnd() = 0;
-    // virtual unsigned int handleAreaToCol(unsigned int area) = 0;
+    virtual unsigned int handleAreaToCol(unsigned int area) = 0;
 
     unsigned int RGBA(int r, int g, int b, int a);
     unsigned int RGBAf(float fr, float fg, float fb, float fa);
