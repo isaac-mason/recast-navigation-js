@@ -66,6 +66,11 @@ export class DebugDrawerUtils {
       this.vertex(x, y, z, color);
     };
 
+    this.debugDrawImpl.handleAreaToCol = (_area: number): number => {
+      // unused for now...
+      return 0;
+    };
+
     const primitiveMap: Record<number, DebugDrawerPrimitiveType> = {
       [Raw.Module.DU_DRAW_LINES]: 'lines',
       [Raw.Module.DU_DRAW_TRIS]: 'tris',
