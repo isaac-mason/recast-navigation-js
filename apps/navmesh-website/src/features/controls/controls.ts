@@ -9,12 +9,14 @@ export const useActionsControls = ({
   loading,
   generateNavMesh,
   exportAsGltf,
+  exportAsGLB,
   exportAsRecastNavMesh,
 }: {
   navMesh: NavMesh | undefined;
   loading: boolean;
   generateNavMesh: () => {};
   exportAsGltf: () => {};
+  exportAsGLB: () => {};
   exportAsRecastNavMesh: () => {};
 }) => {
   useControls(
@@ -24,6 +26,9 @@ export const useActionsControls = ({
         disabled: loading,
       }),
       'Export as GLTF': button(exportAsGltf, {
+        disabled: !navMesh,
+      }),
+      'Export as GLB': button(exportAsGLB, {
         disabled: !navMesh,
       }),
       'Export as Recast NavMesh': button(exportAsRecastNavMesh, {

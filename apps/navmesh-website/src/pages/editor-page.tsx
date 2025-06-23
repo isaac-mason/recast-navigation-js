@@ -27,6 +27,7 @@ import {
   RecastAgent,
   RecastAgentRef,
   navMeshToGLTF,
+  navMeshToGLB,
 } from '../features/recast';
 import { LoadingSpinner } from '../features/ui';
 import { useEditorState } from '../state/editor-state';
@@ -142,6 +143,20 @@ const Editor = () => {
     });
   }, [navMesh]);
 
+  const exportAsGLB = useCallback(async () => {
+    if (!navMesh) return;
+
+    const glbBuffer = await navMeshToGLB(navMesh);
+
+    download(
+      new Blob([glbBuffer], { type: 'model/gltf-binary' }),
+      'model/gltf-binary',
+      'navmesh.glb'
+    );
+
+    gtag('event', 'export_as_glb', navMeshConfig);
+  }, [navMesh]);
+
   const exportAsRecastNavMesh = useCallback(async () => {
     if (!navMesh) return;
 
@@ -175,6 +190,7 @@ const Editor = () => {
     loading,
     generateNavMesh,
     exportAsGltf,
+    exportAsGLB,
     exportAsRecastNavMesh,
   });
 

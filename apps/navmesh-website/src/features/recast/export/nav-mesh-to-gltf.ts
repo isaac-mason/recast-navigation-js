@@ -8,7 +8,7 @@ import {
 } from 'three';
 import { GLTFExporter } from 'three/addons';
 
-const navMeshToPositionsAndIndices = (navMesh: NavMesh) => {
+export const navMeshToPositionsAndIndices = (navMesh: NavMesh) => {
   const positions: number[] = [];
   const indices: number[] = [];
   let tri = 0;
