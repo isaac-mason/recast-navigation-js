@@ -19,13 +19,15 @@
     "test": "yarn test:packages && yarn test:node-smoke-test && yarn lint",
     "test:packages": "(cd packages/recast-navigation && yarn test)",
     "test:node-smoke-test": "(cd ./examples/three-node-cjs-example && yarn start) && (cd ./examples/three-node-esm-example && yarn start)",
-    "lint": "yarn workspaces foreach -A -t run lint",
     "change": "yarn changeset",
     "release": "yarn build && yarn test",
     "publish": "changeset publish",
-    "version": "yarn changeset version && yarn install --mode update-lockfile"
+    "version": "yarn changeset version && yarn install --mode update-lockfile",
+    "format": "yarn biome format --write apps/**/src packages/**/src packages/**/.storybook/stories examples/**/src",
+    "lint": "yarn biome lint --write apps/**/src packages/**/src packages/**/.storybook/stories examples/**/src"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.0.6",
     "@changesets/cli": "^2.26.2",
     "vercel": "^33.7.0"
   },
