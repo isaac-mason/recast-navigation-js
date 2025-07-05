@@ -4,6 +4,7 @@
 
 ### Minor Changes
 
+- 98bd3de: feat: change drawNavMeshPolysWithFlags to take colors in duRGBA format
 - 98bd3de: feat: add utility 'rgbToDuRgba'
 
 ### Patch Changes
