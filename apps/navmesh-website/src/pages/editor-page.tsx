@@ -133,9 +133,21 @@ const Editor = () => {
   const exportAsGltf = useCallback(async () => {
     if (!navMesh) return;
 
-    const gltfJson = await navMeshToGLTF(navMesh);
+    const gltfJson = await navMeshToGLTF(navMesh, false);
 
     download(JSON.stringify(gltfJson), 'application/json', 'navmesh.gltf');
+
+    gtag('event', 'export_as_gltf', {
+      ...navMeshConfig,
+    });
+  }, [navMesh]);
+
+  const exportAsGlb = useCallback(async () => {
+    if (!navMesh) return;
+
+    const gltfJson = await navMeshToGLTF(navMesh, true);
+
+    download(JSON.stringify(gltfJson), 'application/json', 'navmesh.glb');
 
     gtag('event', 'export_as_gltf', {
       ...navMeshConfig,
@@ -175,6 +187,7 @@ const Editor = () => {
     loading,
     generateNavMesh,
     exportAsGltf,
+    exportAsGlb,
     exportAsRecastNavMesh,
   });
 
