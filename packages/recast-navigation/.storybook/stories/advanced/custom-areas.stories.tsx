@@ -41,11 +41,6 @@ const unwalkableBoxAreas: NavMeshGeneratorConfig['unwalkableBoxAreas'] = [
   },
 ];
 
-const navMeshMaterial = new THREE.MeshBasicMaterial({
-  color: 'red',
-  wireframe: true,
-});
-
 const useNavMesh = (group: RefObject<THREE.Group>) => {
   const [navMesh, setNavMesh] = useState<NavMesh>();
   const [navMeshQuery, setNavMeshQuery] = useState<NavMeshQuery>();
@@ -207,9 +202,9 @@ export const ComputePath = () => {
         <Level />
       </group>
 
-      {path && <Line points={path} color={'orange'} lineWidth={10} />}
+      {path && <Line points={path} color="orange" lineWidth={10} />}
 
-      <Debug navMesh={navMesh} navMeshMaterial={navMeshMaterial} />
+      <Debug navMesh={navMesh} />
 
       <CustomAreas />
 
@@ -294,7 +289,7 @@ export const FindClosestPoint = () => {
         </mesh>
       )}
 
-      <Debug navMesh={navMesh} navMeshMaterial={navMeshMaterial} />
+      <Debug navMesh={navMesh} />
 
       <CustomAreas />
 
@@ -402,7 +397,6 @@ export const SingleAgent = () => {
 
         <Debug
           navMesh={navMesh}
-          navMeshMaterial={navMeshMaterial}
           crowd={crowd}
         />
       </group>

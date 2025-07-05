@@ -25,11 +25,6 @@ export default {
   parameters,
 };
 
-const navMeshMaterial = new MeshBasicMaterial({
-  color: 'blue',
-  wireframe: true,
-});
-
 const obstaclesMaterial = new MeshBasicMaterial({
   color: 'red',
   wireframe: true,
@@ -157,7 +152,6 @@ export const PathObstacles = () => {
       <Debug
         autoUpdate
         navMesh={navMesh}
-        navMeshMaterial={navMeshMaterial}
         tileCache={tileCache}
         obstacleMaterial={obstaclesMaterial}
       />

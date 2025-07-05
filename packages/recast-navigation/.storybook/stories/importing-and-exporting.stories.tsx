@@ -11,7 +11,7 @@ import {
 import { threeToSoloNavMesh, threeToTileCache } from '@recast-navigation/three';
 import { button, useControls } from 'leva';
 import React, { useState } from 'react';
-import { Group, Mesh, MeshBasicMaterial } from 'three';
+import { Group, Mesh } from 'three';
 import { Debug } from '../common/debug';
 import { NavTestEnvironment } from '../common/nav-test-environment';
 import { useNavMeshConfig } from '../common/use-nav-mesh-config';
@@ -23,11 +23,6 @@ export default {
   decorators,
   parameters,
 };
-
-const navMeshMaterial = new MeshBasicMaterial({
-  wireframe: true,
-  color: 'red',
-});
 
 const controlsPrefix = 'nav-mesh-importer-exporter';
 
@@ -91,7 +86,7 @@ export const NavMeshExample = () => {
         <NavTestEnvironment />
       </group>
 
-      <Debug navMesh={result} navMeshMaterial={navMeshMaterial} />
+      <Debug navMesh={result} />
 
       <OrbitControls />
     </>
@@ -176,7 +171,7 @@ export const TileCacheExample = () => {
         <NavTestEnvironment />
       </group>
 
-      <Debug navMesh={navMesh} navMeshMaterial={navMeshMaterial} />
+      <Debug navMesh={navMesh} />
 
       <OrbitControls />
     </>

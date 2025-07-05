@@ -257,7 +257,7 @@ export function ClickNearbyPolygons() {
         </>
       )}
 
-      <Debug navMesh={navMesh} navMeshMaterial={navMeshMaterial} />
+      <Debug navMesh={navMesh} />
 
       <OrbitControls makeDefault zoomToCursor />
 
@@ -354,10 +354,6 @@ function range(n: number) {
   return [...Array(n)].map((_, i) => i);
 }
 
-const navMeshMaterial = new THREE.MeshBasicMaterial({
-  wireframe: true,
-  color: 'red',
-});
 const touchMaterial = new THREE.MeshBasicMaterial({
   color: 'blue',
   transparent: true,
