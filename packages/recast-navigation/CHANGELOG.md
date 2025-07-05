@@ -1,5 +1,18 @@
 # recast-navigation
 
+## 0.41.0
+
+### Minor Changes
+
+- 98bd3de: feat: add utility 'rgbToDuRgba'
+
+### Patch Changes
+
+- Updated dependencies [98bd3de]
+- Updated dependencies [98bd3de]
+  - @recast-navigation/core@0.41.0
+  - @recast-navigation/generators@0.41.0
+
 ## 0.40.0
 
 ### Minor Changes
@@ -328,7 +341,7 @@
   old usage:
 
   ```ts
-  import { NavMesh, Crowd, NavMeshQuery } from 'recast-navigation';
+  import { NavMesh, Crowd, NavMeshQuery } from "recast-navigation";
 
   const navMesh = new NavMesh();
 
@@ -344,7 +357,7 @@
   new usage:
 
   ```ts
-  import { NavMesh, Crowd, NavMeshQuery } from 'recast-navigation';
+  import { NavMesh, Crowd, NavMeshQuery } from "recast-navigation";
 
   const navMesh = new NavMesh();
 
@@ -369,10 +382,10 @@
   Note that the other `wasm` flavor currently does not support node.js environments.
 
   ```ts
-  import { init } from 'recast-navigation';
+  import { init } from "recast-navigation";
 
   // import the 'wasm' flavor - has a separate wasm file, not inlined
-  import RecastWasm from '@recast-navigation/wasm/wasm';
+  import RecastWasm from "@recast-navigation/wasm/wasm";
 
   await init(RecastWasm);
   ```
@@ -380,7 +393,7 @@
   It's still possible to use the inlined wasm flavor by not passing anything to `init` as before.
 
   ```ts
-  import { init } from 'recast-navigation';
+  import { init } from "recast-navigation";
 
   // internally dynamically imports `@recast-navigation/wasm`
   await init();
@@ -440,7 +453,7 @@
   usage changed from:
 
   ```ts
-  import { Arrays } from '@recast-navigation/core';
+  import { Arrays } from "@recast-navigation/core";
 
   Arrays.VertsArray;
   Arrays.TrisArray;
@@ -458,7 +471,7 @@
     TringleAreasArray,
     ChunkIdsArray,
     TileCacheData,
-  } from '@recast-navigation/core';
+  } from "@recast-navigation/core";
   ```
 
   The `.copy` method now directly copies the data from the source array to the emscripten heap. This should improve performance when copying large arrays.

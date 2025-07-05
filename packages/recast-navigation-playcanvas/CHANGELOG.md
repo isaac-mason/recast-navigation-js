@@ -1,5 +1,14 @@
 # @recast-navigation/playcanvas
 
+## 0.41.0
+
+### Patch Changes
+
+- Updated dependencies [98bd3de]
+- Updated dependencies [98bd3de]
+  - @recast-navigation/core@0.41.0
+  - @recast-navigation/generators@0.41.0
+
 ## 0.40.0
 
 ### Patch Changes

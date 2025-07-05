@@ -1,5 +1,14 @@
 # @recast-navigation/generators
 
+## 0.41.0
+
+### Patch Changes
+
+- Updated dependencies [98bd3de]
+- Updated dependencies [98bd3de]
+  - @recast-navigation/core@0.41.0
+  - @recast-navigation/wasm@0.41.0
+
 ## 0.40.0
 
 ### Patch Changes
@@ -209,7 +218,7 @@
   usage changed from:
 
   ```ts
-  import { Arrays } from '@recast-navigation/core';
+  import { Arrays } from "@recast-navigation/core";
 
   Arrays.VertsArray;
   Arrays.TrisArray;
@@ -227,7 +236,7 @@
     TringleAreasArray,
     ChunkIdsArray,
     TileCacheData,
-  } from '@recast-navigation/core';
+  } from "@recast-navigation/core";
   ```
 
   The `.copy` method now directly copies the data from the source array to the emscripten heap. This should improve performance when copying large arrays.
