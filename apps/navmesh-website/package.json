@@ -9,26 +9,26 @@
   },
   "dependencies": {
     "@pmndrs/assets": "^1.7.0",
-    "@react-three/drei": "^9.114.3",
-    "@react-three/fiber": "^8.17.10",
-    "leva": "^0.9.35",
-    "react": "^18.3.1",
-    "react-dom": "^18.2.0",
+    "@react-three/drei": "^10.4.2",
+    "@react-three/fiber": "^9.2.0",
+    "leva": "^0.10.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
     "react-dropzone": "^14.2.9",
-    "react-router-dom": "^6.27.0",
+    "react-router": "^7.6.3",
     "recast-navigation": "workspace:*",
     "suspend-react": "^0.1.3",
-    "three": "^0.172.0",
+    "three": "^0.178.0",
     "tunnel-rat": "^0.1.2",
-    "zustand": "^5.0.0"
+    "zustand": "^5.0.6"
   },
   "devDependencies": {
-    "@types/react": "^18.3.11",
-    "@types/react-dom": "^18.3.1",
-    "@types/three": "^0.172.0",
-    "@vitejs/plugin-react": "^4.3.2",
-    "typescript": "^5.6.3",
-    "vite": "^5.4.9",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@types/three": "^0.178.0",
+    "@vitejs/plugin-react": "^4.6.0",
+    "typescript": "^5.8.3",
+    "vite": "^7.0.2",
     "vite-plugin-html": "^3.2.2"
   }
 }

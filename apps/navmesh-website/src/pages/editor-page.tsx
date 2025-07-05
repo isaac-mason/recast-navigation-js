@@ -2,15 +2,14 @@ import cityEnvironment from '@pmndrs/assets/hdri/city.exr';
 import { Bounds, Environment, OrbitControls } from '@react-three/drei';
 import { Canvas, ThreeEvent } from '@react-three/fiber';
 import { Leva } from 'leva';
-import { Suspense, useCallback, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router';
 import { exportNavMesh, init as initRecast } from 'recast-navigation';
 import {
   generateSoloNavMesh,
   generateTiledNavMesh,
 } from 'recast-navigation/generators';
 import { getPositionsAndIndices } from '@recast-navigation/three';
-import { suspend } from 'suspend-react';
 import { Mesh } from 'three';
 import { RouterPaths } from '../app';
 import {
@@ -31,6 +30,8 @@ import {
 import { LoadingSpinner } from '../features/ui';
 import { useEditorState } from '../state/editor-state';
 import { HtmlTunnel } from '../tunnels';
+
+await initRecast()
 
 const Editor = () => {
   const navigate = useNavigate();
@@ -84,17 +85,17 @@ const Editor = () => {
 
       const result = navMeshConfig.tileSize
         ? generateTiledNavMesh(
-            positions,
-            indices,
-            navMeshConfig,
-            keepIntermediates
-          )
+          positions,
+          indices,
+          navMeshConfig,
+          keepIntermediates
+        )
         : generateSoloNavMesh(
-            positions,
-            indices,
-            navMeshConfig,
-            keepIntermediates
-          );
+          positions,
+          indices,
+          navMeshConfig,
+          keepIntermediates
+        );
 
       console.log('nav mesh generation result', result);
 
@@ -248,9 +249,6 @@ const Editor = () => {
         />
       )}
 
-      <Environment files={cityEnvironment} />
-
-      <OrbitControls makeDefault />
 
       <HtmlTunnel.In>
         {loading && <LoadingSpinner />}
@@ -272,17 +270,17 @@ const Editor = () => {
 };
 
 export const EditorPage = () => {
-  suspend(() => initRecast(), []);
-
   return (
     <ErrorBoundary>
-      <Suspense fallback={<LoadingSpinner />}>
-        <Canvas camera={{ position: [100, 100, 100] }}>
-          <Editor />
-        </Canvas>
+      <Canvas
+        camera={{ position: [100, 100, 100] }}
+      >
+        <Editor />
+        <Environment files={cityEnvironment} />
+        <OrbitControls makeDefault />
+      </Canvas>
 
-        <HtmlTunnel.Out />
-      </Suspense>
+      <HtmlTunnel.Out />
     </ErrorBoundary>
   );
 };

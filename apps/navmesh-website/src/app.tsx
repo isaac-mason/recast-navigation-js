@@ -2,7 +2,7 @@ import {
   RouterProvider,
   createBrowserRouter,
   redirect,
-} from 'react-router-dom';
+} from 'react-router';
 import { EditorPage, UploadPage } from './pages';
 
 export const RouterPaths = {

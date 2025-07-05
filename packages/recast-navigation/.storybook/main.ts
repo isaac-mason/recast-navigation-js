@@ -2,18 +2,18 @@ import { dirname, join, resolve } from 'path';
 
 module.exports = {
   stories: ['./stories/**/*.mdx', './stories/**/*.stories.@(js|jsx|ts|tsx)'],
+
   addons: [
     getAbsolutePath('@storybook/addon-links'),
-    getAbsolutePath('@storybook/addon-essentials'),
+    getAbsolutePath("@storybook/addon-docs")
   ],
+
   framework: {
     name: getAbsolutePath('@storybook/react-vite'),
     options: {},
   },
-  staticDirs: ['./public'],
-  docs: {
-    autodocs: false,
-  },
+
+  staticDirs: ['./public']
 };
 
 /**

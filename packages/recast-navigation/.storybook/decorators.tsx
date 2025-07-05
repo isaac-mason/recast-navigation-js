@@ -2,7 +2,7 @@ import { Environment, Loader } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import * as RecastNavigation from '@recast-navigation/core';
 import { Leva } from 'leva';
-import React, { Suspense } from 'react';
+import React, { Suspense, type JSX } from 'react';
 import { suspend } from 'suspend-react';
 import tunnel from 'tunnel-rat'
 
