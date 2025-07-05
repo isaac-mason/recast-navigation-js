@@ -1,7 +1,7 @@
 import { NavMesh, NavMeshQuery } from '@recast-navigation/core';
 import { threeToSoloNavMesh } from '@recast-navigation/three';
 import React, { useEffect, useState } from 'react';
-import { Group, Mesh, MeshBasicMaterial, Vector3Tuple } from 'three';
+import { Group, Mesh, Vector3Tuple } from 'three';
 import { Debug } from '../../common/debug';
 import { NavTestEnvironment } from '../../common/nav-test-environment';
 import { decorators, htmlTunnel } from '../../decorators';
@@ -14,11 +14,6 @@ export default {
   decorators,
   parameters,
 };
-
-const navMeshMaterial = new MeshBasicMaterial({
-  wireframe: true,
-  color: 'red',
-});
 
 export const FindRandomPoint = () => {
   const [group, setGroup] = useState<Group | null>(null);
@@ -88,7 +83,7 @@ export const FindRandomPoint = () => {
         </mesh>
       )}
 
-      <Debug navMesh={navMesh} navMeshMaterial={navMeshMaterial} />
+      <Debug navMesh={navMesh} />
 
       <OrbitControls makeDefault />
 

@@ -3,7 +3,7 @@ import { ThreeEvent } from '@react-three/fiber';
 import { NavMesh, NavMeshQuery } from '@recast-navigation/core';
 import { threeToSoloNavMesh } from '@recast-navigation/three';
 import React, { useEffect, useState } from 'react';
-import { Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
+import { Group, Mesh, Vector3 } from 'three';
 import { Debug } from '../../common/debug';
 import { NavTestEnvironment } from '../../common/nav-test-environment';
 import { decorators, htmlTunnel } from '../../decorators';
@@ -14,11 +14,6 @@ export default {
   decorators,
   parameters,
 };
-
-const navMeshMaterial = new MeshBasicMaterial({
-  wireframe: true,
-  color: 'red',
-});
 
 export const Raycast = () => {
   const [group, setGroup] = useState<Group | null>(null);
@@ -149,7 +144,7 @@ export const Raycast = () => {
         )}
       </group>
 
-      <Debug navMesh={navMesh} navMeshMaterial={navMeshMaterial} />
+      <Debug navMesh={navMesh} />
 
       <OrbitControls />
 
