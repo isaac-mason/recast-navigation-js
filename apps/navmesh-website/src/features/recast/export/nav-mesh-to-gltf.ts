@@ -87,7 +87,7 @@ type GLTFExport =
       [key: string]: any;
     };
 
-export const navMeshToGLTF = (navMesh: NavMesh): Promise<GLTFExport> => {
+export const navMeshToGLTF = (navMesh: NavMesh, binary: boolean): Promise<GLTFExport> => {
   const exporter = new GLTFExporter();
 
   const [positions, indices] = navMeshToPositionsAndIndices(navMesh);
@@ -107,6 +107,6 @@ export const navMeshToGLTF = (navMesh: NavMesh): Promise<GLTFExport> => {
   scene.add(mesh);
 
   return new Promise((resolve, reject) => {
-    exporter.parse(scene, resolve, reject);
+    exporter.parse(scene, resolve, reject, { binary });
   });
 };
