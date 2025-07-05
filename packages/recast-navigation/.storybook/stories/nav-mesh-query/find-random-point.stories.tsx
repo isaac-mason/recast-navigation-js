@@ -1,6 +1,6 @@
 import { type NavMesh, NavMeshQuery } from '@recast-navigation/core';
 import { threeToSoloNavMesh } from '@recast-navigation/three';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { type Group, Mesh, type Vector3Tuple } from 'three';
 import { Debug } from '../../common/debug';
 import { NavTestEnvironment } from '../../common/nav-test-environment';
@@ -21,16 +21,7 @@ export const FindRandomPoint = () => {
   const [navMesh, setNavMesh] = useState<NavMesh>();
   const [navMeshQuery, setNavMeshQuery] = useState<NavMeshQuery>();
   const [point, setPoint] = useState<Vector3Tuple>([0, 0, 0]);
-
-  const newPoint = useCallback(async () => {
-    if (!navMeshQuery) return;
-
-    const result = navMeshQuery.findRandomPoint();
-    if (!result) return;
-
-    const point = result.randomPoint;
-    setPoint([point.x, point.y, point.z]);
-  }, [navMeshQuery]);
+  const [version, setVersion] = useState(0);
 
   useEffect(() => {
     if (!group) return;
@@ -57,8 +48,6 @@ export const FindRandomPoint = () => {
     setNavMesh(navMesh);
     setNavMeshQuery(navMeshQuery);
 
-    newPoint();
-
     return () => {
       setNavMesh(undefined);
       setNavMeshQuery(undefined);
@@ -66,7 +55,18 @@ export const FindRandomPoint = () => {
       navMeshQuery.destroy();
       navMesh.destroy();
     };
-  }, [group, newPoint]);
+  }, [group]);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: rerun on version change
+  useEffect(() => {
+    if (!navMeshQuery) return;
+
+    const result = navMeshQuery.findRandomPoint();
+    if (!result) return;
+
+    const point = result.randomPoint;
+    setPoint([point.x, point.y, point.z]);
+  }, [version, navMeshQuery]);
 
   return (
     <>
@@ -96,7 +96,7 @@ export const FindRandomPoint = () => {
         >
           <button
             type="button"
-            onClick={newPoint}
+            onClick={() => setVersion((v) => v + 1)}
             style={{
               padding: '0.5em',
               fontSize: '1em',

@@ -1,6 +1,6 @@
 import { OrbitControls } from '@react-three/drei';
 import type { ThreeEvent } from '@react-three/fiber';
-import { floodFillPruneNavMesh, NavMeshQuery } from '@recast-navigation/core';
+import { floodFillPruneNavMesh, NavMeshQuery, rgbToDuRgba } from '@recast-navigation/core';
 import { DebugDrawer, threeToSoloNavMesh } from '@recast-navigation/three';
 import { useEffect, useState } from 'react';
 import * as THREE from 'three';
@@ -59,7 +59,7 @@ export const FloodFillPruning = () => {
     /* debug draw */
     const debug = new DebugDrawer();
 
-    debug.drawNavMeshPolysWithFlags(navMesh, 1, 0x0000ff);
+    debug.drawNavMeshPolysWithFlags(navMesh, 1, rgbToDuRgba(0x0000ff));
 
     setDebug(debug);
 

@@ -37,8 +37,8 @@ export const CrowdObstacles = () => {
   const [crowd, setCrowd] = useState<Crowd | undefined>();
   const [agent, setAgent] = useState<CrowdAgent | undefined>();
 
-  const boxObstacle = useRef<BoxObstacle | undefined>();
-  const cylinderObstacle = useRef<CylinderObstacle | undefined>();
+  const boxObstacle = useRef<BoxObstacle | undefined>(undefined);
+  const cylinderObstacle = useRef<CylinderObstacle | undefined>(undefined);
 
   const boxObstacleTarget = useRef<Object3D | null>(null!);
   const cylinderObstacleTarget = useRef<Object3D | null>(null!);

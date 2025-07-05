@@ -260,7 +260,7 @@ export class DebugDrawerUtils {
       this.debugDrawImpl,
       mesh.raw.m_navMesh,
       flags,
-      this.rgbToDuRgba(col),
+      col,
     );
     return this.flush();
   }
@@ -274,7 +274,7 @@ export class DebugDrawerUtils {
       this.debugDrawImpl,
       mesh.raw.m_navMesh,
       ref,
-      this.rgbToDuRgba(col),
+      col,
     );
     return this.flush();
   }
@@ -286,15 +286,6 @@ export class DebugDrawerUtils {
     Raw.Module.destroy(this.debugDrawImpl);
   }
 
-  private rgbToDuRgba(color: number): number {
-    // convert hexadecimal rgb color to duRGBA format
-    const r = color & 0xff;
-    const g = (color >> 8) & 0xff;
-    const b = (color >> 16) & 0xff;
-
-    return r | (g << 8) | (b << 16) | (255 << 24);
-  }
-
   private vertex(x: number, y: number, z: number, color: number) {
     const r = (color & 0xff) / 255;
     const g = ((color >> 8) & 0xff) / 255;
@@ -304,3 +295,14 @@ export class DebugDrawerUtils {
     this.currentVertices.push([x, y, z, r, g, b, a]);
   }
 }
+
+/**
+ * Converts a color in 0xRRGGBBAA format to a duRGBA format.
+ */
+export const rgbToDuRgba = (hexColor: number): number => {
+  const r = (hexColor >> 16) & 0xff;
+  const g = (hexColor >> 8) & 0xff;
+  const b = hexColor & 0xff;
+
+  return r | (g << 8) | (b << 16) | (255 << 24);
+};

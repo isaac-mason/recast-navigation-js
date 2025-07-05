@@ -1,12 +1,12 @@
 import { useFrame } from '@react-three/fiber';
-import { Crowd, NavMesh, TileCache } from '@recast-navigation/core';
+import { rgbToDuRgba, type Crowd, type NavMesh, type TileCache } from '@recast-navigation/core';
 import {
   CrowdHelper,
   DebugDrawer,
   TileCacheHelper,
 } from '@recast-navigation/three';
-import React, { useEffect, useMemo } from 'react';
-import { Material } from 'three';
+import { useEffect, useMemo } from 'react';
+import type { Material } from 'three';
 
 export type DebugProps = {
   autoUpdate?: boolean;
@@ -56,8 +56,7 @@ export const Debug = ({
 
     const update = () => {
       debugDrawer.clear();
-      const color = (0) | (0 << 8) | (255 << 16) | (128 << 24);
-      debugDrawer.drawNavMeshPolysWithFlags(navMesh, 1, color);
+      debugDrawer.drawNavMeshPolysWithFlags(navMesh, 1, rgbToDuRgba(0x0000ff));
     };
 
     update();
@@ -69,7 +68,7 @@ export const Debug = ({
     return () => {
       clearInterval(interval);
     };
-  }, [navMesh]);
+  }, [debugDrawer, navMesh]);
 
   useEffect(() => {
     if (!tileCacheHelper || !autoUpdate) return;
@@ -81,7 +80,7 @@ export const Debug = ({
     return () => {
       clearInterval(interval);
     };
-  }, [tileCacheHelper]);
+  }, [tileCacheHelper, autoUpdate]);
 
   return (
     <>

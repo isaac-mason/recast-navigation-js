@@ -179,6 +179,9 @@ export class DebugDrawer extends THREE.Group {
     this.drawPrimitives(primitives);
   }
 
+  /**
+   * @param col color in 0xRRGGBBAA format
+   */
   drawNavMeshPolysWithFlags(mesh: NavMesh, flags: number, col: number): void {
     const primitives = this.debugDrawerUtils.drawNavMeshPolysWithFlags(
       mesh,
@@ -188,6 +191,9 @@ export class DebugDrawer extends THREE.Group {
     this.drawPrimitives(primitives);
   }
 
+  /**
+   * @param col color in 0xRRGGBBAA format
+   */
   drawNavMeshPoly(mesh: NavMesh, ref: number, col: number): void {
     const primitives = this.debugDrawerUtils.drawNavMeshPoly(mesh, ref, col);
     this.drawPrimitives(primitives);

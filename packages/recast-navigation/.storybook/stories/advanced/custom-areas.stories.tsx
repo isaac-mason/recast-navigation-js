@@ -46,7 +46,7 @@ const useNavMesh = (group: RefObject<THREE.Group>) => {
   const [navMeshQuery, setNavMeshQuery] = useState<NavMeshQuery>();
 
   useEffect(() => {
-    if (!group) return;
+    if (!group.current) return;
 
     const meshes: THREE.Mesh[] = [];
 
@@ -244,7 +244,7 @@ export const FindClosestPoint = () => {
     return () => {
       setQueryFilter(undefined);
     };
-  });
+  }, [canSwim]);
 
   useEffect(() => {
     if (!navMesh || !navMeshQuery || !queryFilter || !point) return;
