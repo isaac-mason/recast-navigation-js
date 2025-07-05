@@ -15,7 +15,7 @@
     "build": "yarn build:packages && yarn build:apps",
     "build:packages": "yarn workspaces foreach -t -A --include @recast-navigation/wasm --include @recast-navigation/core --include @recast-navigation/generators --include recast-navigation --include @recast-navigation/three --include @recast-navigation/playcanvas run build",
     "build:apps": "yarn workspaces foreach -A -t --include navmesh-website --include docs run build",
-    "build:examples": "yarn workspaces foreach -A -t --include three-parcel-example --include three-vite-example --include three-vite-worker-example --include playcanvas-vite-example run build",
+    "build:examples": "yarn workspaces foreach -A -t --include three-vite-example --include three-vite-worker-example --include playcanvas-vite-example run build",
     "test": "yarn test:packages && yarn test:node-smoke-test && yarn lint",
     "test:packages": "(cd packages/recast-navigation && yarn test)",
     "test:node-smoke-test": "(cd ./examples/three-node-cjs-example && yarn start) && (cd ./examples/three-node-esm-example && yarn start)",
