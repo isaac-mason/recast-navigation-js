@@ -6,7 +6,7 @@
     "email": "isaac@isaacmason.com",
     "url": "https://isaacmason.com/"
   },
-  "version": "0.39.0",
+  "version": "0.40.0",
   "license": "MIT",
   "homepage": "https://github.com/isaac-mason/recast-navigation-js",
   "bugs": {
@@ -27,7 +27,7 @@
     "lint": "eslint src"
   },
   "dependencies": {
-    "@recast-navigation/wasm": "0.39.0"
+    "@recast-navigation/wasm": "0.40.0"
   },
   "devDependencies": {
     "@babel/core": "^7.24.5",

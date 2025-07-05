@@ -1,5 +1,18 @@
 # @recast-navigation/core
 
+## 0.40.0
+
+### Minor Changes
+
+- 3e370e9: fix: debug drawer util conversion from rgb hex color to recast/detour duRGBA color unsigned int
+- e759538: fix: recast detour constants binding types
+
+### Patch Changes
+
+- Updated dependencies [e759538]
+- Updated dependencies [732eb28]
+  - @recast-navigation/wasm@0.40.0
+
 ## 0.39.0
 
 ### Minor Changes

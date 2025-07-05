@@ -1,5 +1,18 @@
 # recast-navigation
 
+## 0.40.0
+
+### Minor Changes
+
+- e759538: fix: recast detour constants binding types
+
+### Patch Changes
+
+- Updated dependencies [3e370e9]
+- Updated dependencies [e759538]
+  - @recast-navigation/core@0.40.0
+  - @recast-navigation/generators@0.40.0
+
 ## 0.39.0
 
 ### Minor Changes
