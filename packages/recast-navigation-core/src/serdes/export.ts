@@ -1,5 +1,5 @@
-import { NavMesh } from '../nav-mesh';
-import { TileCache } from '../tile-cache';
+import type { NavMesh } from '../nav-mesh';
+import type { TileCache } from '../tile-cache';
 import { Raw } from '../raw';
 
 const exportImpl = (navMesh: NavMesh, tileCache?: TileCache): Uint8Array => {

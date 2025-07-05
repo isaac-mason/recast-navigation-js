@@ -1,12 +1,12 @@
 import {
-  SoloNavMeshGeneratorConfig,
-  TileCacheGeneratorConfig,
-  TiledNavMeshGeneratorConfig,
+  type SoloNavMeshGeneratorConfig,
+  type TileCacheGeneratorConfig,
+  type TiledNavMeshGeneratorConfig,
   generateSoloNavMesh,
   generateTileCache,
   generateTiledNavMesh,
 } from '@recast-navigation/generators';
-import { MeshInstance } from 'playcanvas';
+import type { MeshInstance } from 'playcanvas';
 import { getPositionsAndIndices } from './get-positions-and-indices';
 
 export const pcToSoloNavMesh = (

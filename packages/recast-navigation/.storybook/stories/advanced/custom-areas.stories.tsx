@@ -1,22 +1,22 @@
 import { Line, OrbitControls } from '@react-three/drei';
-import { ThreeEvent, useFrame } from '@react-three/fiber';
+import { type ThreeEvent, useFrame } from '@react-three/fiber';
 import {
   Crowd,
-  CrowdAgent,
-  NavMesh,
+  type CrowdAgent,
+  type NavMesh,
   NavMeshQuery,
   QueryFilter,
 } from '@recast-navigation/core';
 import { getPositionsAndIndices } from '@recast-navigation/three';
 import { useControls } from 'leva';
-import React, { RefObject, useEffect, useRef, useState } from 'react';
+import { type RefObject, useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { AgentPath } from '../../common/agent-path';
 import { Debug } from '../../common/debug';
 import { decorators } from '../../decorators';
 import { parameters } from '../../parameters';
 import {
-  NavMeshGeneratorConfig,
+  type NavMeshGeneratorConfig,
   PolyFlags,
   generateNavMesh,
 } from './custom-areas-generator';
@@ -92,7 +92,7 @@ const CustomAreas = () => {
     <>
       {waterBoxAreas.map((area, i) => (
         <mesh
-          key={i}
+          key={String(i)}
           position={[
             (area.bmax[0] + area.bmin[0]) / 2,
             (area.bmax[1] + area.bmin[1]) / 2,
@@ -117,7 +117,7 @@ const CustomAreas = () => {
 
       {unwalkableBoxAreas.map((area, i) => (
         <mesh
-          key={i}
+          key={String(i)}
           position={[
             (area.bmax[0] + area.bmin[0]) / 2,
             (area.bmax[1] + area.bmin[1]) / 2,
@@ -194,7 +194,7 @@ export const ComputePath = () => {
     return () => {
       setPath(undefined);
     };
-  }, [navMesh, canSwim]);
+  }, [navMesh, navMeshQuery, canSwim]);
 
   return (
     <>
@@ -267,7 +267,7 @@ export const FindClosestPoint = () => {
     return () => {
       setClosestPointOnNavMesh(undefined);
     };
-  }, [navMesh, queryFilter, point]);
+  }, [navMesh, navMeshQuery, queryFilter, point]);
 
   return (
     <>
@@ -363,7 +363,7 @@ export const SingleAgent = () => {
     if (agentTarget) {
       agent.requestMoveTarget(agentTarget);
     }
-  }, [crowd, agent, canSwim]);
+  }, [crowd, agent, agentTarget, canSwim]);
 
   useFrame((_, delta) => {
     if (!crowd) return;

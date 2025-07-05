@@ -19,6 +19,13 @@
             "recommended": true,
             "style": {
                 "noNonNullAssertion": "off"
+            },
+            "a11y": {
+                "noStaticElementInteractions": "off",
+                "noSvgWithoutTitle": "off"
+            },
+            "suspicious": {
+                "noExplicitAny": "off"
             }
         }
     },

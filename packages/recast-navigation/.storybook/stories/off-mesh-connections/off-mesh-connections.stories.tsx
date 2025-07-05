@@ -1,14 +1,14 @@
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
-import { ThreeEvent, useFrame } from '@react-three/fiber';
+import { type ThreeEvent, useFrame } from '@react-three/fiber';
 import {
   Crowd,
-  NavMesh,
+  type NavMesh,
   NavMeshQuery,
-  OffMeshConnectionParams,
+  type OffMeshConnectionParams,
 } from '@recast-navigation/core';
 import { threeToSoloNavMesh } from '@recast-navigation/three';
-import React, { useEffect, useState } from 'react';
-import { Group, Mesh, MeshStandardMaterial } from 'three';
+import { useEffect, useState } from 'react';
+import { type Group, Mesh, MeshStandardMaterial } from 'three';
 import { Debug } from '../../common/debug';
 import { NavTestEnvironment } from '../../common/nav-test-environment';
 import { decorators } from '../../decorators';

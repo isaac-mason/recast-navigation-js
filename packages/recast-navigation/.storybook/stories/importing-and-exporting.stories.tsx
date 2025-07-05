@@ -1,7 +1,7 @@
 import { OrbitControls } from '@react-three/drei';
 import {
-  NavMesh,
-  TileCache,
+  type NavMesh,
+  type TileCache,
   TileCacheMeshProcess,
   exportNavMesh,
   exportTileCache,
@@ -10,8 +10,8 @@ import {
 } from '@recast-navigation/core';
 import { threeToSoloNavMesh, threeToTileCache } from '@recast-navigation/three';
 import { button, useControls } from 'leva';
-import React, { useState } from 'react';
-import { Group, Mesh } from 'three';
+import { useState } from 'react';
+import { type Group, Mesh } from 'three';
 import { Debug } from '../common/debug';
 import { NavTestEnvironment } from '../common/nav-test-environment';
 import { useNavMeshConfig } from '../common/use-nav-mesh-config';

@@ -1,7 +1,7 @@
 import { UnsignedCharArray } from './arrays';
 import { Detour, Raw, type RawModule } from './raw';
-import { RecastPolyMesh, RecastPolyMeshDetail } from './recast';
-import { Vector3, Vector3Tuple, array, vec3 } from './utils';
+import type { RecastPolyMesh, RecastPolyMeshDetail } from './recast';
+import { type Vector3, type Vector3Tuple, array, vec3 } from './utils';
 
 export const statusSucceed = (status: number): boolean => {
   return Raw.Detour.statusSucceed(status);
@@ -29,7 +29,7 @@ export const statusToReadableString = (status: number): string => {
   }
 
   if (Raw.Detour.statusFailed(status)) {
-    let reason: string | undefined = undefined;
+    let reason: string | undefined ;
 
     const DT_STATUS_REASONS = {
       DT_WRONG_MAGIC: Detour.DT_WRONG_MAGIC,

@@ -1,10 +1,10 @@
 import { OrbitControls } from '@react-three/drei';
-import { ThreeEvent } from '@react-three/fiber';
+import type { ThreeEvent } from '@react-three/fiber';
 import { floodFillPruneNavMesh, NavMeshQuery } from '@recast-navigation/core';
 import { DebugDrawer, threeToSoloNavMesh } from '@recast-navigation/three';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import * as THREE from 'three';
-import { Group, Mesh } from 'three';
+import { type Group, Mesh } from 'three';
 import { NavTestEnvironment } from '../../common/nav-test-environment';
 import { decorators, htmlTunnel } from '../../decorators';
 import { parameters } from '../../parameters';

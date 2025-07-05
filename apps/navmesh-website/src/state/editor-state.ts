@@ -1,9 +1,9 @@
-import { NavMesh } from 'recast-navigation';
-import {
+import type { NavMesh } from 'recast-navigation';
+import type {
   SoloNavMeshGeneratorIntermediates,
   TiledNavMeshGeneratorIntermediates,
 } from 'recast-navigation/generators';
-import { Group } from 'three';
+import type { Group } from 'three';
 import { create } from 'zustand';
 
 export type EditorState = {

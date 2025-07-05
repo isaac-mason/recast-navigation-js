@@ -1,8 +1,8 @@
 import { OrbitControls } from '@react-three/drei';
-import { NavMesh, NavMeshQuery } from '@recast-navigation/core';
+import type { NavMesh } from '@recast-navigation/core';
 import { threeToSoloNavMesh } from '@recast-navigation/three';
-import React, { useEffect, useState } from 'react';
-import { Box3, Group, Mesh } from 'three';
+import { useEffect, useState } from 'react';
+import { Box3, type Group, Mesh } from 'three';
 import { Debug } from '../../common/debug';
 import { NavTestEnvironment } from '../../common/nav-test-environment';
 import { decorators } from '../../decorators';
@@ -22,7 +22,6 @@ export const CustomBounds = () => {
   const [group, setGroup] = useState<Group | null>(null);
 
   const [navMesh, setNavMesh] = useState<NavMesh | undefined>();
-  const [navMeshQuery, setNavMeshQuery] = useState<NavMeshQuery | undefined>();
 
   useEffect(() => {
     if (!group) return;
@@ -50,13 +49,11 @@ export const CustomBounds = () => {
     }
 
     setNavMesh(navMesh);
-    setNavMeshQuery(navMeshQuery);
 
     return () => {
       navMesh.destroy();
 
       setNavMesh(undefined);
-      setNavMeshQuery(undefined);
     };
   }, [group]);
 

@@ -1,28 +1,28 @@
 import {
   ChunkIdsArray,
   Detour,
-  FloatArray,
-  IntArray,
+  type FloatArray,
+  type IntArray,
   NavMesh,
   NavMeshCreateParams,
   NavMeshParams,
-  OffMeshConnectionParams,
+  type OffMeshConnectionParams,
   Raw,
-  RawModule,
+  type RawModule,
   Recast,
   RecastBuildContext,
   RecastChunkyTriMesh,
-  RecastCompactHeightfield,
-  RecastConfig,
-  RecastContourSet,
-  RecastHeightfield,
-  RecastPolyMesh,
-  RecastPolyMeshDetail,
+  type RecastCompactHeightfield,
+  type RecastConfig,
+  type RecastContourSet,
+  type RecastHeightfield,
+  type RecastPolyMesh,
+  type RecastPolyMeshDetail,
   TriangleAreasArray,
   TrianglesArray,
-  UnsignedCharArray,
-  Vector2Tuple,
-  Vector3Tuple,
+  type UnsignedCharArray,
+  type Vector2Tuple,
+  type Vector3Tuple,
   VerticesArray,
   allocCompactHeightfield,
   allocContourSet,
@@ -56,9 +56,9 @@ import {
   statusToReadableString,
   vec3,
 } from '@recast-navigation/core';
-import { Pretty } from '../types';
+import type { Pretty } from '../types';
 import {
-  OffMeshConnectionGeneratorParams,
+  type OffMeshConnectionGeneratorParams,
   dtIlog2,
   dtNextPow2,
   getBoundingBox,
@@ -524,10 +524,10 @@ export const generateTileNavMeshData = (
 
   // Update poly flags from areas.
   for (let i = 0; i < polyMesh.npolys(); i++) {
-    if (polyMesh.areas(i) == Recast.RC_WALKABLE_AREA) {
+    if (polyMesh.areas(i) === Recast.RC_WALKABLE_AREA) {
       polyMesh.setAreas(i, 0);
     }
-    if (polyMesh.areas(i) == 0) {
+    if (polyMesh.areas(i) === 0) {
       polyMesh.setFlags(i, 1);
     }
   }

@@ -1,6 +1,6 @@
 import { NavMesh } from '../nav-mesh';
 import { Raw, type RawModule } from '../raw';
-import { TileCache, TileCacheMeshProcess } from '../tile-cache';
+import { TileCache, type TileCacheMeshProcess } from '../tile-cache';
 
 const createNavMeshExport = (data: Uint8Array) => {
   const nDataBytes = data.length * data.BYTES_PER_ELEMENT;

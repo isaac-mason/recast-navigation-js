@@ -1,12 +1,12 @@
 import {
-  NavMesh,
+  type NavMesh,
   getNavMeshPositionsAndIndices,
 } from '@recast-navigation/core';
 import {
   BLEND_NORMAL,
   Entity,
-  GraphicsDevice,
-  Material,
+  type GraphicsDevice,
+  type Material,
   Mesh,
   MeshInstance,
   StandardMaterial,

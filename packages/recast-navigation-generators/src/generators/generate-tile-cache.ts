@@ -8,18 +8,18 @@ import {
   Recast,
   RecastBuildContext,
   RecastChunkyTriMesh,
-  RecastCompactHeightfield,
-  RecastConfig,
-  RecastHeightfield,
-  RecastHeightfieldLayerSet,
+  type RecastCompactHeightfield,
+  type RecastConfig,
+  type RecastHeightfield,
+  type RecastHeightfieldLayerSet,
   TileCache,
   TileCacheData,
   TileCacheMeshProcess,
   TriangleAreasArray,
   TrianglesArray,
-  UnsignedCharArray,
-  Vector2Tuple,
-  Vector3Tuple,
+  type UnsignedCharArray,
+  type Vector2Tuple,
+  type Vector3Tuple,
   VerticesArray,
   allocCompactHeightfield,
   allocHeightfield,
@@ -47,7 +47,7 @@ import {
   statusFailed,
   vec3,
 } from '@recast-navigation/core';
-import { Pretty } from '../types';
+import type { Pretty } from '../types';
 import { dtIlog2, dtNextPow2, getBoundingBox } from './common';
 
 type TileCacheRecastConfig = Omit<RecastConfig, 'minRegionArea' | 'maxEdgeLen'>;
@@ -588,7 +588,6 @@ export const generateTileCache = (
               Recast.RC_LOG_WARNING,
               `Failed to add tile to tile cache - tx: ${x}, ty: ${y}`,
             );
-            continue;
           }
         }
       }

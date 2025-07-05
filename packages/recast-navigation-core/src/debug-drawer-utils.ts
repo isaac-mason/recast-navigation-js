@@ -1,7 +1,7 @@
-import { NavMesh } from './nav-mesh';
-import { NavMeshQuery } from './nav-mesh-query';
-import { Raw, RawModule } from './raw';
-import {
+import type { NavMesh } from './nav-mesh';
+import type { NavMeshQuery } from './nav-mesh-query';
+import { Raw, type RawModule } from './raw';
+import type {
   RecastCompactHeightfield,
   RecastContourSet,
   RecastHeightfield,

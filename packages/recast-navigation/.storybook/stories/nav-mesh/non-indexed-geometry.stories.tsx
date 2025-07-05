@@ -1,8 +1,8 @@
 import { Bounds, OrbitControls } from '@react-three/drei';
-import { NavMesh } from '@recast-navigation/core';
+import type { NavMesh } from '@recast-navigation/core';
 import { threeToSoloNavMesh } from '@recast-navigation/three';
-import React, { useEffect, useState } from 'react';
-import { BoxGeometry, Group, Mesh } from 'three';
+import { useEffect, useState } from 'react';
+import { BoxGeometry, type Group, Mesh } from 'three';
 import { Debug } from '../../common/debug';
 import { decorators } from '../../decorators';
 import { parameters } from '../../parameters';

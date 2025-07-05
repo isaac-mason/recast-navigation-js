@@ -1,7 +1,7 @@
 import type { NavMesh } from './nav-mesh';
 import { NavMeshQuery, QueryFilter } from './nav-mesh-query';
-import { Raw, RawModule } from './raw';
-import { Vector3, vec3 } from './utils';
+import { Raw, type RawModule } from './raw';
+import { type Vector3, vec3 } from './utils';
 
 export type CrowdAgentParams = {
   /**

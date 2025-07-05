@@ -1,13 +1,13 @@
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
-import { NavMesh } from '@recast-navigation/core';
+import type { NavMesh } from '@recast-navigation/core';
 import {
   DebugDrawer,
   threeToSoloNavMesh,
   threeToTileCache,
   threeToTiledNavMesh,
 } from '@recast-navigation/three';
-import React, { useEffect, useState } from 'react';
-import { Group, Mesh } from 'three';
+import { useEffect, useState } from 'react';
+import { type Group, Mesh } from 'three';
 import { DungeonEnvironment } from '../../common/dungeon-environment';
 import { NavTestEnvironment } from '../../common/nav-test-environment';
 import { decorators } from '../../decorators';
@@ -92,7 +92,7 @@ const Common = ({ level, type, tileSize }: CommonProps) => {
     return () => {
       setDebugDrawer(undefined);
     };
-  }, [group]);
+  }, [group, type, tileSize]);
 
   return (
     <>

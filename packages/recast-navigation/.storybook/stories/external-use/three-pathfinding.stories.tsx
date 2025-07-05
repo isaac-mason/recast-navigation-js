@@ -1,8 +1,8 @@
 import { Line, OrbitControls, PerspectiveCamera } from '@react-three/drei';
-import React, { useEffect, useState } from 'react';
-import { NavMesh } from 'recast-navigation';
+import { useEffect, useState } from 'react';
+import type { NavMesh } from 'recast-navigation';
 import { threeToTileCache } from '@recast-navigation/three';
-import { BufferAttribute, BufferGeometry, Group, Mesh, Vector3 } from 'three';
+import { BufferAttribute, BufferGeometry, type Group, Mesh, type Vector3 } from 'three';
 import { Pathfinding } from 'three-pathfinding';
 import { decorators } from '../../decorators';
 import { parameters } from '../../parameters';

@@ -1,13 +1,13 @@
 import { mergePositionsAndIndices } from '@recast-navigation/generators';
 import {
   INDEXFORMAT_UINT32,
-  Mat4,
-  Mesh,
-  MeshInstance,
+  type Mat4,
+  type Mesh,
+  type MeshInstance,
   SEMANTIC_POSITION,
   Vec3,
-  VertexBuffer,
-  VertexFormat,
+  type VertexBuffer,
+  type VertexFormat,
   VertexIterator,
 } from 'playcanvas';
 

@@ -1,15 +1,15 @@
 import {
-  DebugDrawerPrimitive,
+  type DebugDrawerPrimitive,
   DebugDrawerUtils,
-  NavMesh,
-  NavMeshQuery,
-  RecastCompactHeightfield,
-  RecastContourSet,
-  RecastHeightfield,
-  RecastHeightfieldLayer,
-  RecastHeightfieldLayerSet,
-  RecastPolyMesh,
-  RecastPolyMeshDetail,
+  type NavMesh,
+  type NavMeshQuery,
+  type RecastCompactHeightfield,
+  type RecastContourSet,
+  type RecastHeightfield,
+  type RecastHeightfieldLayer,
+  type RecastHeightfieldLayerSet,
+  type RecastPolyMesh,
+  type RecastPolyMeshDetail,
 } from '@recast-navigation/core';
 import * as THREE from 'three';
 import { LineMaterial } from 'three/addons/lines/LineMaterial.js';

@@ -1,5 +1,5 @@
 import { mergePositionsAndIndices } from '@recast-navigation/generators';
-import { BufferAttribute, Mesh, Vector3 } from 'three';
+import { type BufferAttribute, type Mesh, Vector3 } from 'three';
 
 const _position = new Vector3();
 

@@ -1,12 +1,13 @@
 import { Html, OrbitControls } from '@react-three/drei';
-import { ThreeEvent } from '@react-three/fiber';
+import type { ThreeEvent } from '@react-three/fiber';
 import {
-  NavMesh,
+  type NavMesh,
   NavMeshQuery,
   statusToReadableString,
 } from '@recast-navigation/core';
 import { threeToSoloNavMesh } from '@recast-navigation/three';
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import type React from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { create } from 'zustand';
 
@@ -85,7 +86,7 @@ export function ClickNearbyPolygons() {
       navMeshQuery.destroy();
       navMesh.destroy();
     };
-  }, [group]);
+  }, [group, set]);
 
   /* toggle whether a poly is selected */
   function togglePolySelected(polyId: number, e: React.MouseEvent) {
@@ -129,7 +130,7 @@ export function ClickNearbyPolygons() {
     });
 
     set({ polyVisuals });
-  }, [navMesh, touchedPolyIds]);
+  }, [navMesh, touchedPolyIds, set]);
 
   /* set clicked position and find touched polys */
   const onPointerUp = (e: ThreeEvent<PointerEvent>) => {
@@ -203,14 +204,16 @@ export function ClickNearbyPolygons() {
     <>
       <group ref={setGroup}>
         <NavTestEnvironment
-          onPointerDown={(_) => (downAt.current = Date.now())}
+          onPointerDown={() => {
+            downAt.current = Date.now();
+          }}
           onPointerUp={onPointerUp}
         />
       </group>
 
       {polyVisuals?.map(({ polyId, geometry, center }, i) => (
         <Fragment key={polyId}>
-          <mesh key={i} geometry={geometry} material={touchMaterial} />
+          <mesh key={String(i)} geometry={geometry} material={touchMaterial} />
 
           <Html
             position={center}
@@ -321,12 +324,10 @@ function polyRefToGeom(
   const triangles = [] as number[][];
 
   // Only one tile because we use `threeToSoloNavMesh`
-  let allVertices: undefined | THREE.Vector3Tuple[] = undefined;
-
   const { poly, tile } = navMesh.getTileAndPolyByRef(polyRef);
 
   const vertexIds = range(poly.vertCount()).map((i) => poly.verts(i));
-  allVertices ??= range(tile.header()!.vertCount() * 3).reduce(
+  const allVertices = range(tile.header()!.vertCount() * 3).reduce(
     (agg, i) =>
       i % 3 === 2
         ? agg.concat([[tile.verts(i - 2), tile.verts(i - 1), tile.verts(i)]])
@@ -339,9 +340,9 @@ function polyRefToGeom(
 
   geom.setAttribute(
     'position',
-    new THREE.BufferAttribute(new Float32Array(vertices.flatMap((v) => v)), 3),
+    new THREE.BufferAttribute(new Float32Array(vertices.flat()), 3),
   );
-  geom.setIndex(triangles.flatMap((r) => r));
+  geom.setIndex(triangles.flat());
 
   return geom;
 }

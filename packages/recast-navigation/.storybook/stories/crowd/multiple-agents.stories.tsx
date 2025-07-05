@@ -1,9 +1,9 @@
 import { OrbitControls } from '@react-three/drei';
-import { ThreeEvent, useFrame } from '@react-three/fiber';
-import { Crowd, NavMesh, NavMeshQuery } from '@recast-navigation/core';
-import React, { useEffect, useState } from 'react';
+import { type ThreeEvent, useFrame } from '@react-three/fiber';
+import { Crowd, type NavMesh, NavMeshQuery } from '@recast-navigation/core';
+import { useEffect, useState } from 'react';
 import { threeToSoloNavMesh } from '@recast-navigation/three';
-import { Group, Mesh, MeshStandardMaterial } from 'three';
+import { type Group, Mesh, MeshStandardMaterial } from 'three';
 import { Debug } from '../../common/debug';
 import { NavTestEnvironment } from '../../common/nav-test-environment';
 import { decorators } from '../../decorators';

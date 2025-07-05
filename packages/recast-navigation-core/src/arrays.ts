@@ -1,4 +1,4 @@
-import { Raw, RawModule } from './raw';
+import { Raw, type RawModule } from './raw';
 
 type TypedArray =
   | typeof Int32Array
@@ -98,7 +98,7 @@ export class IntArray extends BaseArray<RawModule.IntArray, typeof Int32Array> {
   }
 
   static fromRaw(raw: RawModule.IntArray) {
-    return new this(raw);
+    return new IntArray(raw);
   }
 }
 
@@ -127,7 +127,7 @@ export class UnsignedIntArray extends BaseArray<
   }
 
   static fromRaw(raw: RawModule.UnsignedIntArray) {
-    return new this(raw);
+    return new UnsignedIntArray(raw);
   }
 }
 
@@ -156,7 +156,7 @@ export class UnsignedCharArray extends BaseArray<
   }
 
   static fromRaw(raw: RawModule.UnsignedCharArray) {
-    return new this(raw);
+    return new UnsignedCharArray(raw);
   }
 }
 
@@ -185,7 +185,7 @@ export class UnsignedShortArray extends BaseArray<
   }
 
   static fromRaw(raw: RawModule.UnsignedShortArray) {
-    return new this(raw);
+    return new UnsignedShortArray(raw);
   }
 }
 
@@ -214,7 +214,7 @@ export class FloatArray extends BaseArray<
   }
 
   static fromRaw(raw: RawModule.FloatArray) {
-    return new this(raw);
+    return new FloatArray(raw);
   }
 }
 

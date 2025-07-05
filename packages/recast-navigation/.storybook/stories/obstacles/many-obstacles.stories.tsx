@@ -1,15 +1,15 @@
 import { Line, OrbitControls } from '@react-three/drei';
 import {
   Detour,
-  NavMesh,
+  type NavMesh,
   NavMeshQuery,
-  TileCache,
+  type TileCache,
   statusDetail,
   statusToReadableString,
 } from '@recast-navigation/core';
 import { threeToTileCache } from '@recast-navigation/three';
-import React, { useEffect, useState } from 'react';
-import { Group, Mesh, MeshBasicMaterial, Vector3, Vector3Tuple } from 'three';
+import { useEffect, useState } from 'react';
+import { type Group, Mesh, MeshBasicMaterial, Vector3, type Vector3Tuple } from 'three';
 import { Debug } from '../../common/debug';
 import { decorators } from '../../decorators';
 import { parameters } from '../../parameters';

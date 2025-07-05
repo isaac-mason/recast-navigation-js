@@ -1,12 +1,12 @@
-import { Obstacle, TileCache } from '@recast-navigation/core';
+import type { Obstacle, TileCache } from '@recast-navigation/core';
 import {
   BoxGeometry,
   CylinderGeometry,
-  Material,
+  type Material,
   Mesh,
   MeshBasicMaterial,
   Object3D,
-  Vector3,
+  type Vector3,
 } from 'three';
 
 export type TileCacheHelperParams = {

@@ -1,19 +1,19 @@
 import { Line, OrbitControls, PivotControls } from '@react-three/drei';
 import {
-  BoxObstacle,
-  NavMesh,
+  type BoxObstacle,
+  type NavMesh,
   NavMeshQuery,
-  TileCache,
+  type TileCache,
 } from '@recast-navigation/core';
 import { threeToTileCache } from '@recast-navigation/three';
-import React, { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  Group,
+  type Group,
   Mesh,
   MeshBasicMaterial,
-  Object3D,
+  type Object3D,
   Vector3,
-  Vector3Tuple,
+  type Vector3Tuple,
 } from 'three';
 import { Debug } from '../../common/debug';
 import { decorators } from '../../decorators';
@@ -39,7 +39,7 @@ export const PathObstacles = () => {
 
   const [path, setPath] = useState<Vector3Tuple[]>();
 
-  const boxObstacle = useRef<BoxObstacle | undefined>();
+  const boxObstacle = useRef<BoxObstacle | undefined>(null!);
 
   const boxObstacleTarget = useRef<Object3D | null>(null!);
 
@@ -79,7 +79,7 @@ export const PathObstacles = () => {
     };
   }, [group]);
 
-  const update = () => {
+  const update = useCallback(() => {
     if (!navMesh || !tileCache || !navMeshQuery) return;
 
     if (boxObstacle.current) {
@@ -123,11 +123,16 @@ export const PathObstacles = () => {
     const { path } = navMeshQuery.computePath(start, end);
 
     setPath(path ? path.map((v) => [v.x, v.y, v.z]) : undefined);
-  };
+  }, [
+    navMesh,
+    tileCache,
+    navMeshQuery,
+  ]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: rerun update when navMesh changes
   useEffect(() => {
     update();
-  }, [navMesh]);
+  }, [update, navMesh]);
 
   return (
     <>

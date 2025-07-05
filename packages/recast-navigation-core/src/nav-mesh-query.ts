@@ -1,8 +1,8 @@
 import { FloatArray, UnsignedCharArray, UnsignedIntArray } from './arrays';
 import { statusSucceed } from './detour';
-import { NavMesh } from './nav-mesh';
+import type { NavMesh } from './nav-mesh';
 import { Raw, type RawModule } from './raw';
-import { Vector3, array, vec3 } from './utils';
+import { type Vector3, array, vec3 } from './utils';
 
 export class QueryFilter {
   raw: RawModule.dtQueryFilter;
@@ -43,7 +43,7 @@ export class QueryFilter {
   }
 
   setAreaCost(i: number, cost: number): void {
-    return this.raw.setAreaCost(i, cost);
+    this.raw.setAreaCost(i, cost);
   }
 }
 
@@ -934,7 +934,7 @@ export class NavMeshQuery {
     const maxStraightPathPoints = options?.maxStraightPathPoints ?? 256;
     const straightPathOptions = options?.straightPathOptions ?? 0;
 
-    let pathPolys;
+    let pathPolys: UnsignedIntArray;
 
     if (Array.isArray(path)) {
       pathPolys = new UnsignedIntArray();

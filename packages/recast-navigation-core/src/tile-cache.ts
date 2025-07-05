@@ -1,8 +1,8 @@
 import { UnsignedCharArray, UnsignedShortArray } from './arrays';
 import { NavMeshCreateParams, statusSucceed } from './detour';
-import { NavMesh } from './nav-mesh';
+import type { NavMesh } from './nav-mesh';
 import { Detour, Raw, type RawModule } from './raw';
-import { Vector3, vec3 } from './utils';
+import { type Vector3, vec3 } from './utils';
 
 export type ObstacleRef = RawModule.dtObstacleRef;
 

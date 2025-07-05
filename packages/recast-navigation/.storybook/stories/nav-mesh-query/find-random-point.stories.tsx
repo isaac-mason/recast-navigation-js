@@ -1,7 +1,7 @@
-import { NavMesh, NavMeshQuery } from '@recast-navigation/core';
+import { type NavMesh, NavMeshQuery } from '@recast-navigation/core';
 import { threeToSoloNavMesh } from '@recast-navigation/three';
-import React, { useEffect, useState } from 'react';
-import { Group, Mesh, Vector3Tuple } from 'three';
+import { useCallback, useEffect, useState } from 'react';
+import { type Group, Mesh, type Vector3Tuple } from 'three';
 import { Debug } from '../../common/debug';
 import { NavTestEnvironment } from '../../common/nav-test-environment';
 import { decorators, htmlTunnel } from '../../decorators';
@@ -22,7 +22,7 @@ export const FindRandomPoint = () => {
   const [navMeshQuery, setNavMeshQuery] = useState<NavMeshQuery>();
   const [point, setPoint] = useState<Vector3Tuple>([0, 0, 0]);
 
-  const newPoint = async function () {
+  const newPoint = useCallback(async () => {
     if (!navMeshQuery) return;
 
     const result = navMeshQuery.findRandomPoint();
@@ -30,7 +30,7 @@ export const FindRandomPoint = () => {
 
     const point = result.randomPoint;
     setPoint([point.x, point.y, point.z]);
-  };
+  }, [navMeshQuery]);
 
   useEffect(() => {
     if (!group) return;
@@ -57,6 +57,8 @@ export const FindRandomPoint = () => {
     setNavMesh(navMesh);
     setNavMeshQuery(navMeshQuery);
 
+    newPoint();
+
     return () => {
       setNavMesh(undefined);
       setNavMeshQuery(undefined);
@@ -64,11 +66,7 @@ export const FindRandomPoint = () => {
       navMeshQuery.destroy();
       navMesh.destroy();
     };
-  }, [group]);
-
-  useEffect(() => {
-    newPoint();
-  }, [navMeshQuery]);
+  }, [group, newPoint]);
 
   return (
     <>
@@ -97,6 +95,7 @@ export const FindRandomPoint = () => {
           }}
         >
           <button
+            type="button"
             onClick={newPoint}
             style={{
               padding: '0.5em',

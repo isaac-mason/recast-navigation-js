@@ -3,13 +3,13 @@ import {
   NavMeshCreateParams,
   Recast,
   RecastBuildContext,
-  RecastCompactHeightfield,
-  RecastConfig,
-  RecastContourSet,
-  RecastHeightfield,
+  type RecastCompactHeightfield,
+  type RecastConfig,
+  type RecastContourSet,
+  type RecastHeightfield,
   TriangleAreasArray,
   TrianglesArray,
-  Vector3Tuple,
+  type Vector3Tuple,
   VerticesArray,
   allocCompactHeightfield,
   allocContourSet,
@@ -373,10 +373,10 @@ export const generateNavMesh = (
   // Step 8. Create Detour data from Recast poly mesh.
   //
   for (let i = 0; i < polyMesh.npolys(); i++) {
-    if (polyMesh.areas(i) == Recast.RC_WALKABLE_AREA) {
+    if (polyMesh.areas(i) === Recast.RC_WALKABLE_AREA) {
       polyMesh.setAreas(i, PolyAreas.GROUND);
       polyMesh.setFlags(i, PolyFlags.WALK);
-    } else if (polyMesh.areas(i) == PolyAreas.WATER) {
+    } else if (polyMesh.areas(i) === PolyAreas.WATER) {
       polyMesh.setFlags(i, PolyFlags.SWIM);
     }
   }

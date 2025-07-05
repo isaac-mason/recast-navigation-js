@@ -1,4 +1,4 @@
-import { RecastConfig, exportNavMesh, init } from '@recast-navigation/core';
+import { type RecastConfig, exportNavMesh, init } from '@recast-navigation/core';
 import { generateSoloNavMesh } from '@recast-navigation/generators';
 
 self.onmessage = async (event: {

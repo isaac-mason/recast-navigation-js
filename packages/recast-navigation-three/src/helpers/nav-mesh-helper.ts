@@ -1,11 +1,11 @@
 import {
   getNavMeshPositionsAndIndices,
-  NavMesh,
+  type NavMesh,
 } from '@recast-navigation/core';
 import {
   BufferAttribute,
   BufferGeometry,
-  Material,
+  type Material,
   Mesh,
   MeshBasicMaterial,
   Object3D,

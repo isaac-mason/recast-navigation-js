@@ -46,20 +46,19 @@ export const ModelDropZone = ({
       {isDragActive ? (
         <p>Drop your model here ...</p>
       ) : (
-        <>
-          <p>
-            Drag 'n' drop your model <span>here</span> or{' '}
-            <button
-              style={exampleButtonStyle}
-              onClick={(e) => {
-                e.stopPropagation();
-                selectExample();
-              }}
-            >
-              try it with an example model
-            </button>
-          </p>
-        </>
+        <p>
+          Drag 'n' drop your model <span>here</span> or{' '}
+          <button
+            type="button"
+            style={exampleButtonStyle}
+            onClick={(e) => {
+              e.stopPropagation();
+              selectExample();
+            }}
+          >
+            try it with an example model
+          </button>
+        </p>
       )}
     </div>
   );

@@ -1,4 +1,4 @@
-import { UnsignedCharArray } from './arrays';
+import type { UnsignedCharArray } from './arrays';
 import {
   DetourMeshTile,
   DetourOffMeshConnection,
@@ -6,7 +6,7 @@ import {
   statusSucceed,
 } from './detour';
 import { Detour, Raw, type RawModule } from './raw';
-import { Vector3, array, vec3 } from './utils';
+import { type Vector3, array, vec3 } from './utils';
 
 export class NavMeshGetTilesAtResult {
   raw: RawModule.NavMeshGetTilesAtResult;

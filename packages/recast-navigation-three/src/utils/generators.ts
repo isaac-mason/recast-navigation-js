@@ -1,12 +1,12 @@
 import {
-  SoloNavMeshGeneratorConfig,
-  TileCacheGeneratorConfig,
-  TiledNavMeshGeneratorConfig,
+  type SoloNavMeshGeneratorConfig,
+  type TileCacheGeneratorConfig,
+  type TiledNavMeshGeneratorConfig,
   generateSoloNavMesh,
   generateTileCache,
   generateTiledNavMesh,
 } from '@recast-navigation/generators';
-import { Mesh } from 'three';
+import type { Mesh } from 'three';
 import { getPositionsAndIndices } from './get-positions-and-indices';
 
 export const threeToSoloNavMesh = (

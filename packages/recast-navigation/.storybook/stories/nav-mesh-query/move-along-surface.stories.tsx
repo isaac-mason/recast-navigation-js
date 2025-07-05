@@ -1,8 +1,8 @@
 import { useFrame } from '@react-three/fiber';
-import { NavMesh, NavMeshQuery } from '@recast-navigation/core';
+import { type NavMesh, NavMeshQuery } from '@recast-navigation/core';
 import { threeToSoloNavMesh } from '@recast-navigation/three';
-import React, { useEffect, useRef, useState } from 'react';
-import { Group, Mesh, Vector3 } from 'three';
+import { useEffect, useRef, useState } from 'react';
+import { type Group, Mesh, Vector3 } from 'three';
 import { Debug } from '../../common/debug';
 import { NavTestEnvironment } from '../../common/nav-test-environment';
 import { decorators, htmlTunnel } from '../../decorators';
@@ -80,7 +80,7 @@ export const MoveAlongSurface = () => {
 
     velocity.normalize();
 
-    velocity.multiplyScalar(1 - Math.pow(0.001, delta)).multiplyScalar(0.5);
+    velocity.multiplyScalar(1 - 0.001 ** delta).multiplyScalar(0.5);
 
     const { point, polyRef } = navMeshQuery.findClosestPoint({
       x: capsule.current.position.x,

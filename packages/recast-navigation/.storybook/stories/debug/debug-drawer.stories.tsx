@@ -1,7 +1,7 @@
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { DebugDrawer, threeToSoloNavMesh } from '@recast-navigation/three';
-import React, { useEffect, useState } from 'react';
-import { Group, Mesh } from 'three';
+import { useEffect, useState } from 'react';
+import { type Group, Mesh } from 'three';
 import { NavTestEnvironment } from '../../common/nav-test-environment';
 import { decorators } from '../../decorators';
 import { parameters } from '../../parameters';
@@ -103,7 +103,7 @@ const DebugDraw = ({ example, showModel = false }: DebugDrawProps) => {
 
       navMesh?.destroy();
     };
-  }, [group]);
+  }, [group, example]);
 
   return (
     <>

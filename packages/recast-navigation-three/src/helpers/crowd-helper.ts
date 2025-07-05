@@ -1,7 +1,7 @@
-import { Crowd, CrowdAgent } from '@recast-navigation/core';
+import type { Crowd, CrowdAgent } from '@recast-navigation/core';
 import {
   CylinderGeometry,
-  Material,
+  type Material,
   Mesh,
   MeshBasicMaterial,
   Object3D,

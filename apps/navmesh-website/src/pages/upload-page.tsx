@@ -81,7 +81,7 @@ const Footer = () => {
         <a
           target="_blank"
           href="https://github.com/isaac-mason/recast-navigation-js"
-          style={linkStyle}
+          style={linkStyle} rel="noopener"
         >
           recast-navigation-js
         </a>
@@ -91,7 +91,7 @@ const Footer = () => {
         <a
           target="_blank"
           href="https://github.com/isaac-mason/recast-navigation-js"
-          style={linkStyle}
+          style={linkStyle} rel="noopener"
         >
           <GithubSvg />
         </a>
@@ -126,7 +126,7 @@ export const UploadPage = () => {
         });
       },
     );
-  }, []);
+  }, [navigate, setEditorState ]);
 
   const onDropFile = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
@@ -165,7 +165,7 @@ export const UploadPage = () => {
         loading: false,
       });
     }
-  }, []);
+  }, [navigate, setEditorState]);
 
   return (
     <div style={layoutStyle}>

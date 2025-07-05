@@ -4,16 +4,16 @@ import {
   Raw,
   Recast,
   RecastBuildContext,
-  RecastCompactHeightfield,
-  RecastConfig,
-  RecastContourSet,
-  RecastHeightfield,
-  RecastPolyMesh,
-  RecastPolyMeshDetail,
+  type RecastCompactHeightfield,
+  type RecastConfig,
+  type RecastContourSet,
+  type RecastHeightfield,
+  type RecastPolyMesh,
+  type RecastPolyMeshDetail,
   TriangleAreasArray,
   TrianglesArray,
-  UnsignedCharArray,
-  Vector3Tuple,
+  type UnsignedCharArray,
+  type Vector3Tuple,
   VerticesArray,
   allocCompactHeightfield,
   allocContourSet,
@@ -43,8 +43,8 @@ import {
   rasterizeTriangles,
   recastConfigDefaults,
 } from '@recast-navigation/core';
-import { Pretty } from '../types';
-import { OffMeshConnectionGeneratorParams, getBoundingBox } from './common';
+import type { Pretty } from '../types';
+import { type OffMeshConnectionGeneratorParams, getBoundingBox } from './common';
 
 export type SoloNavMeshGeneratorConfig = Pretty<
   Omit<RecastConfig, 'tileSize'> &
@@ -397,10 +397,10 @@ export const generateSoloNavMeshData = (
   // Step 8. Create Detour data from Recast poly mesh.
   //
   for (let i = 0; i < polyMesh.npolys(); i++) {
-    if (polyMesh.areas(i) == Recast.RC_WALKABLE_AREA) {
+    if (polyMesh.areas(i) === Recast.RC_WALKABLE_AREA) {
       polyMesh.setAreas(i, 0);
     }
-    if (polyMesh.areas(i) == 0) {
+    if (polyMesh.areas(i) === 0) {
       polyMesh.setFlags(i, 1);
     }
   }

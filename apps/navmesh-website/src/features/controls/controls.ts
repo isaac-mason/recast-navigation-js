@@ -1,6 +1,6 @@
 import { button, useControls } from 'leva';
 import { levaText } from './leva-text';
-import { NavMesh } from 'recast-navigation';
+import type { NavMesh } from 'recast-navigation';
 import { useState } from 'react';
 import { DebugDrawerOption } from '../recast';
 
@@ -14,10 +14,10 @@ export const useActionsControls = ({
 }: {
   navMesh: NavMesh | undefined;
   loading: boolean;
-  generateNavMesh: () => {};
-  exportAsGltf: () => {};
-  exportAsGlb: () => {};
-  exportAsRecastNavMesh: () => {};
+  generateNavMesh: () => void;
+  exportAsGltf: () => void;
+  exportAsGlb: () => void;
+  exportAsRecastNavMesh: () => void;
 }) => {
   useControls(
     'Actions',

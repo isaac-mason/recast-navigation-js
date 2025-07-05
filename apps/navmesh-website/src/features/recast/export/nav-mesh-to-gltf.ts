@@ -1,4 +1,4 @@
-import { NavMesh } from 'recast-navigation';
+import type { NavMesh } from 'recast-navigation';
 import {
   BufferAttribute,
   BufferGeometry,

@@ -1,7 +1,7 @@
-import { Vector3Tuple } from 'three';
-import { FloatArray, IntArray, UnsignedCharArray } from './arrays';
+import type { Vector3Tuple } from 'three';
+import { type FloatArray, IntArray, UnsignedCharArray } from './arrays';
 import { Raw, Recast, type RawModule } from './raw';
-import { Vector2Tuple, Vector3, array, vec3 } from './utils';
+import { type Vector2Tuple, type Vector3, array, vec3 } from './utils';
 
 export type RecastConfig = {
   /**
@@ -735,7 +735,7 @@ export class RecastPolyMesh {
   }
 
   setAreas(index: number, value: number): void {
-    return this.raw.set_areas(index, value);
+    this.raw.set_areas(index, value);
   }
 
   nverts(): number {

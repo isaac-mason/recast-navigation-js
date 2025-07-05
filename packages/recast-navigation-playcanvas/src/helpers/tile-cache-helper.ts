@@ -1,8 +1,8 @@
-import { Obstacle, TileCache } from '@recast-navigation/core';
+import type { Obstacle, TileCache } from '@recast-navigation/core';
 import {
   Color,
   Entity,
-  Material,
+  type Material,
   RENDERSTYLE_WIREFRAME,
   StandardMaterial,
   Vec3,

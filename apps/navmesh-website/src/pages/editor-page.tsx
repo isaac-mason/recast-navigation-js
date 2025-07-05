@@ -1,6 +1,6 @@
 import cityEnvironment from '@pmndrs/assets/hdri/city.exr';
 import { Bounds, Environment, OrbitControls } from '@react-three/drei';
-import { Canvas, ThreeEvent } from '@react-three/fiber';
+import { Canvas, type ThreeEvent } from '@react-three/fiber';
 import { Leva } from 'leva';
 import { useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router';
@@ -24,7 +24,7 @@ import {
   NavMeshGeneratorInputHelper,
   NavMeshDebugDrawer,
   RecastAgent,
-  RecastAgentRef,
+  type RecastAgentRef,
   navMeshToGLTF,
 } from '../features/recast';
 import { LoadingSpinner } from '../features/ui';
@@ -50,7 +50,7 @@ const Editor = () => {
     if (!model) {
       navigate(RouterPaths.upload);
     }
-  }, [model]);
+}, [model, navigate]);
 
   const recastAgent = useRef<RecastAgentRef>(null!);
 
@@ -138,9 +138,7 @@ const Editor = () => {
 
     download(JSON.stringify(gltfJson), 'application/json', 'navmesh.gltf');
 
-    gtag('event', 'export_as_gltf', {
-      ...navMeshConfig,
-    });
+    gtag('event', 'export_as_gltf');
   }, [navMesh]);
 
   const exportAsGlb = useCallback(async () => {
@@ -150,9 +148,7 @@ const Editor = () => {
 
     download(JSON.stringify(gltfJson), 'application/json', 'navmesh.glb');
 
-    gtag('event', 'export_as_gltf', {
-      ...navMeshConfig,
-    });
+    gtag('event', 'export_as_gltf');
   }, [navMesh]);
 
   const exportAsRecastNavMesh = useCallback(async () => {
@@ -162,9 +158,7 @@ const Editor = () => {
 
     download(navMeshExport, 'application/octet-stream', 'navmesh.bin');
 
-    gtag('event', 'export_as_recast_nav_mesh', {
-      ...navMeshConfig,
-    });
+    gtag('event', 'export_as_recast_nav_mesh');
   }, [navMesh]);
 
   const onNavMeshPointerDown = useCallback(

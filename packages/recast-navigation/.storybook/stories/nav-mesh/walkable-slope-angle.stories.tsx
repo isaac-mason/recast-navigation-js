@@ -1,9 +1,9 @@
 import { Bounds, OrbitControls } from '@react-three/drei';
-import { NavMesh } from '@recast-navigation/core';
+import type { NavMesh } from '@recast-navigation/core';
 import { threeToSoloNavMesh } from '@recast-navigation/three';
 import { useControls } from 'leva';
-import React, { useEffect, useState } from 'react';
-import { Group, Mesh } from 'three';
+import { useEffect, useState } from 'react';
+import { type Group, Mesh } from 'three';
 import { DEG2RAD } from 'three/src/math/MathUtils.js';
 import { Debug } from '../../common/debug';
 import { decorators } from '../../decorators';

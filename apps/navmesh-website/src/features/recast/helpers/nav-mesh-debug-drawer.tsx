@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
+import type {
   NavMesh,
   RecastCompactHeightfield,
   RecastContourSet,
@@ -7,7 +7,7 @@ import {
   RecastPolyMesh,
   RecastPolyMeshDetail,
 } from 'recast-navigation';
-import {
+import type {
   SoloNavMeshGeneratorIntermediates,
   TileCacheGeneratorIntermediates,
   TiledNavMeshGeneratorIntermediates,
@@ -193,7 +193,7 @@ export const NavMeshDebugDrawer = ({
     } else if (option === DebugDrawerOption.NAVMESH_BV_TREE) {
       debug.drawNavMeshBVTree(navMesh);
     }
-  }, [debug, navMesh, option]);
+  }, [debug, intermediates, navMesh, option]);
 
   return enabled && debug && <primitive object={debug} />;
 };

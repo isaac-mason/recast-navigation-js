@@ -1,9 +1,9 @@
 import { Line } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
-import { Crowd, CrowdAgent, NavMesh, NavMeshQuery } from 'recast-navigation';
+import { Crowd, type CrowdAgent, type NavMesh, NavMeshQuery } from 'recast-navigation';
 import { CrowdHelper } from '@recast-navigation/three';
-import { MeshStandardMaterial, Vector3, Vector3Tuple } from 'three';
+import { MeshStandardMaterial, Vector3, type Vector3Tuple } from 'three';
 
 export type RecastAgentRef = {
   requestMoveTarget: (target: Vector3) => void;
@@ -54,7 +54,7 @@ export const RecastAgent = forwardRef<RecastAgentRef, RecastAgentProps>(
           setAgentTarget(undefined);
         },
       }),
-      [navMeshQuery, crowd],
+      [navMeshQuery, crowd, agent],
     );
 
     useEffect(() => {
@@ -122,7 +122,7 @@ export const RecastAgent = forwardRef<RecastAgentRef, RecastAgentProps>(
         clearInterval(interval);
         setAgentPath(undefined);
       };
-    }, [crowd, agentTarget]);
+    }, [crowd, agent, agentTarget]);
 
     useFrame((_, delta) => {
       if (

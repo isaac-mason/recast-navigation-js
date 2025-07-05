@@ -1,5 +1,5 @@
 import { DebugDrawer, getPositionsAndIndices } from '@recast-navigation/three';
-import { NavMesh, importNavMesh, init as initRecast } from 'recast-navigation';
+import { type NavMesh, importNavMesh, init as initRecast } from 'recast-navigation';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import NavMeshWorker from './navmesh-worker?worker';

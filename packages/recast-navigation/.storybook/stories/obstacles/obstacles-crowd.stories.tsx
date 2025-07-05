@@ -1,18 +1,18 @@
 import { OrbitControls, PivotControls } from '@react-three/drei';
-import { ThreeEvent, useFrame } from '@react-three/fiber';
+import { type ThreeEvent, useFrame } from '@react-three/fiber';
 import {
-  BoxObstacle,
+  type BoxObstacle,
   Crowd,
-  CrowdAgent,
-  CylinderObstacle,
-  NavMesh,
+  type CrowdAgent,
+  type CylinderObstacle,
+  type NavMesh,
   NavMeshQuery,
-  TileCache,
+  type TileCache,
 } from '@recast-navigation/core';
 import { threeToTileCache } from '@recast-navigation/three';
 import { useControls } from 'leva';
-import React, { useEffect, useRef, useState } from 'react';
-import { Group, Mesh, MeshBasicMaterial, Object3D, Vector3 } from 'three';
+import { useEffect, useRef, useState } from 'react';
+import { type Group, Mesh, MeshBasicMaterial, type Object3D, Vector3 } from 'three';
 import { Debug } from '../../common/debug';
 import { decorators } from '../../decorators';
 import { parameters } from '../../parameters';
@@ -131,7 +131,7 @@ export const CrowdObstacles = () => {
       navMesh.destroy();
       tileCache.destroy();
     };
-  }, [group]);
+  }, [group, agentMaxAcceleration, agentMaxSpeed]);
 
   useFrame((_, delta) => {
     if (!crowd || !navMesh || !tileCache) return;

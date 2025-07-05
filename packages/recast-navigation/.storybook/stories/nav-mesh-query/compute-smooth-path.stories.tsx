@@ -1,14 +1,14 @@
 import { Line, OrbitControls } from '@react-three/drei';
 import {
   Detour,
-  NavMesh,
+  type NavMesh,
   NavMeshQuery,
-  OffMeshConnectionParams,
-  QueryFilter,
+  type OffMeshConnectionParams,
+  type QueryFilter,
 } from '@recast-navigation/core';
 import { threeToSoloNavMesh } from '@recast-navigation/three';
-import React, { useEffect, useState } from 'react';
-import { Group, Mesh, Vector3, Vector3Like, Vector3Tuple } from 'three';
+import { useEffect, useState } from 'react';
+import { type Group, Mesh, Vector3, type Vector3Like, type Vector3Tuple } from 'three';
 import { Debug } from '../../common/debug';
 import { NavTestEnvironment } from '../../common/nav-test-environment';
 import { decorators } from '../../decorators';
@@ -106,7 +106,7 @@ export const ComputeSmoothPath = () => {
             <Line points={path} color="blue" lineWidth={5} />
 
             {path.map((point, index) => (
-              <mesh key={index} position={point}>
+              <mesh key={String(index)} position={point}>
                 <sphereGeometry args={[0.1, 16, 16]} />
                 <meshBasicMaterial color="blue" />
               </mesh>

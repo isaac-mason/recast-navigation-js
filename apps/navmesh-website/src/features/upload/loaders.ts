@@ -1,5 +1,5 @@
 import {
-  Group,
+  type Group,
   Mesh,
   MeshStandardMaterial,
   REVISION,
@@ -8,7 +8,7 @@ import {
 import {
   DRACOLoader,
   FBXLoader,
-  GLTF,
+  type GLTF,
   GLTFLoader,
   KTX2Loader,
   OBJLoader,
