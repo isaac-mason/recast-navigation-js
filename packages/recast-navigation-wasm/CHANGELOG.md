@@ -1,5 +1,12 @@
 # @recast-navigation/wasm
 
+## 0.40.0
+
+### Minor Changes
+
+- e759538: fix: recast detour constants binding types
+- 732eb28: feat: bump emsdk from 3.1.61 to 4.0.10
+
 ## 0.39.0
 
 ## 0.38.0
