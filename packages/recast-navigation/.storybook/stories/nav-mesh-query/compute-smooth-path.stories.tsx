@@ -123,7 +123,6 @@ export const ComputeSmoothPath = () => {
 
       <Debug
         navMesh={navMesh}
-        offMeshConnections={offMeshConnections}
       />
 
       <OrbitControls />
