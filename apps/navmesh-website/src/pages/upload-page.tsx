@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
 import { RouterPaths } from '../app';
 import dungeonGltfUrl from '../assets/dungeon.gltf?url';
 import {
@@ -11,49 +10,49 @@ import {
 } from '../features/upload';
 import { useEditorState } from '../state/editor-state';
 
-const Layout = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100dvh;
-`;
+const layoutStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  height: '100dvh',
+};
 
-const FooterContainer = styled.footer`
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
+const footerStyle: React.CSSProperties = {
+  position: 'fixed',
+  bottom: 0,
+  left: 0,
+  width: '100%',
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  boxSizing: 'border-box',
+  padding: '1em',
+  fontSize: '0.95rem',
+  fontWeight: 300,
+  color: '#efefef',
+};
 
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+const footerDivStyle: React.CSSProperties = {
+  width: '100%',
+};
 
-  box-sizing: border-box;
-  padding: 1em;
-  font-size: 0.95rem;
-  font-weight: 300;
+const leftDivStyle: React.CSSProperties = {
+  ...footerDivStyle,
+  textAlign: 'left',
+};
 
-  color: #efefef;
+const centerDivStyle: React.CSSProperties = {
+  ...footerDivStyle,
+  textAlign: 'center',
+};
 
-  a {
-    color: #efefef;
-  }
+const rightDivStyle: React.CSSProperties = {
+  ...footerDivStyle,
+  textAlign: 'right',
+};
 
-  div {
-    width: 100%;
-  }
-
-  :nth-child(1) {
-    text-align: left;
-  }
-
-  :nth-child(2) {
-    text-align: center;
-  }
-
-  :nth-child(3) {
-    text-align: right;
-  }
-`;
+const linkStyle: React.CSSProperties = {
+  color: '#efefef',
+};
 
 const GithubSvg = () => (
   <svg
@@ -74,28 +73,30 @@ const GithubSvg = () => (
 
 const Footer = () => {
   return (
-    <FooterContainer>
-      <div>NavMesh Generator</div>
+    <footer style={footerStyle}>
+      <div style={leftDivStyle}>NavMesh Generator</div>
 
-      <div>
+      <div style={centerDivStyle}>
         Powered by{' '}
         <a
           target="_blank"
           href="https://github.com/isaac-mason/recast-navigation-js"
+          style={linkStyle}
         >
           recast-navigation-js
         </a>
       </div>
 
-      <div>
+      <div style={rightDivStyle}>
         <a
           target="_blank"
           href="https://github.com/isaac-mason/recast-navigation-js"
+          style={linkStyle}
         >
           <GithubSvg />
         </a>
       </div>
-    </FooterContainer>
+    </footer>
   );
 };
 
@@ -167,10 +168,10 @@ export const UploadPage = () => {
   }, []);
 
   return (
-    <Layout>
+    <div style={layoutStyle}>
       <ModelDropZone onDrop={onDropFile} selectExample={selectExample} />
 
       <Footer />
-    </Layout>
+    </div>
   );
 };

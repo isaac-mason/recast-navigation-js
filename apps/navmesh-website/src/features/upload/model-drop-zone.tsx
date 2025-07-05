@@ -1,37 +1,29 @@
 import { useDropzone } from 'react-dropzone';
-import styled from 'styled-components';
 
-const ModelDropZoneWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+const wrapperStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '100%',
+  height: '100%',
+  fontSize: '2em',
+  fontWeight: 600,
+  lineHeight: 1.3,
+  textAlign: 'center',
+  color: '#fff',
+};
 
-  width: 100%;
-  height: 100%;
-
-  font-size: 2em;
-
-  font-weight: 600;
-  line-height: 1.3;
-  text-align: center;
-
-  color: #fff;
-
-  .example {
-    padding: 0;
-    border: none;
-    background: none;
-
-    color: #0094ff;
-
-    font-size: inherit;
-    font-weight: inherit;
-    text-decoration: underline;
-
-    cursor: pointer;
-  }
-`;
+const exampleButtonStyle: React.CSSProperties = {
+  padding: 0,
+  border: 'none',
+  background: 'none',
+  color: '#0094ff',
+  fontSize: 'inherit',
+  fontWeight: 'inherit',
+  textDecoration: 'underline',
+  cursor: 'pointer',
+};
 
 export type ModelDropZoneProps = {
   onDrop: (acceptedFiles: File[]) => void;
@@ -48,7 +40,7 @@ export const ModelDropZone = ({
   });
 
   return (
-    <ModelDropZoneWrapper {...getRootProps()}>
+    <div style={wrapperStyle} {...getRootProps()}>
       <input {...getInputProps()} />
 
       {isDragActive ? (
@@ -58,7 +50,7 @@ export const ModelDropZone = ({
           <p>
             Drag 'n' drop your model <span>here</span> or{' '}
             <button
-              className="example"
+              style={exampleButtonStyle}
               onClick={(e) => {
                 e.stopPropagation();
                 selectExample();
@@ -69,6 +61,6 @@ export const ModelDropZone = ({
           </p>
         </>
       )}
-    </ModelDropZoneWrapper>
+    </div>
   );
 };
