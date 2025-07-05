@@ -11,7 +11,6 @@ import React, { useEffect, useState } from 'react';
 import {
   Group,
   Mesh,
-  MeshBasicMaterial,
   Vector3,
   Vector3Like,
   Vector3Tuple,
@@ -26,12 +25,6 @@ export default {
   decorators,
   parameters,
 };
-
-const navMeshMaterial = new MeshBasicMaterial({
-  color: 'orange',
-  transparent: true,
-  opacity: 0.5,
-});
 
 const offMeshConnections: OffMeshConnectionParams[] = [
   {
@@ -130,7 +123,6 @@ export const ComputeSmoothPath = () => {
 
       <Debug
         navMesh={navMesh}
-        navMeshMaterial={navMeshMaterial}
         offMeshConnections={offMeshConnections}
       />
 
