@@ -33,7 +33,7 @@ const getIntermediates = (
     | SoloNavMeshGeneratorIntermediates
     | TiledNavMeshGeneratorIntermediates
     | TileCacheGeneratorIntermediates
-    | undefined
+    | undefined,
 ) => {
   const heightfieldList: RecastHeightfield[] = [];
   const compactHeightfieldList: RecastCompactHeightfield[] = [];

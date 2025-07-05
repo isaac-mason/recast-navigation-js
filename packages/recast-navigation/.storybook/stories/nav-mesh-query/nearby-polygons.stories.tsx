@@ -156,19 +156,19 @@ export function ClickNearbyPolygons() {
       startRef,
       clickedPosition,
       1,
-      { maxPolys }
+      { maxPolys },
     );
     console.info('findPolysAroundCircle', findPolysAroundCircleResult);
     console.info(
       'findPolysAroundCircle status',
-      statusToReadableString(findPolysAroundCircleResult.status)
+      statusToReadableString(findPolysAroundCircleResult.status),
     );
 
     const halfExtents = { x: 0.5, y: 0.5, z: 0.5 };
     const queryPolygonsResult = navMeshQuery.queryPolygons(
       clickedPosition,
       halfExtents,
-      { maxPolys }
+      { maxPolys },
     );
     console.info('queryPolygons', queryPolygonsResult);
 
@@ -177,14 +177,14 @@ export function ClickNearbyPolygons() {
     if (selectType === 'circle') {
       polyRefs = findPolysAroundCircleResult.resultRefs.slice(
         0,
-        findPolysAroundCircleResult.resultCount
+        findPolysAroundCircleResult.resultCount,
       );
     } else {
       polyRefs = queryPolygonsResult.polyRefs;
     }
 
     const decodedPolyRefs = polyRefs.map((polyRef) =>
-      navMesh.decodePolyId(polyRef)
+      navMesh.decodePolyId(polyRef),
     );
     console.info('decodedPolyRefs', decodedPolyRefs);
 
@@ -314,7 +314,7 @@ export function ClickNearbyPolygons() {
 
 function polyRefToGeom(
   polyRef: number,
-  navMesh: NavMesh
+  navMesh: NavMesh,
 ): THREE.BufferGeometry {
   const geom = new THREE.BufferGeometry();
   const vertices = [] as THREE.Vector3Tuple[];
@@ -331,7 +331,7 @@ function polyRefToGeom(
       i % 3 === 2
         ? agg.concat([[tile.verts(i - 2), tile.verts(i - 1), tile.verts(i)]])
         : agg,
-    [] as THREE.Vector3Tuple[]
+    [] as THREE.Vector3Tuple[],
   );
 
   triangles.push(range(vertexIds.length).map((x) => x + vertices.length));
@@ -339,7 +339,7 @@ function polyRefToGeom(
 
   geom.setAttribute(
     'position',
-    new THREE.BufferAttribute(new Float32Array(vertices.flatMap((v) => v)), 3)
+    new THREE.BufferAttribute(new Float32Array(vertices.flatMap((v) => v)), 3),
   );
   geom.setIndex(triangles.flatMap((r) => r));
 

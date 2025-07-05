@@ -4,7 +4,7 @@ import { BufferAttribute, Mesh, Vector3 } from 'three';
 const _position = new Vector3();
 
 export const getPositionsAndIndices = (
-  meshes: Mesh[]
+  meshes: Mesh[],
 ): [positions: Float32Array, indices: Uint32Array] => {
   const toMerge: {
     positions: ArrayLike<number>;
@@ -27,7 +27,7 @@ export const getPositionsAndIndices = (
       const pos = _position.set(
         positions[i],
         positions[i + 1],
-        positions[i + 2]
+        positions[i + 2],
       );
       mesh.localToWorld(pos);
       positions[i] = pos.x;

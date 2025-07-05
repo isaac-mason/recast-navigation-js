@@ -367,7 +367,7 @@ export class DetourMeshTile {
 
 export const createNavMeshData = (navMeshCreateParams: NavMeshCreateParams) => {
   const result = Raw.DetourNavMeshBuilder.createNavMeshData(
-    navMeshCreateParams.raw
+    navMeshCreateParams.raw,
   );
 
   return {
@@ -398,12 +398,12 @@ export class NavMeshCreateParams {
   /**
    * Creates a new NavMeshCreateParams object.
    */
-  constructor()
+  constructor();
 
   /**
    * Creates a wrapper around an existing raw NavMeshCreateParams object.
    */
-  constructor(raw: RawModule.dtNavMeshCreateParams)
+  constructor(raw: RawModule.dtNavMeshCreateParams);
 
   constructor(raw?: RawModule.dtNavMeshCreateParams) {
     this.raw = raw ?? new Raw.Module.dtNavMeshCreateParams();
@@ -416,7 +416,7 @@ export class NavMeshCreateParams {
   setPolyMeshDetailCreateParams(polyMeshDetail: RecastPolyMeshDetail): void {
     Raw.DetourNavMeshBuilder.setPolyMeshDetailCreateParams(
       this.raw,
-      polyMeshDetail.raw
+      polyMeshDetail.raw,
     );
   }
 
@@ -436,12 +436,12 @@ export class NavMeshCreateParams {
       verts.push(
         connection.startPosition.x,
         connection.startPosition.y,
-        connection.startPosition.z
+        connection.startPosition.z,
       );
       verts.push(
         connection.endPosition.x,
         connection.endPosition.y,
-        connection.endPosition.z
+        connection.endPosition.z,
       );
 
       rads.push(connection.radius);
@@ -459,7 +459,7 @@ export class NavMeshCreateParams {
       dir,
       areas,
       flags,
-      userIds
+      userIds,
     );
   }
 

@@ -31,7 +31,7 @@ import { LoadingSpinner } from '../features/ui';
 import { useEditorState } from '../state/editor-state';
 import { HtmlTunnel } from '../tunnels';
 
-await initRecast()
+await initRecast();
 
 const Editor = () => {
   const navigate = useNavigate();
@@ -85,17 +85,17 @@ const Editor = () => {
 
       const result = navMeshConfig.tileSize
         ? generateTiledNavMesh(
-          positions,
-          indices,
-          navMeshConfig,
-          keepIntermediates
-        )
+            positions,
+            indices,
+            navMeshConfig,
+            keepIntermediates,
+          )
         : generateSoloNavMesh(
-          positions,
-          indices,
-          navMeshConfig,
-          keepIntermediates
-        );
+            positions,
+            indices,
+            navMeshConfig,
+            keepIntermediates,
+          );
 
       console.log('nav mesh generation result', result);
 
@@ -179,7 +179,7 @@ const Editor = () => {
         recastAgent.current.requestMoveTarget(e.point);
       }
     },
-    [navMesh]
+    [navMesh],
   );
 
   /* controls */
@@ -249,7 +249,6 @@ const Editor = () => {
         />
       )}
 
-
       <HtmlTunnel.In>
         {loading && <LoadingSpinner />}
 
@@ -272,9 +271,7 @@ const Editor = () => {
 export const EditorPage = () => {
   return (
     <ErrorBoundary>
-      <Canvas
-        camera={{ position: [100, 100, 100] }}
-      >
+      <Canvas camera={{ position: [100, 100, 100] }}>
         <Editor />
         <Environment files={cityEnvironment} />
         <OrbitControls makeDefault />

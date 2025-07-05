@@ -64,7 +64,7 @@ export const NavMeshExample = () => {
 
           setNavMeshExport(buffer);
         },
-        { disabled: !result }
+        { disabled: !result },
       ),
       load: button(
         () => {
@@ -74,10 +74,10 @@ export const NavMeshExample = () => {
 
           setResult(navMesh);
         },
-        { disabled: !navMeshExport }
+        { disabled: !navMeshExport },
       ),
     },
-    [group, navMeshConfig, result, navMeshExport]
+    [group, navMeshConfig, result, navMeshExport],
   );
 
   return (
@@ -136,7 +136,7 @@ export const TileCacheExample = () => {
 
           setNavMeshExport(buffer);
         },
-        { disabled: !navMesh || !tileCache }
+        { disabled: !navMesh || !tileCache },
       ),
       load: button(
         () => {
@@ -148,21 +148,21 @@ export const TileCacheExample = () => {
                 polyAreas.set(i, 0);
                 polyFlags.set(i, 1);
               }
-            }
+            },
           );
 
           const { navMesh, tileCache } = importTileCache(
             navMeshExport,
-            meshProcess
+            meshProcess,
           );
 
           setNavMesh(navMesh);
           setTileCache(tileCache);
         },
-        { disabled: !navMeshExport }
+        { disabled: !navMeshExport },
       ),
     },
-    [group, navMeshConfig, navMesh, tileCache, navMeshExport]
+    [group, navMeshConfig, navMesh, tileCache, navMeshExport],
   );
 
   return (

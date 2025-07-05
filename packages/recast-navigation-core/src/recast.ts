@@ -129,7 +129,7 @@ export const recastConfigDefaults: RecastConfig = {
 };
 
 export const createRcConfig = (
-  partialConfig: Partial<RecastConfig>
+  partialConfig: Partial<RecastConfig>,
 ): RawModule.rcConfig => {
   const config = {
     ...recastConfigDefaults,
@@ -157,7 +157,7 @@ export const createRcConfig = (
 };
 
 export const cloneRcConfig = (
-  rcConfig: RawModule.rcConfig
+  rcConfig: RawModule.rcConfig,
 ): RawModule.rcConfig => {
   const clone = new Raw.Module.rcConfig();
 
@@ -307,7 +307,7 @@ export class RecastChunkyTriMesh {
       tris.raw,
       ntris,
       trisPerChunk,
-      this.raw
+      this.raw,
     );
   }
 
@@ -315,20 +315,20 @@ export class RecastChunkyTriMesh {
     boundsMin: Vector2Tuple,
     boundsMax: Vector2Tuple,
     chunks: IntArray,
-    maxChunks: number
+    maxChunks: number,
   ): number {
     return Raw.ChunkyTriMeshUtils.getChunksOverlappingRect(
       this.raw,
       boundsMin,
       boundsMax,
       chunks.raw,
-      maxChunks
+      maxChunks,
     );
   }
 
   getNodeTris(nodeId: number): IntArray {
     return IntArray.fromRaw(
-      Raw.ChunkyTriMeshUtils.getChunkyTriMeshNodeTris(this.raw, nodeId)
+      Raw.ChunkyTriMeshUtils.getChunkyTriMeshNodeTris(this.raw, nodeId),
     );
   }
 
@@ -818,7 +818,7 @@ export const calcBounds = (verts: FloatArray, nv: number) => {
 export const calcGridSize = (
   bmin: Vector3Tuple,
   bmax: Vector3Tuple,
-  cs: number
+  cs: number,
 ) => {
   return Raw.Recast.calcGridSize(bmin, bmax, cs);
 };
@@ -831,7 +831,7 @@ export const createHeightfield = (
   bmin: Vector3Tuple,
   bmax: Vector3Tuple,
   cs: number,
-  ch: number
+  ch: number,
 ) => {
   return Raw.Recast.createHeightfield(
     buildContext.raw,
@@ -841,7 +841,7 @@ export const createHeightfield = (
     bmin,
     bmax,
     cs,
-    ch
+    ch,
   );
 };
 
@@ -852,7 +852,7 @@ export const markWalkableTriangles = (
   nv: number,
   tris: IntArray,
   nt: number,
-  areas: UnsignedCharArray
+  areas: UnsignedCharArray,
 ) => {
   return Raw.Recast.markWalkableTriangles(
     buildContext.raw,
@@ -861,7 +861,7 @@ export const markWalkableTriangles = (
     nv,
     tris.raw,
     nt,
-    areas.raw
+    areas.raw,
   );
 };
 
@@ -872,7 +872,7 @@ export const clearUnwalkableTriangles = (
   nv: number,
   tris: IntArray,
   nt: number,
-  areas: UnsignedCharArray
+  areas: UnsignedCharArray,
 ) => {
   return Raw.Recast.clearUnwalkableTriangles(
     buildContext.raw,
@@ -881,7 +881,7 @@ export const clearUnwalkableTriangles = (
     nv,
     tris.raw,
     nt,
-    areas.raw
+    areas.raw,
   );
 };
 
@@ -893,7 +893,7 @@ export const rasterizeTriangles = (
   areas: UnsignedCharArray,
   nt: number,
   heightfield: RecastHeightfield,
-  flagMergeThreshold = 1
+  flagMergeThreshold = 1,
 ) => {
   return Raw.Recast.rasterizeTriangles(
     buildContext.raw,
@@ -903,19 +903,19 @@ export const rasterizeTriangles = (
     areas.raw,
     nt,
     heightfield.raw,
-    flagMergeThreshold
+    flagMergeThreshold,
   );
 };
 
 export const filterLowHangingWalkableObstacles = (
   buildContext: RecastBuildContext,
   walkableClimb: number,
-  heightfield: RecastHeightfield
+  heightfield: RecastHeightfield,
 ) => {
   return Raw.Recast.filterLowHangingWalkableObstacles(
     buildContext.raw,
     walkableClimb,
-    heightfield.raw
+    heightfield.raw,
   );
 };
 
@@ -923,31 +923,31 @@ export const filterLedgeSpans = (
   buildContext: RecastBuildContext,
   walkableHeight: number,
   walkableClimb: number,
-  heightfield: RecastHeightfield
+  heightfield: RecastHeightfield,
 ) => {
   return Raw.Recast.filterLedgeSpans(
     buildContext.raw,
     walkableHeight,
     walkableClimb,
-    heightfield.raw
+    heightfield.raw,
   );
 };
 
 export const filterWalkableLowHeightSpans = (
   buildContext: RecastBuildContext,
   walkableHeight: number,
-  heightfield: RecastHeightfield
+  heightfield: RecastHeightfield,
 ) => {
   return Raw.Recast.filterWalkableLowHeightSpans(
     buildContext.raw,
     walkableHeight,
-    heightfield.raw
+    heightfield.raw,
   );
 };
 
 export const getHeightFieldSpanCount = (
   buildContext: RecastBuildContext,
-  heightfield: RecastHeightfield
+  heightfield: RecastHeightfield,
 ) => {
   return Raw.Recast.getHeightFieldSpanCount(buildContext.raw, heightfield.raw);
 };
@@ -957,36 +957,36 @@ export const buildCompactHeightfield = (
   walkableHeight: number,
   walkableClimb: number,
   heightfield: RecastHeightfield,
-  compactHeightfield: RecastCompactHeightfield
+  compactHeightfield: RecastCompactHeightfield,
 ) => {
   return Raw.Recast.buildCompactHeightfield(
     buildContext.raw,
     walkableHeight,
     walkableClimb,
     heightfield.raw,
-    compactHeightfield.raw
+    compactHeightfield.raw,
   );
 };
 
 export const erodeWalkableArea = (
   buildContext: RecastBuildContext,
   radius: number,
-  compactHeightfield: RecastCompactHeightfield
+  compactHeightfield: RecastCompactHeightfield,
 ) => {
   return Raw.Recast.erodeWalkableArea(
     buildContext.raw,
     radius,
-    compactHeightfield.raw
+    compactHeightfield.raw,
   );
 };
 
 export const medianFilterWalkableArea = (
   buildContext: RecastBuildContext,
-  compactHeightfield: RecastCompactHeightfield
+  compactHeightfield: RecastCompactHeightfield,
 ) => {
   return Raw.Recast.medianFilterWalkableArea(
     buildContext.raw,
-    compactHeightfield.raw
+    compactHeightfield.raw,
   );
 };
 
@@ -995,14 +995,14 @@ export const markBoxArea = (
   bmin: Vector3Tuple,
   bmax: Vector3Tuple,
   areaId: number,
-  compactHeightfield: RecastCompactHeightfield
+  compactHeightfield: RecastCompactHeightfield,
 ) => {
   return Raw.Recast.markBoxArea(
     buildContext.raw,
     bmin,
     bmax,
     areaId,
-    compactHeightfield.raw
+    compactHeightfield.raw,
   );
 };
 
@@ -1013,7 +1013,7 @@ export const markConvexPolyArea = (
   hmin: number,
   hmax: number,
   areaId: number,
-  compactHeightfield: RecastCompactHeightfield
+  compactHeightfield: RecastCompactHeightfield,
 ) => {
   return Raw.Recast.markConvexPolyArea(
     buildContext.raw,
@@ -1022,7 +1022,7 @@ export const markConvexPolyArea = (
     hmin,
     hmax,
     areaId,
-    compactHeightfield.raw
+    compactHeightfield.raw,
   );
 };
 
@@ -1032,7 +1032,7 @@ export const markCylinderArea = (
   radius: number,
   height: number,
   areaId: number,
-  compactHeightfield: RecastCompactHeightfield
+  compactHeightfield: RecastCompactHeightfield,
 ) => {
   return Raw.Recast.markCylinderArea(
     buildContext.raw,
@@ -1040,17 +1040,17 @@ export const markCylinderArea = (
     radius,
     height,
     areaId,
-    compactHeightfield.raw
+    compactHeightfield.raw,
   );
 };
 
 export const buildDistanceField = (
   buildContext: RecastBuildContext,
-  compactHeightfield: RecastCompactHeightfield
+  compactHeightfield: RecastCompactHeightfield,
 ) => {
   return Raw.Recast.buildDistanceField(
     buildContext.raw,
-    compactHeightfield.raw
+    compactHeightfield.raw,
   );
 };
 
@@ -1059,14 +1059,14 @@ export const buildRegions = (
   compactHeightfield: RecastCompactHeightfield,
   borderSize: number,
   minRegionArea: number,
-  mergeRegionArea: number
+  mergeRegionArea: number,
 ) => {
   return Raw.Recast.buildRegions(
     buildContext.raw,
     compactHeightfield.raw,
     borderSize,
     minRegionArea,
-    mergeRegionArea
+    mergeRegionArea,
   );
 };
 
@@ -1074,13 +1074,13 @@ export const buildLayerRegions = (
   buildContext: RecastBuildContext,
   compactHeightfield: RecastCompactHeightfield,
   borderSize: number,
-  minRegionArea: number
+  minRegionArea: number,
 ) => {
   return Raw.Recast.buildLayerRegions(
     buildContext.raw,
     compactHeightfield.raw,
     borderSize,
-    minRegionArea
+    minRegionArea,
   );
 };
 
@@ -1089,21 +1089,21 @@ export const buildRegionsMonotone = (
   compactHeightfield: RecastCompactHeightfield,
   borderSize: number,
   minRegionArea: number,
-  mergeRegionArea: number
+  mergeRegionArea: number,
 ) => {
   return Raw.Recast.buildRegionsMonotone(
     buildContext.raw,
     compactHeightfield.raw,
     borderSize,
     minRegionArea,
-    mergeRegionArea
+    mergeRegionArea,
   );
 };
 
 export const setCon = (
   compactSpan: RecastCompactSpan,
   dir: number,
-  i: number
+  i: number,
 ) => {
   return Raw.Recast.setCon(compactSpan.raw, dir, i);
 };
@@ -1129,14 +1129,14 @@ export const buildHeightfieldLayers = (
   compactHeightfield: RecastCompactHeightfield,
   borderSize: number,
   walkableHeight: number,
-  heightfieldLayerSet: RecastHeightfieldLayerSet
+  heightfieldLayerSet: RecastHeightfieldLayerSet,
 ) => {
   return Raw.Recast.buildHeightfieldLayers(
     buildContext.raw,
     compactHeightfield.raw,
     borderSize,
     walkableHeight,
-    heightfieldLayerSet.raw
+    heightfieldLayerSet.raw,
   );
 };
 
@@ -1146,7 +1146,7 @@ export const buildContours = (
   maxError: number,
   maxEdgeLen: number,
   contourSet: RecastContourSet,
-  buildFlags = Recast.RC_CONTOUR_TESS_WALL_EDGES
+  buildFlags = Recast.RC_CONTOUR_TESS_WALL_EDGES,
 ) => {
   return Raw.Recast.buildContours(
     buildContext.raw,
@@ -1154,7 +1154,7 @@ export const buildContours = (
     maxError,
     maxEdgeLen,
     contourSet.raw,
-    buildFlags
+    buildFlags,
   );
 };
 
@@ -1162,26 +1162,26 @@ export const buildPolyMesh = (
   buildContext: RecastBuildContext,
   contourSet: RecastContourSet,
   nvp: number,
-  polyMesh: RecastPolyMesh
+  polyMesh: RecastPolyMesh,
 ) => {
   return Raw.Recast.buildPolyMesh(
     buildContext.raw,
     contourSet.raw,
     nvp,
-    polyMesh.raw
+    polyMesh.raw,
   );
 };
 
 export const mergePolyMeshes = (
   buildContext: RecastBuildContext,
   meshes: RecastPolyMesh[],
-  outPolyMesh: RecastPolyMesh
+  outPolyMesh: RecastPolyMesh,
 ) => {
   return Raw.Recast.mergePolyMeshes(
     buildContext.raw,
     meshes.map((m) => m.raw),
     meshes.length,
-    outPolyMesh.raw
+    outPolyMesh.raw,
   );
 };
 
@@ -1191,7 +1191,7 @@ export const buildPolyMeshDetail = (
   compactHeightfield: RecastCompactHeightfield,
   sampleDist: number,
   sampleMaxError: number,
-  polyMeshDetail: RecastPolyMeshDetail
+  polyMeshDetail: RecastPolyMeshDetail,
 ) => {
   return Raw.Recast.buildPolyMeshDetail(
     buildContext.raw,
@@ -1199,14 +1199,14 @@ export const buildPolyMeshDetail = (
     compactHeightfield.raw,
     sampleDist,
     sampleMaxError,
-    polyMeshDetail.raw
+    polyMeshDetail.raw,
   );
 };
 
 export const copyPolyMesh = (
   buildContext: RecastBuildContext,
   src: RecastPolyMesh,
-  dest: RecastPolyMesh
+  dest: RecastPolyMesh,
 ) => {
   return Raw.Recast.copyPolyMesh(buildContext.raw, src.raw, dest.raw);
 };
@@ -1214,37 +1214,37 @@ export const copyPolyMesh = (
 export const mergePolyMeshDetails = (
   buildContext: RecastBuildContext,
   meshes: RecastPolyMeshDetail[],
-  out: RecastPolyMeshDetail
+  out: RecastPolyMeshDetail,
 ) => {
   return Raw.Recast.mergePolyMeshDetails(
     buildContext.raw,
     meshes.map((m) => m.raw),
     meshes.length,
-    out.raw
+    out.raw,
   );
 };
 
 export const getHeightfieldLayerHeights = (
-  heightfieldLayer: RecastHeightfieldLayer
+  heightfieldLayer: RecastHeightfieldLayer,
 ): UnsignedCharArray => {
   return UnsignedCharArray.fromRaw(
-    Raw.Recast.getHeightfieldLayerHeights(heightfieldLayer.raw)
+    Raw.Recast.getHeightfieldLayerHeights(heightfieldLayer.raw),
   );
 };
 
 export const getHeightfieldLayerAreas = (
-  heightfieldLayer: RecastHeightfieldLayer
+  heightfieldLayer: RecastHeightfieldLayer,
 ): UnsignedCharArray => {
   return UnsignedCharArray.fromRaw(
-    Raw.Recast.getHeightfieldLayerAreas(heightfieldLayer.raw)
+    Raw.Recast.getHeightfieldLayerAreas(heightfieldLayer.raw),
   );
 };
 
 export const getHeightfieldLayerCons = (
-  heightfieldLayer: RecastHeightfieldLayer
+  heightfieldLayer: RecastHeightfieldLayer,
 ): UnsignedCharArray => {
   return UnsignedCharArray.fromRaw(
-    Raw.Recast.getHeightfieldLayerCons(heightfieldLayer.raw)
+    Raw.Recast.getHeightfieldLayerCons(heightfieldLayer.raw),
   );
 };
 
@@ -1261,7 +1261,7 @@ export const allocCompactHeightfield = () => {
 };
 
 export const freeCompactHeightfield = (
-  compactHeightfield: RecastCompactHeightfield
+  compactHeightfield: RecastCompactHeightfield,
 ) => {
   return Raw.Recast.freeCompactHeightfield(compactHeightfield.raw);
 };
@@ -1271,7 +1271,7 @@ export const allocHeightfieldLayerSet = () => {
 };
 
 export const freeHeightfieldLayerSet = (
-  heightfieldLayerSet: RecastHeightfieldLayerSet
+  heightfieldLayerSet: RecastHeightfieldLayerSet,
 ) => {
   return Raw.Recast.freeHeightfieldLayerSet(heightfieldLayerSet.raw);
 };

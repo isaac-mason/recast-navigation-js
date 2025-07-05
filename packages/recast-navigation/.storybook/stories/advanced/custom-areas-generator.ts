@@ -98,7 +98,7 @@ export const generateNavMesh = (
   positions: ArrayLike<number>,
   indices: ArrayLike<number>,
   navMeshGeneratorConfig: Partial<NavMeshGeneratorConfig> = {},
-  keepIntermediates = false
+  keepIntermediates = false,
 ): NavMeshGeneratorResult => {
   const buildContext = new RecastBuildContext();
 
@@ -183,7 +183,7 @@ export const generateNavMesh = (
       bbMin,
       bbMax,
       config.cs,
-      config.ch
+      config.ch,
     )
   ) {
     return fail('Could not create heightfield');
@@ -199,7 +199,7 @@ export const generateNavMesh = (
     nVerts,
     trianglesArray,
     nTris,
-    triangleAreasArray
+    triangleAreasArray,
   );
 
   if (
@@ -211,7 +211,7 @@ export const generateNavMesh = (
       triangleAreasArray,
       nTris,
       heightfield,
-      config.walkableClimb
+      config.walkableClimb,
     )
   ) {
     return fail('Could not rasterize triangles');
@@ -227,18 +227,18 @@ export const generateNavMesh = (
   filterLowHangingWalkableObstacles(
     buildContext,
     config.walkableClimb,
-    heightfield
+    heightfield,
   );
   filterLedgeSpans(
     buildContext,
     config.walkableHeight,
     config.walkableClimb,
-    heightfield
+    heightfield,
   );
   filterWalkableLowHeightSpans(
     buildContext,
     config.walkableHeight,
-    heightfield
+    heightfield,
   );
 
   //
@@ -253,7 +253,7 @@ export const generateNavMesh = (
       config.walkableHeight,
       config.walkableClimb,
       heightfield,
-      compactHeightfield
+      compactHeightfield,
     )
   ) {
     return fail('Failed to build compact data');
@@ -279,7 +279,7 @@ export const generateNavMesh = (
         boxArea.bmin,
         boxArea.bmax,
         PolyAreas.WATER,
-        compactHeightfield
+        compactHeightfield,
       );
     }
   }
@@ -292,7 +292,7 @@ export const generateNavMesh = (
         boxArea.bmin,
         boxArea.bmax,
         PolyAreas.DISABLED,
-        compactHeightfield
+        compactHeightfield,
       );
     }
   }
@@ -309,7 +309,7 @@ export const generateNavMesh = (
       compactHeightfield,
       config.borderSize,
       config.minRegionArea,
-      config.mergeRegionArea
+      config.mergeRegionArea,
     )
   ) {
     return fail('Failed to build regions');
@@ -328,7 +328,7 @@ export const generateNavMesh = (
       config.maxSimplificationError,
       config.maxEdgeLen,
       contourSet,
-      Recast.RC_CONTOUR_TESS_WALL_EDGES
+      Recast.RC_CONTOUR_TESS_WALL_EDGES,
     )
   ) {
     return fail('Failed to create contours');
@@ -355,7 +355,7 @@ export const generateNavMesh = (
       compactHeightfield,
       config.detailSampleDist,
       config.detailSampleMaxError,
-      polyMeshDetail
+      polyMeshDetail,
     )
   ) {
     return fail('Failed to build detail mesh');

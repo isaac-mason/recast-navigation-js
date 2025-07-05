@@ -93,22 +93,22 @@ export const MoveAlongSurface = () => {
     const { resultPosition } = navMeshQuery.moveAlongSurface(
       polyRef,
       point,
-      movementTarget
+      movementTarget,
     );
 
     const polyHeightResult = navMeshQuery.getPolyHeight(
       polyRef,
-      resultPosition
+      resultPosition,
     );
 
     capsule.current.position.set(
       resultPosition.x,
       polyHeightResult.success ? polyHeightResult.height : resultPosition.y,
-      resultPosition.z
+      resultPosition.z,
     );
 
     const targetCameraPosition = _targetCameraPosition.copy(
-      capsule.current.position
+      capsule.current.position,
     );
 
     targetCameraPosition.y += 10;

@@ -108,12 +108,12 @@ export const CrowdWithSingleAgent = () => {
     const agentTarget = agent.target();
     const agentNextTargetPath = agent.nextTargetInPath();
     agentTargetSpanRef.current.innerText = `${agentTarget.x.toFixed(
-      3
+      3,
     )}, ${agentTarget.y.toFixed(3)}, ${agentTarget.z.toFixed(3)}`;
     agentNextTargetPathSpanRef.current.innerText = `${agentNextTargetPath.x.toFixed(
-      3
+      3,
     )}, ${agentNextTargetPath.y.toFixed(3)}, ${agentNextTargetPath.z.toFixed(
-      3
+      3,
     )}`;
   });
 

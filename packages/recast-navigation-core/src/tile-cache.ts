@@ -114,7 +114,7 @@ export class TileCache {
     params: DetourTileCacheParams,
     alloc: RawModule.RecastLinearAllocator,
     compressor: RawModule.RecastFastLZCompressor,
-    meshProcess: TileCacheMeshProcess
+    meshProcess: TileCacheMeshProcess,
   ) {
     return this.raw.init(params.raw, alloc, compressor, meshProcess.raw);
   }
@@ -155,12 +155,12 @@ export class TileCache {
   addCylinderObstacle(
     position: Vector3,
     radius: number,
-    height: number
+    height: number,
   ): AddObstacleResult<CylinderObstacle> {
     const result = this.raw.addCylinderObstacle(
       vec3.toRaw(position),
       radius,
-      height
+      height,
     );
 
     if (result.status !== Detour.DT_SUCCESS) {
@@ -195,16 +195,12 @@ export class TileCache {
   addBoxObstacle(
     position: Vector3,
     halfExtents: Vector3,
-    angle: number
+    angle: number,
   ): AddObstacleResult<BoxObstacle> {
     const rawPosition = vec3.toRaw(position);
     const rawHalfExtents = vec3.toRaw(halfExtents);
 
-    const result = this.raw.addBoxObstacle(
-      rawPosition,
-      rawHalfExtents,
-      angle
-    );
+    const result = this.raw.addBoxObstacle(rawPosition, rawHalfExtents, angle);
 
     Raw.destroy(rawPosition);
     Raw.destroy(rawHalfExtents);
@@ -259,7 +255,7 @@ export class TileCache {
 
   addTile(
     data: UnsignedCharArray,
-    flags: number = Detour.DT_COMPRESSEDTILE_FREE_DATA
+    flags: number = Detour.DT_COMPRESSEDTILE_FREE_DATA,
   ): RawModule.TileCacheAddTileResult {
     return this.raw.addTile(data.raw, flags);
   }
@@ -284,34 +280,34 @@ export class TileCacheMeshProcess {
     process: (
       navMeshCreateParams: NavMeshCreateParams,
       polyAreasArray: UnsignedCharArray,
-      polyFlagsArray: UnsignedShortArray
-    ) => void
+      polyFlagsArray: UnsignedShortArray,
+    ) => void,
   ) {
     this.raw = new Raw.Module.TileCacheMeshProcess();
 
     this.raw.process = (
       paramsPtr: number,
       polyAreasArrayPtr: number,
-      polyFlagsArrayPtr: number
+      polyFlagsArrayPtr: number,
     ) => {
       const params = new NavMeshCreateParams(
-        Raw.Module.wrapPointer(paramsPtr, Raw.Module.dtNavMeshCreateParams)
+        Raw.Module.wrapPointer(paramsPtr, Raw.Module.dtNavMeshCreateParams),
       );
 
       const polyAreasArray = Raw.Module.wrapPointer(
         polyAreasArrayPtr,
-        Raw.Module.UnsignedCharArray
+        Raw.Module.UnsignedCharArray,
       );
 
       const polyFlagsArray = Raw.Module.wrapPointer(
         polyFlagsArrayPtr,
-        Raw.Module.UnsignedShortArray
+        Raw.Module.UnsignedShortArray,
       );
 
       process(
         params,
         UnsignedCharArray.fromRaw(polyAreasArray),
-        UnsignedShortArray.fromRaw(polyFlagsArray)
+        UnsignedShortArray.fromRaw(polyFlagsArray),
       );
     };
   }
@@ -323,7 +319,7 @@ export const buildTileCacheLayer = (
   heights: UnsignedCharArray,
   areas: UnsignedCharArray,
   cons: UnsignedCharArray,
-  tileCacheData: UnsignedCharArray
+  tileCacheData: UnsignedCharArray,
 ): number => {
   return Raw.DetourTileCacheBuilder.buildTileCacheLayer(
     comp,
@@ -331,6 +327,6 @@ export const buildTileCacheLayer = (
     heights.raw,
     areas.raw,
     cons.raw,
-    tileCacheData.raw
+    tileCacheData.raw,
   );
 };

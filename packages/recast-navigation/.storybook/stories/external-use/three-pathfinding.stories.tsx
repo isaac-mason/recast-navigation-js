@@ -61,7 +61,7 @@ const navMeshToPositionsAndIndices = (navMesh: NavMesh) => {
             positions.push(
               tile.verts(tileVertsBaseIndex),
               tile.verts(tileVertsBaseIndex + 1),
-              tile.verts(tileVertsBaseIndex + 2)
+              tile.verts(tileVertsBaseIndex + 2),
             );
           } else {
             const tileVertsBaseIndex =
@@ -73,7 +73,7 @@ const navMeshToPositionsAndIndices = (navMesh: NavMesh) => {
             positions.push(
               tile.detailVerts(tileVertsBaseIndex),
               tile.detailVerts(tileVertsBaseIndex + 1),
-              tile.detailVerts(tileVertsBaseIndex + 2)
+              tile.detailVerts(tileVertsBaseIndex + 2),
             );
           }
 
@@ -123,7 +123,7 @@ export const ThreePathfinding = () => {
     const geometry = new BufferGeometry();
     geometry.setAttribute(
       'position',
-      new BufferAttribute(new Float32Array(positions), 3)
+      new BufferAttribute(new Float32Array(positions), 3),
     );
     geometry.setIndex(new BufferAttribute(new Uint16Array(indices), 1));
 
@@ -148,7 +148,7 @@ export const ThreePathfinding = () => {
       start as Vector3,
       end as Vector3,
       ZONE,
-      startGroupId
+      startGroupId,
     );
 
     setNavMeshGeometry(geometry);

@@ -62,7 +62,7 @@ export class TileCacheHelper extends Object3D {
           mesh.geometry = new BoxGeometry(
             halfExtents.x * 2,
             halfExtents.y * 2,
-            halfExtents.z * 2
+            halfExtents.z * 2,
           );
 
           mesh.rotation.y = angle;

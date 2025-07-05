@@ -9,7 +9,7 @@ const createNavMeshExport = (data: Uint8Array) => {
   const dataHeap = new Uint8Array(
     Raw.Module.HEAPU8.buffer,
     dataPtr,
-    nDataBytes
+    nDataBytes,
   );
   dataHeap.set(data);
 
@@ -24,9 +24,7 @@ export type ImportNavMeshResult = {
   navMesh: NavMesh;
 };
 
-export const importNavMesh = (
-  data: Uint8Array
-): ImportNavMeshResult => {
+export const importNavMesh = (data: Uint8Array): ImportNavMeshResult => {
   const { navMeshExport, dataHeap } = createNavMeshExport(data);
 
   const result = Raw.NavMeshImporter.importNavMesh(navMeshExport, undefined!);
@@ -47,13 +45,13 @@ export type ImportTileCacheResult = {
 
 export const importTileCache = (
   data: Uint8Array,
-  tileCacheMeshProcess: TileCacheMeshProcess
+  tileCacheMeshProcess: TileCacheMeshProcess,
 ): ImportTileCacheResult => {
   const { navMeshExport, dataHeap } = createNavMeshExport(data);
 
   const result = Raw.NavMeshImporter.importNavMesh(
     navMeshExport,
-    tileCacheMeshProcess.raw as never
+    tileCacheMeshProcess.raw as never,
   );
 
   Raw.Module._free(dataHeap.byteOffset);

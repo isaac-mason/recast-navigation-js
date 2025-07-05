@@ -124,7 +124,7 @@ export const UploadPage = () => {
           loading: false,
           error: 'Failed to load example model',
         });
-      }
+      },
     );
   }, []);
 

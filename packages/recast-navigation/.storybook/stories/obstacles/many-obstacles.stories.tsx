@@ -5,7 +5,7 @@ import {
   NavMeshQuery,
   TileCache,
   statusDetail,
-  statusToReadableString
+  statusToReadableString,
 } from '@recast-navigation/core';
 import { threeToTileCache } from '@recast-navigation/three';
 import React, { useEffect, useState } from 'react';
@@ -65,7 +65,7 @@ export const ManyObstacles = () => {
 
         console.log(
           'tileCache.update status:',
-          statusToReadableString(result.status)
+          statusToReadableString(result.status),
         );
       }
     };
@@ -82,13 +82,13 @@ export const ManyObstacles = () => {
             return tileCache.addBoxObstacle(
               obstaclePosition,
               boxObstacleSize,
-              0.2
+              0.2,
             );
           } else {
             return tileCache.addCylinderObstacle(
               obstaclePosition,
               addCylinderObstacleRadius,
-              1
+              1,
             );
           }
         };

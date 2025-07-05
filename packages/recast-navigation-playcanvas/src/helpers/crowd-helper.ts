@@ -37,7 +37,7 @@ export class CrowdHelper extends GraphNode {
   constructor(
     crowd: Crowd,
     graphicsDevice: GraphicsDevice,
-    params?: CrowdHelperParams
+    params?: CrowdHelperParams,
   ) {
     super();
 
@@ -86,13 +86,13 @@ export class CrowdHelper extends GraphNode {
       agentMesh.setLocalPosition(
         position.x,
         position.y + agent.height / 2,
-        position.z
+        position.z,
       );
 
       agentMesh.lookAt(
         _position
           .copy(agentMesh.getPosition())
-          .add(_velocity.set(velocity.x, velocity.y, velocity.z))
+          .add(_velocity.set(velocity.x, velocity.y, velocity.z)),
       );
     }
 
@@ -124,7 +124,7 @@ export class CrowdHelper extends GraphNode {
 
   updateAgentGeometry(agentMesh: Entity, agentParams: CrowdAgent) {
     const agentData: CrowdAgentData | undefined = this.agentMeshData.get(
-      agentParams.agentIndex
+      agentParams.agentIndex,
     );
 
     if (
@@ -135,13 +135,13 @@ export class CrowdHelper extends GraphNode {
       // Dispose of the old mesh
       if (agentMesh.render) {
         agentMesh.render.meshInstances.forEach((meshInstance: MeshInstance) =>
-          meshInstance.mesh.destroy()
+          meshInstance.mesh.destroy(),
         );
       }
 
       const mesh: Mesh = Mesh.fromGeometry(
         this.graphicsDevice,
-        new CylinderGeometry(agentParams)
+        new CylinderGeometry(agentParams),
       );
 
       if (agentMesh.render) {

@@ -180,7 +180,7 @@ export class NavMesh {
       navMeshData.raw,
       flags,
       lastRef,
-      tileRefRaw
+      tileRefRaw,
     );
 
     const tileRef = tileRefRaw.value;
@@ -230,7 +230,7 @@ export class NavMesh {
   encodePolyId(
     salt: number,
     tileIndex: number,
-    tilePolygonIndex: number
+    tilePolygonIndex: number,
   ): number {
     return this.raw.encodePolyId(salt, tileIndex, tilePolygonIndex);
   }
@@ -251,7 +251,7 @@ export class NavMesh {
    */
   calcTileLoc(pos: Vector3): NavMeshCalcTileLocResult {
     return new NavMeshCalcTileLocResult(
-      this.raw.calcTileLoc(vec3.toArray(pos))
+      this.raw.calcTileLoc(vec3.toArray(pos)),
     );
   }
 
@@ -393,7 +393,7 @@ export class NavMesh {
       prevRef,
       polyRef,
       startRaw,
-      endRaw
+      endRaw,
     );
 
     const start = vec3.fromRaw(startRaw);
@@ -492,10 +492,10 @@ export class NavMesh {
    */
   storeTileState(
     tile: DetourMeshTile,
-    maxDataSize: number
+    maxDataSize: number,
   ): NavMeshStoreTileStateResult {
     return new NavMeshStoreTileStateResult(
-      this.raw.storeTileState(tile.raw, maxDataSize)
+      this.raw.storeTileState(tile.raw, maxDataSize),
     );
   }
 
@@ -509,7 +509,7 @@ export class NavMesh {
   restoreTileState(
     tile: DetourMeshTile,
     data: number[],
-    maxDataSize: number
+    maxDataSize: number,
   ): number {
     return this.raw.restoreTileState(tile.raw, data, maxDataSize);
   }
@@ -531,7 +531,7 @@ export class NavMesh {
  */
 export const getNavMeshPositionsAndIndices = (
   navMesh: NavMesh,
-  flags?: number
+  flags?: number,
 ): [positions: number[], indices: number[]] => {
   const positions: number[] = [];
   const indices: number[] = [];
@@ -582,7 +582,7 @@ export const getNavMeshPositionsAndIndices = (
             positions.push(
               tile.verts(tileVertsBaseIndex),
               tile.verts(tileVertsBaseIndex + 1),
-              tile.verts(tileVertsBaseIndex + 2)
+              tile.verts(tileVertsBaseIndex + 2),
             );
           } else {
             const tileVertsBaseIndex =
@@ -594,7 +594,7 @@ export const getNavMeshPositionsAndIndices = (
             positions.push(
               tile.detailVerts(tileVertsBaseIndex),
               tile.detailVerts(tileVertsBaseIndex + 1),
-              tile.detailVerts(tileVertsBaseIndex + 2)
+              tile.detailVerts(tileVertsBaseIndex + 2),
             );
           }
 
@@ -627,7 +627,7 @@ export const getNavMeshPositionsAndIndices = (
  */
 export const floodFillPruneNavMesh = (
   navMesh: NavMesh,
-  startPolyRefs: number[]
+  startPolyRefs: number[],
 ) => {
   /* find all polys connected to the nearest poly */
   const visited = new Set<number>();

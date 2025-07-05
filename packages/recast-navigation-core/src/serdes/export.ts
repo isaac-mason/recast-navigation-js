@@ -5,13 +5,13 @@ import { Raw } from '../raw';
 const exportImpl = (navMesh: NavMesh, tileCache?: TileCache): Uint8Array => {
   const navMeshExport = Raw.NavMeshExporter.exportNavMesh(
     navMesh.raw,
-    tileCache?.raw as never
+    tileCache?.raw as never,
   );
 
   const arrView = new Uint8Array(
     Raw.Module.HEAPU8.buffer,
     navMeshExport.dataPointer,
-    navMeshExport.size
+    navMeshExport.size,
   );
 
   const data = new Uint8Array(navMeshExport.size);
@@ -27,7 +27,7 @@ export const exportNavMesh = (navMesh: NavMesh): Uint8Array => {
 
 export const exportTileCache = (
   navMesh: NavMesh,
-  tileCache: TileCache
+  tileCache: TileCache,
 ): Uint8Array => {
   return exportImpl(navMesh, tileCache);
 };

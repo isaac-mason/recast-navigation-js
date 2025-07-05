@@ -2,7 +2,7 @@ import { OffMeshConnectionParams, vec3 } from '@recast-navigation/core';
 
 export const getBoundingBox = (
   positions: ArrayLike<number>,
-  indices: ArrayLike<number>
+  indices: ArrayLike<number>,
 ) => {
   const bbMin = { x: Infinity, y: Infinity, z: Infinity };
   const bbMax = { x: -Infinity, y: -Infinity, z: -Infinity };

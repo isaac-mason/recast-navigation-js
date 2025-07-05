@@ -60,11 +60,11 @@ export class CrowdHelper extends Object3D {
       agentMesh.position.set(
         position.x,
         position.y + agent.height / 2,
-        position.z
+        position.z,
       );
 
       agentMesh.lookAt(
-        new Vector3().copy(agentMesh.position).add(velocity as Vector3)
+        new Vector3().copy(agentMesh.position).add(velocity as Vector3),
       );
     }
 
@@ -101,7 +101,7 @@ export class CrowdHelper extends Object3D {
       const geometry = new CylinderGeometry(
         agentParams.radius,
         agentParams.radius,
-        agentParams.height
+        agentParams.height,
       );
 
       agentMesh.geometry.dispose();

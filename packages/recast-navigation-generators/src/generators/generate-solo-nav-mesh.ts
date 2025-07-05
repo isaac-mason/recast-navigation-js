@@ -105,7 +105,7 @@ export const generateSoloNavMeshData = (
   positions: ArrayLike<number>,
   indices: ArrayLike<number>,
   navMeshGeneratorConfig: Partial<SoloNavMeshGeneratorConfig> = {},
-  keepIntermediates = false
+  keepIntermediates = false,
 ): GenerateSoloNavMeshDataResult => {
   const buildContext = new RecastBuildContext();
 
@@ -215,7 +215,7 @@ export const generateSoloNavMeshData = (
       bbMin,
       bbMax,
       rcConfig.cs,
-      rcConfig.ch
+      rcConfig.ch,
     )
   ) {
     return fail('Could not create heightfield');
@@ -234,7 +234,7 @@ export const generateSoloNavMeshData = (
     numVertices,
     trianglesArray,
     numTriangles,
-    triangleAreasArray
+    triangleAreasArray,
   );
 
   if (
@@ -246,7 +246,7 @@ export const generateSoloNavMeshData = (
       triangleAreasArray,
       numTriangles,
       heightfield,
-      rcConfig.walkableClimb
+      rcConfig.walkableClimb,
     )
   ) {
     return fail('Could not rasterize triangles');
@@ -265,18 +265,18 @@ export const generateSoloNavMeshData = (
   filterLowHangingWalkableObstacles(
     buildContext,
     rcConfig.walkableClimb,
-    heightfield
+    heightfield,
   );
   filterLedgeSpans(
     buildContext,
     rcConfig.walkableHeight,
     rcConfig.walkableClimb,
-    heightfield
+    heightfield,
   );
   filterWalkableLowHeightSpans(
     buildContext,
     rcConfig.walkableHeight,
-    heightfield
+    heightfield,
   );
 
   //
@@ -294,7 +294,7 @@ export const generateSoloNavMeshData = (
       rcConfig.walkableHeight,
       rcConfig.walkableClimb,
       heightfield,
-      compactHeightfield
+      compactHeightfield,
     )
   ) {
     return fail('Failed to build compact data');
@@ -310,7 +310,7 @@ export const generateSoloNavMeshData = (
     !erodeWalkableArea(
       buildContext,
       rcConfig.walkableRadius,
-      compactHeightfield
+      compactHeightfield,
     )
   ) {
     return fail('Failed to erode walkable area');
@@ -331,7 +331,7 @@ export const generateSoloNavMeshData = (
       compactHeightfield,
       rcConfig.borderSize,
       rcConfig.minRegionArea,
-      rcConfig.mergeRegionArea
+      rcConfig.mergeRegionArea,
     )
   ) {
     return fail('Failed to build regions');
@@ -350,7 +350,7 @@ export const generateSoloNavMeshData = (
       rcConfig.maxSimplificationError,
       rcConfig.maxEdgeLen,
       contourSet,
-      Recast.RC_CONTOUR_TESS_WALL_EDGES
+      Recast.RC_CONTOUR_TESS_WALL_EDGES,
     )
   ) {
     return fail('Failed to create contours');
@@ -379,7 +379,7 @@ export const generateSoloNavMeshData = (
       compactHeightfield,
       rcConfig.detailSampleDist,
       rcConfig.detailSampleMaxError,
-      polyMeshDetail
+      polyMeshDetail,
     )
   ) {
     return fail('Failed to build detail mesh');
@@ -421,7 +421,7 @@ export const generateSoloNavMeshData = (
 
   if (navMeshGeneratorConfig.offMeshConnections) {
     navMeshCreateParams.setOffMeshConnections(
-      navMeshGeneratorConfig.offMeshConnections
+      navMeshGeneratorConfig.offMeshConnections,
     );
   }
 
@@ -468,11 +468,11 @@ export const generateSoloNavMesh = (
   positions: ArrayLike<number>,
   indices: ArrayLike<number>,
   navMeshGeneratorConfig: Partial<SoloNavMeshGeneratorConfig> = {},
-  keepIntermediates = false
+  keepIntermediates = false,
 ): GenerateSoloNavMeshResult => {
   if (!Raw.Module) {
     throw new Error(
-      '"init" must be called before using any recast-navigation-js APIs. See: https://github.com/isaac-mason/recast-navigation-js?tab=readme-ov-file#initialization'
+      '"init" must be called before using any recast-navigation-js APIs. See: https://github.com/isaac-mason/recast-navigation-js?tab=readme-ov-file#initialization',
     );
   }
 
@@ -480,7 +480,7 @@ export const generateSoloNavMesh = (
     positions,
     indices,
     navMeshGeneratorConfig,
-    keepIntermediates
+    keepIntermediates,
   );
 
   if (!createNavMeshDataResult.success) {

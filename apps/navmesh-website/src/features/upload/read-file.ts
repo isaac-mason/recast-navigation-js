@@ -1,5 +1,5 @@
 export const readFile = (
-  file: File
+  file: File,
 ): Promise<{
   buffer: ArrayBuffer;
 }> => {

@@ -261,7 +261,7 @@ export const FindClosestPoint = () => {
     });
 
     setClosestPointOnNavMesh(
-      new THREE.Vector3(nearest.x, nearest.y, nearest.z)
+      new THREE.Vector3(nearest.x, nearest.y, nearest.z),
     );
 
     return () => {
@@ -325,16 +325,17 @@ export const SingleAgent = () => {
     crowd.navMeshQuery.defaultQueryHalfExtents.x = 5;
     crowd.navMeshQuery.defaultQueryHalfExtents.z = 5;
 
-    const { point: agentPosition } = navMeshQuery.findClosestPoint({ x: 4, y: 0, z: 4 });
+    const { point: agentPosition } = navMeshQuery.findClosestPoint({
+      x: 4,
+      y: 0,
+      z: 4,
+    });
 
-    const agent = crowd.addAgent(
-      agentPosition,
-      {
-        height: 1,
-        radius: 0.5,
-        queryFilterType: CROWD_QUERY_FILTER_TYPE,
-      }
-    );
+    const agent = crowd.addAgent(agentPosition, {
+      height: 1,
+      radius: 0.5,
+      queryFilterType: CROWD_QUERY_FILTER_TYPE,
+    });
 
     setCrowd(crowd);
     setAgent(agent);
@@ -395,10 +396,7 @@ export const SingleAgent = () => {
           <Level />
         </group>
 
-        <Debug
-          navMesh={navMesh}
-          crowd={crowd}
-        />
+        <Debug navMesh={navMesh} crowd={crowd} />
       </group>
 
       <AgentPath agent={agent} target={agentTarget} />

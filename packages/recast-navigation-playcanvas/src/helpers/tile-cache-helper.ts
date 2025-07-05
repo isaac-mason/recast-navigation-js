@@ -59,7 +59,7 @@ export class TileCacheHelper extends Entity {
 
         obstacleEntity = new Entity();
         obstacleEntity.setPosition(
-          new Vec3(position.x, position.y, position.z)
+          new Vec3(position.x, position.y, position.z),
         );
 
         if (obstacle.type === 'box') {
@@ -73,7 +73,7 @@ export class TileCacheHelper extends Entity {
           obstacleEntity.setLocalScale(
             halfExtents.x * 2,
             halfExtents.y * 2,
-            halfExtents.z * 2
+            halfExtents.z * 2,
           );
 
           obstacleEntity.setEulerAngles(0, angle * (180 / Math.PI), 0);
@@ -89,7 +89,7 @@ export class TileCacheHelper extends Entity {
           obstacleEntity.translateLocal(0, height / 2, 0);
         } else {
           throw new Error(
-            `Unknown obstacle type: ${(obstacle as Obstacle).type}`
+            `Unknown obstacle type: ${(obstacle as Obstacle).type}`,
           );
         }
 

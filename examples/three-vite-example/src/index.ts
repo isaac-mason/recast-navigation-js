@@ -19,7 +19,7 @@ const init = async () => {
     75,
     window.innerWidth / window.innerHeight,
     0.1,
-    1000
+    1000,
   );
   camera.position.set(10, 10, 10);
 

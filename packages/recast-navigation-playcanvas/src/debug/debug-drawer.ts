@@ -178,12 +178,12 @@ export class DebugDrawer extends Entity {
   drawNavMeshWithClosedList(
     mesh: NavMesh,
     query: NavMeshQuery,
-    flags: number = 0
+    flags: number = 0,
   ): void {
     const primitives = this.debugDrawerUtils.drawNavMeshWithClosedList(
       mesh,
       query,
-      flags
+      flags,
     );
     this.drawPrimitives(primitives);
   }
@@ -207,7 +207,7 @@ export class DebugDrawer extends Entity {
     const primitives = this.debugDrawerUtils.drawNavMeshPolysWithFlags(
       mesh,
       flags,
-      col
+      col,
     );
     this.drawPrimitives(primitives);
   }
@@ -342,7 +342,7 @@ export class DebugDrawer extends Entity {
 function createPointMesh(
   graphicsDevice: GraphicsDevice,
   positions: number[],
-  colors: number[]
+  colors: number[],
 ): Mesh {
   const vertexFormat = new VertexFormat(graphicsDevice, [
     { semantic: SEMANTIC_POSITION, components: 3, type: TYPE_FLOAT32 },
@@ -354,7 +354,7 @@ function createPointMesh(
     graphicsDevice,
     vertexFormat,
     vertexCount,
-    { usage: BUFFER_STATIC }
+    { usage: BUFFER_STATIC },
   );
 
   const vertexData = new Float32Array(vertexBuffer.lock());
@@ -385,7 +385,7 @@ function createPointMesh(
 function createLineMesh(
   graphicsDevice: GraphicsDevice,
   positions: number[],
-  colors: number[]
+  colors: number[],
 ): Mesh {
   const vertexFormat = new VertexFormat(graphicsDevice, [
     { semantic: SEMANTIC_POSITION, components: 3, type: TYPE_FLOAT32 },
@@ -397,7 +397,7 @@ function createLineMesh(
     graphicsDevice,
     vertexFormat,
     vertexCount,
-    { usage: BUFFER_STATIC }
+    { usage: BUFFER_STATIC },
   );
 
   const vertexData = new Float32Array(vertexBuffer.lock());
@@ -428,7 +428,7 @@ function createLineMesh(
 function createTriangleMesh(
   graphicsDevice: GraphicsDevice,
   positions: number[],
-  colors: number[]
+  colors: number[],
 ): Mesh {
   const vertexFormat = new VertexFormat(graphicsDevice, [
     { semantic: SEMANTIC_POSITION, components: 3, type: TYPE_FLOAT32 },
@@ -440,7 +440,7 @@ function createTriangleMesh(
     graphicsDevice,
     vertexFormat,
     vertexCount,
-    { usage: BUFFER_STATIC }
+    { usage: BUFFER_STATIC },
   );
 
   const vertexData = new Float32Array(vertexBuffer.lock());

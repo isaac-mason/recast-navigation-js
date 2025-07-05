@@ -25,7 +25,11 @@ export class ErrorBoundary extends Component<
 
   render() {
     if (this.state.hasError) {
-      return <ErrorMessage>Uncaught exception: {this.state.errorMessage}</ErrorMessage>;
+      return (
+        <ErrorMessage>
+          Uncaught exception: {this.state.errorMessage}
+        </ErrorMessage>
+      );
     }
 
     return this.props.children;

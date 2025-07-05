@@ -20,7 +20,7 @@ const init = async () => {
     75,
     window.innerWidth / window.innerHeight,
     0.1,
-    1000
+    1000,
   );
   camera.position.set(10, 10, 10);
 
@@ -38,13 +38,13 @@ const init = async () => {
 
   const ground = new THREE.Mesh(
     new THREE.BoxGeometry(10, 0.2, 10),
-    new THREE.MeshBasicMaterial({ color: 0x999999 })
+    new THREE.MeshBasicMaterial({ color: 0x999999 }),
   );
   scene.add(ground);
 
   const obstacle = new THREE.Mesh(
     new THREE.BoxGeometry(2, 2, 2),
-    new THREE.MeshBasicMaterial({ color: 0x333333 })
+    new THREE.MeshBasicMaterial({ color: 0x333333 }),
   );
   obstacle.position.set(0, 1, 0);
   scene.add(obstacle);

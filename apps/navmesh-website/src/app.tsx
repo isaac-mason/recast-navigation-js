@@ -1,8 +1,4 @@
-import {
-  RouterProvider,
-  createBrowserRouter,
-  redirect,
-} from 'react-router';
+import { RouterProvider, createBrowserRouter, redirect } from 'react-router';
 import { EditorPage, UploadPage } from './pages';
 
 export const RouterPaths = {

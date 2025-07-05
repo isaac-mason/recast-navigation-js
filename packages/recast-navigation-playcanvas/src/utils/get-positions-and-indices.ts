@@ -14,7 +14,7 @@ import {
 const _vector3: Vec3 = new Vec3();
 
 export const getPositionsAndIndices = (
-  meshInstances: MeshInstance[]
+  meshInstances: MeshInstance[],
 ): [Float32Array, Uint32Array] => {
   const toMerge: {
     positions: ArrayLike<number>;
@@ -31,7 +31,7 @@ export const getPositionsAndIndices = (
 
     const vertexFormat: VertexFormat = vertexBuffer.getFormat();
     const positionElement = vertexFormat.elements.find(
-      (element) => element.name === SEMANTIC_POSITION
+      (element) => element.name === SEMANTIC_POSITION,
     );
 
     if (!positionElement || positionElement.numComponents !== 3) {

@@ -15,7 +15,15 @@ export type DebugDrawerPrimitiveType = 'lines' | 'tris' | 'quads' | 'points';
 
 export type DebugDrawerPrimitive = {
   type: DebugDrawerPrimitiveType;
-  vertices: [x: number, y: number, z: number, r: number, g: number, b: number, a: number][];
+  vertices: [
+    x: number,
+    y: number,
+    z: number,
+    r: number,
+    g: number,
+    b: number,
+    a: number,
+  ][];
 };
 
 /**
@@ -50,7 +58,7 @@ export class DebugDrawerUtils {
       x: number,
       y: number,
       z: number,
-      color: number
+      color: number,
     ) => {
       this.vertex(x, y, z, color);
     };
@@ -61,7 +69,7 @@ export class DebugDrawerUtils {
       z: number,
       color: number,
       _u: number,
-      _v: number
+      _v: number,
     ) => {
       this.vertex(x, y, z, color);
     };
@@ -97,90 +105,90 @@ export class DebugDrawerUtils {
   drawHeightfieldWalkable(hf: RecastHeightfield): DebugDrawerPrimitive[] {
     Raw.RecastDebugDraw.debugDrawHeightfieldWalkable(
       this.debugDrawImpl,
-      hf.raw
+      hf.raw,
     );
     return this.flush();
   }
 
   drawCompactHeightfieldSolid(
-    chf: RecastCompactHeightfield
+    chf: RecastCompactHeightfield,
   ): DebugDrawerPrimitive[] {
     Raw.RecastDebugDraw.debugDrawCompactHeightfieldSolid(
       this.debugDrawImpl,
-      chf.raw
+      chf.raw,
     );
     return this.flush();
   }
 
   drawCompactHeightfieldRegions(
-    chf: RecastCompactHeightfield
+    chf: RecastCompactHeightfield,
   ): DebugDrawerPrimitive[] {
     Raw.RecastDebugDraw.debugDrawCompactHeightfieldRegions(
       this.debugDrawImpl,
-      chf.raw
+      chf.raw,
     );
     return this.flush();
   }
 
   drawCompactHeightfieldDistance(
-    chf: RecastCompactHeightfield
+    chf: RecastCompactHeightfield,
   ): DebugDrawerPrimitive[] {
     Raw.RecastDebugDraw.debugDrawCompactHeightfieldDistance(
       this.debugDrawImpl,
-      chf.raw
+      chf.raw,
     );
     return this.flush();
   }
 
   drawHeightfieldLayer(
     layer: RecastHeightfieldLayer,
-    idx: number
+    idx: number,
   ): DebugDrawerPrimitive[] {
     Raw.RecastDebugDraw.debugDrawHeightfieldLayer(
       this.debugDrawImpl,
       layer.raw,
-      idx
+      idx,
     );
     return this.flush();
   }
 
   drawHeightfieldLayers(
-    lset: RecastHeightfieldLayerSet
+    lset: RecastHeightfieldLayerSet,
   ): DebugDrawerPrimitive[] {
     Raw.RecastDebugDraw.debugDrawHeightfieldLayers(
       this.debugDrawImpl,
-      lset.raw
+      lset.raw,
     );
     return this.flush();
   }
 
   drawRegionConnections(
     cset: RecastContourSet,
-    alpha: number = 1
+    alpha: number = 1,
   ): DebugDrawerPrimitive[] {
     Raw.RecastDebugDraw.debugDrawRegionConnections(
       this.debugDrawImpl,
       cset.raw,
-      alpha
+      alpha,
     );
     return this.flush();
   }
 
   drawRawContours(
     cset: RecastContourSet,
-    alpha: number = 1
+    alpha: number = 1,
   ): DebugDrawerPrimitive[] {
     Raw.RecastDebugDraw.debugDrawRawContours(
       this.debugDrawImpl,
       cset.raw,
-      alpha
+      alpha,
     );
     return this.flush();
   }
 
   drawContours(
     cset: RecastContourSet,
-    alpha: number = 1
+    alpha: number = 1,
   ): DebugDrawerPrimitive[] {
     Raw.RecastDebugDraw.debugDrawContours(this.debugDrawImpl, cset.raw, alpha);
     return this.flush();
@@ -200,7 +208,7 @@ export class DebugDrawerUtils {
     Raw.DetourDebugDraw.debugDrawNavMesh(
       this.debugDrawImpl,
       mesh.raw.getNavMesh(),
-      flags
+      flags,
     );
     return this.flush();
   }
@@ -208,13 +216,13 @@ export class DebugDrawerUtils {
   drawNavMeshWithClosedList(
     mesh: NavMesh,
     query: NavMeshQuery,
-    flags: number = 0
+    flags: number = 0,
   ): DebugDrawerPrimitive[] {
     Raw.DetourDebugDraw.debugDrawNavMeshWithClosedList(
       this.debugDrawImpl,
       mesh.raw.m_navMesh,
       query.raw.m_navQuery,
-      flags
+      flags,
     );
     return this.flush();
   }
@@ -222,7 +230,7 @@ export class DebugDrawerUtils {
   drawNavMeshNodes(query: NavMeshQuery): DebugDrawerPrimitive[] {
     Raw.DetourDebugDraw.debugDrawNavMeshNodes(
       this.debugDrawImpl,
-      query.raw.m_navQuery
+      query.raw.m_navQuery,
     );
     return this.flush();
   }
@@ -230,7 +238,7 @@ export class DebugDrawerUtils {
   drawNavMeshBVTree(mesh: NavMesh): DebugDrawerPrimitive[] {
     Raw.DetourDebugDraw.debugDrawNavMeshBVTree(
       this.debugDrawImpl,
-      mesh.raw.m_navMesh
+      mesh.raw.m_navMesh,
     );
     return this.flush();
   }
@@ -238,7 +246,7 @@ export class DebugDrawerUtils {
   drawNavMeshPortals(mesh: NavMesh): DebugDrawerPrimitive[] {
     Raw.DetourDebugDraw.debugDrawNavMeshPortals(
       this.debugDrawImpl,
-      mesh.raw.m_navMesh
+      mesh.raw.m_navMesh,
     );
     return this.flush();
   }
@@ -246,13 +254,13 @@ export class DebugDrawerUtils {
   drawNavMeshPolysWithFlags(
     mesh: NavMesh,
     flags: number,
-    col: number
+    col: number,
   ): DebugDrawerPrimitive[] {
     Raw.DetourDebugDraw.debugDrawNavMeshPolysWithFlags(
       this.debugDrawImpl,
       mesh.raw.m_navMesh,
       flags,
-      this.rgbToDuRgba(col)
+      this.rgbToDuRgba(col),
     );
     return this.flush();
   }
@@ -260,13 +268,13 @@ export class DebugDrawerUtils {
   drawNavMeshPoly(
     mesh: NavMesh,
     ref: number,
-    col: number
+    col: number,
   ): DebugDrawerPrimitive[] {
     Raw.DetourDebugDraw.debugDrawNavMeshPoly(
       this.debugDrawImpl,
       mesh.raw.m_navMesh,
       ref,
-      this.rgbToDuRgba(col)
+      this.rgbToDuRgba(col),
     );
     return this.flush();
   }
@@ -280,13 +288,12 @@ export class DebugDrawerUtils {
 
   private rgbToDuRgba(color: number): number {
     // convert hexadecimal rgb color to duRGBA format
-    const r = (color & 0xff);
-    const g = ((color >> 8) & 0xff);
-    const b = ((color >> 16) & 0xff);
+    const r = color & 0xff;
+    const g = (color >> 8) & 0xff;
+    const b = (color >> 16) & 0xff;
 
     return r | (g << 8) | (b << 16) | (255 << 24);
   }
-
 
   private vertex(x: number, y: number, z: number, color: number) {
     const r = (color & 0xff) / 255;

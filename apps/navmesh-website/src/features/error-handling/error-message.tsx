@@ -16,7 +16,10 @@ const errorMessageStyle: React.CSSProperties = {
   fontWeight: 400,
 };
 
-export const ErrorMessage = ({ children, ...props }: React.HTMLProps<HTMLDivElement>) => {
+export const ErrorMessage = ({
+  children,
+  ...props
+}: React.HTMLProps<HTMLDivElement>) => {
   return (
     <div style={errorMessageStyle} {...props}>
       {children}

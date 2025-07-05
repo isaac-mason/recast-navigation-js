@@ -154,12 +154,12 @@ export class DebugDrawer extends THREE.Group {
   drawNavMeshWithClosedList(
     mesh: NavMesh,
     query: NavMeshQuery,
-    flags: number = 0
+    flags: number = 0,
   ): void {
     const primitives = this.debugDrawerUtils.drawNavMeshWithClosedList(
       mesh,
       query,
-      flags
+      flags,
     );
     this.drawPrimitives(primitives);
   }
@@ -183,7 +183,7 @@ export class DebugDrawer extends THREE.Group {
     const primitives = this.debugDrawerUtils.drawNavMeshPolysWithFlags(
       mesh,
       flags,
-      col
+      col,
     );
     this.drawPrimitives(primitives);
   }
@@ -227,7 +227,7 @@ export class DebugDrawer extends THREE.Group {
     const instancedMesh = new THREE.InstancedMesh(
       geometry,
       this.pointMaterial,
-      primitive.vertices.length / 3
+      primitive.vertices.length / 3,
     );
 
     for (let point = 0; point < primitive.vertices.length / 7; point++) {
@@ -235,7 +235,7 @@ export class DebugDrawer extends THREE.Group {
 
       instancedMesh.setMatrixAt(
         point,
-        new THREE.Matrix4().setPosition(x, y, z)
+        new THREE.Matrix4().setPosition(x, y, z),
       );
 
       instancedMesh.setColorAt(point, _color.setRGB(r, g, b));
@@ -268,7 +268,7 @@ export class DebugDrawer extends THREE.Group {
 
     const lineSegments = new LineSegments2(
       lineSegmentsGeometry,
-      this.lineMaterial
+      this.lineMaterial,
     );
 
     this.add(lineSegments);
@@ -323,11 +323,11 @@ export class DebugDrawer extends THREE.Group {
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute(
       'position',
-      new THREE.BufferAttribute(new Float32Array(positions), 3)
+      new THREE.BufferAttribute(new Float32Array(positions), 3),
     );
     geometry.setAttribute(
       'color',
-      new THREE.BufferAttribute(new Float32Array(colors), 3)
+      new THREE.BufferAttribute(new Float32Array(colors), 3),
     );
 
     const material = this.triMaterial;

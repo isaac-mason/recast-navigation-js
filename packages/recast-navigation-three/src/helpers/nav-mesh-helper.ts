@@ -1,4 +1,7 @@
-import { getNavMeshPositionsAndIndices, NavMesh } from '@recast-navigation/core';
+import {
+  getNavMeshPositionsAndIndices,
+  NavMesh,
+} from '@recast-navigation/core';
 import {
   BufferAttribute,
   BufferGeometry,
@@ -54,10 +57,10 @@ export class NavMeshHelper extends Object3D {
 
     this.navMeshGeometry.setAttribute(
       'position',
-      new BufferAttribute(Float32Array.from(positions), 3)
+      new BufferAttribute(Float32Array.from(positions), 3),
     );
     this.navMeshGeometry.setIndex(
-      new BufferAttribute(Uint32Array.from(indices), 1)
+      new BufferAttribute(Uint32Array.from(indices), 1),
     );
     this.navMeshGeometry.computeVertexNormals();
   }

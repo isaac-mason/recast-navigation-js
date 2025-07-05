@@ -58,7 +58,7 @@ abstract class BaseArray<
     const dataHeap = new this.typedArrayClass(
       heap.buffer,
       this.raw.getDataPointer(),
-      this.size
+      this.size,
     );
 
     return dataHeap as InstanceType<T>;

@@ -94,7 +94,7 @@ export const PathObstacles = () => {
       const addObstacleResult = tileCache.addBoxObstacle(
         boxObstacleTarget.current!.getWorldPosition(new Vector3()),
         { x: 1, y: 1, z: 1 },
-        0.2
+        0.2,
       );
 
       if (addObstacleResult.success) {

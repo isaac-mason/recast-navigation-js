@@ -149,7 +149,7 @@ export const CrowdObstacles = () => {
     const boxObstacleResult = tileCache.addBoxObstacle(
       boxObstacleTarget.current!.getWorldPosition(new Vector3()),
       { x: 1, y: 1, z: 1 },
-      0.2
+      0.2,
     );
 
     if (boxObstacleResult.success) {
@@ -159,7 +159,7 @@ export const CrowdObstacles = () => {
     const cylinderObstacleResult = tileCache.addCylinderObstacle(
       cylinderObstacleTarget.current!.getWorldPosition(new Vector3()),
       1,
-      0.5
+      0.5,
     );
 
     if (cylinderObstacleResult.success) {

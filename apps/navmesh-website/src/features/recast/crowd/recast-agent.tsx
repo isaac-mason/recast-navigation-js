@@ -21,7 +21,7 @@ export type RecastAgentProps = {
 export const RecastAgent = forwardRef<RecastAgentRef, RecastAgentProps>(
   (
     { navMesh, agentRadius, agentHeight, agentMaxAcceleration, agentMaxSpeed },
-    ref
+    ref,
   ) => {
     const [crowd, setCrowd] = useState<Crowd | undefined>();
     const [agent, setAgent] = useState<CrowdAgent | undefined>();
@@ -54,7 +54,7 @@ export const RecastAgent = forwardRef<RecastAgentRef, RecastAgentProps>(
           setAgentTarget(undefined);
         },
       }),
-      [navMeshQuery, crowd]
+      [navMeshQuery, crowd],
     );
 
     useEffect(() => {
@@ -151,5 +151,5 @@ export const RecastAgent = forwardRef<RecastAgentRef, RecastAgentProps>(
         {agentPath && <Line points={agentPath} color="blue" lineWidth={10} />}
       </>
     );
-  }
+  },
 );

@@ -31,7 +31,7 @@ export const NavMeshGeneratorInputHelper = ({
 
     geometry.setAttribute(
       'position',
-      new BufferAttribute(indexedTriangleMesh.positions, 3)
+      new BufferAttribute(indexedTriangleMesh.positions, 3),
     );
     geometry.setIndex(new BufferAttribute(indexedTriangleMesh.indices, 1));
     geometry.computeBoundingBox();
@@ -45,7 +45,7 @@ export const NavMeshGeneratorInputHelper = ({
         wireframe: navMeshGeneratorInputWireframe,
         opacity: navMeshGeneratorInputOpacity,
         depthWrite: false,
-      })
+      }),
     );
 
     return mesh;

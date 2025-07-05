@@ -35,7 +35,7 @@ export const useActionsControls = ({
         disabled: !navMesh,
       }),
     },
-    [navMesh, generateNavMesh, loading]
+    [navMesh, generateNavMesh, loading],
   );
 };
 
@@ -119,7 +119,7 @@ export const useNavMeshGenerationControls = () => {
         label: 'Keep Intermediates',
         value: true,
       },
-    }
+    },
   );
 
   useControls('NavMesh Generation Config.Tips', {
@@ -128,7 +128,7 @@ export const useNavMeshGenerationControls = () => {
         '\n' +
         '- Set Tile Size to 0 to generate a solo nav mesh, and pick a value e.g. 32 to generate a tiled nav mesh' +
         '\n' +
-        '- Uncheck "Keep Intermediates" if you are trying to generate a large nav mesh and are running out of memory.'
+        '- Uncheck "Keep Intermediates" if you are trying to generate a large nav mesh and are running out of memory.',
     ),
   });
 
@@ -152,7 +152,7 @@ export const useDisplayOptionsControls = () => {
     navMeshGeneratorInputOpacity,
   } = useControls('Display Options.NavMesh Generator Input', {
     _: levaText(
-      'The indexed indexed triangle mesh that will be used for NavMesh generation.'
+      'The indexed indexed triangle mesh that will be used for NavMesh generation.',
     ),
     displayNavMeshGenerationInput: {
       label: 'Show Input',
@@ -188,7 +188,7 @@ export const useDisplayOptionsControls = () => {
         value: DebugDrawerOption.NAVMESH,
         options: Object.values(DebugDrawerOption),
       },
-    }
+    },
   );
 
   return {
@@ -211,7 +211,7 @@ export const useTestAgentControls = () => {
     agentMaxSpeed,
   } = useControls('Test Agent', {
     _: levaText(
-      'Creates a Detour Crowd with a single agent for you to test your NavMesh with.\nLeft click to set a target, right click to teleport.'
+      'Creates a Detour Crowd with a single agent for you to test your NavMesh with.\nLeft click to set a target, right click to teleport.',
     ),
     agentEnabled: {
       label: 'Enabled',

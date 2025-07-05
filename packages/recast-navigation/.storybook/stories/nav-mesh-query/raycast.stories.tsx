@@ -70,7 +70,7 @@ export const Raycast = () => {
     const raycastResult = navMeshQuery.raycast(
       nearestStartPoly.nearestRef,
       start,
-      end
+      end,
     );
 
     const hit = 0 < raycastResult.t && raycastResult.t < 1.0;

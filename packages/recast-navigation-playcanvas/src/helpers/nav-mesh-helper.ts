@@ -1,4 +1,7 @@
-import { NavMesh, getNavMeshPositionsAndIndices } from '@recast-navigation/core';
+import {
+  NavMesh,
+  getNavMeshPositionsAndIndices,
+} from '@recast-navigation/core';
 import {
   BLEND_NORMAL,
   Entity,
@@ -27,7 +30,7 @@ export class NavMeshHelper extends Entity {
   constructor(
     navMesh: NavMesh,
     graphicsDevice: GraphicsDevice,
-    params?: NavMeshHelperParams
+    params?: NavMeshHelperParams,
   ) {
     super();
 
@@ -43,7 +46,7 @@ export class NavMeshHelper extends Entity {
     // Create a MeshInstance with the mesh and material
     const meshInstance: MeshInstance = new MeshInstance(
       this.mesh,
-      this.navMeshMaterial
+      this.navMeshMaterial,
     );
 
     // Add a render component and assign the mesh instance

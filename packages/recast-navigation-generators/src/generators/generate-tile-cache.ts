@@ -140,11 +140,11 @@ export const generateTileCache = (
   positions: ArrayLike<number>,
   indices: ArrayLike<number>,
   navMeshGeneratorConfig: Partial<TileCacheGeneratorConfig> = {},
-  keepIntermediates = false
+  keepIntermediates = false,
 ): TileCacheGeneratorResult => {
   if (!Raw.Module) {
     throw new Error(
-      '"init" must be called before using any recast-navigation-js APIs. See: https://github.com/isaac-mason/recast-navigation-js?tab=readme-ov-file#initialization'
+      '"init" must be called before using any recast-navigation-js APIs. See: https://github.com/isaac-mason/recast-navigation-js?tab=readme-ov-file#initialization',
     );
   }
 
@@ -280,7 +280,7 @@ export const generateTileCache = (
       tileCacheParams,
       allocator,
       compressor,
-      tileCacheMeshProcess
+      tileCacheMeshProcess,
     )
   ) {
     return fail('Failed to initialize tile cache');
@@ -292,9 +292,9 @@ export const generateTileCache = (
   // There are 22 bits available for identifying a tile and a polygon.
   let tileBits = Math.min(
     Math.floor(
-      dtIlog2(dtNextPow2(tileWidth * tileHeight * expectedLayersPerTile))
+      dtIlog2(dtNextPow2(tileWidth * tileHeight * expectedLayersPerTile)),
     ),
-    14
+    14,
   );
   if (tileBits > 14) {
     tileBits = 14;
@@ -373,7 +373,7 @@ export const generateTileCache = (
         tileBoundsMin,
         tileBoundsMax,
         tileConfig.cs,
-        tileConfig.ch
+        tileConfig.ch,
       )
     ) {
       return { n: 0 };
@@ -391,7 +391,7 @@ export const generateTileCache = (
       tbmin,
       tbmax,
       chunkIdsArray,
-      maxChunkIds
+      maxChunkIds,
     );
 
     if (nChunksOverlapping === 0) {
@@ -418,7 +418,7 @@ export const generateTileCache = (
         numVertices,
         nodeTrianglesArray,
         nNodeTris,
-        triangleAreasArray
+        triangleAreasArray,
       );
 
       const success = rasterizeTriangles(
@@ -429,7 +429,7 @@ export const generateTileCache = (
         triangleAreasArray,
         nNodeTris,
         heightfield,
-        tileConfig.walkableClimb
+        tileConfig.walkableClimb,
       );
 
       triangleAreasArray.destroy();
@@ -445,18 +445,18 @@ export const generateTileCache = (
     filterLowHangingWalkableObstacles(
       buildContext,
       config.walkableClimb,
-      heightfield
+      heightfield,
     );
     filterLedgeSpans(
       buildContext,
       config.walkableHeight,
       config.walkableClimb,
-      heightfield
+      heightfield,
     );
     filterWalkableLowHeightSpans(
       buildContext,
       config.walkableHeight,
-      heightfield
+      heightfield,
     );
 
     const compactHeightfield = allocCompactHeightfield();
@@ -466,7 +466,7 @@ export const generateTileCache = (
         config.walkableHeight,
         config.walkableClimb,
         heightfield,
-        compactHeightfield
+        compactHeightfield,
       )
     ) {
       return { n: 0 };
@@ -482,7 +482,7 @@ export const generateTileCache = (
       !erodeWalkableArea(
         buildContext,
         config.walkableRadius,
-        compactHeightfield
+        compactHeightfield,
       )
     ) {
       return { n: 0 };
@@ -495,7 +495,7 @@ export const generateTileCache = (
         compactHeightfield,
         config.borderSize,
         config.walkableHeight,
-        heightfieldLayerSet
+        heightfieldLayerSet,
       )
     ) {
       return { n: 0 };
@@ -552,7 +552,7 @@ export const generateTileCache = (
         heights,
         areas,
         cons,
-        tile
+        tile,
       );
 
       if (statusFailed(status)) {
@@ -586,7 +586,7 @@ export const generateTileCache = (
           if (statusFailed(addResult.status)) {
             buildContext.log(
               Recast.RC_LOG_WARNING,
-              `Failed to add tile to tile cache - tx: ${x}, ty: ${y}`
+              `Failed to add tile to tile cache - tx: ${x}, ty: ${y}`,
             );
             continue;
           }

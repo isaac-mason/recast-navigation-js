@@ -21,7 +21,7 @@ export const FloodFillPruning = () => {
   const [debug, setDebug] = useState<DebugDrawer | undefined>();
 
   const [point, setPoint] = useState<THREE.Vector3>(
-    new THREE.Vector3(0.8, 0.26, 3.3)
+    new THREE.Vector3(0.8, 0.26, 3.3),
   );
 
   useEffect(() => {

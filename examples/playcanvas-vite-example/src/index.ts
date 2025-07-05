@@ -26,9 +26,9 @@ const init = async () => {
     new pc.MeshInstance(
       pc.Mesh.fromGeometry(
         app.graphicsDevice,
-        new pc.BoxGeometry({ halfExtents: new pc.Vec3(5, 0.2, 5) })
+        new pc.BoxGeometry({ halfExtents: new pc.Vec3(5, 0.2, 5) }),
       ),
-      new pc.StandardMaterial()
+      new pc.StandardMaterial(),
     ),
   ];
   app.root.addChild(ground);
@@ -67,7 +67,7 @@ const init = async () => {
 
   const { success, navMesh } = pcToSoloNavMesh(
     navMeshMeshInstances,
-    recastConfig
+    recastConfig,
   );
 
   if (success) {

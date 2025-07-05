@@ -59,7 +59,7 @@ const DebugDraw = ({ example, showModel = false }: DebugDrawProps) => {
     const { success, navMesh, intermediates } = threeToSoloNavMesh(
       meshes,
       config,
-      true
+      true,
     );
 
     if (!success) return;
@@ -72,15 +72,15 @@ const DebugDraw = ({ example, showModel = false }: DebugDrawProps) => {
       debugDrawer.drawHeightfieldWalkable(intermediates.heightfield!);
     } else if (example === DebugDrawExample.COMPACT_HEIGHTFIELD_SOLID) {
       debugDrawer.drawCompactHeightfieldSolid(
-        intermediates.compactHeightfield!
+        intermediates.compactHeightfield!,
       );
     } else if (example === DebugDrawExample.COMPACT_HEIGHTFIELD_REGIONS) {
       debugDrawer.drawCompactHeightfieldRegions(
-        intermediates.compactHeightfield!
+        intermediates.compactHeightfield!,
       );
     } else if (example === DebugDrawExample.COMPACT_HEIGHTFIELD_DISTANCE) {
       debugDrawer.drawCompactHeightfieldDistance(
-        intermediates.compactHeightfield!
+        intermediates.compactHeightfield!,
       );
     } else if (example === DebugDrawExample.RAW_CONTOURS) {
       debugDrawer.drawRawContours(intermediates.contourSet!, 1);

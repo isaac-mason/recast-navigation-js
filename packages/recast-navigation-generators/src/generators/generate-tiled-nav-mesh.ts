@@ -104,7 +104,7 @@ export const buildTiledNavMeshRcConfig = ({
   // There are 22 bits available for identifying a tile and a polygon.
   let tileBits = Math.min(
     Math.floor(dtIlog2(dtNextPow2(tileWidth * tileHeight))),
-    14
+    14,
   );
   if (tileBits > 14) tileBits = 14;
   const polyBits = 22 - tileBits;
@@ -194,7 +194,7 @@ export const generateTileNavMeshData = (
     buildBvTree?: boolean;
   } = {},
   keepIntermediates: boolean = false,
-  buildContext: RecastBuildContext = new RecastBuildContext()
+  buildContext: RecastBuildContext = new RecastBuildContext(),
 ): GenerateTileNavMeshDataResult => {
   const tileIntermediate: TileIntermediates = { x: tile.x, y: tile.y };
 
@@ -284,15 +284,15 @@ export const generateTileNavMeshData = (
 
   buildContext.log(
     Recast.RC_LOG_PROGRESS,
-    `Building tile at x: ${tile.x}, y: ${tile.y}`
+    `Building tile at x: ${tile.x}, y: ${tile.y}`,
   );
   buildContext.log(
     Recast.RC_LOG_PROGRESS,
-    ` - ${tileConfig.width} x ${tileConfig.height} cells`
+    ` - ${tileConfig.width} x ${tileConfig.height} cells`,
   );
   buildContext.log(
     Recast.RC_LOG_PROGRESS,
-    ` - ${positions.size / 3 / 1000}K verts, ${indices.size / 3 / 1000}K tris`
+    ` - ${positions.size / 3 / 1000}K verts, ${indices.size / 3 / 1000}K tris`,
   );
 
   // Allocate voxel heightfield where we rasterize our input data to.
@@ -308,7 +308,7 @@ export const generateTileNavMeshData = (
       expandedTileBoundsMin,
       expandedTileBoundsMax,
       tileConfig.cs,
-      tileConfig.ch
+      tileConfig.ch,
     )
   ) {
     return failTileMesh('Could not create heightfield');
@@ -338,7 +338,7 @@ export const generateTileNavMeshData = (
     tbmin,
     tbmax,
     chunkIdsArray,
-    maxChunkIds
+    maxChunkIds,
   );
 
   if (nChunksOverlapping === 0) {
@@ -365,7 +365,7 @@ export const generateTileNavMeshData = (
       indices.size,
       nodeTrianglesArray,
       nNodeTris,
-      triangleAreasArray
+      triangleAreasArray,
     );
 
     const success = rasterizeTriangles(
@@ -376,7 +376,7 @@ export const generateTileNavMeshData = (
       triangleAreasArray,
       nNodeTris,
       heightfield,
-      tileConfig.walkableClimb
+      tileConfig.walkableClimb,
     );
 
     triangleAreasArray.destroy();
@@ -392,18 +392,18 @@ export const generateTileNavMeshData = (
   filterLowHangingWalkableObstacles(
     buildContext,
     tileConfig.walkableClimb,
-    heightfield
+    heightfield,
   );
   filterLedgeSpans(
     buildContext,
     tileConfig.walkableHeight,
     tileConfig.walkableClimb,
-    heightfield
+    heightfield,
   );
   filterWalkableLowHeightSpans(
     buildContext,
     tileConfig.walkableHeight,
-    heightfield
+    heightfield,
   );
 
   // Compact the heightfield so that it is faster to handle from now on.
@@ -418,7 +418,7 @@ export const generateTileNavMeshData = (
       tileConfig.walkableHeight,
       tileConfig.walkableClimb,
       heightfield,
-      compactHeightfield
+      compactHeightfield,
     )
   ) {
     return failTileMesh('Could not build compact heightfield');
@@ -434,7 +434,7 @@ export const generateTileNavMeshData = (
     !erodeWalkableArea(
       buildContext,
       tileConfig.walkableRadius,
-      compactHeightfield
+      compactHeightfield,
     )
   ) {
     return failTileMesh('Could not erode walkable area');
@@ -455,7 +455,7 @@ export const generateTileNavMeshData = (
       compactHeightfield,
       tileConfig.borderSize,
       tileConfig.minRegionArea,
-      tileConfig.mergeRegionArea
+      tileConfig.mergeRegionArea,
     )
   ) {
     return failTileMesh('Failed to build regions');
@@ -474,7 +474,7 @@ export const generateTileNavMeshData = (
       tileConfig.maxSimplificationError,
       tileConfig.maxEdgeLen,
       contourSet,
-      Recast.RC_CONTOUR_TESS_WALL_EDGES
+      Recast.RC_CONTOUR_TESS_WALL_EDGES,
     )
   ) {
     return failTileMesh('Failed to create contours');
@@ -490,7 +490,7 @@ export const generateTileNavMeshData = (
       buildContext,
       contourSet,
       tileConfig.maxVertsPerPoly,
-      polyMesh
+      polyMesh,
     )
   ) {
     return failTileMesh('Failed to triangulate contours');
@@ -508,7 +508,7 @@ export const generateTileNavMeshData = (
       compactHeightfield,
       tileConfig.detailSampleDist,
       tileConfig.detailSampleMaxError,
-      polyMeshDetail
+      polyMeshDetail,
     )
   ) {
     return failTileMesh('Failed to build detail mesh');
@@ -538,20 +538,20 @@ export const generateTileNavMeshData = (
   navMeshCreateParams.setPolyMeshDetailCreateParams(polyMeshDetail);
 
   navMeshCreateParams.setWalkableHeight(
-    tileConfig.walkableHeight * tileConfig.ch
+    tileConfig.walkableHeight * tileConfig.ch,
   );
   navMeshCreateParams.setWalkableRadius(
-    tileConfig.walkableRadius * tileConfig.cs
+    tileConfig.walkableRadius * tileConfig.cs,
   );
   navMeshCreateParams.setWalkableClimb(
-    tileConfig.walkableClimb * tileConfig.ch
+    tileConfig.walkableClimb * tileConfig.ch,
   );
 
   navMeshCreateParams.setCellSize(tileConfig.cs);
   navMeshCreateParams.setCellHeight(tileConfig.ch);
 
   navMeshCreateParams.setBuildBvTree(
-    options.buildBvTree ?? tiledNavMeshGeneratorConfigDefaults.buildBvTree
+    options.buildBvTree ?? tiledNavMeshGeneratorConfigDefaults.buildBvTree,
   );
 
   if (options.offMeshConnections) {
@@ -569,7 +569,7 @@ export const generateTileNavMeshData = (
 
   buildContext.log(
     Recast.RC_LOG_PROGRESS,
-    `>> Polymesh: ${polyMesh.nverts()} vertices  ${polyMesh.npolys()} polygons`
+    `>> Polymesh: ${polyMesh.nverts()} vertices  ${polyMesh.npolys()} polygons`,
   );
 
   return {
@@ -614,11 +614,11 @@ export const generateTiledNavMesh = (
   positions: ArrayLike<number>,
   indices: ArrayLike<number>,
   navMeshGeneratorConfig: Partial<TiledNavMeshGeneratorConfig> = {},
-  keepIntermediates = false
+  keepIntermediates = false,
 ): GenerateTiledNavMeshResult => {
   if (!Raw.Module) {
     throw new Error(
-      '"init" must be called before using any recast-navigation-js APIs. See: https://github.com/isaac-mason/recast-navigation-js?tab=readme-ov-file#initialization'
+      '"init" must be called before using any recast-navigation-js APIs. See: https://github.com/isaac-mason/recast-navigation-js?tab=readme-ov-file#initialization',
     );
   }
 
@@ -721,7 +721,7 @@ export const generateTiledNavMesh = (
       verticesArray,
       trianglesArray,
       numTriangles,
-      generatorConfig.chunkyTriMeshTrisPerChunk
+      generatorConfig.chunkyTriMeshTrisPerChunk,
     )
   ) {
     return fail('Failed to build chunky triangle mesh');
@@ -762,7 +762,7 @@ export const generateTiledNavMesh = (
         tile,
         generatorOptions,
         keepIntermediates,
-        buildContext
+        buildContext,
       );
 
       intermediates.tileIntermediates.push(result.intermediates);
@@ -773,7 +773,7 @@ export const generateTiledNavMesh = (
         const addTileResult = navMesh.addTile(
           result.data,
           Detour.DT_TILE_FREE_DATA,
-          0
+          0,
         );
 
         if (statusFailed(addTileResult.status)) {
@@ -781,7 +781,7 @@ export const generateTiledNavMesh = (
             Recast.RC_LOG_WARNING,
             `Failed to add tile to nav mesh tx: ${x}, ty: ${y}, status: ${statusToReadableString(addTileResult.status)} (${
               addTileResult.status
-            })`
+            })`,
           );
 
           result.data.destroy();

@@ -34,7 +34,7 @@ export const vec3 = {
     a: Vector3,
     b: Vector3,
     t: number,
-    out: Vector3 = { x: 0, y: 0, z: 0 }
+    out: Vector3 = { x: 0, y: 0, z: 0 },
   ) => {
     out.x = a.x + (b.x - a.x) * t;
     out.y = a.y + (b.y - a.y) * t;

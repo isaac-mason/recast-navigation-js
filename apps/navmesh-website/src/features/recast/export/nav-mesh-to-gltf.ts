@@ -56,7 +56,7 @@ const navMeshToPositionsAndIndices = (navMesh: NavMesh) => {
             positions.push(
               tile.verts(tileVertsBaseIndex),
               tile.verts(tileVertsBaseIndex + 1),
-              tile.verts(tileVertsBaseIndex + 2)
+              tile.verts(tileVertsBaseIndex + 2),
             );
           } else {
             const tileVertsBaseIndex =
@@ -68,7 +68,7 @@ const navMeshToPositionsAndIndices = (navMesh: NavMesh) => {
             positions.push(
               tile.detailVerts(tileVertsBaseIndex),
               tile.detailVerts(tileVertsBaseIndex + 1),
-              tile.detailVerts(tileVertsBaseIndex + 2)
+              tile.detailVerts(tileVertsBaseIndex + 2),
             );
           }
 
@@ -87,7 +87,10 @@ type GLTFExport =
       [key: string]: any;
     };
 
-export const navMeshToGLTF = (navMesh: NavMesh, binary: boolean): Promise<GLTFExport> => {
+export const navMeshToGLTF = (
+  navMesh: NavMesh,
+  binary: boolean,
+): Promise<GLTFExport> => {
   const exporter = new GLTFExporter();
 
   const [positions, indices] = navMeshToPositionsAndIndices(navMesh);
@@ -96,7 +99,7 @@ export const navMeshToGLTF = (navMesh: NavMesh, binary: boolean): Promise<GLTFEx
 
   geometry.setAttribute(
     'position',
-    new BufferAttribute(new Float32Array(positions), 3)
+    new BufferAttribute(new Float32Array(positions), 3),
   );
   geometry.setIndex(new BufferAttribute(new Uint16Array(indices), 1));
 

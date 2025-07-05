@@ -190,7 +190,7 @@ export class CrowdAgent implements CrowdAgentParams {
 
   constructor(
     public crowd: Crowd,
-    public agentIndex: number
+    public agentIndex: number,
   ) {
     this.raw = crowd.raw.getEditableAgent(agentIndex);
     this.interpolatedPosition = this.position();
@@ -211,7 +211,7 @@ export class CrowdAgent implements CrowdAgentParams {
     return this.crowd.raw.requestMoveTarget(
       this.agentIndex,
       nearestRef,
-      vec3.toArray(nearestPoint)
+      vec3.toArray(nearestPoint),
     );
   }
 
@@ -223,7 +223,7 @@ export class CrowdAgent implements CrowdAgentParams {
   requestMoveVelocity(velocity: Vector3): boolean {
     return this.crowd.raw.requestMoveVelocity(
       this.agentIndex,
-      vec3.toArray(velocity)
+      vec3.toArray(velocity),
     );
   }
 
@@ -244,7 +244,7 @@ export class CrowdAgent implements CrowdAgentParams {
       this.agentIndex,
       vec3.toArray(position),
       vec3.toArray(this.crowd.navMeshQuery.defaultQueryHalfExtents),
-      this.crowd.navMeshQuery.defaultFilter.raw
+      this.crowd.navMeshQuery.defaultFilter.raw,
     );
 
     vec3.copy(position, this.interpolatedPosition);
@@ -419,7 +419,7 @@ export class CrowdAgent implements CrowdAgentParams {
   overOffMeshConnection(): boolean {
     return Raw.CrowdUtils.overOffMeshConnection(
       this.crowd.raw,
-      this.agentIndex
+      this.agentIndex,
     );
   }
 }
@@ -480,7 +480,7 @@ export class Crowd {
     this.raw.init(maxAgents, maxAgentRadius, navMesh.raw.getNavMesh());
 
     this.navMeshQuery = new NavMeshQuery(
-      new Raw.Module.NavMeshQuery(this.raw.getNavMeshQuery())
+      new Raw.Module.NavMeshQuery(this.raw.getNavMeshQuery()),
     );
   }
 
@@ -536,7 +536,7 @@ export class Crowd {
           agent.interpolatedPosition,
           agent.position(),
           t,
-          agent.interpolatedPosition
+          agent.interpolatedPosition,
         );
       }
     }
@@ -547,7 +547,7 @@ export class Crowd {
    */
   addAgent(
     position: Vector3,
-    crowdAgentParams: Partial<CrowdAgentParams>
+    crowdAgentParams: Partial<CrowdAgentParams>,
   ): CrowdAgent {
     const params = {
       ...crowdAgentParamsDefaults,
@@ -569,7 +569,7 @@ export class Crowd {
 
     const agentIndex = this.raw.addAgent(
       vec3.toArray(position),
-      dtCrowdAgentParams
+      dtCrowdAgentParams,
     );
 
     const agent = new CrowdAgent(this, agentIndex);

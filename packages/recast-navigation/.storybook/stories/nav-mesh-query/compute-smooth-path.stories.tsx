@@ -4,17 +4,11 @@ import {
   NavMesh,
   NavMeshQuery,
   OffMeshConnectionParams,
-  QueryFilter
+  QueryFilter,
 } from '@recast-navigation/core';
 import { threeToSoloNavMesh } from '@recast-navigation/three';
 import React, { useEffect, useState } from 'react';
-import {
-  Group,
-  Mesh,
-  Vector3,
-  Vector3Like,
-  Vector3Tuple,
-} from 'three';
+import { Group, Mesh, Vector3, Vector3Like, Vector3Tuple } from 'three';
 import { Debug } from '../../common/debug';
 import { NavTestEnvironment } from '../../common/nav-test-environment';
 import { decorators } from '../../decorators';
@@ -121,9 +115,7 @@ export const ComputeSmoothPath = () => {
         )}
       </group>
 
-      <Debug
-        navMesh={navMesh}
-      />
+      <Debug navMesh={navMesh} />
 
       <OrbitControls />
     </>
@@ -182,7 +174,7 @@ function computeSmoothPath(
      * @default 0.01
      */
     slop?: number;
-  }
+  },
 ): ComputeSmoothPathResult {
   const filter = options?.filter ?? navMeshQuery.defaultFilter;
   const halfExtents =
@@ -265,7 +257,7 @@ function computeSmoothPath(
   if (lastPoly !== endRef) {
     const lastPolyClosestPointResult = navMeshQuery.closestPointOnPoly(
       lastPoly,
-      end
+      end,
     );
 
     if (!lastPolyClosestPointResult.success) {
@@ -298,15 +290,14 @@ function computeSmoothPath(
       iterPos,
       targetPos,
       slop,
-      polys
+      polys,
     );
 
     if (!steerTarget.success) {
       break;
     }
 
-    const isEndOfPath =
-      steerTarget.steerPosFlag & Detour.DT_STRAIGHTPATH_END;
+    const isEndOfPath = steerTarget.steerPosFlag & Detour.DT_STRAIGHTPATH_END;
 
     const isOffMeshConnection =
       steerTarget.steerPosFlag & Detour.DT_STRAIGHTPATH_OFFMESH_CONNECTION;
@@ -332,7 +323,7 @@ function computeSmoothPath(
       polys[0],
       iterPos,
       moveTarget,
-      { filter, maxVisitedSize: 16 }
+      { filter, maxVisitedSize: 16 },
     );
 
     if (!moveAlongSurface.success) {
@@ -406,7 +397,7 @@ function computeSmoothPath(
 
           const endPositionPolyHeight = navMeshQuery.getPolyHeight(
             polys[0],
-            iterPos
+            iterPos,
           );
 
           if (endPositionPolyHeight.success) {
@@ -445,7 +436,7 @@ function getSteerTarget(
   start: Vector3,
   end: Vector3,
   minTargetDist: number,
-  pathPolys: number[]
+  pathPolys: number[],
 ): GetSteerTargetResult {
   const maxSteerPoints = 3;
 
@@ -464,7 +455,7 @@ function getSteerTarget(
     const point = new Vector3(
       straightPath.straightPath.get(i * 3),
       straightPath.straightPath.get(i * 3 + 1),
-      straightPath.straightPath.get(i * 3 + 2)
+      straightPath.straightPath.get(i * 3 + 2),
     );
 
     outPoints.push(point);
@@ -521,7 +512,7 @@ function inRange(a: Vector3, b: Vector3, r: number, h: number) {
 function fixupCorridor(
   pathPolys: number[],
   maxPath: number,
-  visitedPolyRefs: number[]
+  visitedPolyRefs: number[],
 ) {
   let furthestPath = -1;
   let furthestVisited = -1;
