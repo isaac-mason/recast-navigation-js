@@ -567,8 +567,6 @@ function fixupCorridor(
   }
 }
 
-const DT_NULL_LINK = 0xffffffff;
-
 /**
  *
  * This function checks if the path has a small U-turn, that is,
