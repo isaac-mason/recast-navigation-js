@@ -135,6 +135,26 @@ dtStatus NavMeshQuery::getPolyHeight(dtPolyRef ref, const float *pos, FloatRef *
     return m_navQuery->getPolyHeight(ref, pos, &height->value);
 }
 
+dtStatus NavMeshQuery::initSlicedFindPath(dtPolyRef startRef, dtPolyRef endRef,
+    const float* startPos, const float* endPos,
+    const dtQueryFilter* filter, const unsigned int options) {
+
+    return m_navQuery->initSlicedFindPath(startRef, endRef, startPos, endPos, filter, options);
+}
+
+dtStatus NavMeshQuery::updateSlicedFindPath(const int maxIter, IntRef *doneIters) {
+    return m_navQuery->updateSlicedFindPath(maxIter, &doneIters->value);
+}
+
+dtStatus NavMeshQuery::finalizeSlicedFindPath(UnsignedIntArray *path, IntRef *pathCount, const int maxPath) {
+    return m_navQuery->finalizeSlicedFindPath(path->data, &pathCount->value, maxPath);
+}
+
+dtStatus NavMeshQuery::finalizeSlicedFindPathPartial(UnsignedIntArray *existing, const int existingSize,
+    UnsignedIntArray *path, IntRef *pathCount, const int maxPath) {
+    return m_navQuery->finalizeSlicedFindPathPartial(existing->data, existingSize, path->data, &pathCount->value, maxPath);
+}
+
 void NavMeshQuery::destroy()
 {
     dtFreeNavMeshQuery(m_navQuery);

@@ -22,8 +22,8 @@
     "lint": "eslint src"
   },
   "dependencies": {
-    "@recast-navigation/core": "npm:@rob-myers/recast-navigation__core@0.39.6",
-    "@recast-navigation/generators": "npm:@rob-myers/recast-navigation__generators@0.39.6"
+    "@recast-navigation/core": "npm:@rob-myers/recast-navigation__core@0.39.7",
+    "@recast-navigation/generators": "npm:@rob-myers/recast-navigation__generators@0.39.7"
   },
   "devDependencies": {
     "@babel/core": "^7.24.5",

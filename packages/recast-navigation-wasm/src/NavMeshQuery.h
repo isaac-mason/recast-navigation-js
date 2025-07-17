@@ -80,5 +80,17 @@ public:
 
     dtStatus getPolyHeight(dtPolyRef ref, const float *pos, FloatRef *height);
 
+	dtStatus initSlicedFindPath(dtPolyRef startRef, dtPolyRef endRef,
+								const float* startPos, const float* endPos,
+								const dtQueryFilter* filter, const unsigned int options = 0);
+
+	dtStatus updateSlicedFindPath(const int maxIter, IntRef *doneIters);
+
+	dtStatus finalizeSlicedFindPath(UnsignedIntArray *path, IntRef *pathCount, const int maxPath);
+	
+	dtStatus finalizeSlicedFindPathPartial(UnsignedIntArray *existing, const int existingSize,
+										   UnsignedIntArray *path, IntRef *pathCount, const int maxPath);
+    
     void destroy();
+
 };

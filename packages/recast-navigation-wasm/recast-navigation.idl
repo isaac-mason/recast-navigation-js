@@ -482,6 +482,14 @@ interface NavMeshQuery {
     unsigned long findRandomPoint([Const] dtQueryFilter filter, UnsignedIntRef resultRandomRef, Vec3 resultRandomPoint);
 
     unsigned long getPolyHeight(unsigned long ref, float[] pos, FloatRef height);
+    
+    unsigned long initSlicedFindPath(unsigned long startRef, unsigned long endRef, [Const] float[] startPos, [Const] float[] endPos, [Const] dtQueryFilter filter, unsigned long options);
+
+    unsigned long updateSlicedFindPath(long maxIter, IntRef doneIters);
+
+	unsigned long finalizeSlicedFindPath(UnsignedIntArray path, IntRef pathCount, long maxPath);
+
+    unsigned long finalizeSlicedFindPathPartial(UnsignedIntArray existing, long existingSize, UnsignedIntArray path, IntRef pathCount, long maxPath);
 
     void destroy();
 };
