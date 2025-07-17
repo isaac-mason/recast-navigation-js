@@ -11,6 +11,12 @@ export type CrowdAgentParams = {
   radius: number;
 
   /**
+   * The slow down radius of the agent.
+   * @default 1
+   */
+  slowDownRadius: number;
+
+  /**
    * The height of the agent.
    * @default 1
    */
@@ -77,6 +83,7 @@ export type CrowdAgentParams = {
 
 export const crowdAgentParamsDefaults: CrowdAgentParams = {
   radius: 0.5,
+  slowDownRadius: 1,
   height: 1,
   maxAcceleration: 20,
   maxSpeed: 6,
@@ -98,6 +105,14 @@ export class CrowdAgent implements CrowdAgentParams {
 
   set radius(value: number) {
     this.raw.params.radius = value;
+  }
+
+  get slowDownRadius(): number {
+    return this.raw.params.slowDownRadius;
+  }
+
+  set slowDownRadius(value: number) {
+    this.raw.params.slowDownRadius = value;
   }
 
   get height(): number {
@@ -357,6 +372,7 @@ export class CrowdAgent implements CrowdAgentParams {
 
     return {
       radius: params.radius,
+      slowDownRadius: params.slowDownRadius,
       height: params.height,
       maxAcceleration: params.maxAcceleration,
       maxSpeed: params.maxSpeed,
@@ -398,6 +414,7 @@ export class CrowdAgent implements CrowdAgentParams {
     const dtCrowdAgentParams = new Raw.Module.dtCrowdAgentParams();
 
     dtCrowdAgentParams.radius = params.radius;
+    dtCrowdAgentParams.slowDownRadius = params.slowDownRadius;
     dtCrowdAgentParams.height = params.height;
     dtCrowdAgentParams.maxAcceleration = params.maxAcceleration;
     dtCrowdAgentParams.maxSpeed = params.maxSpeed;
@@ -556,6 +573,7 @@ export class Crowd {
 
     const dtCrowdAgentParams = new Raw.Module.dtCrowdAgentParams();
     dtCrowdAgentParams.radius = params.radius;
+    dtCrowdAgentParams.slowDownRadius = params.slowDownRadius;
     dtCrowdAgentParams.height = params.height;
     dtCrowdAgentParams.maxAcceleration = params.maxAcceleration;
     dtCrowdAgentParams.maxSpeed = params.maxSpeed;

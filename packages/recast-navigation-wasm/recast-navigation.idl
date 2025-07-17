@@ -177,6 +177,9 @@ interface dtCrowdAgentParams {
 
     /// Agent radius. [Limit: >= 0]
     attribute float radius;                        
+
+    /// Agent slow down radius. [Limit: >= 0]
+    attribute float slowDownRadius;                        
     
     /// Agent height. [Limit: > 0]
     attribute float height;                        
@@ -695,6 +698,21 @@ interface dtCrowdAgentDebugInfo {
     attribute dtObstacleAvoidanceDebugData vod;
 };
 
+interface dtCrowdAgentAnimation {
+    
+    attribute boolean active;
+    attribute float[] initPos;
+    attribute float[] startPos;
+    attribute float[] endPos;
+    attribute unsigned long polyRef;
+    attribute float t;
+    attribute float tmid;
+    attribute float tmax;
+    attribute float tScale;
+    attribute float[] unitExitVel;
+
+};
+
 interface dtQueryFilter {
     void dtQueryFilter();
 
@@ -754,6 +772,8 @@ interface dtCrowd {
     dtQueryFilter getEditableFilter([Const] long i);
 
     [Const] dtNavMeshQuery getNavMeshQuery();
+
+    dtCrowdAgentAnimation getAgentAnimation([Const] long idx);
 };
 
 enum rcBuildContoursFlags {

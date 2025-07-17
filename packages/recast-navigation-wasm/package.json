@@ -1,12 +1,12 @@
 {
-  "name": "@recast-navigation/wasm",
+  "name": "@rob-myers/recast-navigation__wasm",
   "description": "A webassembly port of Recast Navigation",
   "author": {
     "name": "Isaac Mason",
     "email": "isaac@isaacmason.com",
     "url": "https://isaacmason.com/"
   },
-  "version": "0.39.0",
+  "version": "0.39.6",
   "license": "MIT",
   "homepage": "https://github.com/isaac-mason/recast-navigation-js",
   "bugs": {
