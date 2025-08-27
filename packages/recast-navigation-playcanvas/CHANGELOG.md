@@ -1,5 +1,16 @@
 # @recast-navigation/playcanvas
 
+## 0.42.0
+
+### Minor Changes
+
+- d2e6ce8: fix: rename playcanvas util 'threeToTileCache' to 'pcToTileCache'
+
+### Patch Changes
+
+- @recast-navigation/core@0.42.0
+- @recast-navigation/generators@0.42.0
+
 ## 0.41.0
 
 ### Patch Changes
