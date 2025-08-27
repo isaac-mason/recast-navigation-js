@@ -1,7 +1,7 @@
 {
   "name": "@recast-navigation/playcanvas",
   "description": "Utilities for using recast-navigation with PlayCanvas",
-  "version": "0.41.0",
+  "version": "0.42.0",
   "license": "MIT",
   "homepage": "https://github.com/isaac-mason/recast-navigation-js",
   "bugs": {
@@ -21,8 +21,8 @@
     "test": "tsc"
   },
   "dependencies": {
-    "@recast-navigation/core": "0.41.0",
-    "@recast-navigation/generators": "0.41.0"
+    "@recast-navigation/core": "0.42.0",
+    "@recast-navigation/generators": "0.42.0"
   },
   "devDependencies": {
     "@babel/core": "^7.28.0",
