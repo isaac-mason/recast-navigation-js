@@ -39,7 +39,7 @@ export const pcToTiledNavMesh = (
   );
 };
 
-export const threeToTileCache = (
+export const pcToTileCache = (
   meshes: MeshInstance[],
   navMeshGeneratorConfig: Partial<TileCacheGeneratorConfig> = {},
   keepIntermediates = false,
