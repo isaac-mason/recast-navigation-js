@@ -40,7 +40,7 @@ await init();
 
 ### Generating a NavMesh
 
-This package provides convenience functions for generating nav meshes from playcanvas MeshInstance objects.
+This package provides convenience functions for generating nav meshes from PlayCanvas MeshInstance objects.
 
 ```ts
 import { init } from 'recast-navigation';
@@ -77,7 +77,7 @@ This library provides helpers that are used in conjunction with the core library
 
 ### Helpers
 
-This package provides helpers for visualizing various recast-navigation objects in playcanvas.
+This package provides helpers for visualizing various recast-navigation objects in PlayCanvas.
 
 #### `NavMeshHelper`
 
@@ -86,7 +86,7 @@ import { NavMeshHelper } from '@recast-navigation/playcanvas';
 
 const navMeshHelper = new NavMeshHelper(navMesh, graphicsDevice);
 
-this.entity.add(navMeshHelper);
+this.entity.addChild(navMeshHelper);
 
 // update the helper when the navmesh changes
 navMeshHelper.update();
@@ -101,7 +101,7 @@ import { TileCacheHelper } from '@recast-navigation/playcanvas';
 
 const tileCacheHelper = new TileCacheHelper(tileCache);
 
-this.entity.add(tileCacheHelper);
+this.entity.addChild(tileCacheHelper);
 
 // update the helper after adding or removing obstacles
 tileCacheHelper.update();
@@ -116,7 +116,7 @@ import { CrowdHelper } from '@recast-navigation/playcanvas';
 
 const crowdHelper = new CrowdHelper(crowd, graphicsDevice);
 
-this.entity.add(crowdHelper);
+this.entity.addChild(crowdHelper);
 
 // update the helper after updating the crowd
 crowdHelper.update();
