@@ -1,7 +1,7 @@
-import type { Vector3Tuple } from 'three';
-import { type FloatArray, IntArray, UnsignedCharArray } from './arrays';
-import { Raw, Recast, type RawModule } from './raw';
-import { type Vector2Tuple, type Vector3, array, vec3 } from './utils';
+import type { Vector3Tuple } from "./utils";
+import { type FloatArray, IntArray, UnsignedCharArray } from "./arrays";
+import { Raw, Recast, type RawModule } from "./raw";
+import { type Vector2Tuple, type Vector3, array, vec3 } from "./utils";
 
 export type RecastConfig = {
   /**
