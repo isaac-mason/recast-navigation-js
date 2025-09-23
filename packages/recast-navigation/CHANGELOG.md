@@ -1,5 +1,14 @@
 # recast-navigation
 
+## 0.42.1
+
+### Patch Changes
+
+- 9eedba1: fix: remove import from 'three' in @recast-navigation/core (@RolandCsibrei)
+- Updated dependencies [9eedba1]
+  - @recast-navigation/core@0.42.1
+  - @recast-navigation/generators@0.42.1
+
 ## 0.42.0
 
 ### Patch Changes
