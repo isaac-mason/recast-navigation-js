@@ -6,7 +6,7 @@
     "email": "isaac@isaacmason.com",
     "url": "https://isaacmason.com/"
   },
-  "version": "0.42.0",
+  "version": "0.42.1",
   "license": "MIT",
   "homepage": "https://github.com/isaac-mason/recast-navigation-js",
   "bugs": {
@@ -26,8 +26,8 @@
     "test": "tsc"
   },
   "dependencies": {
-    "@recast-navigation/core": "0.42.0",
-    "@recast-navigation/generators": "0.42.0"
+    "@recast-navigation/core": "0.42.1",
+    "@recast-navigation/generators": "0.42.1"
   },
   "peerDependencies": {
     "@types/three": "0.x.x",
