@@ -1,5 +1,18 @@
 # @recast-navigation/core
 
+## 0.43.0
+
+### Minor Changes
+
+- da4ca89: feat: bump webidl-dts-gen from v1.11.2 to v1.12.0
+- da4ca89: feat: refactor recast build context bindings for naming clarity, remove unnecessary base RecastBuildContextImpl bindings
+
+### Patch Changes
+
+- Updated dependencies [da4ca89]
+- Updated dependencies [da4ca89]
+  - @recast-navigation/wasm@0.43.0
+
 ## 0.42.1
 
 ### Patch Changes
