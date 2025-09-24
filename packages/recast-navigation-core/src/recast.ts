@@ -197,7 +197,7 @@ export class RecastBuildContext {
   accumulatedTimes: { [label: string]: number } = {};
 
   constructor(timersAndLogsEnabled = true) {
-    const impl = new Raw.Module.RecastBuildContextImpl();
+    const impl = new Raw.Module.RecastBuildContextJsImpl();
 
     impl.log = (category, msg, len) => {
       if (!this.raw.logEnabled()) return;

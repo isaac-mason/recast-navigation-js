@@ -15,7 +15,7 @@ struct RecastCalcGridSizeResult
     int height;
 };
 
-class RecastBuildContextJsImpl
+class RecastBuildContextImpl
 {
 public:
     virtual void resetLog() {}
@@ -34,9 +34,9 @@ public:
 class RecastBuildContext : public rcContext
 {
 public:
-    RecastBuildContextJsImpl *impl;
+    RecastBuildContextImpl *impl;
 
-    RecastBuildContext(RecastBuildContextJsImpl *recastBuildContextImpl)
+    RecastBuildContext(RecastBuildContextImpl *recastBuildContextImpl)
     {
         impl = recastBuildContextImpl;
     }

@@ -818,19 +818,12 @@ interface rcContext {
     float getAccumulatedTime([Const] rcTimerLabel label);
 };
 
-interface RecastBuildContextJsImpl {
-    void resetLog();
-    void log([Const] rcLogCategory category, [Const] DOMString msg, [Const] long len);
-    
-    void resetTimers();
-    void startTimer([Const] rcTimerLabel label);
-    void stopTimer([Const] rcTimerLabel label);
-    long getAccumulatedTime([Const] rcTimerLabel label);
+interface RecastBuildContextImpl {
 };
 
-[JSImplementation="RecastBuildContextJsImpl"]
-interface RecastBuildContextImpl {
-    void RecastBuildContextImpl();
+[JSImplementation="RecastBuildContextImpl"]
+interface RecastBuildContextJsImpl {
+    void RecastBuildContextJsImpl();
 
     void resetLog();
     void log([Const] rcLogCategory category, [Const] DOMString msg, [Const] long len);
