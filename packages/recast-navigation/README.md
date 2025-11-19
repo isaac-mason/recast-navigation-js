@@ -16,6 +16,8 @@
 - 💙 ‎ TypeScript friendly
 - 🖇 ‎ Easy integration with [three.js via @recast-navigation/three](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-three) and [playcanvas via @recast-navigation/playcanvas](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-playcanvas)
 
+> 📣 [navcat](https://github.com/isaac-mason/navcat) is a new, pure JavaScript navigation mesh generation and querying library that uses the same algorithms as recast and detour. Consider giving it a try! This library will continue to be maintained and track the upstream repo, so you can choose the best fit for your project. See here for a feature comparison: [navcat vs other libraries](https://github.com/isaac-mason/navcat?tab=readme-ov-file#how-does-navcat-compare-to-other-libraries)
+
 ## Overview
 
 **recast-navigation-js** is a WebAssembly port of [the Recast and Detour libraries](https://github.com/recastnavigation/recastnavigation). Recast is a state of the art navigation mesh construction toolset for games, and Detour is a path-finding and spatial reasoning toolkit.
