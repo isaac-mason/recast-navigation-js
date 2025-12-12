@@ -7,6 +7,26 @@ type TypedArray =
   | typeof Uint16Array
   | typeof Float32Array;
 
+/**
+ * Maps TypedArray constructors to their instance types.
+ * This avoids using InstanceType<T> which behaves differently in TypeScript 5.9+
+ * where InstanceType<typeof Int32Array> resolves to Int32Array<ArrayBuffer>
+ * but plain Int32Array resolves to Int32Array<ArrayBufferLike>.
+ *
+ * See https://github.com/isaac-mason/recast-navigation-js/issues/499 for details.
+ */
+type TypedArrayInstance<T extends TypedArray> = T extends typeof Int32Array
+  ? Int32Array
+  : T extends typeof Uint32Array
+    ? Uint32Array
+    : T extends typeof Uint8Array
+      ? Uint8Array
+      : T extends typeof Uint16Array
+        ? Uint16Array
+        : T extends typeof Float32Array
+          ? Float32Array
+          : never;
+
 abstract class BaseArray<
   RawType extends
     | RawModule.IntArray
@@ -40,7 +60,7 @@ abstract class BaseArray<
     this.raw.resize(size);
   }
 
-  copy(data: InstanceType<T> | number[]): void {
+  copy(data: TypedArrayInstance<T> | number[]): void {
     this.raw.resize(data.length);
 
     const view = this.getHeapView();
@@ -52,7 +72,7 @@ abstract class BaseArray<
     Raw.destroy(this.raw);
   }
 
-  getHeapView(): InstanceType<T> {
+  getHeapView(): TypedArrayInstance<T> {
     const heap = this.getHeap();
 
     const dataHeap = new this.typedArrayClass(
@@ -61,19 +81,19 @@ abstract class BaseArray<
       this.size,
     );
 
-    return dataHeap as InstanceType<T>;
+    return dataHeap as TypedArrayInstance<T>;
   }
 
-  toTypedArray(): InstanceType<T> {
+  toTypedArray(): TypedArrayInstance<T> {
     const view = this.getHeapView();
 
     const data = new this.typedArrayClass(this.size);
     data.set(view);
 
-    return data as InstanceType<T>;
+    return data as TypedArrayInstance<T>;
   }
 
-  protected abstract getHeap(): InstanceType<T>;
+  protected abstract getHeap(): TypedArrayInstance<T>;
 }
 
 export class IntArray extends BaseArray<RawModule.IntArray, typeof Int32Array> {
