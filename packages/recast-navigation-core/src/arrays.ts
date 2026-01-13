@@ -1,32 +1,5 @@
 import { Raw, type RawModule } from './raw';
 
-type TypedArray =
-  | typeof Int32Array
-  | typeof Uint32Array
-  | typeof Uint8Array
-  | typeof Uint16Array
-  | typeof Float32Array;
-
-/**
- * Maps TypedArray constructors to their instance types.
- * This avoids using InstanceType<T> which behaves differently in TypeScript 5.9+
- * where InstanceType<typeof Int32Array> resolves to Int32Array<ArrayBuffer>
- * but plain Int32Array resolves to Int32Array<ArrayBufferLike>.
- *
- * See https://github.com/isaac-mason/recast-navigation-js/issues/499 for details.
- */
-type TypedArrayInstance<T extends TypedArray> = T extends typeof Int32Array
-  ? Int32Array
-  : T extends typeof Uint32Array
-    ? Uint32Array
-    : T extends typeof Uint8Array
-      ? Uint8Array
-      : T extends typeof Uint16Array
-        ? Uint16Array
-        : T extends typeof Float32Array
-          ? Float32Array
-          : never;
-
 abstract class BaseArray<
   RawType extends
     | RawModule.IntArray
@@ -34,7 +7,12 @@ abstract class BaseArray<
     | RawModule.UnsignedCharArray
     | RawModule.UnsignedShortArray
     | RawModule.FloatArray,
-  T extends TypedArray,
+  TypedArrayType extends
+    | Int32Array
+    | Uint32Array
+    | Uint8Array
+    | Uint16Array
+    | Float32Array,
 > {
   raw: RawType;
 
@@ -42,7 +20,11 @@ abstract class BaseArray<
     return this.raw.size;
   }
 
-  protected abstract typedArrayClass: T;
+  protected abstract ArrayConstructor: new (
+    buffer: ArrayBufferLike,
+    byteOffset: number,
+    length: number
+  ) => TypedArrayType;
 
   constructor(raw: RawType) {
     this.raw = raw;
@@ -60,7 +42,7 @@ abstract class BaseArray<
     this.raw.resize(size);
   }
 
-  copy(data: TypedArrayInstance<T> | number[]): void {
+  copy(data: TypedArrayType | number[]): void {
     this.raw.resize(data.length);
 
     const view = this.getHeapView();
@@ -72,32 +54,34 @@ abstract class BaseArray<
     Raw.destroy(this.raw);
   }
 
-  getHeapView(): TypedArrayInstance<T> {
+  getHeapView(): TypedArrayType {
     const heap = this.getHeap();
 
-    const dataHeap = new this.typedArrayClass(
+    return new this.ArrayConstructor(
       heap.buffer,
       this.raw.getDataPointer(),
-      this.size,
+      this.size
     );
-
-    return dataHeap as TypedArrayInstance<T>;
   }
 
-  toTypedArray(): TypedArrayInstance<T> {
+  toTypedArray(): TypedArrayType {
     const view = this.getHeapView();
 
-    const data = new this.typedArrayClass(this.size);
+    const data = new this.ArrayConstructor(
+      new ArrayBuffer(this.size * view.BYTES_PER_ELEMENT),
+      0,
+      this.size
+    );
     data.set(view);
 
-    return data as TypedArrayInstance<T>;
+    return data;
   }
 
-  protected abstract getHeap(): TypedArrayInstance<T>;
+  protected abstract getHeap(): TypedArrayType;
 }
 
-export class IntArray extends BaseArray<RawModule.IntArray, typeof Int32Array> {
-  typedArrayClass = Int32Array;
+export class IntArray extends BaseArray<RawModule.IntArray, Int32Array> {
+  protected ArrayConstructor = Int32Array;
 
   /**
    * Creates a new IntArray.
@@ -124,9 +108,9 @@ export class IntArray extends BaseArray<RawModule.IntArray, typeof Int32Array> {
 
 export class UnsignedIntArray extends BaseArray<
   RawModule.UnsignedIntArray,
-  typeof Uint32Array
+  Uint32Array
 > {
-  typedArrayClass = Uint32Array;
+  protected ArrayConstructor = Uint32Array;
 
   /**
    * Creates a new UnsignedIntArray.
@@ -153,9 +137,9 @@ export class UnsignedIntArray extends BaseArray<
 
 export class UnsignedCharArray extends BaseArray<
   RawModule.UnsignedCharArray,
-  typeof Uint8Array
+  Uint8Array
 > {
-  typedArrayClass = Uint8Array;
+  protected ArrayConstructor = Uint8Array;
 
   /**
    * Creates a new UnsignedCharArray.
@@ -182,9 +166,9 @@ export class UnsignedCharArray extends BaseArray<
 
 export class UnsignedShortArray extends BaseArray<
   RawModule.UnsignedShortArray,
-  typeof Uint16Array
+  Uint16Array
 > {
-  typedArrayClass = Uint16Array;
+  protected ArrayConstructor = Uint16Array;
 
   /**
    * Creates a new UnsignedShortArray.
@@ -211,9 +195,9 @@ export class UnsignedShortArray extends BaseArray<
 
 export class FloatArray extends BaseArray<
   RawModule.FloatArray,
-  typeof Float32Array
+  Float32Array
 > {
-  typedArrayClass = Float32Array;
+  protected ArrayConstructor = Float32Array;
 
   /**
    * Creates a new FloatArray.
