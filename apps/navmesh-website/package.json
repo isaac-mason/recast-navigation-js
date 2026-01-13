@@ -27,7 +27,7 @@
     "@types/react-dom": "^19.1.6",
     "@types/three": "^0.178.0",
     "@vitejs/plugin-react": "^4.6.0",
-    "typescript": "^5.8.3",
+    "typescript": "^5.9.3",
     "vite": "^7.0.2",
     "vite-plugin-html": "^3.2.2"
   }
