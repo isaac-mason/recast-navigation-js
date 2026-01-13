@@ -1,5 +1,7 @@
 # @recast-navigation/wasm
 
+## 0.43.1
+
 ## 0.43.0
 
 ### Minor Changes
