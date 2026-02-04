@@ -1,5 +1,14 @@
 # recast-navigation
 
+## 0.43.1
+
+### Patch Changes
+
+- ee8e90c: fix: changes to array classes for typescript 5.9 compat (@nyan-left, @isaac-mason)
+- Updated dependencies [ee8e90c]
+  - @recast-navigation/core@0.43.1
+  - @recast-navigation/generators@0.43.1
+
 ## 0.43.0
 
 ### Minor Changes
