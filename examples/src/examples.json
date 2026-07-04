@@ -1,0 +1,162 @@
+{
+    "example-crowd-single-agent": {
+        "title": "Crowd With Single Agent",
+        "description": "Click to steer a single crowd agent across the nav mesh; right-click to teleport.",
+        "tags": ["crowd", "agent", "pathfinding"]
+    },
+    "example-crowd-multiple-agents": {
+        "title": "Crowd With Multiple Agents",
+        "description": "Ten agents navigate and avoid each other; click to send them all to a point.",
+        "tags": ["crowd", "agents", "avoidance"]
+    },
+    "example-crowd-fixed-stepping-with-interpolation": {
+        "title": "Fixed Stepping With Interpolation",
+        "description": "Fixed-timestep crowd updates with smooth interpolated agent rendering.",
+        "tags": ["crowd", "fixed-step", "interpolation"]
+    },
+    "example-compute-path": {
+        "title": "Compute Path",
+        "description": "Compute a polygon path between two points on the nav mesh.",
+        "tags": ["nav-mesh-query", "pathfinding"]
+    },
+    "example-compute-smooth-path": {
+        "title": "Compute Smooth Path",
+        "description": "A smooth path that walks the detail mesh and off-mesh connections.",
+        "tags": ["nav-mesh-query", "smooth-path", "off-mesh"]
+    },
+    "example-find-random-point": {
+        "title": "Find Random Point",
+        "description": "Sample uniformly random points on the nav mesh surface.",
+        "tags": ["nav-mesh-query", "random"]
+    },
+    "example-move-along-surface": {
+        "title": "Move Along Surface",
+        "description": "Slide a capsule across the nav mesh surface with WASD / arrow keys.",
+        "tags": ["nav-mesh-query", "movement", "controls"]
+    },
+    "example-nearby-polygons": {
+        "title": "Click Nearby Polygons",
+        "description": "Select nav mesh polygons within a box or circle around a click.",
+        "tags": ["nav-mesh-query", "polygons"]
+    },
+    "example-raycast": {
+        "title": "Raycast",
+        "description": "Cast a ray across the nav mesh and find where it hits a wall.",
+        "tags": ["nav-mesh-query", "raycast"]
+    },
+    "example-custom-bounds": {
+        "title": "Custom Bounds",
+        "description": "Restrict nav mesh generation to a custom bounding box.",
+        "tags": ["nav-mesh", "generation", "bounds"]
+    },
+    "example-models": {
+        "title": "Models",
+        "description": "Generate a tiled nav mesh from a loaded gltf dungeon model.",
+        "tags": ["nav-mesh", "tiled", "gltf"]
+    },
+    "example-non-indexed-geometry": {
+        "title": "Non Indexed Geometry",
+        "description": "Build a nav mesh from both indexed and non-indexed geometry.",
+        "tags": ["nav-mesh", "geometry"]
+    },
+    "example-walkable-slope-angle": {
+        "title": "Walkable Slope",
+        "description": "Tune the walkable slope angle and watch the nav mesh update live.",
+        "tags": ["nav-mesh", "slope"]
+    },
+    "example-obstacles-crowd": {
+        "title": "Crowd Obstacles",
+        "description": "Drag box and cylinder obstacles while an agent re-paths around them.",
+        "tags": ["tile-cache", "obstacles", "crowd"]
+    },
+    "example-obstacles-path": {
+        "title": "Path Obstacles",
+        "description": "A computed path re-routes around a draggable temporary obstacle.",
+        "tags": ["tile-cache", "obstacles", "pathfinding"]
+    },
+    "example-many-obstacles": {
+        "title": "Many Obstacles",
+        "description": "A dense grid of box and cylinder obstacles carved into the tile cache.",
+        "tags": ["tile-cache", "obstacles"]
+    },
+    "example-off-mesh-connections": {
+        "title": "Off Mesh Connections",
+        "description": "An agent traverses off-mesh connection jump links between areas.",
+        "tags": ["off-mesh-connections", "crowd", "links"]
+    },
+    "example-custom-areas": {
+        "title": "Custom Areas",
+        "description": "A custom generator marks water and unwalkable box areas with flags.",
+        "tags": ["advanced", "areas", "query-filter"]
+    },
+    "example-flood-fill-pruning": {
+        "title": "Flood Fill Pruning",
+        "description": "Prune disconnected nav mesh regions with a flood fill from a click.",
+        "tags": ["advanced", "pruning"]
+    },
+    "example-importing-and-exporting": {
+        "title": "Importing and Exporting",
+        "description": "Generate, export, and re-import a nav mesh as a binary buffer.",
+        "tags": ["utilities", "import", "export"]
+    },
+    "example-three-pathfinding": {
+        "title": "Three Pathfinding",
+        "description": "Generate a nav mesh with recast, then query it with three-pathfinding.",
+        "tags": ["external-use", "three-pathfinding"]
+    },
+    "example-debug-heightfield-solid": {
+        "title": "Debug: Heightfield Solid",
+        "description": "Debug draw the solid voxel heightfield from nav mesh generation.",
+        "tags": ["debug", "heightfield"]
+    },
+    "example-debug-heightfield-walkable": {
+        "title": "Debug: Heightfield Walkable",
+        "description": "Debug draw the walkable spans of the heightfield.",
+        "tags": ["debug", "heightfield"]
+    },
+    "example-debug-compact-heightfield-solid": {
+        "title": "Debug: Compact Heightfield Solid",
+        "description": "Debug draw the compact heightfield built from the walkable surface.",
+        "tags": ["debug", "heightfield"]
+    },
+    "example-debug-compact-heightfield-regions": {
+        "title": "Debug: Compact Heightfield Regions",
+        "description": "Debug draw the regions partitioned on the compact heightfield.",
+        "tags": ["debug", "regions"]
+    },
+    "example-debug-compact-heightfield-distance": {
+        "title": "Debug: Compact Heightfield Distance",
+        "description": "Debug draw the distance field over the compact heightfield.",
+        "tags": ["debug", "distance"]
+    },
+    "example-debug-raw-contours": {
+        "title": "Debug: Raw Contours",
+        "description": "Debug draw the raw region contours before simplification.",
+        "tags": ["debug", "contours"]
+    },
+    "example-debug-contours": {
+        "title": "Debug: Contours",
+        "description": "Debug draw the simplified region contours.",
+        "tags": ["debug", "contours"]
+    },
+    "example-debug-poly-mesh": {
+        "title": "Debug: Poly Mesh",
+        "description": "Debug draw the polygon mesh built from the contours.",
+        "tags": ["debug", "poly-mesh"]
+    },
+    "example-debug-poly-mesh-detail": {
+        "title": "Debug: Poly Mesh Detail",
+        "description": "Debug draw the detail polygon mesh with per-poly height.",
+        "tags": ["debug", "poly-mesh"]
+    },
+    "example-debug-navmesh": {
+        "title": "Debug: NavMesh",
+        "description": "Debug draw the final Detour nav mesh over the source model.",
+        "tags": ["debug", "nav-mesh"]
+    },
+    "example-debug-navmesh-bv-tree": {
+        "title": "Debug: NavMesh BV Tree",
+        "description": "Debug draw the nav mesh bounding-volume tree.",
+        "tags": ["debug", "bv-tree"]
+    }
+}

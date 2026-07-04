@@ -8,6 +8,7 @@ import {
   NavMeshParams,
   type OffMeshConnectionParams,
   Raw,
+  writeFloats,
   type RawModule,
   Recast,
   RecastBuildContext,
@@ -268,13 +269,9 @@ export const generateTileNavMeshData = (
   expandedTileBoundsMax[0] += tileConfig.borderSize * tileConfig.cs;
   expandedTileBoundsMax[2] += tileConfig.borderSize * tileConfig.cs;
 
-  tileConfig.set_bmin(0, expandedTileBoundsMin[0]);
-  tileConfig.set_bmin(1, expandedTileBoundsMin[1]);
-  tileConfig.set_bmin(2, expandedTileBoundsMin[2]);
+  writeFloats(tileConfig, 'bmin', expandedTileBoundsMin, 3);
 
-  tileConfig.set_bmax(0, expandedTileBoundsMax[0]);
-  tileConfig.set_bmax(1, expandedTileBoundsMax[1]);
-  tileConfig.set_bmax(2, expandedTileBoundsMax[2]);
+  writeFloats(tileConfig, 'bmax', expandedTileBoundsMax, 3);
 
   // Reset build timer
   buildContext.resetTimers();

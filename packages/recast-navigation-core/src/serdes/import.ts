@@ -27,7 +27,7 @@ export type ImportNavMeshResult = {
 export const importNavMesh = (data: Uint8Array): ImportNavMeshResult => {
   const { navMeshExport, dataHeap } = createNavMeshExport(data);
 
-  const result = Raw.NavMeshImporter.importNavMesh(navMeshExport, undefined!);
+  const result = Raw.NavMeshImporter.importNavMesh(navMeshExport, null!);
 
   Raw.Module._free(dataHeap.byteOffset);
 

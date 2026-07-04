@@ -63,11 +63,13 @@ type RawApi = Pretty<
  * The `init` function must be called before using the `Raw` api.
  */
 export const Raw = {
-  isNull: (obj: unknown) => {
-    return Raw.Module.getPointer(obj) === 0;
+  // embind returns `null` for null raw pointers (no getPointer helper).
+  isNull: (obj: unknown): boolean => {
+    return obj === null || obj === undefined;
   },
+  // embind objects are freed via `.delete()` (replaces Module.destroy).
   destroy: (obj: unknown) => {
-    Raw.Module.destroy(obj);
+    (obj as { delete?: () => void })?.delete?.();
   },
 } satisfies Partial<RawApi> as RawApi;
 

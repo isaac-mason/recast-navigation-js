@@ -30,7 +30,7 @@ export type DebugDrawerPrimitive = {
  * Represents a helper class to visualize navigation cur and related data in PlayCanvas.
  */
 export class DebugDrawerUtils {
-  private debugDrawImpl: RawModule.DebugDrawImpl;
+  private debugDrawImpl: RawModule.DebugDraw;
 
   private currentPrimitiveType: number = 0;
   private currentVertices: DebugDrawerPrimitive['vertices'] = [];
@@ -38,41 +38,7 @@ export class DebugDrawerUtils {
   private primitives: DebugDrawerPrimitive[] = [];
 
   constructor() {
-    this.debugDrawImpl = new Raw.Module.DebugDrawImpl();
-
-    // Bind the debug draw implementation handlers
-    this.debugDrawImpl.handleBegin = (primitive: number, _size: number) => {
-      this.currentPrimitiveType = primitive;
-      this.currentVertices = [];
-    };
-
-    this.debugDrawImpl.handleDepthMask = (_state: number) => {
-      // unused for now...
-    };
-
-    this.debugDrawImpl.handleTexture = (_state: number) => {
-      // unused for now...
-    };
-
-    this.debugDrawImpl.handleVertexWithColor = (
-      x: number,
-      y: number,
-      z: number,
-      color: number,
-    ) => {
-      this.vertex(x, y, z, color);
-    };
-
-    this.debugDrawImpl.handleVertexWithColorAndUV = (
-      x: number,
-      y: number,
-      z: number,
-      color: number,
-      _u: number,
-      _v: number,
-    ) => {
-      this.vertex(x, y, z, color);
-    };
+    const self = this;
 
     const primitiveMap: Record<number, DebugDrawerPrimitiveType> = {
       [Raw.Module.DU_DRAW_LINES]: 'lines',
@@ -81,14 +47,39 @@ export class DebugDrawerUtils {
       [Raw.Module.DU_DRAW_POINTS]: 'points',
     };
 
-    this.debugDrawImpl.handleEnd = () => {
-      const type = primitiveMap[this.currentPrimitiveType];
+    // embind: subclass the DebugDraw base via .extend() and implement the handlers
+    // (replaces the WebIDL JSImpl property-assignment pattern).
+    const DebugDrawImpl = (
+      Raw.Module.DebugDraw as unknown as {
+        extend: (name: string, methods: object) => new () => RawModule.DebugDraw;
+      }
+    ).extend('DebugDrawImpl', {
+      handleBegin(primitive: number, _size: number) {
+        self.currentPrimitiveType = primitive;
+        self.currentVertices = [];
+      },
+      handleDepthMask(_state: number) {},
+      handleTexture(_state: number) {},
+      handleVertexWithColor(x: number, y: number, z: number, color: number) {
+        self.vertex(x, y, z, color);
+      },
+      handleVertexWithColorAndUV(
+        x: number,
+        y: number,
+        z: number,
+        color: number,
+        _u: number,
+        _v: number,
+      ) {
+        self.vertex(x, y, z, color);
+      },
+      handleEnd() {
+        const type = primitiveMap[self.currentPrimitiveType];
+        self.primitives.push({ type, vertices: self.currentVertices });
+      },
+    });
 
-      this.primitives.push({
-        type,
-        vertices: this.currentVertices,
-      });
-    };
+    this.debugDrawImpl = new DebugDrawImpl();
   }
 
   private flush(): DebugDrawerPrimitive[] {
@@ -283,7 +274,7 @@ export class DebugDrawerUtils {
    * Disposes of the debug drawer and releases resources.
    */
   dispose(): void {
-    Raw.Module.destroy(this.debugDrawImpl);
+    Raw.destroy(this.debugDrawImpl);
   }
 
   private vertex(x: number, y: number, z: number, color: number) {

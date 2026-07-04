@@ -16,77 +16,81 @@ jobs:
       NODE_OPTIONS: '--max-old-space-size=4096'
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
 
       - name: Setup Node.js 22.x
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: 22.x
+          cache: pnpm
 
       - name: Install Dependencies
-        run: yarn
+        run: pnpm install --frozen-lockfile
 
       - name: Build Packages
         run: ./ci/build-packages.sh
         shell: bash
 
       - name: Test
-        run: yarn test
+        run: pnpm test
 
       # navmesh website
       - name: NavMesh Website - Pull Vercel Environment Information
-        run: yarn run vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        run: pnpm exec vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_NAVMESH_WEBSITE_PROJECT_ID }}
 
       - name: NavMesh Website - Build Project Artifacts
-        run: yarn run vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        run: pnpm exec vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VITE_GTAG_ID: ${{ secrets.PROD_VITE_GTAG_ID }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_NAVMESH_WEBSITE_PROJECT_ID }}
 
       - name: NavMesh Website - Deploy Project Artifacts to Vercel
-        run: yarn run vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        run: pnpm exec vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_NAVMESH_WEBSITE_PROJECT_ID }}
 
-      # storybook
-      - name: Storybook - Pull Vercel Environment Information
-        run: yarn run vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+      # examples
+      - name: Examples - Pull Vercel Environment Information
+        run: pnpm exec vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_STORYBOOK_PROJECT_ID }}
 
-      - name: Storybook - Build Project Artifacts
-        run: yarn run vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Examples - Build Project Artifacts
+        run: pnpm exec vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_STORYBOOK_PROJECT_ID }}
 
-      - name: Storybook - Deploy Project Artifacts to Vercel
-        run: yarn run vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Examples - Deploy Project Artifacts to Vercel
+        run: pnpm exec vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_STORYBOOK_PROJECT_ID }}
 
       # docs
       - name: Docs - Pull Vercel Environment Information
-        run: yarn run vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        run: pnpm exec vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_DOCS_PROJECT_ID }}
 
       - name: Docs - Build Project Artifacts
-        run: yarn run vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        run: pnpm exec vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_DOCS_PROJECT_ID }}
 
       - name: Docs - Deploy Project Artifacts to Vercel
-        run: yarn run vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        run: pnpm exec vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_DOCS_PROJECT_ID }}
@@ -96,8 +100,8 @@ jobs:
         id: changesets
         uses: changesets/action@v1
         with:
-          version: yarn run version
-          publish: yarn run publish
+          version: pnpm run version
+          publish: pnpm run publish
           commit: 'chore(changeset): release packages'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

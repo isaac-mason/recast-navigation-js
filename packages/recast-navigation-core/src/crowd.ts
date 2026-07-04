@@ -1,7 +1,7 @@
 import type { NavMesh } from './nav-mesh';
 import { NavMeshQuery, QueryFilter } from './nav-mesh-query';
 import { Raw, type RawModule } from './raw';
-import { type Vector3, vec3 } from './utils';
+import { bulkView, readVec3, type Vector3, vec3 } from './utils';
 
 export type CrowdAgentParams = {
   /**
@@ -177,7 +177,7 @@ export class CrowdAgent implements CrowdAgentParams {
   }
 
   set userData(value: unknown) {
-    this.raw.params.userData = value;
+    this.raw.params.userData = value as number;
   }
 
   /**
@@ -255,44 +255,28 @@ export class CrowdAgent implements CrowdAgentParams {
    * @returns
    */
   position(): Vector3 {
-    return {
-      x: this.raw.get_npos(0),
-      y: this.raw.get_npos(1),
-      z: this.raw.get_npos(2),
-    };
+    return readVec3(this.raw, 'npos');
   }
 
   /**
    * The actual velocity of the agent. The change from velocityDesiredObstacleAdjusted -> velocity is constrained by max acceleration.
    */
   velocity(): Vector3 {
-    return {
-      x: this.raw.get_vel(0),
-      y: this.raw.get_vel(1),
-      z: this.raw.get_vel(2),
-    };
+    return readVec3(this.raw, 'vel');
   }
 
   /**
    * The desired velocity of the agent. Based on the current path, calculated from scratch each frame.
    */
   desiredVelocity(): Vector3 {
-    return {
-      x: this.raw.get_dvel(0),
-      y: this.raw.get_dvel(1),
-      z: this.raw.get_dvel(2),
-    };
+    return readVec3(this.raw, 'dvel');
   }
 
   /**
    * The desired velocity adjusted by obstacle avoidance, calculated from scratch each frame.
    */
   desiredVelocityObstacleAdjusted(): Vector3 {
-    return {
-      x: this.raw.get_nvel(0),
-      y: this.raw.get_nvel(1),
-      z: this.raw.get_nvel(2),
-    };
+    return readVec3(this.raw, 'nvel');
   }
 
   /**
@@ -311,11 +295,7 @@ export class CrowdAgent implements CrowdAgentParams {
    * @returns
    */
   target(): Vector3 {
-    return {
-      x: this.raw.get_targetPos(0),
-      y: this.raw.get_targetPos(1),
-      z: this.raw.get_targetPos(2),
-    };
+    return readVec3(this.raw, 'targetPos');
   }
 
   /**
@@ -323,11 +303,8 @@ export class CrowdAgent implements CrowdAgentParams {
    * @returns
    */
   nextTargetInPath(): Vector3 {
-    return {
-      x: this.raw.get_cornerVerts(0),
-      y: this.raw.get_cornerVerts(1),
-      z: this.raw.get_cornerVerts(2),
-    };
+    const v = bulkView(this.raw, 'cornerVerts', 3, Float32Array, Raw.Module.HEAPF32);
+    return { x: v[0], y: v[1], z: v[2] };
   }
 
   /**
@@ -335,14 +312,12 @@ export class CrowdAgent implements CrowdAgentParams {
    * @returns
    */
   corners(): Vector3[] {
+    const n = this.raw.ncorners;
+    const v = bulkView(this.raw, 'cornerVerts', n * 3, Float32Array, Raw.Module.HEAPF32);
     const points: Vector3[] = [];
 
-    for (let i = 0; i < this.raw.ncorners; i++) {
-      points.push({
-        x: this.raw.get_cornerVerts(i * 3),
-        y: this.raw.get_cornerVerts(i * 3 + 1),
-        z: this.raw.get_cornerVerts(i * 3 + 2),
-      });
+    for (let i = 0; i < n; i++) {
+      points.push({ x: v[i * 3], y: v[i * 3 + 1], z: v[i * 3 + 2] });
     }
 
     return points;
@@ -407,7 +382,7 @@ export class CrowdAgent implements CrowdAgentParams {
     dtCrowdAgentParams.updateFlags = params.updateFlags;
     dtCrowdAgentParams.obstacleAvoidanceType = params.obstacleAvoidanceType;
     dtCrowdAgentParams.queryFilterType = params.queryFilterType;
-    dtCrowdAgentParams.userData = params.userData;
+    dtCrowdAgentParams.userData = params.userData as number;
 
     this.crowd.raw.updateAgentParameters(this.agentIndex, dtCrowdAgentParams);
   }
@@ -516,14 +491,14 @@ export class Crowd {
   update(dt: number, timeSinceLastCalled?: number, maxSubSteps: number = 10) {
     if (timeSinceLastCalled === undefined) {
       // fixed step
-      this.raw.update(dt, undefined!);
+      this.raw.update(dt, null!);
     } else {
       this.accumulator += timeSinceLastCalled;
 
       // Do fixed steps to catch up
       let substeps = 0;
       while (this.accumulator >= dt && substeps < maxSubSteps) {
-        this.raw.update(dt, undefined!);
+        this.raw.update(dt, null!);
         this.accumulator -= dt;
         substeps++;
       }
@@ -565,7 +540,7 @@ export class Crowd {
     dtCrowdAgentParams.updateFlags = params.updateFlags;
     dtCrowdAgentParams.obstacleAvoidanceType = params.obstacleAvoidanceType;
     dtCrowdAgentParams.queryFilterType = params.queryFilterType;
-    dtCrowdAgentParams.userData = params.userData;
+    dtCrowdAgentParams.userData = params.userData as number;
 
     const agentIndex = this.raw.addAgent(
       vec3.toArray(position),

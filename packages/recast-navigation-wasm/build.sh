@@ -18,12 +18,12 @@ mkdir -p dist
 [ ! -d "recastnavigation" ] && git clone https://github.com/isaac-mason/recastnavigation.git
 (cd recastnavigation && git checkout '599fd0f023181c0a484df2a18cf1d75a3553852e')
 
-# emscripten builds
+# emscripten builds (embind bindings + types via --emit-tsd + postprocess-tsd.mjs)
 emcmake cmake -B build -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 cmake --build build
 
-# generate typescript definitions
-yarn run webidl-dts-gen -e -d -i recast-navigation.idl -o ./dist/recast-navigation.d.ts -n Recast
-
-# copy files to dist
-cp ./build/recast-navigation.* ./dist/
+# copy artifacts to dist (the .d.ts is produced by the CMake post-process step)
+cp ./build/recast-navigation.wasm.js ./dist/
+cp ./build/recast-navigation.wasm.wasm ./dist/
+cp ./build/recast-navigation.wasm-compat.js ./dist/
+cp ./build/recast-navigation.d.ts ./dist/

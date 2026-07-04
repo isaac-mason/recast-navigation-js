@@ -2,9 +2,9 @@ import { UnsignedCharArray, UnsignedShortArray } from './arrays';
 import { NavMeshCreateParams, statusSucceed } from './detour';
 import type { NavMesh } from './nav-mesh';
 import { Detour, Raw, type RawModule } from './raw';
-import { type Vector3, vec3 } from './utils';
+import { type Vector3, vec3, writeFloats } from './utils';
 
-export type ObstacleRef = RawModule.dtObstacleRef;
+export type ObstacleRef = number;
 
 export type BoxObstacle = {
   type: 'box';
@@ -61,20 +61,18 @@ export class DetourTileCacheParams {
   static create(config: TileCacheParamsType): DetourTileCacheParams {
     const tileCacheParams = new Raw.Module.dtTileCacheParams();
 
-    tileCacheParams.set_orig(0, config.orig[0]);
-    tileCacheParams.set_orig(1, config.orig[1]);
-    tileCacheParams.set_orig(2, config.orig[2]);
+    writeFloats(tileCacheParams, 'orig', config.orig, 3);
 
-    tileCacheParams.set_cs(config.cs);
-    tileCacheParams.set_ch(config.ch);
-    tileCacheParams.set_width(config.width);
-    tileCacheParams.set_height(config.height);
-    tileCacheParams.set_walkableHeight(config.walkableHeight);
-    tileCacheParams.set_walkableRadius(config.walkableRadius);
-    tileCacheParams.set_walkableClimb(config.walkableClimb);
-    tileCacheParams.set_maxSimplificationError(config.maxSimplificationError);
-    tileCacheParams.set_maxTiles(config.maxTiles);
-    tileCacheParams.set_maxObstacles(config.maxObstacles);
+    tileCacheParams.cs = config.cs;
+    tileCacheParams.ch = config.ch;
+    tileCacheParams.width = config.width;
+    tileCacheParams.height = config.height;
+    tileCacheParams.walkableHeight = config.walkableHeight;
+    tileCacheParams.walkableRadius = config.walkableRadius;
+    tileCacheParams.walkableClimb = config.walkableClimb;
+    tileCacheParams.maxSimplificationError = config.maxSimplificationError;
+    tileCacheParams.maxTiles = config.maxTiles;
+    tileCacheParams.maxObstacles = config.maxObstacles;
 
     return new DetourTileCacheParams(tileCacheParams);
   }
@@ -260,7 +258,7 @@ export class TileCache {
     return this.raw.addTile(data.raw, flags);
   }
 
-  buildNavMeshTile(ref: RawModule.dtCompressedTileRef, navMesh: NavMesh) {
+  buildNavMeshTile(ref: number, navMesh: NavMesh) {
     return this.raw.buildNavMeshTile(ref, navMesh.raw);
   }
 
@@ -283,33 +281,30 @@ export class TileCacheMeshProcess {
       polyFlagsArray: UnsignedShortArray,
     ) => void,
   ) {
-    this.raw = new Raw.Module.TileCacheMeshProcess();
-
-    this.raw.process = (
-      paramsPtr: number,
-      polyAreasArrayPtr: number,
-      polyFlagsArrayPtr: number,
-    ) => {
-      const params = new NavMeshCreateParams(
-        Raw.Module.wrapPointer(paramsPtr, Raw.Module.dtNavMeshCreateParams),
-      );
-
-      const polyAreasArray = Raw.Module.wrapPointer(
-        polyAreasArrayPtr,
-        Raw.Module.UnsignedCharArray,
-      );
-
-      const polyFlagsArray = Raw.Module.wrapPointer(
-        polyFlagsArrayPtr,
-        Raw.Module.UnsignedShortArray,
-      );
-
+    // embind: subclass TileCacheMeshProcess via .extend(); the callback receives
+    // typed handles directly (no wrapPointer).
+    const Impl = (
+      Raw.Module.TileCacheMeshProcess as unknown as {
+        extend: (
+          name: string,
+          methods: object,
+        ) => new () => RawModule.TileCacheMeshProcess;
+      }
+    ).extend('TileCacheMeshProcess', {
       process(
-        params,
-        UnsignedCharArray.fromRaw(polyAreasArray),
-        UnsignedShortArray.fromRaw(polyFlagsArray),
-      );
-    };
+        params: RawModule.dtNavMeshCreateParams,
+        polyAreasArray: RawModule.UnsignedCharArray,
+        polyFlagsArray: RawModule.UnsignedShortArray,
+      ) {
+        process(
+          new NavMeshCreateParams(params),
+          UnsignedCharArray.fromRaw(polyAreasArray),
+          UnsignedShortArray.fromRaw(polyFlagsArray),
+        );
+      },
+    });
+
+    this.raw = new Impl();
   }
 }
 
