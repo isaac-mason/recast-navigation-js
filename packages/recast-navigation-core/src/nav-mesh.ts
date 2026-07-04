@@ -6,7 +6,7 @@ import {
   statusSucceed,
 } from './detour';
 import { Detour, Raw, type RawModule } from './raw';
-import { type Vector3, array, vec3 } from './utils';
+import { type Vector3, bulkView, readVec3, vec3, writeVec3 } from './utils';
 
 export class NavMeshGetTilesAtResult {
   raw: RawModule.NavMeshGetTilesAtResult;
@@ -32,7 +32,7 @@ export class NavMeshRemoveTileResult {
   }
 
   data(): number[] {
-    return array((i) => this.raw.get_data(i), this.raw.dataSize);
+    return Array.from(bulkView(this.raw, "data", this.raw.dataSize, Uint8Array, Raw.Module.HEAPU8));
   }
 
   dataSize(): number {
@@ -64,7 +64,7 @@ export class NavMeshStoreTileStateResult {
   }
 
   data(): number[] {
-    return array((i) => this.raw.get_data(i), this.raw.dataSize);
+    return Array.from(bulkView(this.raw, "data", this.raw.dataSize, Uint8Array, Raw.Module.HEAPU8));
   }
 
   dataSize(): number {
@@ -103,9 +103,7 @@ export class NavMeshParams {
   static create(params: NavMeshParamsType): NavMeshParams {
     const raw = new Raw.Module.dtNavMeshParams();
 
-    raw.set_orig(0, params.orig.x);
-    raw.set_orig(1, params.orig.y);
-    raw.set_orig(2, params.orig.z);
+    writeVec3(raw, "orig", params.orig);
 
     raw.tileWidth = params.tileWidth;
     raw.tileHeight = params.tileHeight;
@@ -117,11 +115,7 @@ export class NavMeshParams {
 
   clone(): NavMeshParams {
     return NavMeshParams.create({
-      orig: {
-        x: this.raw.get_orig(0),
-        y: this.raw.get_orig(1),
-        z: this.raw.get_orig(2),
-      },
+      orig: readVec3(this.raw, "orig"),
       tileWidth: this.raw.tileWidth,
       tileHeight: this.raw.tileHeight,
       maxTiles: this.raw.maxTiles,
@@ -519,7 +513,7 @@ export class NavMesh {
    */
   destroy(): void {
     this.raw.destroy();
-    Raw.Module.destroy(this.raw);
+    Raw.destroy(this.raw);
   }
 }
 
