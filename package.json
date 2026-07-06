@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.0.6",
-    "@changesets/cli": "^2.26.2",
+    "@changesets/cli": "^2.31.0",
     "vercel": "^33.7.0"
   },
   "packageManager": "yarn@4.1.1"
