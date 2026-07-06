@@ -33,7 +33,7 @@
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-typescript": "^12.1.4",
     "playcanvas": "^2.0.0",
-    "rollup": "^4.44.2",
+    "rollup": "^4.62.2",
     "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-filesize": "^10.0.0",
     "typescript": "^5.9.3"

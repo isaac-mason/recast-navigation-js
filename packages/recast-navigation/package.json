@@ -83,7 +83,7 @@
     "leva": "^0.10.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "rollup": "^4.44.2",
+    "rollup": "^4.62.2",
     "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-filesize": "^10.0.0",
     "storybook": "^9.0.15",
