@@ -3404,18 +3404,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-links@npm:^9.0.15":
-  version: 9.0.15
-  resolution: "@storybook/addon-links@npm:9.0.15"
+"@storybook/addon-links@npm:^10.4.6":
+  version: 10.4.6
+  resolution: "@storybook/addon-links@npm:10.4.6"
   dependencies:
     "@storybook/global": "npm:^5.0.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0-beta
-    storybook: ^9.0.15
+    "@types/react": ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    storybook: ^10.4.6
   peerDependenciesMeta:
+    "@types/react":
+      optional: true
     react:
       optional: true
-  checksum: 10/797fa5ef3e2cdf3301a4e0d0faff2ee27e3eca74df504d92ba38f5a4df501d2e01f3e3e9c013f67ca3d1fb88fae475857ab66dc7fdb751b5389e31fd16fd4f03
+  checksum: 10/109e09c01cb56da47e0749746b456e838b22c2d40b9dfc3c157559109e5024a243e43ca82a8a21d777bc3a713ee748b2349d4ea1941be9dfe4e3400ed476fdf2
   languageName: node
   linkType: hard
 
@@ -9071,7 +9074,7 @@ __metadata:
     "@rollup/plugin-node-resolve": "npm:^16.0.1"
     "@rollup/plugin-typescript": "npm:^12.1.4"
     "@storybook/addon-docs": "npm:^9.0.15"
-    "@storybook/addon-links": "npm:^9.0.15"
+    "@storybook/addon-links": "npm:^10.4.6"
     "@storybook/react-vite": "npm:^9.0.15"
     "@types/react": "npm:^19.1.8"
     "@types/react-dom": "npm:^19.1.6"
