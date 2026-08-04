@@ -23,7 +23,7 @@ emcmake cmake -B build -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 cmake --build build
 
 # generate typescript definitions
-yarn run webidl-dts-gen -e -d -i recast-navigation.idl -o ./dist/recast-navigation.d.ts -n Recast
+yarn run webidl-dts-gen -e -d -i build/recast-navigation.idl -o ./dist/recast-navigation.d.ts -n Recast
 
 # copy files to dist
 cp ./build/recast-navigation.* ./dist/

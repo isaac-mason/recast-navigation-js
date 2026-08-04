@@ -1,7 +1,13 @@
 #include "./NavMeshSerdes.h"
 
 static const int NAVMESHSET_MAGIC = 'M' << 24 | 'S' << 16 | 'E' << 8 | 'T'; //'MSET';
+#ifdef DT_POLYREF64
+// MSET embeds dtTileRef in NavMeshTileHeader. Keep 32-bit and 64-bit
+// artifacts explicitly incompatible instead of misreading the next field.
+static const int NAVMESHSET_VERSION = 2;
+#else
 static const int NAVMESHSET_VERSION = 1;
+#endif
 static const int TILECACHESET_MAGIC = 'T' << 24 | 'S' << 16 | 'E' << 8 | 'T'; //'TSET';
 static const int TILECACHESET_VERSION = 1;
 
@@ -93,7 +99,8 @@ NavMeshImporterResult NavMeshImporter::importNavMesh(NavMeshExport *navMeshExpor
             navMeshData->data = data;
             navMeshData->size = tileHeader.dataSize;
 
-            navMesh->addTile(navMeshData, DT_TILE_FREE_DATA, tileHeader.tileRef, nullptr);
+            PolyRefRef addedTileRef;
+            navMesh->addTile(navMeshData, DT_TILE_FREE_DATA, tileHeader.tileRef, &addedTileRef);
         }
 
         result.navMesh = navMesh;

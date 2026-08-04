@@ -14,7 +14,7 @@ bool NavMesh::initTiled(const dtNavMeshParams *params)
     return dtStatusSucceed(status);
 };
 
-dtStatus NavMesh::addTile(UnsignedCharArray *navMeshData, int flags, dtTileRef lastRef, UnsignedIntRef *tileRef)
+dtStatus NavMesh::addTile(UnsignedCharArray *navMeshData, int flags, dtTileRef lastRef, PolyRefRef *tileRef)
 {
     return m_navMesh->addTile(navMeshData->data, navMeshData->size, flags, lastRef, &tileRef->value);
 }

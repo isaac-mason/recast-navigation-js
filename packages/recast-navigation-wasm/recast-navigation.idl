@@ -68,7 +68,7 @@ interface dtPolyDetail {
 };
 
 interface dtLink {
-    attribute unsigned long ref;
+    attribute @POLYREF_IDL_TYPE@ ref;
     attribute unsigned long next;
     attribute octet edge;
     attribute octet side;
@@ -382,29 +382,29 @@ interface NavMesh {
 
     boolean initSolo(UnsignedCharArray navMeshData);    
     boolean initTiled([Const] dtNavMeshParams params);
-    unsigned long addTile(UnsignedCharArray navMeshData, long flags, unsigned long lastRef, UnsignedIntRef tileRef);
-    void decodePolyId(unsigned long polyRef, UnsignedIntRef salt, UnsignedIntRef it, UnsignedIntRef ip);
-    unsigned long encodePolyId(unsigned long salt, unsigned long it, unsigned long ip);
-    [Value] NavMeshRemoveTileResult removeTile(unsigned long ref);
+    unsigned long addTile(UnsignedCharArray navMeshData, long flags, @POLYREF_IDL_TYPE@ lastRef, @POLYREF_REF_IDL_TYPE@ tileRef);
+    void decodePolyId(@POLYREF_IDL_TYPE@ polyRef, UnsignedIntRef salt, UnsignedIntRef it, UnsignedIntRef ip);
+    @POLYREF_IDL_TYPE@ encodePolyId(unsigned long salt, unsigned long it, unsigned long ip);
+    [Value] NavMeshRemoveTileResult removeTile(@POLYREF_IDL_TYPE@ ref);
     dtNavMesh getNavMesh();
     [Value] NavMeshCalcTileLocResult calcTileLoc([Const] float[] pos);
     [Const] dtMeshTile getTileAt([Const] long x, [Const] long y, [Const] long layer);
     [Value] NavMeshGetTilesAtResult getTilesAt([Const] long x, [Const] long y, [Const] long maxTiles);
-    unsigned long getTileRefAt(long x, long y, long layer);
-    unsigned long getTileRef([Const] dtMeshTile tile);
-    [Const] dtMeshTile getTileByRef(unsigned long ref);
+    @POLYREF_IDL_TYPE@ getTileRefAt(long x, long y, long layer);
+    @POLYREF_IDL_TYPE@ getTileRef([Const] dtMeshTile tile);
+    [Const] dtMeshTile getTileByRef(@POLYREF_IDL_TYPE@ ref);
     long getMaxTiles();
     [Const] dtMeshTile getTile(long i);
-    [Value] NavMeshGetTileAndPolyByRefResult getTileAndPolyByRef([Const] unsigned long ref);
-    [Value] NavMeshGetTileAndPolyByRefResult getTileAndPolyByRefUnsafe([Const] unsigned long ref);
-    boolean isValidPolyRef(unsigned long ref);
-    unsigned long getPolyRefBase([Const] dtMeshTile tile);
-    unsigned long getOffMeshConnectionPolyEndPoints(unsigned long prevRef, unsigned long polyRef, Vec3 startPos, Vec3 endPos);
-    [Const] dtOffMeshConnection getOffMeshConnectionByRef(unsigned long ref);
-    unsigned long setPolyFlags(unsigned long ref, unsigned short flags);
-    unsigned long getPolyFlags(unsigned long ref, UnsignedShortRef flags);
-    unsigned long setPolyArea(unsigned long ref, octet area);
-    unsigned long getPolyArea(unsigned long ref, UnsignedCharRef area);
+    [Value] NavMeshGetTileAndPolyByRefResult getTileAndPolyByRef([Const] @POLYREF_IDL_TYPE@ ref);
+    [Value] NavMeshGetTileAndPolyByRefResult getTileAndPolyByRefUnsafe([Const] @POLYREF_IDL_TYPE@ ref);
+    boolean isValidPolyRef(@POLYREF_IDL_TYPE@ ref);
+    @POLYREF_IDL_TYPE@ getPolyRefBase([Const] dtMeshTile tile);
+    unsigned long getOffMeshConnectionPolyEndPoints(@POLYREF_IDL_TYPE@ prevRef, @POLYREF_IDL_TYPE@ polyRef, Vec3 startPos, Vec3 endPos);
+    [Const] dtOffMeshConnection getOffMeshConnectionByRef(@POLYREF_IDL_TYPE@ ref);
+    unsigned long setPolyFlags(@POLYREF_IDL_TYPE@ ref, unsigned short flags);
+    unsigned long getPolyFlags(@POLYREF_IDL_TYPE@ ref, UnsignedShortRef flags);
+    unsigned long setPolyArea(@POLYREF_IDL_TYPE@ ref, octet area);
+    unsigned long getPolyArea(@POLYREF_IDL_TYPE@ ref, UnsignedCharRef area);
     unsigned long getTileStateSize([Const] dtMeshTile tile);
     [Value] NavMeshStoreTileStateResult storeTileState([Const] dtMeshTile tile, [Const] long maxDataSize);
     unsigned long restoreTileState(dtMeshTile tile, [Const] octet[] data, [Const] long maxDataSize);
@@ -422,7 +422,7 @@ interface dtRaycastHit {
     attribute float t;
     attribute float[] hitNormal;
     attribute long hitEdgeIndex;
-    attribute unsigned long[] path;
+    attribute @POLYREF_IDL_TYPE@[] path;
     attribute long pathCount;
     attribute long maxPath;
     attribute float pathCost;
@@ -456,29 +456,29 @@ interface NavMeshQuery {
 
     unsigned long init(NavMesh navMesh, [Const] long maxNodes);
 
-    unsigned long findPath(unsigned long startRef, unsigned long endRef, [Const] float[] startPos, [Const] float[] endPos, [Const] dtQueryFilter filter, UnsignedIntArray path, long maxPath);
+    unsigned long findPath(@POLYREF_IDL_TYPE@ startRef, @POLYREF_IDL_TYPE@ endRef, [Const] float[] startPos, [Const] float[] endPos, [Const] dtQueryFilter filter, @POLYREF_ARRAY_IDL_TYPE@ path, long maxPath);
 
-    unsigned long closestPointOnPoly(unsigned long ref, [Const] float[] pos, Vec3 closest, BoolRef posOverPoly);
+    unsigned long closestPointOnPoly(@POLYREF_IDL_TYPE@ ref, [Const] float[] pos, Vec3 closest, BoolRef posOverPoly);
 
-    unsigned long findClosestPoint([Const] float[] position, [Const] float[] halfExtents, [Const] dtQueryFilter filter, UnsignedIntRef resultPolyRef, Vec3 resultPoint, BoolRef resultPosOverPoly);
+    unsigned long findClosestPoint([Const] float[] position, [Const] float[] halfExtents, [Const] dtQueryFilter filter, @POLYREF_REF_IDL_TYPE@ resultPolyRef, Vec3 resultPoint, BoolRef resultPosOverPoly);
 
-    unsigned long findStraightPath([Const] float[] startPos, [Const] float[] endPos, UnsignedIntArray pathPolys, FloatArray straightPath, UnsignedCharArray straightPathFlags, UnsignedIntArray straightPathRefs, IntRef straightPathCountRef, [Const] long maxStraightPath, [Const] long options);
+    unsigned long findStraightPath([Const] float[] startPos, [Const] float[] endPos, @POLYREF_ARRAY_IDL_TYPE@ pathPolys, FloatArray straightPath, UnsignedCharArray straightPathFlags, @POLYREF_ARRAY_IDL_TYPE@ straightPathRefs, IntRef straightPathCountRef, [Const] long maxStraightPath, [Const] long options);
 
-    unsigned long findNearestPoly([Const] float[] center, [Const] float[] halfExtents, [Const] dtQueryFilter filter, UnsignedIntRef nearestRef, Vec3 nearestPt, BoolRef isOverPoly);
+    unsigned long findNearestPoly([Const] float[] center, [Const] float[] halfExtents, [Const] dtQueryFilter filter, @POLYREF_REF_IDL_TYPE@ nearestRef, Vec3 nearestPt, BoolRef isOverPoly);
 
-    unsigned long findPolysAroundCircle(unsigned long startRef, [Const] float[] centerPos, [Const] float radius, [Const] dtQueryFilter filter, UnsignedIntArray resultRef, UnsignedIntArray resultParent, FloatArray resultCost, IntRef resultCount, [Const] long maxResult);
+    unsigned long findPolysAroundCircle(@POLYREF_IDL_TYPE@ startRef, [Const] float[] centerPos, [Const] float radius, [Const] dtQueryFilter filter, @POLYREF_ARRAY_IDL_TYPE@ resultRef, @POLYREF_ARRAY_IDL_TYPE@ resultParent, FloatArray resultCost, IntRef resultCount, [Const] long maxResult);
 
-    unsigned long queryPolygons([Const] float[] center, [Const] float[] halfExtents, [Const] dtQueryFilter filter, UnsignedIntArray polys, IntRef polyCount, [Const] long maxPolys);
+    unsigned long queryPolygons([Const] float[] center, [Const] float[] halfExtents, [Const] dtQueryFilter filter, @POLYREF_ARRAY_IDL_TYPE@ polys, IntRef polyCount, [Const] long maxPolys);
 
-    unsigned long raycast(unsigned long startRef, [Const] float[] startPos, [Const] float[] endPos, [Const] dtQueryFilter filter, [Const] unsigned long options, dtRaycastHit hit, unsigned long prevRef);
+    unsigned long raycast(@POLYREF_IDL_TYPE@ startRef, [Const] float[] startPos, [Const] float[] endPos, [Const] dtQueryFilter filter, [Const] unsigned long options, dtRaycastHit hit, @POLYREF_IDL_TYPE@ prevRef);
 
-    unsigned long findRandomPointAroundCircle(unsigned long startRef, [Const] float[] centerPos, float radius, [Const] dtQueryFilter filter, UnsignedIntRef resultRandomRef, Vec3 resultRandomPoint);
+    unsigned long findRandomPointAroundCircle(@POLYREF_IDL_TYPE@ startRef, [Const] float[] centerPos, float radius, [Const] dtQueryFilter filter, @POLYREF_REF_IDL_TYPE@ resultRandomRef, Vec3 resultRandomPoint);
 
-    unsigned long moveAlongSurface(unsigned long startRef, float[] startPos, float[] endPos, [Const] dtQueryFilter filter, Vec3 resultPos, UnsignedIntArray visited, long maxVisitedSize);
+    unsigned long moveAlongSurface(@POLYREF_IDL_TYPE@ startRef, float[] startPos, float[] endPos, [Const] dtQueryFilter filter, Vec3 resultPos, @POLYREF_ARRAY_IDL_TYPE@ visited, long maxVisitedSize);
 
-    unsigned long findRandomPoint([Const] dtQueryFilter filter, UnsignedIntRef resultRandomRef, Vec3 resultRandomPoint);
+    unsigned long findRandomPoint([Const] dtQueryFilter filter, @POLYREF_REF_IDL_TYPE@ resultRandomRef, Vec3 resultRandomPoint);
 
-    unsigned long getPolyHeight(unsigned long ref, float[] pos, FloatRef height);
+    unsigned long getPolyHeight(@POLYREF_IDL_TYPE@ ref, float[] pos, FloatRef height);
 
     void destroy();
 };
@@ -626,7 +626,7 @@ enum MoveRequestState {
 
 interface dtPathCorridor {
     boolean init([Const] long maxPath);
-    void reset(unsigned long ref, [Const] float[] pos);
+    void reset(@POLYREF_IDL_TYPE@ ref, [Const] float[] pos);
 };
 
 interface dtLocalBoundary {
@@ -661,7 +661,7 @@ interface dtCrowdAgent {
     attribute octet[] cornerFlags;
     attribute long ncorners;
     attribute octet targetState;
-    attribute unsigned long targetRef;
+    attribute @POLYREF_IDL_TYPE@ targetRef;
     attribute float[] targetPos;
     attribute unsigned long targetPathqRef;
     attribute boolean targetReplan;
@@ -741,7 +741,7 @@ interface dtCrowd {
 
     void removeAgent([Const] long idx);
 
-    boolean requestMoveTarget([Const] long idx, unsigned long ref, [Const] float[] pos);
+    boolean requestMoveTarget([Const] long idx, @POLYREF_IDL_TYPE@ ref, [Const] float[] pos);
 
     boolean requestMoveVelocity([Const] long idx, [Const] float[] vel);
 
@@ -1112,6 +1112,8 @@ interface UnsignedIntArray {
     any getDataPointer();
 };
 
+@POLYREF64_IDL_INTERFACES@
+
 interface UnsignedCharArray {
     void UnsignedCharArray();
 
@@ -1246,7 +1248,7 @@ interface DetourDebugDraw {
     void debugDrawNavMeshBVTree(duDebugDraw dd, [Const, Ref] dtNavMesh mesh);
     void debugDrawNavMeshPortals(duDebugDraw dd, [Const, Ref] dtNavMesh mesh);
     void debugDrawNavMeshPolysWithFlags(duDebugDraw dd, [Const, Ref] dtNavMesh mesh, [Const] unsigned short flags, [Const] unsigned long col);
-    void debugDrawNavMeshPoly(duDebugDraw dd, [Const, Ref] dtNavMesh mesh, unsigned long ref, unsigned long col);
+    void debugDrawNavMeshPoly(duDebugDraw dd, [Const, Ref] dtNavMesh mesh, @POLYREF_IDL_TYPE@ ref, unsigned long col);
 
     void debugDrawTileCacheLayerAreas(duDebugDraw dd, [Const, Ref] dtTileCacheLayer layer, [Const] float cs, [Const] float ch);
     void debugDrawTileCacheLayerRegions(duDebugDraw dd, [Const, Ref] dtTileCacheLayer layer, [Const] float cs, [Const] float ch);

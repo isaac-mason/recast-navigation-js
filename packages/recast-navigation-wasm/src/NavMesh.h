@@ -60,7 +60,7 @@ public:
 
     bool initTiled(const dtNavMeshParams *params);
 
-    dtStatus addTile(UnsignedCharArray *navMeshData, int flags, dtTileRef lastRef, UnsignedIntRef *tileRef);
+    dtStatus addTile(UnsignedCharArray *navMeshData, int flags, dtTileRef lastRef, PolyRefRef *tileRef);
 
     NavMeshRemoveTileResult removeTile(dtTileRef ref);
 

@@ -2,6 +2,7 @@
 
 #include <string.h>
 #include <algorithm>
+#include <cstdint>
 
 template <typename T>
 class ArrayWrapperTemplate
@@ -82,6 +83,16 @@ class IntArray : public ArrayWrapperTemplate<int>
 class UnsignedIntArray : public ArrayWrapperTemplate<unsigned int>
 {
 };
+
+class UnsignedLongLongArray : public ArrayWrapperTemplate<std::uint64_t>
+{
+};
+
+#ifdef DT_POLYREF64
+using PolyRefArray = UnsignedLongLongArray;
+#else
+using PolyRefArray = UnsignedIntArray;
+#endif
 
 class UnsignedCharArray : public ArrayWrapperTemplate<unsigned char>
 {

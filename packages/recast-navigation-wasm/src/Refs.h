@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 class BoolRef
 {
 public:
@@ -26,6 +28,21 @@ public:
     UnsignedIntRef() {}
     ~UnsignedIntRef() {}
 };
+
+class UnsignedLongLongRef
+{
+public:
+    std::uint64_t value;
+
+    UnsignedLongLongRef() : value(0) {}
+    ~UnsignedLongLongRef() {}
+};
+
+#ifdef DT_POLYREF64
+using PolyRefRef = UnsignedLongLongRef;
+#else
+using PolyRefRef = UnsignedIntRef;
+#endif
 
 class UnsignedCharRef
 {

@@ -8,11 +8,16 @@ set(CMAKE_TOOLCHAIN_FILE ${EMSCRIPTEN_ROOT}/cmake/Modules/Platform/Emscripten.cm
 set(WEBIDL_BINDER_SCRIPT ${EMSCRIPTEN_ROOT}/tools/webidl_binder.py)
 
 set(RECAST_FRONT_MATTER_FILE ${CMAKE_CURRENT_SOURCE_DIR}/front-matter.js)
-set(RECAST_IDL_FILE ${CMAKE_CURRENT_SOURCE_DIR}/recast-navigation.idl)
+set(RECAST_IDL_TEMPLATE ${CMAKE_CURRENT_SOURCE_DIR}/recast-navigation.idl)
 set(ENTRY_HEADER_FILE ${CMAKE_CURRENT_SOURCE_DIR}/src/recast-navigation.h)
 set(RECAST_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/)
 
 project("recast-navigation-wasm")
+
+include(CTest)
+
+option(RECASTNAVIGATION_DT_POLYREF64
+  "Build Detour with 64-bit polygon references" OFF)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -47,6 +52,50 @@ SET(EXE_NAME "recast-navigation")
 
 ADD_LIBRARY(${EXE_NAME} ${SRC_FILES} ${RECASTDETOUR_FILES})
 
+set(RECAST_WASM_BIGINT 0)
+set(RECAST_EXPORTED_RUNTIME_METHODS
+  "[\"UTF8ToString\",\"addFunction\",\"HEAP32\",\"HEAPU32\",\"HEAPU8\",\"HEAPU16\",\"HEAPF32\"]")
+set(POLYREF_IDL_TYPE "unsigned long")
+set(POLYREF_REF_IDL_TYPE "UnsignedIntRef")
+set(POLYREF_ARRAY_IDL_TYPE "UnsignedIntArray")
+set(POLYREF64_IDL_INTERFACES "")
+if(RECASTNAVIGATION_DT_POLYREF64)
+  target_compile_definitions(${EXE_NAME} PUBLIC DT_POLYREF64)
+  set(RECAST_WASM_BIGINT 1)
+  set(RECAST_EXPORTED_RUNTIME_METHODS
+    "[\"UTF8ToString\",\"addFunction\",\"HEAP32\",\"HEAPU32\",\"HEAP64\",\"HEAPU64\",\"HEAPU8\",\"HEAPU16\",\"HEAPF32\"]")
+  set(POLYREF_IDL_TYPE "unsigned long long")
+  set(POLYREF_REF_IDL_TYPE "UnsignedLongLongRef")
+  set(POLYREF_ARRAY_IDL_TYPE "UnsignedLongLongArray")
+  set(POLYREF64_IDL_INTERFACES [=[
+interface UnsignedLongLongRef {
+    void UnsignedLongLongRef();
+
+    attribute unsigned long long value;
+};
+
+interface UnsignedLongLongArray {
+    void UnsignedLongLongArray();
+
+    attribute unsigned long long[] data;
+    attribute long size;
+    attribute boolean isView;
+
+    void resize(long size);
+    void copy([Const] unsigned long long[] data, long size);
+    void free();
+
+    unsigned long long get(long i);
+    void set(long i, unsigned long long value);
+
+    any getDataPointer();
+};
+]=])
+endif()
+
+set(RECAST_IDL_FILE ${CMAKE_CURRENT_BINARY_DIR}/recast-navigation.idl)
+configure_file(${RECAST_IDL_TEMPLATE} ${RECAST_IDL_FILE} @ONLY)
+
 set(EMCC_ARGS
   -flto
   --extern-pre-js ${RECAST_FRONT_MATTER_FILE}
@@ -55,9 +104,9 @@ set(EMCC_ARGS
   -s ALLOW_MEMORY_GROWTH=1
   -s ALLOW_TABLE_GROWTH=1
   -s EXPORTED_FUNCTIONS=["_malloc","_free"]
-  -s EXPORTED_RUNTIME_METHODS=["UTF8ToString","addFunction","HEAP32","HEAPU32","HEAPU8","HEAPU16","HEAPF32"]
+  -s EXPORTED_RUNTIME_METHODS=${RECAST_EXPORTED_RUNTIME_METHODS}
   -s EXPORT_NAME="Recast"
-  -s WASM_BIGINT=0
+  -s WASM_BIGINT=${RECAST_WASM_BIGINT}
   -s MODULARIZE=1
   -s ENVIRONMENT='web'
   -s NO_EXIT_RUNTIME=1
@@ -107,12 +156,16 @@ set(EMCC_GLUE_ARGS
   -include${ENTRY_HEADER_FILE}
 )
 
+if(RECASTNAVIGATION_DT_POLYREF64)
+  LIST(APPEND EMCC_GLUE_ARGS -DDT_POLYREF64)
+endif()
+
 # GLUE
 add_custom_command(
   OUTPUT glue.cpp glue.js
   BYPRODUCTS parser.out WebIDLGrammar.pkl
   COMMAND ${PYTHON} ${WEBIDL_BINDER_SCRIPT} ${RECAST_IDL_FILE} glue
-  DEPENDS ${RECAST_IDL_FILE}
+  DEPENDS ${RECAST_IDL_TEMPLATE} ${RECAST_IDL_FILE}
   COMMENT "Generating ${EXE_NAME} bindings"
   VERBATIM)
 add_custom_command(
@@ -140,3 +193,18 @@ add_custom_command(
   COMMENT "Building ${EXE_NAME} inlined base64 webassembly"
   VERBATIM)
 add_custom_target(${EXE_NAME}-wasm-compat ALL DEPENDS ${EXE_NAME}.wasm-compat.js)
+
+if(BUILD_TESTING)
+  find_program(NODE_EXECUTABLE node REQUIRED)
+  if(RECASTNAVIGATION_DT_POLYREF64)
+    set(POLYREF_ABI_TEST_MODE 64)
+  else()
+    set(POLYREF_ABI_TEST_MODE 32)
+  endif()
+  add_test(
+    NAME polyref-abi-smoke
+    COMMAND ${NODE_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tests/polyref-abi-smoke.mjs
+      ${POLYREF_ABI_TEST_MODE}
+      ${CMAKE_CURRENT_BINARY_DIR}/${EXE_NAME}.wasm-compat.js)
+endif()
