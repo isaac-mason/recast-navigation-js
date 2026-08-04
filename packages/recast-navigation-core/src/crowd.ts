@@ -1,6 +1,7 @@
 import type { NavMesh } from './nav-mesh';
 import { NavMeshQuery, QueryFilter } from './nav-mesh-query';
 import { Raw, type RawModule } from './raw';
+import { toWasmPolyRef } from './poly-ref';
 import { type Vector3, vec3 } from './utils';
 
 export type CrowdAgentParams = {
@@ -208,9 +209,9 @@ export class CrowdAgent implements CrowdAgentParams {
         filter: this.crowd.navMeshQuery.defaultFilter,
       });
 
-    return this.crowd.raw.requestMoveTarget(
+    return (this.crowd.raw as any).requestMoveTarget(
       this.agentIndex,
-      nearestRef,
+      toWasmPolyRef(nearestRef),
       vec3.toArray(nearestPoint),
     );
   }

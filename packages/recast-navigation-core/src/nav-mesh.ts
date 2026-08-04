@@ -6,6 +6,13 @@ import {
   statusSucceed,
 } from './detour';
 import { Detour, Raw, type RawModule } from './raw';
+import {
+  type PolyRef,
+  createPolyRefRef,
+  fromWasmPolyRef,
+  readPolyRefRef,
+  toWasmPolyRef,
+} from './poly-ref';
 import { type Vector3, array, vec3 } from './utils';
 
 export class NavMeshGetTilesAtResult {
@@ -173,17 +180,17 @@ export class NavMesh {
    * @param lastRef
    * @returns the status of the operation and the reference of the added tile
    */
-  addTile(navMeshData: UnsignedCharArray, flags: number, lastRef: number) {
-    const tileRefRaw = new Raw.UnsignedIntRef();
+  addTile(navMeshData: UnsignedCharArray, flags: number, lastRef: PolyRef) {
+    const tileRefRaw = createPolyRefRef();
 
-    const status = this.raw.addTile(
+    const status = (this.raw as any).addTile(
       navMeshData.raw,
       flags,
-      lastRef,
+      toWasmPolyRef(lastRef),
       tileRefRaw,
     );
 
-    const tileRef = tileRefRaw.value;
+    const tileRef = readPolyRefRef(tileRefRaw);
     Raw.destroy(tileRefRaw);
 
     return {
@@ -197,12 +204,17 @@ export class NavMesh {
    * @param polyRef The polygon reference to decode
    * @returns the decoded polygon reference
    */
-  decodePolyId(polyRef: number): NavMeshDecodePolyIdResult {
+  decodePolyId(polyRef: PolyRef): NavMeshDecodePolyIdResult {
     const saltRef = new Raw.UnsignedIntRef();
     const itRef = new Raw.UnsignedIntRef();
     const ipRef = new Raw.UnsignedIntRef();
 
-    this.raw.decodePolyId(polyRef, saltRef, itRef, ipRef);
+    (this.raw as any).decodePolyId(
+      toWasmPolyRef(polyRef),
+      saltRef,
+      itRef,
+      ipRef,
+    );
 
     const tileSalt = saltRef.value;
     Raw.destroy(saltRef);
@@ -231,8 +243,10 @@ export class NavMesh {
     salt: number,
     tileIndex: number,
     tilePolygonIndex: number,
-  ): number {
-    return this.raw.encodePolyId(salt, tileIndex, tilePolygonIndex);
+  ): PolyRef {
+    return fromWasmPolyRef(
+      (this.raw as any).encodePolyId(salt, tileIndex, tilePolygonIndex),
+    );
   }
 
   /**
@@ -240,8 +254,10 @@ export class NavMesh {
    * @param ref the tile ref
    * @returns the nav mesh data, so it can be added back later
    */
-  removeTile(ref: number): NavMeshRemoveTileResult {
-    return new NavMeshRemoveTileResult(this.raw.removeTile(ref));
+  removeTile(ref: PolyRef): NavMeshRemoveTileResult {
+    return new NavMeshRemoveTileResult(
+      (this.raw as any).removeTile(toWasmPolyRef(ref)),
+    );
   }
 
   /**
@@ -285,8 +301,8 @@ export class NavMesh {
    * @param layer The tile's layer. (x, y, layer)
    * @returns The tile reference of the tile, or 0 if there is none.
    */
-  getTileRefAt(x: number, y: number, layer: number): number {
-    return this.raw.getTileRefAt(x, y, layer);
+  getTileRefAt(x: number, y: number, layer: number): PolyRef {
+    return fromWasmPolyRef((this.raw as any).getTileRefAt(x, y, layer));
   }
 
   /**
@@ -294,8 +310,8 @@ export class NavMesh {
    * @param tile
    * @returns
    */
-  getTileRef(tile: DetourMeshTile): number {
-    return this.raw.getTileRef(tile.raw);
+  getTileRef(tile: DetourMeshTile): PolyRef {
+    return fromWasmPolyRef((this.raw as any).getTileRef(tile.raw));
   }
 
   /**
@@ -303,8 +319,8 @@ export class NavMesh {
    * @param ref The tile reference of the tile to retrieve.
    * @returns The tile for the specified reference, or null if the reference is invalid.
    */
-  getTileByRef(ref: number): DetourMeshTile | null {
-    const tile = this.raw.getTileByRef(ref);
+  getTileByRef(ref: PolyRef): DetourMeshTile | null {
+    const tile = (this.raw as any).getTileByRef(toWasmPolyRef(ref));
 
     return !Raw.isNull(tile) ? new DetourMeshTile(tile) : null;
   }
@@ -330,8 +346,8 @@ export class NavMesh {
    * @param ref The reference for the a polygon.
    * @returns
    */
-  getTileAndPolyByRef(ref: number) {
-    const result = this.raw.getTileAndPolyByRef(ref);
+  getTileAndPolyByRef(ref: PolyRef) {
+    const result = (this.raw as any).getTileAndPolyByRef(toWasmPolyRef(ref));
 
     const tile = new DetourMeshTile(result.tile);
     const poly = new DetourPoly(result.poly);
@@ -349,8 +365,10 @@ export class NavMesh {
    * @param ref A known valid reference for a polygon.
    * @returns
    */
-  getTileAndPolyByRefUnsafe(ref: number) {
-    const result = this.raw.getTileAndPolyByRef(ref);
+  getTileAndPolyByRefUnsafe(ref: PolyRef) {
+    const result = (this.raw as any).getTileAndPolyByRefUnsafe(
+      toWasmPolyRef(ref),
+    );
 
     const tile = new DetourMeshTile(result.tile);
     const poly = new DetourPoly(result.poly);
@@ -366,8 +384,8 @@ export class NavMesh {
    * @param ref
    * @returns
    */
-  isValidPolyRef(ref: number): boolean {
-    return this.raw.isValidPolyRef(ref);
+  isValidPolyRef(ref: PolyRef): boolean {
+    return (this.raw as any).isValidPolyRef(toWasmPolyRef(ref));
   }
 
   /**
@@ -375,8 +393,8 @@ export class NavMesh {
    * @param tile
    * @returns
    */
-  getPolyRefBase(tile: DetourMeshTile): number {
-    return this.raw.getPolyRefBase(tile.raw);
+  getPolyRefBase(tile: DetourMeshTile): PolyRef {
+    return fromWasmPolyRef((this.raw as any).getPolyRefBase(tile.raw));
   }
 
   /**
@@ -385,13 +403,13 @@ export class NavMesh {
    * @param polyRef The reference of the off-mesh connection polygon.
    * @returns
    */
-  getOffMeshConnectionPolyEndPoints(prevRef: number, polyRef: number) {
+  getOffMeshConnectionPolyEndPoints(prevRef: PolyRef, polyRef: PolyRef) {
     const startRaw = new Raw.Vec3();
     const endRaw = new Raw.Vec3();
 
-    const status = this.raw.getOffMeshConnectionPolyEndPoints(
-      prevRef,
-      polyRef,
+    const status = (this.raw as any).getOffMeshConnectionPolyEndPoints(
+      toWasmPolyRef(prevRef),
+      toWasmPolyRef(polyRef),
       startRaw,
       endRaw,
     );
@@ -415,8 +433,10 @@ export class NavMesh {
    * @param ref The polygon reference of the off-mesh connection.
    * @returns
    */
-  getOffMeshConnectionByRef(ref: number): DetourOffMeshConnection {
-    return new DetourOffMeshConnection(this.raw.getOffMeshConnectionByRef(ref));
+  getOffMeshConnectionByRef(ref: PolyRef): DetourOffMeshConnection {
+    return new DetourOffMeshConnection(
+      (this.raw as any).getOffMeshConnectionByRef(toWasmPolyRef(ref)),
+    );
   }
 
   /**
@@ -424,8 +444,8 @@ export class NavMesh {
    * @param ref The polygon reference.
    * @param flags The new flags for the polygon.
    */
-  setPolyFlags(ref: number, flags: number): number {
-    return this.raw.setPolyFlags(ref, flags);
+  setPolyFlags(ref: PolyRef, flags: number): number {
+    return (this.raw as any).setPolyFlags(toWasmPolyRef(ref), flags);
   }
 
   /**
@@ -433,10 +453,10 @@ export class NavMesh {
    * @param ref The polygon reference.
    * @returns
    */
-  getPolyFlags(ref: number) {
+  getPolyFlags(ref: PolyRef) {
     const flagsRaw = new Raw.UnsignedShortRef();
 
-    const status = this.raw.getPolyFlags(ref, flagsRaw);
+    const status = (this.raw as any).getPolyFlags(toWasmPolyRef(ref), flagsRaw);
 
     const flags = flagsRaw.value;
     Raw.destroy(flagsRaw);
@@ -452,8 +472,8 @@ export class NavMesh {
    * @param ref The polygon reference.
    * @param flags The new flags for the polygon.
    */
-  setPolyArea(ref: number, area: number): number {
-    return this.raw.setPolyArea(ref, area);
+  setPolyArea(ref: PolyRef, area: number): number {
+    return (this.raw as any).setPolyArea(toWasmPolyRef(ref), area);
   }
 
   /**
@@ -461,10 +481,10 @@ export class NavMesh {
    * @param ref The polygon reference.
    * @returns
    */
-  getPolyArea(ref: number) {
+  getPolyArea(ref: PolyRef) {
     const areaRaw = new Raw.UnsignedCharRef();
 
-    const status = this.raw.getPolyArea(ref, areaRaw);
+    const status = (this.raw as any).getPolyArea(toWasmPolyRef(ref), areaRaw);
 
     const area = areaRaw.value;
     Raw.destroy(areaRaw);
@@ -627,11 +647,11 @@ export const getNavMeshPositionsAndIndices = (
  */
 export const floodFillPruneNavMesh = (
   navMesh: NavMesh,
-  startPolyRefs: number[],
+  startPolyRefs: PolyRef[],
 ) => {
   /* find all polys connected to the nearest poly */
-  const visited = new Set<number>();
-  const openList: number[] = [];
+  const visited = new Set<PolyRef>();
+  const openList: PolyRef[] = [];
 
   for (const startPolyRef of startPolyRefs) {
     visited.add(startPolyRef);
@@ -674,7 +694,7 @@ export const floodFillPruneNavMesh = (
     const base = navMesh.getPolyRefBase(tile);
 
     for (let i = 0; i < tileHeader.polyCount(); i++) {
-      const ref = base | i;
+      const ref = typeof base === 'bigint' ? base | BigInt(i) : base | i;
 
       if (!visited.has(ref)) {
         // set flag to 0

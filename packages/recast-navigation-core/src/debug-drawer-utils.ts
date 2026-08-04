@@ -1,4 +1,5 @@
 import type { NavMesh } from './nav-mesh';
+import { type PolyRef, toWasmPolyRef } from './poly-ref';
 import type { NavMeshQuery } from './nav-mesh-query';
 import { Raw, type RawModule } from './raw';
 import type {
@@ -267,13 +268,13 @@ export class DebugDrawerUtils {
 
   drawNavMeshPoly(
     mesh: NavMesh,
-    ref: number,
+    ref: PolyRef,
     col: number,
   ): DebugDrawerPrimitive[] {
-    Raw.DetourDebugDraw.debugDrawNavMeshPoly(
+    (Raw.DetourDebugDraw as any).debugDrawNavMeshPoly(
       this.debugDrawImpl,
       mesh.raw.m_navMesh,
-      ref,
+      toWasmPolyRef(ref),
       col,
     );
     return this.flush();

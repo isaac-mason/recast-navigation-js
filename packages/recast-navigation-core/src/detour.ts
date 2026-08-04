@@ -1,5 +1,6 @@
 import { UnsignedCharArray } from './arrays';
 import { Detour, Raw, type RawModule } from './raw';
+import { type PolyRef, fromWasmPolyRef } from './poly-ref';
 import type { RecastPolyMesh, RecastPolyMeshDetail } from './recast';
 import { type Vector3, type Vector3Tuple, array, vec3 } from './utils';
 
@@ -29,7 +30,7 @@ export const statusToReadableString = (status: number): string => {
   }
 
   if (Raw.Detour.statusFailed(status)) {
-    let reason: string | undefined ;
+    let reason: string | undefined;
 
     const DT_STATUS_REASONS = {
       DT_WRONG_MAGIC: Detour.DT_WRONG_MAGIC,
@@ -90,8 +91,8 @@ export class DetourLink {
     this.raw = raw;
   }
 
-  ref(): number {
-    return this.raw.ref;
+  ref(): PolyRef {
+    return fromWasmPolyRef(this.raw.ref as PolyRef);
   }
 
   next(): number {

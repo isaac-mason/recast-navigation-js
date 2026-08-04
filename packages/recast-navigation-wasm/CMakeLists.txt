@@ -180,7 +180,7 @@ add_custom_target(${EXE_NAME}-bindings ALL DEPENDS glue.js glue.o)
 add_custom_command(
   OUTPUT ${EXE_NAME}.wasm.js ${EXE_NAME}.wasm.wasm
   COMMAND emcc glue.o lib${EXE_NAME}.a ${EMCC_WASM_ESM_ARGS} -o ${EXE_NAME}.wasm.js
-  DEPENDS ${EXE_NAME}-bindings ${EXE_NAME}
+  DEPENDS glue.o ${EXE_NAME}
   COMMENT "Building ${EXE_NAME} webassembly"
   VERBATIM)
 add_custom_target(${EXE_NAME}-wasm ALL DEPENDS ${EXE_NAME}.wasm.js ${EXE_NAME}.wasm.wasm)
@@ -189,7 +189,7 @@ add_custom_target(${EXE_NAME}-wasm ALL DEPENDS ${EXE_NAME}.wasm.js ${EXE_NAME}.w
 add_custom_command(
   OUTPUT ${EXE_NAME}.wasm-compat.js
   COMMAND emcc glue.o lib${EXE_NAME}.a ${EMCC_WASM_COMPAT_ESM_ARGS} -o ${EXE_NAME}.wasm-compat.js
-  DEPENDS ${EXE_NAME}-bindings ${EXE_NAME}
+  DEPENDS glue.o ${EXE_NAME}
   COMMENT "Building ${EXE_NAME} inlined base64 webassembly"
   VERBATIM)
 add_custom_target(${EXE_NAME}-wasm-compat ALL DEPENDS ${EXE_NAME}.wasm-compat.js)

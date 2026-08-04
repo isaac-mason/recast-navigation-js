@@ -1,6 +1,15 @@
-import { FloatArray, UnsignedCharArray, UnsignedIntArray } from './arrays';
+import { FloatArray, UnsignedCharArray } from './arrays';
 import { statusSucceed } from './detour';
 import type { NavMesh } from './nav-mesh';
+import {
+  type PolyRef,
+  PolyRefArray,
+  createPolyRefRef,
+  fromWasmPolyRef,
+  nullPolyRef,
+  readPolyRefRef,
+  toWasmPolyRef,
+} from './poly-ref';
 import { Raw, type RawModule } from './raw';
 import { type Vector3, array, vec3 } from './utils';
 
@@ -142,11 +151,11 @@ export class NavMeshQuery {
       halfExtents?: Vector3;
     },
   ) {
-    const nearestRefRaw = new Raw.UnsignedIntRef();
+    const nearestRefRaw = createPolyRefRef();
     const nearestPointRaw = new Raw.Vec3();
     const isOverPolyRaw = new Raw.BoolRef();
 
-    const status = this.raw.findNearestPoly(
+    const status = (this.raw as any).findNearestPoly(
       vec3.toArray(position),
       vec3.toArray(options?.halfExtents ?? this.defaultQueryHalfExtents),
       options?.filter?.raw ?? this.defaultFilter.raw,
@@ -158,7 +167,7 @@ export class NavMeshQuery {
     const nearestPoint = vec3.fromRaw(nearestPointRaw);
     Raw.destroy(nearestPointRaw);
 
-    const nearestRef = nearestRefRaw.value;
+    const nearestRef = readPolyRefRef(nearestRefRaw);
     Raw.destroy(nearestRefRaw);
 
     const isOverPoly = isOverPolyRaw.value;
@@ -181,7 +190,7 @@ export class NavMeshQuery {
    * @param options
    */
   findPolysAroundCircle(
-    startRef: number,
+    startRef: PolyRef,
     centerPos: Vector3,
     radius: number,
     options?: {
@@ -201,8 +210,8 @@ export class NavMeshQuery {
     const filter = options?.filter ?? this.defaultFilter;
     const maxPolys = options?.maxPolys ?? 256;
 
-    const resultRefArray = new UnsignedIntArray();
-    const resultParentArray = new UnsignedIntArray();
+    const resultRefArray = new PolyRefArray();
+    const resultParentArray = new PolyRefArray();
     const resultCostArray = new FloatArray();
     resultRefArray.resize(maxPolys);
     resultParentArray.resize(maxPolys);
@@ -210,8 +219,8 @@ export class NavMeshQuery {
 
     const resultCountRef = new Raw.IntRef();
 
-    const status = this.raw.findPolysAroundCircle(
-      startRef,
+    const status = (this.raw as any).findPolysAroundCircle(
+      toWasmPolyRef(startRef),
       vec3.toArray(centerPos),
       radius,
       filter.raw,
@@ -222,10 +231,10 @@ export class NavMeshQuery {
       maxPolys,
     );
 
-    const resultRefs = [...resultRefArray.getHeapView()];
+    const resultRefs = resultRefArray.toArray();
     resultRefArray.destroy();
 
-    const resultParents = [...resultParentArray.getHeapView()];
+    const resultParents = resultParentArray.toArray();
     resultParentArray.destroy();
 
     const resultCost = [...resultCostArray.getHeapView()];
@@ -275,12 +284,12 @@ export class NavMeshQuery {
     const filter = options?.filter ?? this.defaultFilter;
     const maxPolys = options?.maxPolys ?? 256;
 
-    const polysRefsArray = new UnsignedIntArray();
+    const polysRefsArray = new PolyRefArray();
     polysRefsArray.resize(maxPolys);
 
     const polyCountRef = new Raw.IntRef();
 
-    const status = this.raw.queryPolygons(
+    const status = (this.raw as any).queryPolygons(
       vec3.toArray(center),
       vec3.toArray(halfExtents),
       filter.raw,
@@ -292,7 +301,7 @@ export class NavMeshQuery {
     const polyCount = polyCountRef.value;
     Raw.destroy(polyCountRef);
 
-    const polyRefs = [...polysRefsArray.getHeapView()].slice(0, polyCount);
+    const polyRefs = polysRefsArray.toArray().slice(0, polyCount);
     polysRefsArray.destroy();
 
     return {
@@ -308,12 +317,12 @@ export class NavMeshQuery {
    * @param polyRef The reference of the polygon
    * @param position The position to find the closest point to
    */
-  closestPointOnPoly(polyRef: number, position: Vector3) {
+  closestPointOnPoly(polyRef: PolyRef, position: Vector3) {
     const closestPointRaw = new Raw.Vec3();
     const positionOverPolyRaw = new Raw.BoolRef();
 
-    const status = this.raw.closestPointOnPoly(
-      polyRef,
+    const status = (this.raw as any).closestPointOnPoly(
+      toWasmPolyRef(polyRef),
       vec3.toArray(position),
       closestPointRaw,
       positionOverPolyRaw,
@@ -358,11 +367,11 @@ export class NavMeshQuery {
     const filter = options?.filter ?? this.defaultFilter;
     const halfExtents = options?.halfExtents ?? this.defaultQueryHalfExtents;
 
-    const resultPolyRef = new Raw.UnsignedIntRef();
+    const resultPolyRef = createPolyRefRef();
     const resultPoint = new Raw.Vec3();
     const resultPointOverPoly = new Raw.BoolRef();
 
-    const status = this.raw.findClosestPoint(
+    const status = (this.raw as any).findClosestPoint(
       vec3.toArray(position),
       vec3.toArray(halfExtents),
       filter.raw,
@@ -371,7 +380,7 @@ export class NavMeshQuery {
       resultPointOverPoly,
     );
 
-    const polyRef = resultPolyRef.value;
+    const polyRef = readPolyRefRef(resultPolyRef);
     Raw.destroy(resultPolyRef);
 
     const point = vec3.fromRaw(resultPoint);
@@ -404,7 +413,7 @@ export class NavMeshQuery {
        * The reference id of the polygon to start the search from.
        * If not provided, the nearest polygon to the position will be used.
        */
-      startRef?: number;
+      startRef?: PolyRef;
 
       /**
        * The polygon filter to apply to the query.
@@ -421,15 +430,15 @@ export class NavMeshQuery {
   ): {
     success: boolean;
     status: number;
-    randomPolyRef: number;
+    randomPolyRef: PolyRef;
     randomPoint: Vector3;
   } {
     const filter = options?.filter ?? this.defaultFilter;
     const halfExtents = options?.halfExtents ?? this.defaultQueryHalfExtents;
 
-    let startRef: number;
+    let startRef: PolyRef;
 
-    if (options?.startRef) {
+    if (options?.startRef !== undefined) {
       startRef = options.startRef;
     } else {
       const nearestPoly = this.findNearestPoly(position, {
@@ -441,7 +450,7 @@ export class NavMeshQuery {
         return {
           success: false,
           status: nearestPoly.status,
-          randomPolyRef: 0,
+          randomPolyRef: nullPolyRef(),
           randomPoint: { x: 0, y: 0, z: 0 },
         };
       }
@@ -449,11 +458,11 @@ export class NavMeshQuery {
       startRef = nearestPoly.nearestRef;
     }
 
-    const randomPolyRefRaw = new Raw.UnsignedIntRef();
+    const randomPolyRefRaw = createPolyRefRef();
     const randomPointRaw = new Raw.Vec3();
 
-    const status = this.raw.findRandomPointAroundCircle(
-      startRef,
+    const status = (this.raw as any).findRandomPointAroundCircle(
+      toWasmPolyRef(startRef),
       vec3.toArray(position),
       radius,
       filter.raw,
@@ -461,7 +470,7 @@ export class NavMeshQuery {
       randomPointRaw,
     );
 
-    const randomPolyRef = randomPolyRefRaw.value;
+    const randomPolyRef = readPolyRefRef(randomPolyRefRaw);
     Raw.destroy(randomPolyRefRaw);
 
     const randomPoint = vec3.fromRaw(randomPointRaw);
@@ -485,7 +494,7 @@ export class NavMeshQuery {
    * @returns The result of the move along surface operation.
    */
   moveAlongSurface(
-    startRef: number,
+    startRef: PolyRef,
     startPosition: Vector3,
     endPosition: Vector3,
     options?: {
@@ -505,12 +514,12 @@ export class NavMeshQuery {
     const maxVisitedSize = options?.maxVisitedSize ?? 256;
 
     const resultPositionRaw = new Raw.Vec3();
-    const visitedArray = new UnsignedIntArray();
+    const visitedArray = new PolyRefArray();
 
     const filter = options?.filter?.raw ?? this.defaultFilter.raw;
 
-    const status = this.raw.moveAlongSurface(
-      startRef,
+    const status = (this.raw as any).moveAlongSurface(
+      toWasmPolyRef(startRef),
       vec3.toArray(startPosition),
       vec3.toArray(endPosition),
       filter,
@@ -522,7 +531,7 @@ export class NavMeshQuery {
     const resultPosition = vec3.fromRaw(resultPositionRaw);
     Raw.destroy(resultPositionRaw);
 
-    const visited = [...visitedArray.getHeapView()];
+    const visited = visitedArray.toArray();
     visitedArray.destroy();
 
     return {
@@ -545,16 +554,16 @@ export class NavMeshQuery {
      */
     filter?: QueryFilter;
   }) {
-    const randomPolyRefRaw = new Raw.UnsignedIntRef();
+    const randomPolyRefRaw = createPolyRefRef();
     const randomPointRaw = new Raw.Vec3();
 
-    const status = this.raw.findRandomPoint(
+    const status = (this.raw as any).findRandomPoint(
       options?.filter?.raw ?? this.defaultFilter.raw,
       randomPolyRefRaw,
       randomPointRaw,
     );
 
-    const randomPolyRef = randomPolyRefRaw.value;
+    const randomPolyRef = readPolyRefRef(randomPolyRefRaw);
     Raw.destroy(randomPolyRefRaw);
 
     const randomPoint = vec3.fromRaw(randomPointRaw);
@@ -574,11 +583,11 @@ export class NavMeshQuery {
    * @param polyRef the reference id of the polygon.
    * @param position a position within the xz-bounds of the polygon.
    */
-  getPolyHeight(polyRef: number, position: Vector3) {
+  getPolyHeight(polyRef: PolyRef, position: Vector3) {
     const floatRef = new Raw.FloatRef();
 
-    const status = this.raw.getPolyHeight(
-      polyRef,
+    const status = (this.raw as any).getPolyHeight(
+      toWasmPolyRef(polyRef),
       vec3.toArray(position),
       floatRef,
     );
@@ -806,8 +815,8 @@ export class NavMeshQuery {
    * ```
    */
   findPath(
-    startRef: number,
-    endRef: number,
+    startRef: PolyRef,
+    endRef: PolyRef,
     startPosition: Vector3,
     endPosition: Vector3,
     options?: {
@@ -827,12 +836,12 @@ export class NavMeshQuery {
     const filter = options?.filter ?? this.defaultFilter;
     const maxPathPolys = options?.maxPathPolys ?? 256;
 
-    const polysArray = new UnsignedIntArray();
+    const polysArray = new PolyRefArray();
     polysArray.resize(maxPathPolys);
 
-    const status = this.raw.findPath(
-      startRef,
-      endRef,
+    const status = (this.raw as any).findPath(
+      toWasmPolyRef(startRef),
+      toWasmPolyRef(endRef),
       vec3.toArray(startPosition),
       vec3.toArray(endPosition),
       filter.raw,
@@ -882,7 +891,7 @@ export class NavMeshQuery {
   findStraightPath(
     start: Vector3,
     end: Vector3,
-    path: number[] | UnsignedIntArray,
+    path: PolyRef[] | PolyRefArray,
     options?: {
       /**
        * The maximum number of points the straight path arrays can hold. [Limit: > 0]
@@ -924,7 +933,7 @@ export class NavMeshQuery {
      * Detour.DT_STRAIGHTPATH_END
      * Detour.DT_STRAIGHTPATH_OFFMESH_CONNECTION
      */
-    straightPathRefs: UnsignedIntArray;
+    straightPathRefs: PolyRefArray;
 
     /**
      * The number of points in the straight path.
@@ -934,10 +943,10 @@ export class NavMeshQuery {
     const maxStraightPathPoints = options?.maxStraightPathPoints ?? 256;
     const straightPathOptions = options?.straightPathOptions ?? 0;
 
-    let pathPolys: UnsignedIntArray;
+    let pathPolys: PolyRefArray;
 
     if (Array.isArray(path)) {
-      pathPolys = new UnsignedIntArray();
+      pathPolys = new PolyRefArray();
       pathPolys.copy(path);
     } else {
       pathPolys = path;
@@ -949,12 +958,12 @@ export class NavMeshQuery {
     const straightPathFlags = new UnsignedCharArray();
     straightPathFlags.resize(maxStraightPathPoints);
 
-    const straightPathRefs = new UnsignedIntArray();
+    const straightPathRefs = new PolyRefArray();
     straightPathRefs.resize(maxStraightPathPoints);
 
     const straightPathCountRaw = new Raw.IntRef();
 
-    const status = this.raw.findStraightPath(
+    const status = (this.raw as any).findStraightPath(
       vec3.toArray(start),
       vec3.toArray(end),
       pathPolys.raw,
@@ -1025,7 +1034,7 @@ export class NavMeshQuery {
    * @param options additional options
    */
   raycast(
-    startRef: number,
+    startRef: PolyRef,
     startPosition: Vector3,
     endPosition: Vector3,
     options?: {
@@ -1048,7 +1057,7 @@ export class NavMeshQuery {
       /**
        * Optional parent of start ref. Used during for cost calculation.
        */
-      prevRef?: number;
+      prevRef?: PolyRef;
     },
   ): {
     /**
@@ -1079,7 +1088,7 @@ export class NavMeshQuery {
     /**
      * The reference ids of the visited polygons.
      */
-    path: number[];
+    path: PolyRef[];
 
     /**
      * The maximum number of polygons the path can contain.
@@ -1094,17 +1103,17 @@ export class NavMeshQuery {
     const raycastHit = new Raw.Module.dtRaycastHit();
 
     const raycastOptions = options?.raycastOptions ?? 0;
-    const prevRef = options?.prevRef ?? 0;
+    const prevRef = options?.prevRef ?? nullPolyRef();
     const queryFilter = options?.filter?.raw ?? this.defaultFilter.raw;
 
-    const status = this.raw.raycast(
-      startRef,
+    const status = (this.raw as any).raycast(
+      toWasmPolyRef(startRef),
       vec3.toArray(startPosition),
       vec3.toArray(endPosition),
       queryFilter,
       raycastOptions,
       raycastHit,
-      prevRef,
+      toWasmPolyRef(prevRef),
     );
 
     const result = {
@@ -1113,7 +1122,10 @@ export class NavMeshQuery {
       t: raycastHit.t,
       hitNormal: vec3.fromArray(array((i) => raycastHit.get_hitNormal(i), 3)),
       hitEdgeIndex: raycastHit.hitEdgeIndex,
-      path: array((i) => raycastHit.get_path(i), raycastHit.pathCount),
+      path: array(
+        (i) => fromWasmPolyRef((raycastHit as any).get_path(i)),
+        raycastHit.pathCount,
+      ),
       maxPath: raycastHit.maxPath,
       pathCost: raycastHit.pathCost,
     };

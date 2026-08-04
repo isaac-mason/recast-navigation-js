@@ -4,6 +4,7 @@ export * from './debug-drawer-utils';
 export * from './detour';
 export * from './nav-mesh';
 export * from './nav-mesh-query';
+export * from './poly-ref';
 export * from './random';
 export * from './raw';
 export * from './recast';
