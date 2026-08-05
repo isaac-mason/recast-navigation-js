@@ -24,9 +24,42 @@ bool TileCache::init(const dtTileCacheParams *params, RecastLinearAllocator *all
 
 TileCacheAddTileResult TileCache::addTile(UnsignedCharArray *tileCacheData, unsigned char flags)
 {
-    TileCacheAddTileResult result;
+    TileCacheAddTileResult result{};
 
     result.status = m_tileCache->addTile(tileCacheData->data, tileCacheData->size, flags, &result.tileRef);
+
+    return result;
+}
+
+TileCacheAddTileResult TileCache::addTileCopy(const UnsignedCharArray *tileCacheData)
+{
+    TileCacheAddTileResult result{};
+
+    if (!tileCacheData || !tileCacheData->data || tileCacheData->size <= 0)
+    {
+        result.status = DT_FAILURE | DT_INVALID_PARAM;
+        return result;
+    }
+
+    unsigned char *ownedData = static_cast<unsigned char *>(
+        dtAlloc(tileCacheData->size, DT_ALLOC_PERM));
+    if (!ownedData)
+    {
+        result.status = DT_FAILURE | DT_OUT_OF_MEMORY;
+        return result;
+    }
+
+    memcpy(ownedData, tileCacheData->data, tileCacheData->size);
+    result.status = m_tileCache->addTile(
+        ownedData,
+        tileCacheData->size,
+        DT_COMPRESSEDTILE_FREE_DATA,
+        &result.tileRef);
+
+    if (dtStatusFailed(result.status))
+    {
+        dtFree(ownedData);
+    }
 
     return result;
 }

@@ -17,6 +17,8 @@
 #include "./Vec.h"
 #include "./NavMesh.h"
 
+#include <cstddef>
+
 struct RecastFastLZCompressor : public dtTileCacheCompressor
 {
     virtual int maxCompressedSize(const int bufferSize)
@@ -83,13 +85,15 @@ struct RecastLinearAllocator : public dtTileCacheAlloc
             return 0;
         }
 
-        if (top + size > capacity)
+        constexpr size_t alignment = alignof(std::max_align_t);
+        const size_t alignedTop = (top + alignment - 1) & ~(alignment - 1);
+        if (alignedTop > capacity || size > capacity - alignedTop)
         {
             return 0;
         }
 
-        unsigned char *mem = &buffer[top];
-        top += size;
+        unsigned char *mem = &buffer[alignedTop];
+        top = alignedTop + size;
         return mem;
     }
 
@@ -120,13 +124,13 @@ struct TileCacheMeshProcessWrapper : public dtTileCacheMeshProcess
 
     virtual void process(struct dtNavMeshCreateParams *params, unsigned char *polyAreas, unsigned short *polyFlags)
     {
-        UnsignedCharArray *polyAreasView = new UnsignedCharArray();
-        polyAreasView->view(polyAreas);
+        UnsignedCharArray polyAreasView;
+        polyAreasView.view(polyAreas);
 
-        UnsignedShortArray *polyFlagsView = new UnsignedShortArray();
-        polyFlagsView->view(polyFlags);
+        UnsignedShortArray polyFlagsView;
+        polyFlagsView.view(polyFlags);
 
-        js.process(params, polyAreasView, polyFlagsView);
+        js.process(params, &polyAreasView, &polyFlagsView);
     }
 };
 
@@ -161,6 +165,8 @@ public:
     bool init(const dtTileCacheParams *params, RecastLinearAllocator *allocator, RecastFastLZCompressor *compressor, TileCacheMeshProcessJsImpl &meshProcess);
 
     TileCacheAddTileResult addTile(UnsignedCharArray *data, unsigned char flags);
+
+    TileCacheAddTileResult addTileCopy(const UnsignedCharArray *data);
 
     dtStatus buildNavMeshTile(const dtCompressedTileRef *ref, NavMesh *navMesh);
 

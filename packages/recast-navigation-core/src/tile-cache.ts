@@ -260,6 +260,14 @@ export class TileCache {
     return this.raw.addTile(data.raw, flags);
   }
 
+  /**
+   * Copies compressed layer data into Detour-owned memory before adding it.
+   * The caller retains ownership of `data` and may destroy it immediately.
+   */
+  addTileCopy(data: UnsignedCharArray): RawModule.TileCacheAddTileResult {
+    return (this.raw as any).addTileCopy(data.raw);
+  }
+
   buildNavMeshTile(ref: RawModule.dtCompressedTileRef, navMesh: NavMesh) {
     return this.raw.buildNavMeshTile(ref, navMesh.raw);
   }

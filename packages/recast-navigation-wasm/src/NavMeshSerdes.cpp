@@ -138,27 +138,13 @@ NavMeshImporterResult NavMeshImporter::importNavMesh(NavMeshExport *navMeshExpor
                 break;
             }
 
-            unsigned char *data = (unsigned char *)dtAlloc(tileHeader.dataSize, DT_ALLOC_PERM);
-            if (!data)
-            {
-                break;
-            }
-
-            memset(data, 0, tileHeader.dataSize);
-
             readLen = tileHeader.dataSize;
-            memcpy(data, bits, readLen);
+            UnsignedCharArray tileCacheData;
+            tileCacheData.data = bits;
+            tileCacheData.size = tileHeader.dataSize;
             bits += readLen;
 
-            UnsignedCharArray *tileCacheData = new UnsignedCharArray;
-            tileCacheData->data = data;
-            tileCacheData->size = tileHeader.dataSize;
-
-            TileCacheAddTileResult addTileResult = tileCache->addTile(tileCacheData, DT_COMPRESSEDTILE_FREE_DATA);
-            if (dtStatusFailed(addTileResult.status))
-            {
-                dtFree(data);
-            }
+            TileCacheAddTileResult addTileResult = tileCache->addTileCopy(&tileCacheData);
 
             if (addTileResult.tileRef)
             {

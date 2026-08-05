@@ -546,6 +546,7 @@ interface TileCache {
 
     boolean init([Const] dtTileCacheParams params, RecastLinearAllocator allocator, RecastFastLZCompressor compressor, [Ref] TileCacheMeshProcess meshProcess);
     [Value] TileCacheAddTileResult addTile(UnsignedCharArray data, octet flags);
+    [Value] TileCacheAddTileResult addTileCopy([Const] UnsignedCharArray data);
     unsigned long buildNavMeshTile([Const] dtCompressedTileRef ref, NavMesh navMesh);
     unsigned long buildNavMeshTilesAt([Const] long tx, [Const] long ty, NavMesh navMesh);
     [Value] TileCacheUpdateResult update(NavMesh navMesh);
