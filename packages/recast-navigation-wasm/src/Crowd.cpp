@@ -2,7 +2,15 @@
 
 int CrowdUtils::getActiveAgentCount(dtCrowd *crowd)
 {
-    return crowd->getActiveAgents(NULL, crowd->getAgentCount());
+    int activeAgents = 0;
+    for (int i = 0; i < crowd->getAgentCount(); ++i)
+    {
+        if (crowd->getAgent(i)->active)
+        {
+            activeAgents++;
+        }
+    }
+    return activeAgents;
 }
 
 bool CrowdUtils::overOffMeshConnection(dtCrowd *crowd, int idx)

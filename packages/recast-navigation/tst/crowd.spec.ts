@@ -25,7 +25,7 @@ describe('Crowd', () => {
     navMesh = result.navMesh;
 
     crowd = new Crowd(navMesh, {
-      maxAgents: 10,
+      maxAgents: 512,
       maxAgentRadius: 0.5,
     });
   });
@@ -35,7 +35,7 @@ describe('Crowd', () => {
       { x: 0, y: 0, z: 0 },
       {
         radius: 0.5,
-      }
+      },
     );
 
     expectVectorToBeCloseTo(agent.position(), { x: 0, y: 0, z: 0 }, 0.3);
@@ -54,7 +54,7 @@ describe('Crowd', () => {
       { x: 0, y: 0, z: 0 },
       {
         radius: 0.5,
-      }
+      },
     );
 
     expectVectorToBeCloseTo(agent.position(), { x: 0, y: 0, z: 0 }, 0.3);
@@ -69,7 +69,7 @@ describe('Crowd', () => {
       { x: 0, y: 0, z: 0 },
       {
         radius: 0.5,
-      }
+      },
     );
 
     expect(agent.radius).toBeCloseTo(0.5);
@@ -77,5 +77,22 @@ describe('Crowd', () => {
     agent.radius = 0.2;
 
     expect(agent.radius).toBeCloseTo(0.2);
+  });
+
+  test('counts active agents without writing through a null output array', () => {
+    const agents = Array.from({ length: 512 }, () =>
+      crowd.addAgent(
+        { x: 0, y: 0, z: 0 },
+        {
+          radius: 0.5,
+        },
+      ),
+    );
+
+    expect(crowd.getActiveAgentCount()).toBe(512);
+
+    for (const agent of agents) crowd.removeAgent(agent);
+
+    expect(crowd.getActiveAgentCount()).toBe(0);
   });
 });
