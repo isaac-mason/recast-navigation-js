@@ -5,15 +5,15 @@ import {
   DetourPoly,
   statusSucceed,
 } from './detour';
-import { Detour, Raw, type RawModule } from './raw';
 import {
-  type PolyRef,
   createPolyRefRef,
   fromWasmPolyRef,
+  type PolyRef,
   readPolyRefRef,
   toWasmPolyRef,
 } from './poly-ref';
-import { type Vector3, array, vec3 } from './utils';
+import { Detour, Raw, type RawModule } from './raw';
+import { array, type Vector3, vec3 } from './utils';
 
 export class NavMeshGetTilesAtResult {
   raw: RawModule.NavMeshGetTilesAtResult;

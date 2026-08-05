@@ -1,8 +1,8 @@
 import { UnsignedCharArray } from './arrays';
+import { fromWasmPolyRef, type PolyRef } from './poly-ref';
 import { Detour, Raw, type RawModule } from './raw';
-import { type PolyRef, fromWasmPolyRef } from './poly-ref';
 import type { RecastPolyMesh, RecastPolyMeshDetail } from './recast';
-import { type Vector3, type Vector3Tuple, array, vec3 } from './utils';
+import { array, type Vector3, type Vector3Tuple, vec3 } from './utils';
 
 export const statusSucceed = (status: number): boolean => {
   return Raw.Detour.statusSucceed(status);

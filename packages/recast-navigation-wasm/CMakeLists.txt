@@ -195,7 +195,11 @@ add_custom_command(
 add_custom_target(${EXE_NAME}-wasm-compat ALL DEPENDS ${EXE_NAME}.wasm-compat.js)
 
 if(BUILD_TESTING)
-  find_program(NODE_EXECUTABLE node REQUIRED)
+  if(CMAKE_CROSSCOMPILING_EMULATOR)
+    list(GET CMAKE_CROSSCOMPILING_EMULATOR 0 NODE_EXECUTABLE)
+  else()
+    find_program(NODE_EXECUTABLE node REQUIRED)
+  endif()
   if(RECASTNAVIGATION_DT_POLYREF64)
     set(POLYREF_ABI_TEST_MODE 64)
   else()

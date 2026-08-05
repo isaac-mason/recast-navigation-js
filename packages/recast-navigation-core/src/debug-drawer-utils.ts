@@ -1,6 +1,6 @@
 import type { NavMesh } from './nav-mesh';
-import { type PolyRef, toWasmPolyRef } from './poly-ref';
 import type { NavMeshQuery } from './nav-mesh-query';
+import { type PolyRef, toWasmPolyRef } from './poly-ref';
 import { Raw, type RawModule } from './raw';
 import type {
   RecastCompactHeightfield,

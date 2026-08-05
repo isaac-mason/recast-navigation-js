@@ -1,4 +1,4 @@
-# DT_POLYREF64 WASM spike
+# DT_POLYREF64 WASM builds
 
 This package has an opt-in `RECASTNAVIGATION_DT_POLYREF64` CMake build mode.
 The default remains the existing 32-bit Detour ABI.
@@ -14,25 +14,28 @@ The 64-bit mode:
   above `2^53` and the full unsigned 64-bit bit pattern.
 
 WebIDL currently exposes high-bit unsigned values as signed JavaScript
-`bigint` values. Callers must normalize at the boundary:
+`bigint` values. The core package normalizes those values at its public
+boundary. Raw-WASM callers must normalize explicitly:
 
 ```js
 const unsignedRef = BigInt.asUintN(64, wasmRef);
 const wasmArgument = BigInt.asIntN(64, unsignedRef);
 ```
 
-This is a raw-WASM proof, not yet a production package:
+The high-level core API supports either runtime through the `PolyRef` type
+(`number | bigint`) and detects the loaded ABI at initialization. The published
+WASM package remains the existing 32-bit build by default. A 64-bit artifact is
+an opt-in source build and therefore has two packaging caveats:
 
-- the TypeScript core wrappers still model refs as `number`;
 - upstream `webidl-dts-gen` cannot parse `unsigned long long[]`, so the
-  64-bit package needs a BigInt-aware declaration generator or checked-in
-  declaration surface before it can be published;
-- the server has not yet been switched to a monolithic 64-bit consumer;
-- direct `MSET` serialization has a separate version for 64-bit tile refs,
-  while compressed `TSET` data remains the intended migration input; and
-- the five known TileCache materialization failures in the current Z1 data
-  still need local geometry/region repair because wider refs do not fix bad
-  compressed layers.
+  generated raw declaration surface for a separately published 64-bit WASM
+  package needs a BigInt-aware generator or checked-in declarations; and
+- direct navmesh serialization uses a distinct version for 64-bit tile refs,
+  so 32-bit and 64-bit direct artifacts cannot be silently interchanged.
+
+Compressed TileCache data contains no polygon references and can be imported
+into either runtime. Wider references increase capacity; they do not repair
+invalid compressed layers or disconnected navigation topology.
 
 Build and test both modes from an Emscripten environment:
 
@@ -46,3 +49,7 @@ emcmake cmake -S . -B build-polyref64 -DCMAKE_BUILD_TYPE=release \
 cmake --build build-polyref64 --parallel
 ctest --test-dir build-polyref64 --output-on-failure
 ```
+
+After the normal package build, `yarn test:polyrefs` builds the 64-bit variant
+and runs the same raw ABI and high-level core API smoke tests against both
+32-bit and 64-bit runtimes.

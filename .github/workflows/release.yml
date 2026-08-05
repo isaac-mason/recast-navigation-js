@@ -33,6 +33,9 @@ jobs:
       - name: Test
         run: yarn test
 
+      - name: Test 32-bit and 64-bit polygon references
+        run: yarn test:polyrefs
+
       # navmesh website
       - name: NavMesh Website - Pull Vercel Environment Information
         run: yarn run vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
