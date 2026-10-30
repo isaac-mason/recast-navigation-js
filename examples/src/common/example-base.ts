@@ -9,7 +9,7 @@ export type ExampleBase = {
 export const createExample = (container: HTMLElement): ExampleBase => {
     /* scene */
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x222222);
+    scene.background = new THREE.Color(0x000000);
 
     /* camera */
     const camera = new THREE.PerspectiveCamera(

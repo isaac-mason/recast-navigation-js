@@ -29,8 +29,7 @@ orbitControls.enableDamping = true;
 
 /* instruction overlay */
 const instructions = document.createElement('div');
-instructions.style.cssText =
-    'position:absolute;top:0;left:0;padding:25px;color:white;font-family:monospace;user-select:none;z-index:1;';
+instructions.className = 'mc-info mc-hint';
 instructions.textContent = 'Click to select polygons';
 document.body.appendChild(instructions);
 

@@ -142,8 +142,7 @@ renderer.domElement.addEventListener('contextmenu', (e) => e.preventDefault());
 
 /* info overlay */
 const infoDiv = document.createElement('div');
-infoDiv.style.cssText =
-    'position:absolute;top:0;padding:25px;color:white;font-family:monospace;user-select:none;z-index:1;';
+infoDiv.className = 'mc-info mc-hint';
 document.body.appendChild(infoDiv);
 
 /* start loop */

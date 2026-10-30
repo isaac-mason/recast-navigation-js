@@ -177,9 +177,7 @@ if (success && navMesh) {
 
     /* instructions overlay */
     const instructions = document.createElement('div');
-    instructions.style.cssText =
-        'position:fixed;top:12px;left:12px;padding:8px 12px;background:rgba(0,0,0,0.6);' +
-        'color:#fff;font:13px system-ui,sans-serif;border-radius:6px;pointer-events:none;';
+    instructions.className = 'mc-info mc-hint';
     instructions.innerHTML =
         'Left-click: place <b style="color:#2196f3">start</b> &nbsp;·&nbsp; ' +
         'Right-click: place <b style="color:#f44336">end</b> &nbsp;·&nbsp; drag to move';

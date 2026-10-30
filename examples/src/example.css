@@ -1,9 +1,8 @@
 body {
     margin: 0;
     padding: 0;
-    background: #222;
-    font-family:
-        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #000;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     overflow: hidden;
 }
 
@@ -15,4 +14,45 @@ body {
 canvas {
     width: 100%;
     height: 100%;
+}
+
+:root {
+    --mc-mono:
+        "Berkeley Mono", "JetBrains Mono", "SFMono-Regular", "SF Mono", ui-monospace, Menlo, Consolas, "Liberation Mono",
+        monospace;
+    --mc-ink: #eaf1f5;
+    --mc-dim: #8ea3af;
+}
+
+/* readout / stats panel - a soft glass pill in a crisp monospace */
+.mc-info {
+    position: absolute;
+    margin: 0;
+    padding: 9px 13px;
+    font-family: var(--mc-mono);
+    font-size: 12.5px;
+    line-height: 1.65;
+    letter-spacing: 0.02em;
+    color: var(--mc-ink);
+    background: rgba(16, 18, 24, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 9px;
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+/* interaction hints, bottom-left so they stay clear of the gallery's title overlay */
+.mc-hint {
+    bottom: 16px;
+    left: 16px;
+    max-width: calc(100vw - 32px);
+    white-space: normal;
+    z-index: 1;
+}
+
+.mc-dim {
+    color: var(--mc-dim);
 }
