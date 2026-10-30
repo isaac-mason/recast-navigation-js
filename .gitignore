@@ -13,3 +13,6 @@ dist
 .vercel
 emsdk
 .parcel-cache
+
+# typescript
+*.tsbuildinfo
