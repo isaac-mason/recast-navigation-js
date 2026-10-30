@@ -1,6 +1,11 @@
 {
   "name": "@recast-navigation/core",
   "description": "Recast Navigation for JavaScript!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/isaac-mason/recast-navigation-js.git",
+    "directory": "packages/recast-navigation-core"
+  },
   "author": {
     "name": "Isaac Mason",
     "email": "isaac@isaacmason.com",

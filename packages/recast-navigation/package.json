@@ -1,6 +1,11 @@
 {
   "name": "recast-navigation",
   "description": "Recast Navigation for JavaScript!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/isaac-mason/recast-navigation-js.git",
+    "directory": "packages/recast-navigation"
+  },
   "keywords": [
     "recastnavigation",
     "recast-navigation",

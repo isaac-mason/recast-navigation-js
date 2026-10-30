@@ -1,6 +1,11 @@
 {
   "name": "@recast-navigation/playcanvas",
   "description": "Utilities for using recast-navigation with PlayCanvas",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/isaac-mason/recast-navigation-js.git",
+    "directory": "packages/recast-navigation-playcanvas"
+  },
   "version": "0.43.1",
   "license": "MIT",
   "homepage": "https://github.com/isaac-mason/recast-navigation-js",
