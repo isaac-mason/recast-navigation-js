@@ -172,7 +172,7 @@ To build the website (landing page, examples and API docs) into `./website/dist`
 
 ## Releasing
 
-All packages are versioned together. To release, set the new version and merge to `main`:
+All packages are versioned together. To release, add an entry for the new version to [`CHANGELOG.md`](./CHANGELOG.md), set the version, and merge to `main`:
 
 ```sh
 > pnpm set-version 0.44.0

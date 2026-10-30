@@ -134,7 +134,7 @@ API Documentation can be found at [https://recast-navigation-js.isaacmason.com/d
 
 <!-- REMOVE-FROM-DOCS-END -->
 
-For information on changes between versions, see [CHANGELOG.md](https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation/CHANGELOG.md)
+For information on changes between versions, see [CHANGELOG.md](https://github.com/isaac-mason/recast-navigation-js/blob/main/CHANGELOG.md)
 
 These are useful resources for understanding the recast navmesh generation process, which will help you understand how to use this library effectively:
 - https://recastnav.com/md_Docs__1_Introducation.html
