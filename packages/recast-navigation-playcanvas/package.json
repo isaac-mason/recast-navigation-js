@@ -6,7 +6,7 @@
     "url": "git+https://github.com/isaac-mason/recast-navigation-js.git",
     "directory": "packages/recast-navigation-playcanvas"
   },
-  "version": "0.43.1",
+  "version": "0.44.0",
   "license": "MIT",
   "homepage": "https://github.com/isaac-mason/recast-navigation-js",
   "bugs": {
