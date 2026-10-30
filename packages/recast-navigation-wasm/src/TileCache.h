@@ -16,6 +16,7 @@
 #include "./Arrays.h"
 #include "./Vec.h"
 #include "./NavMesh.h"
+#include "./Detour.h"
 
 struct RecastFastLZCompressor : public dtTileCacheCompressor
 {
@@ -116,17 +117,38 @@ struct TileCacheMeshProcessWrapper : public dtTileCacheMeshProcess
 {
     TileCacheMeshProcessJsImpl &js;
 
-    TileCacheMeshProcessWrapper(TileCacheMeshProcessJsImpl &inJs) : js(inJs) {}
+    // Off mesh connections set in the previous process call. dtTileCache creates the
+    // nav mesh data after process returns, so these are freed on the next call.
+    dtNavMeshCreateParams lastOffMeshConnections;
+
+    TileCacheMeshProcessWrapper(TileCacheMeshProcessJsImpl &inJs) : js(inJs)
+    {
+        memset(&lastOffMeshConnections, 0, sizeof(lastOffMeshConnections));
+    }
+
+    virtual ~TileCacheMeshProcessWrapper()
+    {
+        freeNavMeshCreateParamsOffMeshConnections(&lastOffMeshConnections);
+    }
 
     virtual void process(struct dtNavMeshCreateParams *params, unsigned char *polyAreas, unsigned short *polyFlags)
     {
-        UnsignedCharArray *polyAreasView = new UnsignedCharArray();
-        polyAreasView->view(polyAreas);
+        freeNavMeshCreateParamsOffMeshConnections(&lastOffMeshConnections);
 
-        UnsignedShortArray *polyFlagsView = new UnsignedShortArray();
-        polyFlagsView->view(polyFlags);
+        UnsignedCharArray polyAreasView;
+        polyAreasView.view(polyAreas);
 
-        js.process(params, polyAreasView, polyFlagsView);
+        UnsignedShortArray polyFlagsView;
+        polyFlagsView.view(polyFlags);
+
+        js.process(params, &polyAreasView, &polyFlagsView);
+
+        lastOffMeshConnections.offMeshConVerts = params->offMeshConVerts;
+        lastOffMeshConnections.offMeshConRad = params->offMeshConRad;
+        lastOffMeshConnections.offMeshConDir = params->offMeshConDir;
+        lastOffMeshConnections.offMeshConAreas = params->offMeshConAreas;
+        lastOffMeshConnections.offMeshConFlags = params->offMeshConFlags;
+        lastOffMeshConnections.offMeshConUserID = params->offMeshConUserID;
     }
 };
 
@@ -153,7 +175,7 @@ class TileCache
 public:
     dtTileCache *m_tileCache;
 
-    TileCache() : m_tileCache(0)
+    TileCache() : m_tileCache(0), m_tmproc(0)
     {
         m_tileCache = dtAllocTileCache();
     }

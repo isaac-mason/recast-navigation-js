@@ -76,6 +76,25 @@ struct CreateNavMeshDataResult
     UnsignedCharArray *navMeshData;
 };
 
+// Frees off mesh connection arrays allocated by DetourNavMeshBuilder::setOffMeshConnections
+inline void freeNavMeshCreateParamsOffMeshConnections(dtNavMeshCreateParams *navMeshCreateParams)
+{
+    delete[] navMeshCreateParams->offMeshConVerts;
+    delete[] navMeshCreateParams->offMeshConRad;
+    delete[] navMeshCreateParams->offMeshConDir;
+    delete[] navMeshCreateParams->offMeshConAreas;
+    delete[] navMeshCreateParams->offMeshConFlags;
+    delete[] navMeshCreateParams->offMeshConUserID;
+
+    navMeshCreateParams->offMeshConVerts = nullptr;
+    navMeshCreateParams->offMeshConRad = nullptr;
+    navMeshCreateParams->offMeshConDir = nullptr;
+    navMeshCreateParams->offMeshConAreas = nullptr;
+    navMeshCreateParams->offMeshConFlags = nullptr;
+    navMeshCreateParams->offMeshConUserID = nullptr;
+    navMeshCreateParams->offMeshConCount = 0;
+}
+
 class DetourNavMeshBuilder
 {
 public:
@@ -84,6 +103,8 @@ public:
     void setPolyMeshDetailCreateParams(dtNavMeshCreateParams *navMeshCreateParams, rcPolyMeshDetail *polyMeshDetail);
 
     void setOffMeshConnections(dtNavMeshCreateParams *navMeshCreateParams, int offMeshConCount, float *offMeshConVerts, float *offMeshConRad, unsigned char *offMeshConDirs, unsigned char *offMeshConAreas, unsigned short *offMeshConFlags, unsigned int *offMeshConUserId);
+
+    void freeOffMeshConnections(dtNavMeshCreateParams *navMeshCreateParams);
 
     CreateNavMeshDataResult *createNavMeshData(dtNavMeshCreateParams &params);
 };
