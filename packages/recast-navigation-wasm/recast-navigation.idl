@@ -976,6 +976,8 @@ interface DetourNavMeshBuilder {
 
     void setOffMeshConnections(dtNavMeshCreateParams navMeshCreateParams, long offMeshConCount, float[] offMeshConVerts, float[] offMeshConRad, octet[] offMeshConDirs, octet[] offMeshConAreas, unsigned short[] offMeshConFlags, unsigned long[] offMeshConUserId);
 
+    void freeOffMeshConnections(dtNavMeshCreateParams navMeshCreateParams);
+
     CreateNavMeshDataResult createNavMeshData([Ref] dtNavMeshCreateParams params);
 };
 

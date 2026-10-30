@@ -12,6 +12,7 @@ bool TileCache::init(const dtTileCacheParams *params, RecastLinearAllocator *all
     dtStatus status = m_tileCache->init(params, allocator, compressor, recastMeshProcess);
     if (dtStatusFailed(status))
     {
+        delete recastMeshProcess;
         return false;
     }
 
@@ -120,5 +121,7 @@ void TileCache::destroy()
     m_talloc->reset();
     m_talloc = 0;
     m_tcomp = 0;
+
+    delete m_tmproc;
     m_tmproc = 0;
 }
