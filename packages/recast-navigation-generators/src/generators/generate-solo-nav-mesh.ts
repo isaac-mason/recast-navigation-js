@@ -44,7 +44,10 @@ import {
   recastConfigDefaults,
 } from '@recast-navigation/core';
 import type { Pretty } from '../types';
-import { type OffMeshConnectionGeneratorParams, getBoundingBox } from './common';
+import {
+  type OffMeshConnectionGeneratorParams,
+  getBoundingBox,
+} from './common';
 
 export type SoloNavMeshGeneratorConfig = Pretty<
   Omit<RecastConfig, 'tileSize'> &
@@ -116,6 +119,8 @@ export const generateSoloNavMeshData = (
 
   const cleanup = () => {
     if (keepIntermediates) return;
+
+    buildContext.destroy();
 
     if (intermediates.heightfield) {
       freeHeightfield(intermediates.heightfield);
@@ -218,6 +223,9 @@ export const generateSoloNavMeshData = (
       rcConfig.ch,
     )
   ) {
+    verticesArray.destroy();
+    trianglesArray.destroy();
+
     return fail('Could not create heightfield');
   }
 
@@ -237,24 +245,24 @@ export const generateSoloNavMeshData = (
     triangleAreasArray,
   );
 
-  if (
-    !rasterizeTriangles(
-      buildContext,
-      verticesArray,
-      numVertices,
-      trianglesArray,
-      triangleAreasArray,
-      numTriangles,
-      heightfield,
-      rcConfig.walkableClimb,
-    )
-  ) {
-    return fail('Could not rasterize triangles');
-  }
+  const rasterizeSuccess = rasterizeTriangles(
+    buildContext,
+    verticesArray,
+    numVertices,
+    trianglesArray,
+    triangleAreasArray,
+    numTriangles,
+    heightfield,
+    rcConfig.walkableClimb,
+  );
 
   triangleAreasArray.destroy();
   verticesArray.destroy();
   trianglesArray.destroy();
+
+  if (!rasterizeSuccess) {
+    return fail('Could not rasterize triangles');
+  }
 
   //
   // Step 3. Filter walkables surfaces.
@@ -427,6 +435,8 @@ export const generateSoloNavMeshData = (
 
   const createNavMeshDataResult = createNavMeshData(navMeshCreateParams);
 
+  navMeshCreateParams.destroy();
+
   if (!createNavMeshDataResult.success) {
     return fail('Failed to create Detour navmesh data');
   }
@@ -498,6 +508,7 @@ export const generateSoloNavMesh = (
 
   if (!navMesh.initSolo(navMeshData)) {
     navMeshData.destroy();
+    navMesh.destroy();
 
     return {
       navMesh: undefined,
