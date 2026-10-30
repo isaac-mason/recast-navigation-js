@@ -1,6 +1,11 @@
 {
   "name": "@recast-navigation/generators",
   "description": "NavMesh generator implementations for @recast-navigation/core",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/isaac-mason/recast-navigation-js.git",
+    "directory": "packages/recast-navigation-generators"
+  },
   "author": {
     "name": "Isaac Mason",
     "email": "isaac@isaacmason.com",

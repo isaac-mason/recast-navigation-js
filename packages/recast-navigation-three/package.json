@@ -1,6 +1,11 @@
 {
   "name": "@recast-navigation/three",
   "description": "Utilities for using recast-navigation with Three.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/isaac-mason/recast-navigation-js.git",
+    "directory": "packages/recast-navigation-three"
+  },
   "author": {
     "name": "Isaac Mason",
     "email": "isaac@isaacmason.com",

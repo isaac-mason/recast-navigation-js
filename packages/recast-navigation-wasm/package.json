@@ -1,6 +1,11 @@
 {
   "name": "@recast-navigation/wasm",
   "description": "A webassembly port of Recast Navigation",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/isaac-mason/recast-navigation-js.git",
+    "directory": "packages/recast-navigation-wasm"
+  },
   "author": {
     "name": "Isaac Mason",
     "email": "isaac@isaacmason.com",
