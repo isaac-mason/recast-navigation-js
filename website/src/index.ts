@@ -78,7 +78,6 @@ const navMeshHelper = new NavMeshHelper(navMesh, {
   }),
 });
 navMeshHelper.position.y += 0.02;
-navMeshHelper.visible = false;
 scene.add(navMeshHelper);
 
 /* frame the camera on the level */
@@ -86,8 +85,16 @@ const bounds = new THREE.Box3().setFromObject(level.scene);
 const center = bounds.getCenter(new THREE.Vector3());
 const radius = bounds.getSize(new THREE.Vector3()).length() * 0.5;
 
+const cameraAngle = 0.2;
+camera.position.set(
+  center.x + Math.cos(cameraAngle) * radius * 0.6,
+  center.y + radius * 0.6,
+  center.z + Math.sin(cameraAngle) * radius * 0.6,
+);
+camera.lookAt(center);
+
 /* crowd of agents wandering between random points */
-const agentCount = 20;
+const agentCount = 150;
 
 const crowd = new Crowd(navMesh, {
   maxAgents: agentCount,
@@ -177,16 +184,6 @@ function update() {
   timer.update();
 
   const delta = Math.min(timer.getDelta(), 0.1);
-  const time = timer.getElapsed();
-
-  // slow orbit around the level
-  const angle = time * 0.05;
-  camera.position.set(
-    center.x + Math.cos(angle) * radius * 0.45,
-    center.y + radius * 0.5,
-    center.z + Math.sin(angle) * radius * 0.45,
-  );
-  camera.lookAt(center);
 
   crowd.update(delta);
   crowdHelper.update();
