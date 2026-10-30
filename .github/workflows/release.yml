@@ -5,100 +5,146 @@ on:
     branches:
       - main
 
-concurrency: release-${{ github.workflow }}-${{ github.ref }}
+permissions:
+  contents: write
+  id-token: write
+
+# one release at a time; never cancel a publish in flight
+concurrency:
+  group: release
+  cancel-in-progress: false
 
 jobs:
-  release:
-    name: Release
+  publish:
+    name: Publish to npm
     if: github.repository_owner == 'isaac-mason'
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     env:
       NODE_OPTIONS: '--max-old-space-size=4096'
+
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v2
-
-      - name: Setup Node.js 22.x
-        uses: actions/setup-node@v2
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          node-version: 22.x
+          persist-credentials: false
 
-      - name: Install Dependencies
-        run: yarn
+      - name: Set up pnpm
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
 
-      - name: Build Packages
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+
+      - name: Build packages
         run: ./ci/build-packages.sh
         shell: bash
 
       - name: Test
-        run: yarn test
+        run: pnpm test
 
-      # navmesh website
-      - name: NavMesh Website - Pull Vercel Environment Information
-        run: yarn run vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_NAVMESH_WEBSITE_PROJECT_ID }}
+      - name: Resolve release mode
+        id: mode
+        shell: bash
+        run: |
+          # all packages are versioned together, so they must all agree
+          versions="$(node -e "
+            const fs = require('fs');
+            for (const dir of fs.readdirSync('packages')) {
+              const path = 'packages/' + dir + '/package.json';
+              if (!fs.existsSync(path)) continue;
+              const pkg = JSON.parse(fs.readFileSync(path, 'utf-8'));
+              if (!pkg.private) console.log(pkg.name + ' ' + pkg.version);
+            }
+          ")"
 
-      - name: NavMesh Website - Build Project Artifacts
-        run: yarn run vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VITE_GTAG_ID: ${{ secrets.PROD_VITE_GTAG_ID }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_NAVMESH_WEBSITE_PROJECT_ID }}
+          if [ "$(echo "${versions}" | awk '{ print $2 }' | sort -u | wc -l)" -ne 1 ]; then
+            echo "::error::package versions differ, set them with 'node scripts/set-version.mjs <version>'"
+            echo "${versions}"
+            exit 1
+          fi
 
-      - name: NavMesh Website - Deploy Project Artifacts to Vercel
-        run: yarn run vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_NAVMESH_WEBSITE_PROJECT_ID }}
+          version="$(echo "${versions}" | head -n 1 | awk '{ print $2 }')"
 
-      # storybook
-      - name: Storybook - Pull Vercel Environment Information
-        run: yarn run vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_STORYBOOK_PROJECT_ID }}
+          # if any package at this version is missing from npm, this is a release.
+          # the publish step skips versions that are already published, so a partially failed release can be re-run
+          mode=canary
+          while read -r name _; do
+            if ! npm view "${name}@${version}" version >/dev/null 2>&1; then
+              mode=release
+            fi
+          done <<< "${versions}"
 
-      - name: Storybook - Build Project Artifacts
-        run: yarn run vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_STORYBOOK_PROJECT_ID }}
+          {
+            echo "version=${version}"
+            echo "mode=${mode}"
+          } >> "${GITHUB_OUTPUT}"
 
-      - name: Storybook - Deploy Project Artifacts to Vercel
-        run: yarn run vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_STORYBOOK_PROJECT_ID }}
+      - name: Set canary version
+        id: canary
+        if: steps.mode.outputs.mode == 'canary'
+        shell: bash
+        run: |
+          # canaries publish from 0.0.0 so they satisfy no range and the canary tag is the only way to install one
+          # the date leads the sha so canaries sort chronologically
+          canary_version="0.0.0-canary-$(date -u +%Y%m%d)-${GITHUB_SHA::8}"
+          node scripts/set-version.mjs "${canary_version}"
+          echo "version=${canary_version}" >> "${GITHUB_OUTPUT}"
 
-      # docs
-      - name: Docs - Pull Vercel Environment Information
-        run: yarn run vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_DOCS_PROJECT_ID }}
+      # pnpm pack replaces workspace:* dependencies with the version being published,
+      # then npm publish authenticates with npm trusted publishing
+      - name: Publish
+        shell: bash
+        run: |
+          if [ "${{ steps.mode.outputs.mode }}" = canary ]; then
+            tag=canary
+          else
+            tag=latest
+          fi
 
-      - name: Docs - Build Project Artifacts
-        run: yarn run vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_DOCS_PROJECT_ID }}
+          # dependencies first
+          for dir in \
+            recast-navigation-wasm \
+            recast-navigation-core \
+            recast-navigation-generators \
+            recast-navigation-three \
+            recast-navigation-playcanvas \
+            recast-navigation; do
+            name="$(node -p "require('./packages/${dir}/package.json').name")"
+            version="$(node -p "require('./packages/${dir}/package.json').version")"
 
-      - name: Docs - Deploy Project Artifacts to Vercel
-        run: yarn run vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_DOCS_PROJECT_ID }}
+            if npm view "${name}@${version}" version >/dev/null 2>&1; then
+              echo "${name}@${version} is already published, skipping"
+              continue
+            fi
 
-      # release
-      - name: Create Release Pull Request or Publish to npm
-        id: changesets
-        uses: changesets/action@v1
-        with:
-          version: yarn run version
-          publish: yarn run publish
-          commit: 'chore(changeset): release packages'
+            tarball="$(cd "packages/${dir}" && pnpm pack --pack-destination "${RUNNER_TEMP}" --json | node -p "JSON.parse(require('fs').readFileSync(0, 'utf-8')).filename")"
+
+            npm publish "${tarball}" --tag "${tag}" --access public
+          done
+
+      - name: Create GitHub release
+        if: steps.mode.outputs.mode == 'release'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "recast-navigation@${{ steps.mode.outputs.version }}" \
+            --target "${GITHUB_SHA}" \
+            --title "recast-navigation@${{ steps.mode.outputs.version }}" \
+            --generate-notes \
+            --latest
+
+      - name: Add release summary
+        shell: bash
+        run: |
+          case "${{ steps.mode.outputs.mode }}" in
+            canary)
+              echo "Published ${{ steps.canary.outputs.version }} with the canary tag." >> "${GITHUB_STEP_SUMMARY}"
+              ;;
+            release)
+              echo "Published ${{ steps.mode.outputs.version }} with the latest tag." >> "${GITHUB_STEP_SUMMARY}"
+              ;;
+          esac

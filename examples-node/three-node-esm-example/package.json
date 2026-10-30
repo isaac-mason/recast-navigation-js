@@ -1,0 +1,19 @@
+{
+  "name": "three-node-esm-example",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "description": "example of using recast-navigation in node",
+  "scripts": {
+    "start": "node index.mjs"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "recast-navigation": "workspace:*",
+    "three": "^0.172.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.172.0"
+  }
+}

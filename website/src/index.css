@@ -1,0 +1,246 @@
+body {
+  margin: 0;
+  font-family: "Roboto Mono", monospace;
+  overflow: hidden;
+  background-color: #222;
+  overscroll-behavior-y: contain;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+#root {
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  -webkit-touch-callout: none;
+}
+
+canvas {
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  -webkit-touch-callout: none;
+}
+
+/* Top Navigation - Mobile First */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 1rem;
+  gap: 0.75rem;
+  z-index: 100;
+}
+
+.nav-title {
+  font-size: 1.5rem;
+  font-weight: 400;
+  margin: 0;
+  color: #ffffff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+  letter-spacing: 0.05em;
+  font-family: "Roboto Mono", monospace;
+  text-transform: lowercase;
+}
+
+.nav-subtitle {
+  font-size: 0.9rem;
+  font-weight: 300;
+  margin: 0;
+  color: #cccccc;
+  font-family: "Roboto Mono", monospace;
+  text-transform: lowercase;
+}
+
+.nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  color: #fff;
+}
+
+.nav-links a {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  font-family: "Roboto Mono", monospace;
+  text-transform: lowercase;
+  text-decoration: underline;
+  color: #cccccc;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.nav-links a:hover {
+  background: #ffffff;
+  color: #000000;
+}
+
+/* Bottom Footer - Mobile First */
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding-bottom: 1rem;
+  z-index: 100;
+}
+
+/* Footer Links Container - Mobile First */
+.footer-links {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5em;
+  align-items: center;
+}
+
+.footer-link {
+  font-size: 0.75rem;
+  font-family: "Roboto Mono", monospace;
+  text-transform: lowercase;
+  text-decoration: none;
+  color: #cccccc;
+  transition: color 0.2s ease;
+  cursor: pointer;
+  padding: 0.2rem 0.75rem;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.footer-link:hover {
+  color: #ffffff;
+}
+
+/* NavMesh Toggle Button - Mobile First */
+.navmesh-toggle {
+  text-align: center;
+  padding: 0.75rem 1rem;
+  font-family: "Roboto Mono", monospace;
+  font-size: 0.75rem;
+  text-transform: lowercase;
+  color: #cccccc;
+  background-color: rgba(34, 34, 34, 0.8);
+  border: 1px solid #666666;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+  min-height: 44px;
+}
+
+.navmesh-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #000000;
+  border-color: #ffffff;
+}
+
+.navmesh-toggle:active {
+  transform: scale(0.95);
+}
+
+/* Loading Spinner */
+.loading-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: #222;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 5;
+  transition: opacity 0.5s ease;
+}
+
+.loading-container.hidden {
+  opacity: 0;
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 6px solid rgba(255, 255, 255, 0.1);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Desktop Styles - min-width 769px */
+@media (min-width: 769px) {
+  .nav {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 3rem;
+  }
+
+  .nav-title {
+    font-size: 2rem;
+  }
+
+  .nav-subtitle {
+    font-size: 1.1rem;
+  }
+
+  .nav-links {
+    gap: 1rem;
+    flex-wrap: nowrap;
+  }
+
+  .nav-links a {
+    padding: 0;
+    font-size: 1rem;
+    min-height: auto;
+  }
+
+  .footer {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 2rem 3rem;
+  }
+
+  .footer-links {
+    flex-direction: row;
+    gap: 2rem;
+  }
+
+  .footer-link {
+    font-size: 0.9rem;
+    padding: 0;
+    min-height: auto;
+  }
+
+  .navmesh-toggle {
+    width: auto;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9rem;
+    min-height: auto;
+  }
+}

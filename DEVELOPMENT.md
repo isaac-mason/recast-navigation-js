@@ -1,6 +1,6 @@
 # Development
 
-The `recast-navigation-js` repository is structured as a yarn monorepo. You will find all published packages inside `./packages`, reference examples in `./examples`, and deployed applications in `./apps`.
+The `recast-navigation-js` repository is structured as a pnpm monorepo. You will find all published packages inside `./packages`, examples in `./examples`, integration examples in `./examples-integrations` and `./examples-node`, the website in `./website`, and deployed applications in `./apps`.
 
 
 ## Packages
@@ -96,11 +96,11 @@ If you don't already use a node version manager. Give nvm a try if you don't alr
 
 https://github.com/nvm-sh/nvm
 
-### Yarn Installation
+### pnpm Installation
 
-**This project uses yarn 4.**
+**This project uses pnpm 10.**
 
-If you have Corepack enabled, you should be able to use this project's yarn version without doing anything special. If you don't have Corepack enabled, you can enable it by running the following:
+If you have Corepack enabled, you should be able to use this project's pnpm version without doing anything special. If you don't have Corepack enabled, you can enable it by running the following:
 
 ```sh
 > corepack enable
@@ -153,24 +153,40 @@ After you have installed emscripten, you can sanity check that you have the corr
 Once you have the above installed, run the following to install dependencies and build all packages:
 
 ```sh
-> yarn install
-> yarn build
+> pnpm install
+> pnpm build
 ```
 
-To run the storybooks, run the following:
+To run the examples, run the following:
 
 ```sh
-cd packages/recast-navigation
-yarn storybook
+cd examples
+pnpm dev
 ```
+
+To build the website (landing page, examples and API docs) into `./website/dist`, run the following:
+
+```sh
+> pnpm build:website
+```
+
+## Releasing
+
+All packages are versioned together. To release, set the new version and merge to `main`:
+
+```sh
+> pnpm set-version 0.44.0
+```
+
+On every push to `main`, the release workflow publishes any packages whose version isn't on npm yet and creates a GitHub release. If every package version is already published, it publishes a canary instead (`0.0.0-canary-<date>-<sha>`) with the `canary` tag.
 
 ## Debugging WASM
 
 In order to debug @recast-navigation/wasm, you must build the library in debug mode, then rebuild @recast-navigation/core:
 
 ```ts
-(cd packages/recast-navigation-wasm && yarn build:debug)
-(cd packages/recast-navigtion-core && yarn build)
+(cd packages/recast-navigation-wasm && pnpm build:debug)
+(cd packages/recast-navigation-core && pnpm build)
 ```
 
 You can then follow these instructions to setup chrome for debugging WASM: https://developer.chrome.com/blog/wasm-debugging-2020/

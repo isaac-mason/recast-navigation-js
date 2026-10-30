@@ -107,7 +107,7 @@ debugDrawer.reset();
 debugDrawer.dispose();
 ```
 
-See the Debug Drawer storybooks for more examples: https://recast-navigation-js.isaacmason.com/?path=/story/debug-three-debug-drawer--nav-mesh
+See the debug examples for more: https://recast-navigation-js.isaacmason.com/examples/#example-debug-navmesh
 
 ### Helpers
 
