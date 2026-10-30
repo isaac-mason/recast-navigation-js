@@ -5,6 +5,7 @@ import {
 } from '@recast-navigation/three';
 import { Crowd, init, NavMeshQuery } from 'recast-navigation';
 import * as THREE from 'three';
+import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { loadGLTF } from './load-gltf';
 
 await init();
@@ -25,15 +26,25 @@ const camera = new THREE.PerspectiveCamera(
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFShadowMap;
 renderer.setSize(container.clientWidth, container.clientHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 container.appendChild(renderer.domElement);
 
-scene.add(new THREE.AmbientLight(0xffffff, 1.5));
+// soft image based lighting, so faces turned away from the sun aren't black
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+scene.environmentIntensity = 0.6;
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
-directionalLight.position.set(5, 10, 5);
-scene.add(directionalLight);
+scene.add(new THREE.HemisphereLight('#ffe8c7', '#3a3f5c', 1.2));
+
+const sun = new THREE.DirectionalLight('#ffd9a8', 2.5);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+sun.shadow.radius = 6;
+sun.shadow.bias = -0.0005;
+scene.add(sun, sun.target);
 
 function onWindowResize() {
   camera.aspect = container.clientWidth / container.clientHeight;
@@ -46,9 +57,19 @@ window.addEventListener('resize', onWindowResize);
 const level = await loadGLTF('./dungeon.gltf');
 scene.add(level.scene);
 
+// the level has no materials, and glTF's default material is fully metallic, so give it a matte one
+const levelMaterial = new THREE.MeshStandardMaterial({
+  color: '#c9b9a4',
+  roughness: 0.85,
+  metalness: 0,
+});
+
 const meshes: THREE.Mesh[] = [];
 level.scene.traverse((object) => {
   if (object instanceof THREE.Mesh) {
+    object.material = levelMaterial;
+    object.castShadow = true;
+    object.receiveShadow = true;
     meshes.push(object);
   }
 });
@@ -93,8 +114,37 @@ camera.position.set(
 );
 camera.lookAt(center);
 
+// light the level from above and to the side, with the shadow camera covering the whole level
+const size = bounds.getSize(new THREE.Vector3());
+sun.position.set(
+  center.x - size.x * 0.4,
+  center.y + size.y * 1.5,
+  center.z + size.z * 0.2,
+);
+sun.target.position.copy(center);
+const shadowExtent = Math.max(size.x, size.z) * 0.6;
+sun.shadow.camera.left = -shadowExtent;
+sun.shadow.camera.right = shadowExtent;
+sun.shadow.camera.top = shadowExtent;
+sun.shadow.camera.bottom = -shadowExtent;
+sun.shadow.camera.near = 1;
+sun.shadow.camera.far = size.length() * 3;
+sun.shadow.camera.updateProjectionMatrix();
+
 /* crowd of agents wandering between random points */
 const agentCount = 150;
+
+// pick random points around a known point on the main corridor. findRandomPointAroundCircle
+// only visits polygons connected to the start, so agents never spawn on or wander to isolated
+// bits of the navmesh like ledges and the tops of walls
+const { point: spawnPoint } = navMeshQuery.findClosestPoint({
+  x: 18.2,
+  y: 10.2,
+  z: -43.5,
+});
+
+const randomPoint = () =>
+  navMeshQuery.findRandomPointAroundCircle(spawnPoint, radius).randomPoint;
 
 const crowd = new Crowd(navMesh, {
   maxAgents: agentCount,
@@ -102,9 +152,7 @@ const crowd = new Crowd(navMesh, {
 });
 
 for (let i = 0; i < agentCount; i++) {
-  const { randomPoint } = navMeshQuery.findRandomPoint();
-
-  crowd.addAgent(randomPoint, {
+  crowd.addAgent(randomPoint(), {
     radius: agentRadius,
     height: 0.5,
     maxAcceleration: 4,
@@ -115,8 +163,7 @@ for (let i = 0; i < agentCount; i++) {
 
 const wander = () => {
   for (const agent of crowd.getAgents()) {
-    const { randomPoint } = navMeshQuery.findRandomPoint();
-    agent.requestMoveTarget(randomPoint);
+    agent.requestMoveTarget(randomPoint());
   }
 };
 
@@ -124,10 +171,18 @@ wander();
 const wanderInterval = 6000;
 let wanderTimer = setInterval(wander, wanderInterval);
 
-const crowdHelper = new CrowdHelper(crowd, {
-  agentMaterial: new THREE.MeshStandardMaterial({ color: '#ff4444' }),
-});
+const crowdHelper = new CrowdHelper(crowd);
 scene.add(crowdHelper);
+
+// give every agent its own colour
+crowdHelper.update();
+for (const agentMesh of crowdHelper.agentMeshes.values()) {
+  agentMesh.material = new THREE.MeshStandardMaterial({
+    color: new THREE.Color().setHSL(Math.random(), 0.75, 0.55),
+    roughness: 0.4,
+  });
+  agentMesh.castShadow = true;
+}
 
 /* click to send the crowd somewhere */
 const raycaster = new THREE.Raycaster();
