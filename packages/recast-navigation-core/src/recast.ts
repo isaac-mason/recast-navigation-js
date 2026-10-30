@@ -196,6 +196,8 @@ export const cloneRcConfig = (
 export class RecastBuildContext {
   raw: RawModule.RecastBuildContext;
 
+  private impl: RawModule.RecastBuildContextImpl;
+
   logs: Array<{ category: number; msg: string }> = [];
   startTimes: { [label: string]: number } = {};
   accumulatedTimes: { [label: string]: number } = {};
@@ -238,6 +240,7 @@ export class RecastBuildContext {
 
     const impl = new Impl();
 
+    this.impl = impl;
     this.raw = new Raw.Module.RecastBuildContext(impl);
     this.raw.enableTimer(timersAndLogsEnabled);
     this.raw.enableLog(timersAndLogsEnabled);
@@ -276,6 +279,11 @@ export class RecastBuildContext {
       this.startTimes[i] = -1;
       this.accumulatedTimes[i] = -1;
     }
+  }
+
+  destroy() {
+    Raw.destroy(this.raw);
+    Raw.destroy(this.impl);
   }
 }
 
@@ -333,6 +341,10 @@ export class RecastChunkyTriMesh {
 
   maxTrisPerChunk(): number {
     return this.raw.maxTrisPerChunk;
+  }
+
+  destroy() {
+    Raw.destroy(this.raw);
   }
 }
 

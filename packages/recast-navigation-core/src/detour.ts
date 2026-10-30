@@ -37,7 +37,7 @@ export const statusToReadableString = (status: number): string => {
   }
 
   if (Raw.Detour.statusFailed(status)) {
-    let reason: string | undefined ;
+    let reason: string | undefined;
 
     const DT_STATUS_REASONS = {
       DT_WRONG_MAGIC: Detour.DT_WRONG_MAGIC,
@@ -378,9 +378,14 @@ export const createNavMeshData = (navMeshCreateParams: NavMeshCreateParams) => {
     navMeshCreateParams.raw,
   );
 
+  const success = result.success;
+  const navMeshData = UnsignedCharArray.fromRaw(result.navMeshData);
+
+  Raw.destroy(result);
+
   return {
-    success: result.success,
-    navMeshData: UnsignedCharArray.fromRaw(result.navMeshData),
+    success,
+    navMeshData,
   };
 };
 
@@ -669,5 +674,9 @@ export class NavMeshCreateParams {
 
   setBuildBvTree(value: boolean): void {
     this.raw.buildBvTree = value;
+  }
+
+  destroy(): void {
+    Raw.destroy(this.raw);
   }
 }

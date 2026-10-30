@@ -195,11 +195,18 @@ export const generateTileNavMeshData = (
     buildBvTree?: boolean;
   } = {},
   keepIntermediates: boolean = false,
-  buildContext: RecastBuildContext = new RecastBuildContext(),
+  buildContextParam?: RecastBuildContext,
 ): GenerateTileNavMeshDataResult => {
   const tileIntermediate: TileIntermediates = { x: tile.x, y: tile.y };
 
+  const ownsBuildContext = !buildContextParam;
+  const buildContext = buildContextParam ?? new RecastBuildContext();
+
   const cleanup = () => {
+    if (ownsBuildContext) {
+      buildContext.destroy();
+    }
+
     if (keepIntermediates) return;
 
     if (tileIntermediate.compactHeightfield) {
@@ -311,12 +318,6 @@ export const generateTileNavMeshData = (
     return failTileMesh('Could not create heightfield');
   }
 
-  // Allocate array that can hold triangle flags.
-  // If you have multiple meshes you need to process, allocate
-  // and array which can hold the max number of triangles you need to process.
-  const triAreas = new TriangleAreasArray();
-  triAreas.resize(chunkyTriMesh.maxTrisPerChunk());
-
   const tbmin: Vector2Tuple = [
     expandedTileBoundsMin[0],
     expandedTileBoundsMin[2],
@@ -339,6 +340,9 @@ export const generateTileNavMeshData = (
   );
 
   if (nChunksOverlapping === 0) {
+    chunkIdsArray.destroy();
+    cleanup();
+
     return { success: true, intermediates: tileIntermediate };
   }
 
@@ -376,12 +380,17 @@ export const generateTileNavMeshData = (
       tileConfig.walkableClimb,
     );
 
+    nodeTrianglesArray.destroy();
     triangleAreasArray.destroy();
 
     if (!success) {
+      chunkIdsArray.destroy();
+
       return failTileMesh('Could not rasterize triangles');
     }
   }
+
+  chunkIdsArray.destroy();
 
   // Once all geometry is rasterized, we do initial pass of filtering to
   // remove unwanted overhangs caused by the conservative rasterization
@@ -560,6 +569,8 @@ export const generateTileNavMeshData = (
 
   const createNavMeshDataResult = createNavMeshData(navMeshCreateParams);
 
+  navMeshCreateParams.destroy();
+
   if (!createNavMeshDataResult.success) {
     return failTileMesh('Failed to create Detour navmesh data');
   }
@@ -568,6 +579,8 @@ export const generateTileNavMeshData = (
     Recast.RC_LOG_PROGRESS,
     `>> Polymesh: ${polyMesh.nverts()} vertices  ${polyMesh.npolys()} polygons`,
   );
+
+  cleanup();
 
   return {
     success: true,
@@ -647,8 +660,11 @@ export const generateTiledNavMesh = (
     if (keepIntermediates) return;
 
     if (intermediates.chunkyTriMesh) {
+      intermediates.chunkyTriMesh.destroy();
       intermediates.chunkyTriMesh = undefined;
     }
+
+    buildContext.destroy();
   };
 
   const fail = (error: string): GenerateTiledNavMeshFailResult => {
@@ -789,9 +805,7 @@ export const generateTiledNavMesh = (
 
   buildContext.stopTimer(Recast.RC_TIMER_TEMP);
 
-  if (!keepIntermediates) {
-    cleanup();
-  }
+  cleanup();
 
   return {
     success: true,
