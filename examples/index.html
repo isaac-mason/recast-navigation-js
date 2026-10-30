@@ -265,6 +265,34 @@
             background: var(--color-viewer);
         }
 
+        /* small spinner shown while an example loads */
+        .viewer-spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            z-index: 2;
+            width: 18px;
+            height: 18px;
+            margin: -9px 0 0 -9px;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            border-top-color: var(--color-ink);
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            animation: viewer-spin 0.8s linear infinite;
+        }
+
+        .viewer-spinner.show {
+            opacity: 1;
+        }
+
+        @keyframes viewer-spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
         /* title overlaid top-left of the demo (desktop) */
         .viewer-title {
             position: absolute;
@@ -407,6 +435,7 @@
         </div>
         <div class="viewer" id="viewer">
             <iframe class="example-frame" id="example-frame"></iframe>
+            <div class="viewer-spinner" id="viewer-spinner"></div>
             <div class="viewer-title">
                 <h2 id="viewer-title-text"></h2>
             </div>
@@ -496,6 +525,7 @@
         const titleElement = document.getElementById("example-title");
         const viewerTitleText = document.getElementById("viewer-title-text");
         const frameElement = document.getElementById("example-frame");
+        const spinner = document.getElementById("viewer-spinner");
         const btnSource = document.getElementById("btn-source");
         const btnOpen = document.getElementById("btn-open");
         const hamburger = document.getElementById("hamburger");
@@ -559,12 +589,42 @@
             sidebarOverlay.classList.remove("show");
         });
 
+        // examples await wasm init and model loading after the iframe's load event,
+        // so wait for the example's canvas before hiding the spinner
+        let loadToken = 0;
+
+        function showSpinnerUntilLoaded() {
+            loadToken++;
+            spinner.classList.add("show");
+        }
+
+        frameElement.addEventListener("load", () => {
+            const token = loadToken;
+            const started = performance.now();
+
+            const check = () => {
+                // a newer example has started loading
+                if (token !== loadToken) return;
+
+                const doc = frameElement.contentDocument;
+                if (!doc || doc.querySelector("canvas") || performance.now() - started > 10000) {
+                    spinner.classList.remove("show");
+                    return;
+                }
+
+                requestAnimationFrame(check);
+            };
+
+            check();
+        });
+
         function loadExample(exampleKey, scrollIntoView) {
             const example = examples[exampleKey];
             if (!example) return;
 
             titleElement.textContent = example.title;
             viewerTitleText.textContent = example.title;
+            showSpinnerUntilLoaded();
             frameElement.src = `./${exampleKey}.html`;
             btnSource.href = `https://github.com/isaac-mason/recast-navigation-js/blob/main/examples/src/${exampleKey}.ts`;
             btnOpen.href = `./${exampleKey}.html`;
