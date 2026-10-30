@@ -100,12 +100,15 @@ renderer.domElement.addEventListener('pointerdown', (event) => {
 });
 
 /* start loop */
-const clock = new THREE.Clock();
+const timer = new THREE.Timer();
+timer.connect(document);
 
 function update() {
     requestAnimationFrame(update);
 
-    const delta = Math.min(clock.getDelta(), 0.1);
+    timer.update();
+
+    const delta = Math.min(timer.getDelta(), 0.1);
 
     orbitControls.update();
     crowd.update(delta);

@@ -18,8 +18,8 @@
     "lint": "biome lint --write apps/**/src packages/**/src examples/src examples-integrations/**/src website/src"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.0.6",
-    "vercel": "^33.7.0"
+    "@biomejs/biome": "^2.6.4",
+    "vercel": "^65.8.0"
   },
   "packageManager": "pnpm@10.32.1"
 }

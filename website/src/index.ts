@@ -168,13 +168,16 @@ loading.classList.add('hidden');
 setTimeout(() => loading.remove(), 500);
 
 /* loop */
-const clock = new THREE.Clock();
+const timer = new THREE.Timer();
+timer.connect(document);
 
 function update() {
   requestAnimationFrame(update);
 
-  const delta = Math.min(clock.getDelta(), 0.1);
-  const time = clock.elapsedTime;
+  timer.update();
+
+  const delta = Math.min(timer.getDelta(), 0.1);
+  const time = timer.getElapsed();
 
   // slow orbit around the level
   const angle = time * 0.05;

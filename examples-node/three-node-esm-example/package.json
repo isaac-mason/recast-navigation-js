@@ -10,10 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@recast-navigation/three": "workspace:*",
     "recast-navigation": "workspace:*",
-    "three": "^0.172.0"
+    "three": "^0.186.1"
   },
   "devDependencies": {
-    "@types/three": "^0.172.0"
+    "@types/three": "^0.186.0"
   }
 }

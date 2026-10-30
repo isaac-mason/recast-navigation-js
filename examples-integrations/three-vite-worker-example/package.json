@@ -8,12 +8,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@recast-navigation/core": "workspace:*",
+    "@recast-navigation/generators": "workspace:*",
+    "@recast-navigation/three": "workspace:*",
     "recast-navigation": "workspace:*",
-    "three": "^0.178.0"
+    "three": "^0.186.1"
   },
   "devDependencies": {
-    "@types/three": "^0.178.0",
-    "typescript": "^5.9.3",
-    "vite": "^5.4.8"
+    "@types/three": "^0.186.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.5"
   }
 }

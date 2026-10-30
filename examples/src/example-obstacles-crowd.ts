@@ -245,12 +245,15 @@ renderer.domElement.addEventListener('pointerdown', (event) => {
 renderer.domElement.addEventListener('contextmenu', (e) => e.preventDefault());
 
 /* start loop */
-const clock = new THREE.Clock();
+const timer = new THREE.Timer();
+timer.connect(document);
 
 function loop() {
     requestAnimationFrame(loop);
 
-    const delta = Math.min(clock.getDelta(), 0.1);
+    timer.update();
+
+    const delta = Math.min(timer.getDelta(), 0.1);
 
     crowd.update(delta);
     crowdHelper.update();

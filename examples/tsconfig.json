@@ -12,7 +12,6 @@
     "noEmit": true,
     "skipLibCheck": true,
     "types": ["@types/three", "vite/client"],
-    "baseUrl": "./",
     "allowSyntheticDefaultImports": true
   },
   "include": ["./src", "vite-env.d.ts"],

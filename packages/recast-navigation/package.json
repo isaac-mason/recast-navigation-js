@@ -60,20 +60,20 @@
     "@recast-navigation/generators": "workspace:*"
   },
   "devDependencies": {
-    "@babel/core": "^7.28.0",
-    "@babel/preset-env": "^7.28.0",
-    "@babel/preset-typescript": "^7.27.1",
-    "@rollup/plugin-babel": "^6.0.4",
-    "@rollup/plugin-commonjs": "^28.0.6",
-    "@rollup/plugin-node-resolve": "^16.0.1",
-    "@rollup/plugin-typescript": "^12.1.4",
-    "@types/three": "^0.178.0",
-    "rollup": "^4.44.2",
+    "@babel/core": "^8.0.10",
+    "@babel/preset-env": "^8.0.7",
+    "@babel/preset-typescript": "^8.0.7",
+    "@rollup/plugin-babel": "^7.1.0",
+    "@rollup/plugin-commonjs": "^29.0.3",
+    "@rollup/plugin-node-resolve": "^16.0.3",
+    "@rollup/plugin-typescript": "^12.3.1",
+    "@types/three": "^0.186.0",
+    "rollup": "^4.66.0",
     "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-filesize": "^10.0.0",
-    "three": "^0.178.0",
-    "typescript": "^5.9.3",
-    "vite": "^7.0.2",
-    "vitest": "^3.2.4"
+    "three": "^0.186.1",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5"
   }
 }

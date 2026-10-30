@@ -95,13 +95,16 @@ if (success && navMesh) {
 }
 
 /* chase camera + movement loop */
-const clock = new THREE.Clock();
+const timer = new THREE.Timer();
+timer.connect(document);
 const _targetCameraPosition = new THREE.Vector3();
 
 function update() {
     requestAnimationFrame(update);
 
-    const delta = clock.getDelta();
+    timer.update();
+
+    const delta = timer.getDelta();
 
     if (navMeshQuery) {
         const { forward, backward, left, right } = controls;

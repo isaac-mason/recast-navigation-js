@@ -10,11 +10,12 @@ const babelOptions = {
   extensions: ['.ts'],
   exclude: '**/node_modules/**',
   babelHelpers: 'bundled',
+  // the typescript plugin output references sourcemaps that aren't written to disk
+  inputSourceMap: false,
   presets: [
     [
       '@babel/preset-env',
       {
-        loose: true,
         modules: false,
         targets: '>1%, not dead, not ie 11, not op_mini all',
       },
