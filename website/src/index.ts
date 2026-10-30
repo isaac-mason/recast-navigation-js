@@ -153,22 +153,6 @@ renderer.domElement.addEventListener('pointerdown', (event) => {
   wanderTimer = setInterval(wander, wanderInterval);
 });
 
-/* nav mesh toggle */
-const navMeshToggle = document.getElementById('navmesh-toggle')!;
-
-const toggleNavMesh = () => {
-  navMeshHelper.visible = !navMeshHelper.visible;
-  navMeshToggle.textContent = `${navMeshHelper.visible ? 'Hide' : 'Show'} NavMesh [H]`;
-};
-
-navMeshToggle.addEventListener('click', toggleNavMesh);
-
-window.addEventListener('keydown', (event) => {
-  if (event.key.toLowerCase() === 'h') {
-    toggleNavMesh();
-  }
-});
-
 /* hide loading spinner */
 const loading = document.getElementById('loading')!;
 loading.classList.add('hidden');
