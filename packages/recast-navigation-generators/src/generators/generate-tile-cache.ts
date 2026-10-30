@@ -5,6 +5,8 @@ import {
   NavMesh,
   NavMeshParams,
   Raw,
+  writeFloats,
+  writeVec3,
   Recast,
   RecastBuildContext,
   RecastChunkyTriMesh,
@@ -193,6 +195,13 @@ export const generateTileCache = (
     trianglesArray.destroy();
 
     if (!keepIntermediates) {
+      buildContext.destroy();
+
+      if (intermediates.chunkyTriMesh) {
+        intermediates.chunkyTriMesh.destroy();
+        intermediates.chunkyTriMesh = undefined;
+      }
+
       for (let i = 0; i < intermediates.tileIntermediates.length; i++) {
         const tileIntermediate = intermediates.tileIntermediates[i];
 
@@ -329,6 +338,7 @@ export const generateTileCache = (
       tileX,
       tileY,
     };
+    intermediates.tileIntermediates.push(tileIntermediates);
 
     // Tile bounds
     const tcs = config.tileSize * config.cs;
@@ -352,13 +362,9 @@ export const generateTileCache = (
     tileBoundsMax[0] += tileConfig.borderSize * tileConfig.cs;
     tileBoundsMax[2] += tileConfig.borderSize * tileConfig.cs;
 
-    tileConfig.set_bmin(0, tileBoundsMin[0]);
-    tileConfig.set_bmin(1, tileBoundsMin[1]);
-    tileConfig.set_bmin(2, tileBoundsMin[2]);
+    writeFloats(tileConfig, 'bmin', tileBoundsMin, 3);
 
-    tileConfig.set_bmax(0, tileBoundsMax[0]);
-    tileConfig.set_bmax(1, tileBoundsMax[1]);
-    tileConfig.set_bmax(2, tileBoundsMax[2]);
+    writeFloats(tileConfig, 'bmax', tileBoundsMax, 3);
 
     // Allocate voxel heightfield where we rasterize our input data to.
     const heightfield = allocHeightfield();
@@ -395,6 +401,8 @@ export const generateTileCache = (
     );
 
     if (nChunksOverlapping === 0) {
+      chunkIdsArray.destroy();
+
       return { n: 0 };
     }
 
@@ -432,12 +440,17 @@ export const generateTileCache = (
         tileConfig.walkableClimb,
       );
 
+      nodeTrianglesArray.destroy();
       triangleAreasArray.destroy();
 
       if (!success) {
+        chunkIdsArray.destroy();
+
         return { n: 0 };
       }
     }
+
+    chunkIdsArray.destroy();
 
     // Once all geometry is rasterized, we do initial pass of filtering to
     // remove unwanted overhangs caused by the conservative rasterization
@@ -460,6 +473,8 @@ export const generateTileCache = (
     );
 
     const compactHeightfield = allocCompactHeightfield();
+    tileIntermediates.compactHeightfield = compactHeightfield;
+
     if (
       !buildCompactHeightfield(
         buildContext,
@@ -489,6 +504,8 @@ export const generateTileCache = (
     }
 
     const heightfieldLayerSet = allocHeightfieldLayerSet();
+    tileIntermediates.heightfieldLayerSet = heightfieldLayerSet;
+
     if (
       !buildHeightfieldLayers(
         buildContext,
@@ -524,13 +541,9 @@ export const generateTileCache = (
 
       const heightfieldLayerBin = heightfieldLayer.bmin();
       const heightfieldLayerBmax = heightfieldLayer.bmax();
-      header.set_bmin(0, heightfieldLayerBin.x);
-      header.set_bmin(1, heightfieldLayerBin.y);
-      header.set_bmin(2, heightfieldLayerBin.z);
+      writeVec3(header, 'bmin', heightfieldLayerBin);
 
-      header.set_bmax(0, heightfieldLayerBmax.x);
-      header.set_bmax(1, heightfieldLayerBmax.y);
-      header.set_bmax(2, heightfieldLayerBmax.z);
+      writeVec3(header, 'bmax', heightfieldLayerBmax);
 
       // Tile info
       header.width = heightfieldLayer.width();
@@ -555,7 +568,18 @@ export const generateTileCache = (
         tile,
       );
 
+      Raw.destroy(header);
+      heights.destroy();
+      areas.destroy();
+      cons.destroy();
+
       if (statusFailed(status)) {
+        tile.destroy();
+
+        for (const t of tiles) {
+          t.destroy();
+        }
+
         return { n: 0 };
       }
 
@@ -566,8 +590,6 @@ export const generateTileCache = (
       freeHeightfieldLayerSet(heightfieldLayerSet);
       tileIntermediates.heightfieldLayerSet = undefined;
     }
-
-    intermediates.tileIntermediates.push(tileIntermediates);
 
     return { n: tiles.length, tiles };
   };
@@ -588,6 +610,8 @@ export const generateTileCache = (
               Recast.RC_LOG_WARNING,
               `Failed to add tile to tile cache - tx: ${x}, ty: ${y}`,
             );
+
+            tileCacheData.destroy();
           }
         }
       }

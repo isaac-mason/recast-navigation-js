@@ -2,7 +2,7 @@ import { FloatArray, UnsignedCharArray, UnsignedIntArray } from './arrays';
 import { statusSucceed } from './detour';
 import type { NavMesh } from './nav-mesh';
 import { Raw, type RawModule } from './raw';
-import { type Vector3, array, vec3 } from './utils';
+import { type Vector3, bulkView, readVec3, vec3 } from './utils';
 
 export class QueryFilter {
   raw: RawModule.dtQueryFilter;
@@ -1111,9 +1111,11 @@ export class NavMeshQuery {
       success: statusSucceed(status),
       status,
       t: raycastHit.t,
-      hitNormal: vec3.fromArray(array((i) => raycastHit.get_hitNormal(i), 3)),
+      hitNormal: readVec3(raycastHit, 'hitNormal'),
       hitEdgeIndex: raycastHit.hitEdgeIndex,
-      path: array((i) => raycastHit.get_path(i), raycastHit.pathCount),
+      path: Array.from(
+        bulkView(raycastHit, 'path', raycastHit.pathCount, Uint32Array, Raw.Module.HEAPU32),
+      ),
       maxPath: raycastHit.maxPath,
       pathCost: raycastHit.pathCost,
     };

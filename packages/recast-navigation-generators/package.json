@@ -26,8 +26,8 @@
     "test": "tsc"
   },
   "dependencies": {
-    "@recast-navigation/core": "0.43.1",
-    "@recast-navigation/wasm": "0.43.1"
+    "@recast-navigation/core": "workspace:*",
+    "@recast-navigation/wasm": "workspace:*"
   },
   "devDependencies": {
     "@babel/core": "^7.28.0",
@@ -41,6 +41,5 @@
     "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-filesize": "^10.0.0",
     "typescript": "^5.9.3"
-  },
-  "packageManager": "yarn@3.2.1"
+  }
 }

@@ -13,3 +13,6 @@ dist
 .vercel
 emsdk
 .parcel-cache
+
+# LLM working files — plans, progress notes, throwaway build harnesses
+llm/

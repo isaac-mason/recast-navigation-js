@@ -1,7 +1,15 @@
 import type { Vector3Tuple } from './utils';
 import { type FloatArray, IntArray, UnsignedCharArray } from './arrays';
 import { Raw, Recast, type RawModule } from './raw';
-import { type Vector2Tuple, type Vector3, array, vec3 } from './utils';
+import {
+  type Vector2Tuple,
+  type Vector3,
+  bulkAt,
+  bulkSet,
+  readFloats,
+  readVec3,
+  writeFloats,
+} from './utils';
 
 export type RecastConfig = {
   /**
@@ -161,12 +169,8 @@ export const cloneRcConfig = (
 ): RawModule.rcConfig => {
   const clone = new Raw.Module.rcConfig();
 
-  clone.set_bmin(0, rcConfig.get_bmin(0));
-  clone.set_bmin(1, rcConfig.get_bmin(1));
-  clone.set_bmin(2, rcConfig.get_bmin(2));
-  clone.set_bmax(0, rcConfig.get_bmax(0));
-  clone.set_bmax(1, rcConfig.get_bmax(1));
-  clone.set_bmax(2, rcConfig.get_bmax(2));
+  writeFloats(clone, 'bmin', readFloats(rcConfig, 'bmin', [], 3), 3);
+  writeFloats(clone, 'bmax', readFloats(rcConfig, 'bmax', [], 3), 3);
 
   clone.width = rcConfig.width;
   clone.height = rcConfig.height;
@@ -192,57 +196,51 @@ export const cloneRcConfig = (
 export class RecastBuildContext {
   raw: RawModule.RecastBuildContext;
 
+  private impl: RawModule.RecastBuildContextImpl;
+
   logs: Array<{ category: number; msg: string }> = [];
   startTimes: { [label: string]: number } = {};
   accumulatedTimes: { [label: string]: number } = {};
 
   constructor(timersAndLogsEnabled = true) {
-    const impl = new Raw.Module.RecastBuildContextJsImpl();
+    const self = this;
 
-    impl.log = (category, msg, len) => {
-      if (!this.raw.logEnabled()) return;
+    // embind: subclass RecastBuildContextImpl via .extend(). The `log` callback now
+    // receives a real string (no HEAPU8 pointer decode).
+    const Impl = (
+      Raw.Module.RecastBuildContextImpl as unknown as {
+        extend: (name: string, methods: object) => new () => RawModule.RecastBuildContextImpl;
+      }
+    ).extend('RecastBuildContextImpl', {
+      log(category: number, msg: string, _len: number) {
+        if (!self.raw.logEnabled()) return;
+        self.log(category, msg);
+      },
+      resetLog() {
+        self.resetLog();
+      },
+      startTimer(label: number) {
+        if (!self.raw.timerEnabled()) return;
+        self.startTimer(label);
+      },
+      stopTimer(label: number) {
+        if (!self.raw.timerEnabled()) return;
+        self.stopTimer(label);
+      },
+      getAccumulatedTime(label: number) {
+        if (!self.raw.timerEnabled()) return -1;
+        return self.getAccumulatedTime(label);
+      },
+      resetTimers() {
+        if (!self.raw.timerEnabled()) return;
+        self.startTimes = {};
+        self.accumulatedTimes = {};
+      },
+    });
 
-      // type is string, but webidl binder passes us a pointer
-      const msgPointer = msg as unknown as number;
+    const impl = new Impl();
 
-      const view = new Uint8Array(Raw.Module.HEAPU8.buffer, msgPointer, len);
-      const data = new Uint8Array(len);
-      data.set(view);
-
-      const msgString = new TextDecoder().decode(data);
-
-      this.log(category, msgString);
-    };
-
-    impl.resetLog = () => {
-      this.resetLog();
-    };
-
-    impl.startTimer = (label) => {
-      if (!this.raw.timerEnabled()) return;
-
-      this.startTimer(label);
-    };
-
-    impl.stopTimer = (label) => {
-      if (!this.raw.timerEnabled()) return;
-
-      this.stopTimer(label);
-    };
-
-    impl.getAccumulatedTime = (label) => {
-      if (!this.raw.timerEnabled()) return -1;
-
-      return this.getAccumulatedTime(label);
-    };
-
-    impl.resetTimers = () => {
-      if (!this.raw.timerEnabled()) return;
-
-      this.startTimes = {};
-      this.accumulatedTimes = {};
-    };
-
+    this.impl = impl;
     this.raw = new Raw.Module.RecastBuildContext(impl);
     this.raw.enableTimer(timersAndLogsEnabled);
     this.raw.enableLog(timersAndLogsEnabled);
@@ -281,6 +279,11 @@ export class RecastBuildContext {
       this.startTimes[i] = -1;
       this.accumulatedTimes[i] = -1;
     }
+  }
+
+  destroy() {
+    Raw.destroy(this.raw);
+    Raw.destroy(this.impl);
   }
 }
 
@@ -333,11 +336,15 @@ export class RecastChunkyTriMesh {
   }
 
   nodes(index: number): RawModule.rcChunkyTriMeshNode {
-    return this.raw.get_nodes(index);
+    return this.raw.nodes(index);
   }
 
   maxTrisPerChunk(): number {
     return this.raw.maxTrisPerChunk;
+  }
+
+  destroy() {
+    Raw.destroy(this.raw);
   }
 }
 
@@ -379,7 +386,7 @@ export class RecastSpanPool {
   }
 
   items(index: number): RecastSpan {
-    return new RecastSpan(this.raw.get_items(index));
+    return new RecastSpan(this.raw.items(index));
   }
 }
 
@@ -399,11 +406,11 @@ export class RecastHeightfield {
   }
 
   bmin(): Vector3 {
-    return vec3.fromArray(array((i) => this.raw.get_bmin(i), 3));
+    return readVec3(this.raw, 'bmin');
   }
 
   bmax(): Vector3 {
-    return vec3.fromArray(array((i) => this.raw.get_bmax(i), 3));
+    return readVec3(this.raw, 'bmax');
   }
 
   cs(): number {
@@ -415,15 +422,15 @@ export class RecastHeightfield {
   }
 
   spans(index: number): RecastSpan {
-    return new RecastSpan(this.raw.get_spans(index));
+    return new RecastSpan(this.raw.spans(index));
   }
 
-  pools(index: number): RecastSpanPool {
-    return new RecastSpanPool(this.raw.get_pools(index));
+  pools(_index: number): RecastSpanPool {
+    return new RecastSpanPool(this.raw.pools);
   }
 
-  freelist(index: number): RecastSpan {
-    return new RecastSpan(this.raw.get_freelist(index));
+  freelist(_index: number): RecastSpan {
+    return new RecastSpan(this.raw.freelist);
   }
 }
 
@@ -435,11 +442,11 @@ export class RecastCompactCell {
   }
 
   index(): number {
-    return this.raw.get_index();
+    return this.raw.index;
   }
 
   count(): number {
-    return this.raw.get_count();
+    return this.raw.count;
   }
 }
 
@@ -451,19 +458,19 @@ export class RecastCompactSpan {
   }
 
   y(): number {
-    return this.raw.get_y();
+    return this.raw.y;
   }
 
   reg(): number {
-    return this.raw.get_reg();
+    return this.raw.reg;
   }
 
   con(): number {
-    return this.raw.get_con();
+    return this.raw.con;
   }
 
   h(): number {
-    return this.raw.get_h();
+    return this.raw.h;
   }
 }
 
@@ -507,11 +514,11 @@ export class RecastCompactHeightfield {
   }
 
   bmin(): Vector3 {
-    return vec3.fromArray(array((i) => this.raw.get_bmin(i), 3));
+    return readVec3(this.raw, 'bmin');
   }
 
   bmax(): Vector3 {
-    return vec3.fromArray(array((i) => this.raw.get_bmax(i), 3));
+    return readVec3(this.raw, 'bmax');
   }
 
   cs(): number {
@@ -523,19 +530,19 @@ export class RecastCompactHeightfield {
   }
 
   cells(index: number): RecastCompactCell {
-    return new RecastCompactCell(this.raw.get_cells(index));
+    return new RecastCompactCell(this.raw.cells(index));
   }
 
   spans(index: number): RecastCompactSpan {
-    return new RecastCompactSpan(this.raw.get_spans(index));
+    return new RecastCompactSpan(this.raw.spans(index));
   }
 
   dist(index: number): number {
-    return this.raw.get_dist(index);
+    return bulkAt.u16(this.raw, 'dist', index);
   }
 
   areas(index: number): number {
-    return this.raw.get_areas(index);
+    return bulkAt.u8(this.raw, 'areas', index);
   }
 }
 
@@ -547,7 +554,7 @@ export class RecastContour {
   }
 
   verts(index: number): number {
-    return this.raw.get_verts(index);
+    return bulkAt.i32(this.raw, 'verts', index);
   }
 
   nverts(): number {
@@ -555,7 +562,7 @@ export class RecastContour {
   }
 
   rverts(index: number): number {
-    return this.raw.get_rverts(index);
+    return bulkAt.i32(this.raw, 'rverts', index);
   }
 
   nrverts(): number {
@@ -579,7 +586,7 @@ export class RecastContourSet {
   }
 
   conts(index: number): RecastContour {
-    return new RecastContour(this.raw.get_conts(index));
+    return new RecastContour(this.raw.conts(index));
   }
 
   nconts(): number {
@@ -587,11 +594,11 @@ export class RecastContourSet {
   }
 
   bmin(): Vector3 {
-    return vec3.fromArray(array((i) => this.raw.get_bmin(i), 3));
+    return readVec3(this.raw, 'bmin');
   }
 
   bmax(): Vector3 {
-    return vec3.fromArray(array((i) => this.raw.get_bmax(i), 3));
+    return readVec3(this.raw, 'bmax');
   }
 
   cs(): number {
@@ -627,11 +634,11 @@ export class RecastHeightfieldLayer {
   }
 
   bmin(): Vector3 {
-    return vec3.fromArray(array((i) => this.raw.get_bmin(i), 3));
+    return readVec3(this.raw, 'bmin');
   }
 
   bmax(): Vector3 {
-    return vec3.fromArray(array((i) => this.raw.get_bmax(i), 3));
+    return readVec3(this.raw, 'bmax');
   }
 
   cs(): number {
@@ -675,15 +682,15 @@ export class RecastHeightfieldLayer {
   }
 
   heights(index: number): number {
-    return this.raw.get_heights(index);
+    return bulkAt.u8(this.raw, 'heights', index);
   }
 
   areas(index: number): number {
-    return this.raw.get_areas(index);
+    return bulkAt.u8(this.raw, 'areas', index);
   }
 
   cons(index: number): number {
-    return this.raw.get_cons(index);
+    return bulkAt.u8(this.raw, 'cons', index);
   }
 }
 
@@ -695,7 +702,7 @@ export class RecastHeightfieldLayerSet {
   }
 
   layers(index: number): RecastHeightfieldLayer {
-    return new RecastHeightfieldLayer(this.raw.get_layers(index));
+    return new RecastHeightfieldLayer(this.raw.layers(index));
   }
 
   nlayers(): number {
@@ -711,31 +718,31 @@ export class RecastPolyMesh {
   }
 
   verts(index: number): number {
-    return this.raw.get_verts(index);
+    return bulkAt.u16(this.raw, 'verts', index);
   }
 
   polys(index: number): number {
-    return this.raw.get_polys(index);
+    return bulkAt.u16(this.raw, 'polys', index);
   }
 
   regs(index: number): number {
-    return this.raw.get_regs(index);
+    return bulkAt.u16(this.raw, 'regs', index);
   }
 
   flags(index: number): number {
-    return this.raw.get_flags(index);
+    return bulkAt.u16(this.raw, 'flags', index);
   }
 
   setFlags(index: number, value: number): void {
-    this.raw.set_flags(index, value);
+    bulkSet.u16(this.raw, 'flags', index, value);
   }
 
   areas(index: number): number {
-    return this.raw.get_areas(index);
+    return bulkAt.u8(this.raw, 'areas', index);
   }
 
   setAreas(index: number, value: number): void {
-    this.raw.set_areas(index, value);
+    bulkSet.u8(this.raw, 'areas', index, value);
   }
 
   nverts(): number {
@@ -755,11 +762,11 @@ export class RecastPolyMesh {
   }
 
   bmin(): Vector3 {
-    return vec3.fromArray(array((i) => this.raw.get_bmin(i), 3));
+    return readVec3(this.raw, 'bmin');
   }
 
   bmax(): Vector3 {
-    return vec3.fromArray(array((i) => this.raw.get_bmax(i), 3));
+    return readVec3(this.raw, 'bmax');
   }
 
   cs(): number {
@@ -787,15 +794,15 @@ export class RecastPolyMeshDetail {
   }
 
   meshes(index: number): number {
-    return this.raw.get_meshes(index);
+    return bulkAt.u32(this.raw, 'meshes', index);
   }
 
   verts(index: number): number {
-    return this.raw.get_verts(index);
+    return bulkAt.f32(this.raw, 'verts', index);
   }
 
   tris(index: number): number {
-    return this.raw.get_tris(index);
+    return bulkAt.u8(this.raw, 'tris', index);
   }
 
   nmeshes(): number {

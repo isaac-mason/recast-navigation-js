@@ -1,7 +1,15 @@
 import { UnsignedCharArray } from './arrays';
 import { Detour, Raw, type RawModule } from './raw';
 import type { RecastPolyMesh, RecastPolyMeshDetail } from './recast';
-import { type Vector3, type Vector3Tuple, array, vec3 } from './utils';
+import {
+  type Vector3,
+  type Vector3Tuple,
+  bulkAt,
+  bulkSet,
+  readFloats,
+  readVec3,
+  writeFloats,
+} from './utils';
 
 export const statusSucceed = (status: number): boolean => {
   return Raw.Detour.statusSucceed(status);
@@ -29,7 +37,7 @@ export const statusToReadableString = (status: number): string => {
   }
 
   if (Raw.Detour.statusFailed(status)) {
-    let reason: string | undefined ;
+    let reason: string | undefined;
 
     const DT_STATUS_REASONS = {
       DT_WRONG_MAGIC: Detour.DT_WRONG_MAGIC,
@@ -123,11 +131,11 @@ export class DetourBVNode {
   }
 
   bmin(): Vector3 {
-    return vec3.fromArray(array((i) => this.raw.get_bmin(i), 3));
+    return readVec3(this.raw, 'bmin');
   }
 
   bmax(): Vector3 {
-    return vec3.fromArray(array((i) => this.raw.get_bmax(i), 3));
+    return readVec3(this.raw, 'bmax');
   }
 
   i(): number {
@@ -143,7 +151,7 @@ export class DetourOffMeshConnection {
   }
 
   pos(index: number): number {
-    return this.raw.get_pos(index);
+    return bulkAt.f32(this.raw, 'pos', index);
   }
 
   rad(): number {
@@ -247,11 +255,11 @@ export class DetourMeshHeader {
   }
 
   bmin(index: number): number {
-    return this.raw.get_bmin(index);
+    return bulkAt.f32(this.raw, 'bmin', index);
   }
 
   bmax(index: number): number {
-    return this.raw.get_bmax(index);
+    return bulkAt.f32(this.raw, 'bmax', index);
   }
 
   bvQuantFactor(): number {
@@ -271,11 +279,11 @@ export class DetourPoly {
   }
 
   verts(index: number): number {
-    return this.raw.get_verts(index);
+    return bulkAt.u16(this.raw, 'verts', index);
   }
 
   neis(index: number): number {
-    return this.raw.get_neis(index);
+    return bulkAt.u16(this.raw, 'neis', index);
   }
 
   flags(): number {
@@ -287,7 +295,7 @@ export class DetourPoly {
   }
 
   areaAndType(): number {
-    return this.raw.get_areaAndtype();
+    return this.raw.areaAndtype;
   }
 
   getType(): number {
@@ -317,39 +325,39 @@ export class DetourMeshTile {
   }
 
   polys(index: number): DetourPoly {
-    return new DetourPoly(this.raw.get_polys(index));
+    return new DetourPoly(this.raw.polys(index));
   }
 
   verts(index: number): number {
-    return this.raw.get_verts(index);
+    return bulkAt.f32(this.raw, 'verts', index);
   }
 
   links(index: number): DetourLink {
-    return new DetourLink(this.raw.get_links(index));
+    return new DetourLink(this.raw.links(index));
   }
 
   detailMeshes(index: number): DetourPolyDetail {
-    return new DetourPolyDetail(this.raw.get_detailMeshes(index));
+    return new DetourPolyDetail(this.raw.detailMeshes(index));
   }
 
   detailVerts(index: number): number {
-    return this.raw.get_detailVerts(index);
+    return bulkAt.f32(this.raw, 'detailVerts', index);
   }
 
   detailTris(index: number): number {
-    return this.raw.get_detailTris(index);
+    return bulkAt.u8(this.raw, 'detailTris', index);
   }
 
   bvTree(index: number): DetourBVNode {
-    return new DetourBVNode(this.raw.get_bvTree(index));
+    return new DetourBVNode(this.raw.bvTree(index));
   }
 
   offMeshCons(index: number): DetourOffMeshConnection {
-    return new DetourOffMeshConnection(this.raw.get_offMeshCons(index));
+    return new DetourOffMeshConnection(this.raw.offMeshCons(index));
   }
 
   data(index: number): number {
-    return this.raw.get_data(index);
+    return bulkAt.u8(this.raw, 'data', index);
   }
 
   dataSize(): number {
@@ -370,9 +378,14 @@ export const createNavMeshData = (navMeshCreateParams: NavMeshCreateParams) => {
     navMeshCreateParams.raw,
   );
 
+  const success = result.success;
+  const navMeshData = UnsignedCharArray.fromRaw(result.navMeshData);
+
+  Raw.destroy(result);
+
   return {
-    success: result.success,
-    navMeshData: UnsignedCharArray.fromRaw(result.navMeshData),
+    success,
+    navMeshData,
   };
 };
 
@@ -464,11 +477,11 @@ export class NavMeshCreateParams {
   }
 
   verts(index: number): number {
-    return this.raw.get_verts(index);
+    return bulkAt.u16(this.raw, 'verts', index);
   }
 
   setVerts(index: number, value: number): void {
-    this.raw.set_verts(index, value);
+    bulkSet.u16(this.raw, 'verts', index, value);
   }
 
   vertCount(): number {
@@ -476,27 +489,27 @@ export class NavMeshCreateParams {
   }
 
   polys(index: number): number {
-    return this.raw.get_polys(index);
+    return bulkAt.u16(this.raw, 'polys', index);
   }
 
   setPolys(index: number, value: number): void {
-    this.raw.set_polys(index, value);
+    bulkSet.u16(this.raw, 'polys', index, value);
   }
 
   polyAreas(index: number): number {
-    return this.raw.get_polyAreas(index);
+    return bulkAt.u8(this.raw, 'polyAreas', index);
   }
 
   setPolyAreas(index: number, value: number): void {
-    this.raw.set_polyAreas(index, value);
+    bulkSet.u8(this.raw, 'polyAreas', index, value);
   }
 
   polyFlags(index: number): number {
-    return this.raw.get_polyFlags(index);
+    return bulkAt.u16(this.raw, 'polyFlags', index);
   }
 
   setPolyFlags(index: number, value: number): void {
-    this.raw.set_polyFlags(index, value);
+    bulkSet.u16(this.raw, 'polyFlags', index, value);
   }
 
   polyCount(): number {
@@ -512,19 +525,19 @@ export class NavMeshCreateParams {
   }
 
   detailMeshes(index: number): number {
-    return this.raw.get_detailMeshes(index);
+    return bulkAt.u32(this.raw, 'detailMeshes', index);
   }
 
   setDetailMeshes(index: number, value: number): void {
-    this.raw.set_detailMeshes(index, value);
+    bulkSet.u32(this.raw, 'detailMeshes', index, value);
   }
 
   detailVerts(index: number): number {
-    return this.raw.get_detailVerts(index);
+    return bulkAt.f32(this.raw, 'detailVerts', index);
   }
 
   setDetailVerts(index: number, value: number): void {
-    this.raw.set_detailVerts(index, value);
+    bulkSet.f32(this.raw, 'detailVerts', index, value);
   }
 
   detailVertsCount(): number {
@@ -532,11 +545,11 @@ export class NavMeshCreateParams {
   }
 
   detailTris(index: number): number {
-    return this.raw.get_detailTris(index);
+    return bulkAt.u8(this.raw, 'detailTris', index);
   }
 
   setDetailTris(index: number, value: number): void {
-    this.raw.set_detailTris(index, value);
+    bulkSet.u8(this.raw, 'detailTris', index, value);
   }
 
   detailTriCount(): number {
@@ -544,27 +557,27 @@ export class NavMeshCreateParams {
   }
 
   offMeshConVerts(index: number): number {
-    return this.raw.get_offMeshConVerts(index);
+    return bulkAt.f32(this.raw, 'offMeshConVerts', index);
   }
 
   offMeshConRad(index: number): number {
-    return this.raw.get_offMeshConRad(index);
+    return bulkAt.f32(this.raw, 'offMeshConRad', index);
   }
 
   offMeshConDir(index: number): number {
-    return this.raw.get_offMeshConDir(index);
+    return bulkAt.u8(this.raw, 'offMeshConDir', index);
   }
 
   offMeshConAreas(index: number): number {
-    return this.raw.get_offMeshConAreas(index);
+    return bulkAt.u8(this.raw, 'offMeshConAreas', index);
   }
 
   offMeshConFlags(index: number): number {
-    return this.raw.get_offMeshConFlags(index);
+    return bulkAt.u16(this.raw, 'offMeshConFlags', index);
   }
 
   offMeshConUserID(index: number): number {
-    return this.raw.get_offMeshConUserID(index);
+    return bulkAt.u32(this.raw, 'offMeshConUserID', index);
   }
 
   offMeshConCount(): number {
@@ -600,23 +613,19 @@ export class NavMeshCreateParams {
   }
 
   boundsMin(): Vector3Tuple {
-    return array((i) => this.raw.get_bmin(i), 3) as Vector3Tuple;
+    return readFloats(this.raw, 'bmin', [], 3) as Vector3Tuple;
   }
 
   setBoundsMin(value: Vector3Tuple): void {
-    this.raw.set_bmin(0, value[0]);
-    this.raw.set_bmin(1, value[1]);
-    this.raw.set_bmin(2, value[2]);
+    writeFloats(this.raw, 'bmin', value, 3);
   }
 
   boundsMax(): Vector3Tuple {
-    return array((i) => this.raw.get_bmax(i), 3) as Vector3Tuple;
+    return readFloats(this.raw, 'bmax', [], 3) as Vector3Tuple;
   }
 
   setBoundsMax(value: Vector3Tuple): void {
-    this.raw.set_bmax(0, value[0]);
-    this.raw.set_bmax(1, value[1]);
-    this.raw.set_bmax(2, value[2]);
+    writeFloats(this.raw, 'bmax', value, 3);
   }
 
   walkableHeight(): number {
@@ -665,5 +674,10 @@ export class NavMeshCreateParams {
 
   setBuildBvTree(value: boolean): void {
     this.raw.buildBvTree = value;
+  }
+
+  destroy(): void {
+    Raw.DetourNavMeshBuilder.freeOffMeshConnections(this.raw);
+    Raw.destroy(this.raw);
   }
 }

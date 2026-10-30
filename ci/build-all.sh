@@ -1,9 +1,9 @@
 #!/bin/bash
 
-yarn
+pnpm install --frozen-lockfile
 
 bash ./ci/install-emsdk.sh
 
 source ./emsdk/emsdk_env.sh
 
-yarn build
+pnpm build

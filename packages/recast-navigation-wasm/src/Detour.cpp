@@ -25,6 +25,8 @@ void DetourNavMeshBuilder::setPolyMeshDetailCreateParams(dtNavMeshCreateParams *
 
 void DetourNavMeshBuilder::setOffMeshConnections(dtNavMeshCreateParams *navMeshCreateParams, int offMeshConCount, float *offMeshConVerts, float *offMeshConRad, unsigned char *offMeshConDirs, unsigned char *offMeshConAreas, unsigned short *offMeshConFlags, unsigned int *offMeshConUserId)
 {
+    freeNavMeshCreateParamsOffMeshConnections(navMeshCreateParams);
+
     int n = offMeshConCount;
 
     float *verts = new float[n * 3 * 2];
@@ -52,6 +54,11 @@ void DetourNavMeshBuilder::setOffMeshConnections(dtNavMeshCreateParams *navMeshC
     navMeshCreateParams->offMeshConAreas = areas;
     navMeshCreateParams->offMeshConFlags = flags;
     navMeshCreateParams->offMeshConUserID = userIds;
+}
+
+void DetourNavMeshBuilder::freeOffMeshConnections(dtNavMeshCreateParams *navMeshCreateParams)
+{
+    freeNavMeshCreateParamsOffMeshConnections(navMeshCreateParams);
 }
 
 CreateNavMeshDataResult *DetourNavMeshBuilder::createNavMeshData(dtNavMeshCreateParams &params)

@@ -8,6 +8,7 @@ import {
   NavMeshParams,
   type OffMeshConnectionParams,
   Raw,
+  writeFloats,
   type RawModule,
   Recast,
   RecastBuildContext,
@@ -194,11 +195,18 @@ export const generateTileNavMeshData = (
     buildBvTree?: boolean;
   } = {},
   keepIntermediates: boolean = false,
-  buildContext: RecastBuildContext = new RecastBuildContext(),
+  buildContextParam?: RecastBuildContext,
 ): GenerateTileNavMeshDataResult => {
   const tileIntermediate: TileIntermediates = { x: tile.x, y: tile.y };
 
+  const ownsBuildContext = !buildContextParam;
+  const buildContext = buildContextParam ?? new RecastBuildContext();
+
   const cleanup = () => {
+    if (ownsBuildContext) {
+      buildContext.destroy();
+    }
+
     if (keepIntermediates) return;
 
     if (tileIntermediate.compactHeightfield) {
@@ -268,13 +276,9 @@ export const generateTileNavMeshData = (
   expandedTileBoundsMax[0] += tileConfig.borderSize * tileConfig.cs;
   expandedTileBoundsMax[2] += tileConfig.borderSize * tileConfig.cs;
 
-  tileConfig.set_bmin(0, expandedTileBoundsMin[0]);
-  tileConfig.set_bmin(1, expandedTileBoundsMin[1]);
-  tileConfig.set_bmin(2, expandedTileBoundsMin[2]);
+  writeFloats(tileConfig, 'bmin', expandedTileBoundsMin, 3);
 
-  tileConfig.set_bmax(0, expandedTileBoundsMax[0]);
-  tileConfig.set_bmax(1, expandedTileBoundsMax[1]);
-  tileConfig.set_bmax(2, expandedTileBoundsMax[2]);
+  writeFloats(tileConfig, 'bmax', expandedTileBoundsMax, 3);
 
   // Reset build timer
   buildContext.resetTimers();
@@ -314,12 +318,6 @@ export const generateTileNavMeshData = (
     return failTileMesh('Could not create heightfield');
   }
 
-  // Allocate array that can hold triangle flags.
-  // If you have multiple meshes you need to process, allocate
-  // and array which can hold the max number of triangles you need to process.
-  const triAreas = new TriangleAreasArray();
-  triAreas.resize(chunkyTriMesh.maxTrisPerChunk());
-
   const tbmin: Vector2Tuple = [
     expandedTileBoundsMin[0],
     expandedTileBoundsMin[2],
@@ -342,6 +340,9 @@ export const generateTileNavMeshData = (
   );
 
   if (nChunksOverlapping === 0) {
+    chunkIdsArray.destroy();
+    cleanup();
+
     return { success: true, intermediates: tileIntermediate };
   }
 
@@ -379,12 +380,17 @@ export const generateTileNavMeshData = (
       tileConfig.walkableClimb,
     );
 
+    nodeTrianglesArray.destroy();
     triangleAreasArray.destroy();
 
     if (!success) {
+      chunkIdsArray.destroy();
+
       return failTileMesh('Could not rasterize triangles');
     }
   }
+
+  chunkIdsArray.destroy();
 
   // Once all geometry is rasterized, we do initial pass of filtering to
   // remove unwanted overhangs caused by the conservative rasterization
@@ -563,6 +569,8 @@ export const generateTileNavMeshData = (
 
   const createNavMeshDataResult = createNavMeshData(navMeshCreateParams);
 
+  navMeshCreateParams.destroy();
+
   if (!createNavMeshDataResult.success) {
     return failTileMesh('Failed to create Detour navmesh data');
   }
@@ -571,6 +579,8 @@ export const generateTileNavMeshData = (
     Recast.RC_LOG_PROGRESS,
     `>> Polymesh: ${polyMesh.nverts()} vertices  ${polyMesh.npolys()} polygons`,
   );
+
+  cleanup();
 
   return {
     success: true,
@@ -650,8 +660,11 @@ export const generateTiledNavMesh = (
     if (keepIntermediates) return;
 
     if (intermediates.chunkyTriMesh) {
+      intermediates.chunkyTriMesh.destroy();
       intermediates.chunkyTriMesh = undefined;
     }
+
+    buildContext.destroy();
   };
 
   const fail = (error: string): GenerateTiledNavMeshFailResult => {
@@ -792,9 +805,7 @@ export const generateTiledNavMesh = (
 
   buildContext.stopTimer(Recast.RC_TIMER_TEMP);
 
-  if (!keepIntermediates) {
-    cleanup();
-  }
+  cleanup();
 
   return {
     success: true,
