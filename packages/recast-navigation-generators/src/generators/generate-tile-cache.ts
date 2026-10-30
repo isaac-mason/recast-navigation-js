@@ -193,6 +193,13 @@ export const generateTileCache = (
     trianglesArray.destroy();
 
     if (!keepIntermediates) {
+      buildContext.destroy();
+
+      if (intermediates.chunkyTriMesh) {
+        intermediates.chunkyTriMesh.destroy();
+        intermediates.chunkyTriMesh = undefined;
+      }
+
       for (let i = 0; i < intermediates.tileIntermediates.length; i++) {
         const tileIntermediate = intermediates.tileIntermediates[i];
 
@@ -329,6 +336,7 @@ export const generateTileCache = (
       tileX,
       tileY,
     };
+    intermediates.tileIntermediates.push(tileIntermediates);
 
     // Tile bounds
     const tcs = config.tileSize * config.cs;
@@ -395,6 +403,8 @@ export const generateTileCache = (
     );
 
     if (nChunksOverlapping === 0) {
+      chunkIdsArray.destroy();
+
       return { n: 0 };
     }
 
@@ -432,12 +442,17 @@ export const generateTileCache = (
         tileConfig.walkableClimb,
       );
 
+      nodeTrianglesArray.destroy();
       triangleAreasArray.destroy();
 
       if (!success) {
+        chunkIdsArray.destroy();
+
         return { n: 0 };
       }
     }
+
+    chunkIdsArray.destroy();
 
     // Once all geometry is rasterized, we do initial pass of filtering to
     // remove unwanted overhangs caused by the conservative rasterization
@@ -460,6 +475,8 @@ export const generateTileCache = (
     );
 
     const compactHeightfield = allocCompactHeightfield();
+    tileIntermediates.compactHeightfield = compactHeightfield;
+
     if (
       !buildCompactHeightfield(
         buildContext,
@@ -489,6 +506,8 @@ export const generateTileCache = (
     }
 
     const heightfieldLayerSet = allocHeightfieldLayerSet();
+    tileIntermediates.heightfieldLayerSet = heightfieldLayerSet;
+
     if (
       !buildHeightfieldLayers(
         buildContext,
@@ -555,7 +574,18 @@ export const generateTileCache = (
         tile,
       );
 
+      Raw.destroy(header);
+      heights.destroy();
+      areas.destroy();
+      cons.destroy();
+
       if (statusFailed(status)) {
+        tile.destroy();
+
+        for (const t of tiles) {
+          t.destroy();
+        }
+
         return { n: 0 };
       }
 
@@ -566,8 +596,6 @@ export const generateTileCache = (
       freeHeightfieldLayerSet(heightfieldLayerSet);
       tileIntermediates.heightfieldLayerSet = undefined;
     }
-
-    intermediates.tileIntermediates.push(tileIntermediates);
 
     return { n: tiles.length, tiles };
   };
@@ -588,6 +616,8 @@ export const generateTileCache = (
               Recast.RC_LOG_WARNING,
               `Failed to add tile to tile cache - tx: ${x}, ty: ${y}`,
             );
+
+            tileCacheData.destroy();
           }
         }
       }
