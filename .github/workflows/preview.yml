@@ -7,6 +7,9 @@ on:
 
 concurrency: preview-${{ github.workflow }}-${{ github.ref }}
 
+permissions:
+  contents: read
+
 jobs:
   preview:
     name: Preview
@@ -14,87 +17,50 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NODE_OPTIONS: '--max-old-space-size=4096'
+
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v2
-
-      - name: Setup Node.js 22.x
-        uses: actions/setup-node@v2
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          node-version: 22.x
+          persist-credentials: false
 
-      - name: Install Dependencies
-        run: yarn
+      - name: Set up pnpm
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
 
-      - name: Build Packages
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Build packages
         run: ./ci/build-packages.sh
         shell: bash
 
       - name: Test
-        run: yarn test
+        run: pnpm test
+
+      - name: Build website
+        run: pnpm build:website
 
       # navmesh website
       - name: NavMesh Website - Pull Vercel Environment Information
         if: github.event_name != 'pull_request' && github.actor != 'dependabot[bot]'
-        run: yarn run vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+        run: pnpm exec vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_NAVMESH_WEBSITE_PROJECT_ID }}
 
       - name: NavMesh Website - Build Project Artifacts
         if: github.event_name != 'pull_request' && github.actor != 'dependabot[bot]'
-        run: yarn run vercel build --token=${{ secrets.VERCEL_TOKEN }}
+        run: pnpm exec vercel build --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_NAVMESH_WEBSITE_PROJECT_ID }}
 
       - name: NavMesh Website - Deploy Project Artifacts to Vercel
         if: github.event_name != 'pull_request' && github.actor != 'dependabot[bot]'
-        run: yarn run vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+        run: pnpm exec vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_NAVMESH_WEBSITE_PROJECT_ID }}
-
-      # storybook
-      - name: Storybook - Pull Vercel Environment Information
-        if: github.event_name != 'pull_request' && github.actor != 'dependabot[bot]'
-        run: yarn run vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_STORYBOOK_PROJECT_ID }}
-
-      - name: Storybook - Build Project Artifacts
-        if: github.event_name != 'pull_request' && github.actor != 'dependabot[bot]'
-        run: yarn run vercel build --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_STORYBOOK_PROJECT_ID }}
-
-      - name: Storybook - Deploy Project Artifacts to Vercel
-        if: github.event_name != 'pull_request' && github.actor != 'dependabot[bot]'
-        run: yarn run vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_STORYBOOK_PROJECT_ID }}
-
-      # docs
-      - name: Docs - Pull Vercel Environment Information
-        if: github.event_name != 'pull_request' && github.actor != 'dependabot[bot]'
-        run: yarn run vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_DOCS_PROJECT_ID }}
-
-      - name: Docs - Build Project Artifacts
-        if: github.event_name != 'pull_request' && github.actor != 'dependabot[bot]'
-        run: yarn run vercel build --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_DOCS_PROJECT_ID }}
-
-      - name: Docs - Deploy Project Artifacts to Vercel
-        if: github.event_name != 'pull_request' && github.actor != 'dependabot[bot]'
-        run: yarn run vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_DOCS_PROJECT_ID }}

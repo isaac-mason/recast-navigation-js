@@ -1,3 +1,7 @@
+<!--
+  This README is generated from docs/README.template.md - DO NOT EDIT DIRECTLY.
+  Edit the template and run `pnpm run docs` from the repo root to regenerate.
+-->
 ![cover](https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/packages/recast-navigation/cover.png)
 
 [![Version](https://img.shields.io/npm/v/recast-navigation?style=for-the-badge)](https://www.npmjs.com/package/recast-navigation)
@@ -40,7 +44,7 @@ The TileCache Detour API provides support for temporary obstacles, which can be 
 
 #### 3. **Offline NavMesh Generation (GLTF or Custom Format), external NavMesh querying solution**
 
-You can opt to only use the navigation mesh generation capabilities of this library, and export the generated navigation mesh in a GLTF or custom format. You can then use an external pathfinding solution (for example, [three-pathfinding](https://github.com/donmccurdy/three-pathfinding)) for querying the generated navigation mesh. ([See recast-navigation-js & three-pathfinding example](https://github.com/isaac-mason/recast-navigation-js/blob/main/packages/recast-navigation/.storybook/stories/external-use/three-pathfinding.stories.tsx))
+You can opt to only use the navigation mesh generation capabilities of this library, and export the generated navigation mesh in a GLTF or custom format. You can then use an external pathfinding solution (for example, [three-pathfinding](https://github.com/donmccurdy/three-pathfinding)) for querying the generated navigation mesh. ([See recast-navigation-js & three-pathfinding example](https://github.com/isaac-mason/recast-navigation-js/blob/main/examples/src/example-three-pathfinding.tsx))
 
 This is worth considering if:
   - you need more flexibility than the detour WASM API affords
@@ -54,12 +58,226 @@ If you want to integrate navigation mesh generation into your project's asset pi
 
 ## Examples
 
-Go to the [examples website](https://recast-navigation-js.isaacmason.com) to see the project in action:
+Live at the [examples website](https://recast-navigation-js.isaacmason.com); source in [`examples/src`](./examples/src).
 
-- live: [https://recast-navigation-js.isaacmason.com](https://recast-navigation-js.isaacmason.com).
-- examples source code: [./packages/recast-navigation/.storybook/stories](./packages/recast-navigation/.storybook/stories).
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-crowd-single-agent">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-crowd-single-agent.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        Crowd With Single Agent
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-crowd-multiple-agents">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-crowd-multiple-agents.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        Crowd With Multiple Agents
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-crowd-fixed-stepping-with-interpolation">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-crowd-fixed-stepping-with-interpolation.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        Fixed Stepping With Interpolation
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-compute-path">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-compute-path.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        Compute Path
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-compute-smooth-path">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-compute-smooth-path.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        Compute Smooth Path
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-find-random-point">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-find-random-point.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        Find Random Point
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-move-along-surface">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-move-along-surface.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        Move Along Surface
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-nearby-polygons">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-nearby-polygons.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        Click Nearby Polygons
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-raycast">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-raycast.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        Raycast
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-custom-bounds">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-custom-bounds.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        Custom Bounds
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-models">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-models.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        Models
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-non-indexed-geometry">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-non-indexed-geometry.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        Non Indexed Geometry
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-walkable-slope-angle">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-walkable-slope-angle.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        Walkable Slope
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-obstacles-crowd">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-obstacles-crowd.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        Crowd Obstacles
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-obstacles-path">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-obstacles-path.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        Path Obstacles
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-many-obstacles">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-many-obstacles.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        Many Obstacles
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-off-mesh-connections">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-off-mesh-connections.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        Off Mesh Connections
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-custom-areas">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-custom-areas.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        Custom Areas
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-flood-fill-pruning">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-flood-fill-pruning.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        Flood Fill Pruning
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-importing-and-exporting">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-importing-and-exporting.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        Importing and Exporting
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-three-pathfinding">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-three-pathfinding.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        Three Pathfinding
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-debug-heightfield-solid">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-debug-heightfield-solid.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        Debug: Heightfield Solid
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-debug-heightfield-walkable">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-debug-heightfield-walkable.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        Debug: Heightfield Walkable
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-debug-compact-heightfield-solid">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-debug-compact-heightfield-solid.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        Debug: Compact Heightfield Solid
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-debug-compact-heightfield-regions">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-debug-compact-heightfield-regions.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        Debug: Compact Heightfield Regions
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-debug-compact-heightfield-distance">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-debug-compact-heightfield-distance.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        Debug: Compact Heightfield Distance
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-debug-raw-contours">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-debug-raw-contours.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        Debug: Raw Contours
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-debug-contours">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-debug-contours.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        Debug: Contours
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-debug-poly-mesh">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-debug-poly-mesh.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        Debug: Poly Mesh
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-debug-poly-mesh-detail">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-debug-poly-mesh-detail.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        Debug: Poly Mesh Detail
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-debug-navmesh">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-debug-navmesh.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        Debug: NavMesh
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-debug-navmesh-bv-tree">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-debug-navmesh-bv-tree.png" width="180" height="120" style="object-fit:cover;"/><br/>
+        Debug: NavMesh BV Tree
+      </a>
+    </td>
+  </tr>
+</table>
 
-Demonstrations of how to use the recast-navigation-js with different libraries and environments can be found in the [examples](./examples) directory.
+Demonstrations of how to use recast-navigation-js with different libraries and environments (vite, web workers, playcanvas, vanilla three.js, node) can be found in the [examples-integrations](./examples-integrations) and [examples-node](./examples-node) directories.
 
 ## Installation
 
@@ -121,13 +339,13 @@ You can use import maps to use the library without a bundler:
 </script>
 ```
 
-A full example can be found here: https://github.com/isaac-mason/recast-navigation-js/tree/main/examples/three-vanilla-example/index.html
+A full example can be found here: https://github.com/isaac-mason/recast-navigation-js/tree/main/examples-integrations/three-vanilla-example/index.html
 
 ## Documentation
 
 <!-- REMOVE-FROM-DOCS-START -->
 
-API Documentation can be found at [https://docs.recast-navigation-js.isaacmason.com](https://docs.recast-navigation-js.isaacmason.com).
+API Documentation can be found at [https://recast-navigation-js.isaacmason.com/docs](https://recast-navigation-js.isaacmason.com/docs).
 
 <!-- REMOVE-FROM-DOCS-END -->
 
@@ -194,13 +412,13 @@ const { success, navMesh } = generateSoloNavMesh(
 );
 ```
 
-See the docs for more information on generator options: https://docs.recast-navigation-js.isaacmason.com/modules/generators.html
+See the docs for more information on generator options: https://recast-navigation-js.isaacmason.com/docs/modules/generators.html
 
 #### Builing a NavMesh in a Web Worker
 
 It's possible to build a NavMesh in a Web Worker. This can be useful for offloading heavy computation from the main thread.
 
-The library doesn't include a web worker, but it's straightforward to create your own. An example of solo nav mesh generation in a web worker can be found here: https://github.com/isaac-mason/recast-navigation-js/tree/main/examples/three-vite-worker-example
+The library doesn't include a web worker, but it's straightforward to create your own. An example of solo nav mesh generation in a web worker can be found here: https://github.com/isaac-mason/recast-navigation-js/tree/main/examples-integrations/three-vite-worker-example
 
 The example uses `importNavMesh` and `exportNavMesh` to serialize and deserialize a NavMesh for transfer between the main thread and the web worker.
 
@@ -210,7 +428,7 @@ For more advanced scenarios such as dynamic navmesh regeneration, you can genera
 
 This library provides low-level APIs that aim to match the recast and detour c++ api, allowing you to create custom navigation mesh generators based on your specific needs. You can use the NavMesh generators provided by `@recast-navigation/generators` as a basis: https://github.com/isaac-mason/recast-navigation-js/tree/main/packages/recast-navigation-generators/src/generators
 
-An example of a custom NavMesh generator with custom areas can be found here: https://recast-navigation-js.isaacmason.com/?path=/story/advanced-custom-areas--compute-path
+An example of a custom NavMesh generator with custom areas can be found here: https://recast-navigation-js.isaacmason.com/examples/#example-custom-areas
 
 Please note that not all recast and detour functionality is exposed yet. If you require unexposed functionality, please submit an issue or a pull request.
 
@@ -254,6 +472,29 @@ const {
 ```
 
 ### Crowds and Agents
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-crowd-single-agent">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-crowd-single-agent.png" width="200" height="133" style="object-fit:cover;"/><br/>
+        Crowd With Single Agent
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-crowd-multiple-agents">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-crowd-multiple-agents.png" width="200" height="133" style="object-fit:cover;"/><br/>
+        Crowd With Multiple Agents
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-crowd-fixed-stepping-with-interpolation">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-crowd-fixed-stepping-with-interpolation.png" width="200" height="133" style="object-fit:cover;"/><br/>
+        Fixed Stepping With Interpolation
+      </a>
+    </td>
+  </tr>
+</table>
 
 **Creating a Crowd**
 
@@ -395,6 +636,29 @@ crowd.removeAgent(agent);
 
 Recast Navigation supports temporary Box and Cylinder obstacles via a `TileCache`.
 
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-obstacles-crowd">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-obstacles-crowd.png" width="200" height="133" style="object-fit:cover;"/><br/>
+        Crowd Obstacles
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-obstacles-path">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-obstacles-path.png" width="200" height="133" style="object-fit:cover;"/><br/>
+        Path Obstacles
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-many-obstacles">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-many-obstacles.png" width="200" height="133" style="object-fit:cover;"/><br/>
+        Many Obstacles
+      </a>
+    </td>
+  </tr>
+</table>
+
 `TileCache` assumes small tiles (around 32-64 squared). Using `tileSize` values outside this range may result in unexpected behaviour.
 
 ```ts
@@ -460,6 +724,17 @@ for (let i = 0; i < maxTileCacheUpdates; i++) {
 ### Off Mesh Connections
 
 Off mesh connections are user-defined connections between two points on a NavMesh. You can use them to create things like ladders, teleporters, jump pads, etc.
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-off-mesh-connections">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-off-mesh-connections.png" width="200" height="133" style="object-fit:cover;"/><br/>
+        Off Mesh Connections
+      </a>
+    </td>
+  </tr>
+</table>
 
 Off mesh connections can be bidirectional or unidirectional.
 
@@ -582,6 +857,17 @@ const detail = statusDetail(status, detail);
 ### Importing and Exporting
 
 A NavMesh and TileCache can be imported and exported as a Uint8Array.
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://recast-navigation-js.isaacmason.com/examples/#example-importing-and-exporting">
+        <img src="https://raw.githubusercontent.com/isaac-mason/recast-navigation-js/main/examples/public/screenshots/example-importing-and-exporting.png" width="200" height="133" style="object-fit:cover;"/><br/>
+        Importing and Exporting
+      </a>
+    </td>
+  </tr>
+</table>
 
 See below for an example of exporting then importing a NavMesh:
 

@@ -1,0 +1,16 @@
+packages:
+  - packages/recast-navigation-wasm
+  - packages/recast-navigation-core
+  - packages/recast-navigation-generators
+  - packages/recast-navigation-three
+  - packages/recast-navigation-playcanvas
+  - packages/recast-navigation
+  - apps/*
+  - examples
+  - examples-node/*
+  - examples-integrations/*
+  - docs
+  - website
+
+onlyBuiltDependencies:
+  - esbuild
