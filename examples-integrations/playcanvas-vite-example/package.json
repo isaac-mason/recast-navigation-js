@@ -9,11 +9,11 @@
   },
   "dependencies": {
     "@recast-navigation/playcanvas": "workspace:*",
-    "playcanvas": "^2.0.0",
+    "playcanvas": "^2.23.3",
     "recast-navigation": "workspace:*"
   },
   "devDependencies": {
-    "typescript": "^5.9.3",
-    "vite": "^5.4.8"
+    "typescript": "^6.0.3",
+    "vite": "^8.3.5"
   }
 }
