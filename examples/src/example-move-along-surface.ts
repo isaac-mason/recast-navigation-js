@@ -13,8 +13,7 @@ const { scene, camera, renderer } = createExample(container);
 
 /* instruction overlay */
 const instructions = document.createElement('div');
-instructions.style.cssText =
-    'position:absolute;top:0;left:0;padding:25px;color:white;font-family:monospace;user-select:none;z-index:1;';
+instructions.className = 'mc-info mc-hint';
 instructions.textContent = 'use wasd or arrow keys to move';
 document.body.appendChild(instructions);
 

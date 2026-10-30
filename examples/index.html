@@ -12,15 +12,20 @@
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
                 sans-serif;
-            background: #222;
+            background: var(--color-background);
             height: 100vh;
             display: flex;
             overflow: hidden;
 
             /* vars */
-            --color-background: #222;
-            --color-card: #333;
-            --color-border: #555;
+            --color-background: #131518;
+            --color-card: #1c1f25;
+            --color-border: rgba(255, 255, 255, 0.1);
+            --color-viewer: #000;
+            --color-ink: #e8eaed;
+            --color-glass: rgba(22, 25, 31, 0.72);
+            --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas,
+                monospace;
         }
 
         /* sidebar - mobile first (hidden by default) */
@@ -32,159 +37,187 @@
             width: 100%;
             max-width: 320px;
             background: var(--color-background);
-            color: #fff;
+            color: var(--color-ink);
             overflow-y: auto;
-            border-right: 1px solid var(--color-border);
             transform: translateX(-100%);
             transition: transform 0.3s ease;
             z-index: 1000;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
+            /* hidden scrollbar */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            display: none;
         }
 
         .sidebar.open {
             transform: translateX(0);
         }
 
-        .sidebar-header {
-            padding: 16px;
-            background: var(--color-background);
-            border-bottom: 1px solid var(--color-border);
+        /* title + search scroll together as one sticky unit */
+        .sidebar-top {
             position: sticky;
             top: 0;
-            z-index: 1001;
+            z-index: 2;
+            background: var(--color-background);
+        }
+
+        .sidebar-header {
+            padding: 18px 14px 10px;
         }
 
         .sidebar-header h1 {
             margin: 0;
-            font-size: 24px;
-            font-weight: 500;
+            font-family: var(--mono);
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+        }
+
+        .sidebar-header h1 a {
+            color: var(--color-ink);
+            text-decoration: none;
+        }
+
+        .sidebar-header p {
+            margin: 8px 0 0;
+            font-family: var(--mono);
+            font-size: 11px;
+            letter-spacing: 0.04em;
+            color: #8a95a1;
         }
 
         .search-container {
             margin: 0;
-            border-bottom: 1px solid var(--color-border);
-            position: relative;
+            padding: 0 14px 12px;
         }
 
         .search-input {
             width: 100%;
-            border: none;
-            padding: 16px;
-            background: transparent;
-            color: #fff;
-            font-size: 12px;
-            font-family: inherit;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 0;
+            padding: 9px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--color-ink);
+            font-size: 11px;
+            font-family: var(--mono);
+            text-transform: lowercase;
             box-sizing: border-box;
+            transition: border-color 0.18s ease, background 0.18s ease;
         }
 
         .search-input::placeholder {
-            color: #90a4ae;
+            color: #7d848c;
         }
 
         .search-input:focus {
             outline: none;
-            border-color: #37474f;
-            background: #1e272c;
+            border-color: rgba(255, 255, 255, 0.28);
+            background: rgba(255, 255, 255, 0.08);
         }
 
         .examples-list {
-            padding: 16px;
+            padding: 10px 14px 16px;
             margin: 0;
             list-style: none;
         }
 
         .examples-list li {
-            margin-bottom: 20px;
+            margin-bottom: 12px;
         }
 
         .examples-list li:last-child {
             margin-bottom: 16px;
         }
 
+        .category-header {
+            font-family: var(--mono);
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            text-transform: lowercase;
+            color: #8a95a1;
+            margin: 0 0 10px 0;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            list-style: none;
+        }
+
+        .category-group {
+            margin-bottom: 22px;
+        }
+
+        .category-group.hidden {
+            display: none;
+        }
+
         .example-item {
             display: block;
-            padding: 0;
             color: #cfd8dc;
             background-color: var(--color-card);
             text-decoration: none;
-            font-size: 14px;
-            transition: background-color 0.2s, border 0.2s ease;
             cursor: pointer;
-            border: 3px solid transparent;
-            border-radius: 0.2em;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 0;
             overflow: hidden;
+            transition: border-color 0.16s ease;
         }
 
         .example-item:hover {
-            color: #fff;
+            border-color: rgba(255, 255, 255, 0.5);
         }
 
         .example-item.active {
-            color: #fff;
-            border: 3px solid #0277bd;
+            border-color: #fff;
         }
 
         .example-preview {
-            display: flex;
-            flex-direction: column;
-            gap: 0;
+            position: relative;
+            aspect-ratio: 16 / 10;
+            overflow: hidden;
+            /* placeholder gradient shown until (or if) the screenshot loads */
+            background: radial-gradient(120% 120% at 30% 20%,
+                    #313c44 0%, #262d34 55%, #1a2025 100%);
         }
 
         .example-screenshot {
+            position: absolute;
+            inset: 0;
             width: 100%;
-            height: 140px;
+            height: 100%;
             object-fit: cover;
-            border-radius: 0;
-            flex-shrink: 0;
             display: block;
-            background: #1a1a1a;
+            -webkit-user-drag: none;
+            user-select: none;
         }
 
-        .example-info {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            padding: 16px 16px 20px 16px;
+        .example-overlay {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            padding: 10px;
+            pointer-events: none;
         }
 
         .example-title {
-            font-weight: 500;
-            font-size: 16px;
+            display: inline-block;
             margin: 0;
-            line-height: 1.2;
-        }
-
-        .example-description {
+            padding: 4px 9px;
+            background: #fff;
+            color: #111;
+            font-family: var(--mono);
+            font-weight: 500;
             font-size: 13px;
-            color: #b0bec5;
-            margin: 0;
-            line-height: 1.4;
-        }
-
-        .example-source-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 11px;
-            color: #eceff1;
-            text-decoration: none;
-            align-self: flex-start;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            font-weight: 500;
-            border-bottom: 1px solid rgba(236, 239, 241, 0.25);
-            padding-bottom: 1px;
-            transition: border-color 0.2s, opacity 0.2s;
-            opacity: 0.5;
-        }
-
-        .example-source-link:hover {
-            opacity: 1;
-            border-bottom-color: #eceff1;
+            line-height: 1.2;
+            letter-spacing: 0.01em;
+            text-transform: lowercase;
         }
 
         .content {
-            width: 100%;
+            flex: 1;
+            min-width: 0;
             display: flex;
             flex-direction: column;
         }
@@ -193,7 +226,6 @@
             background: var(--color-background);
             border-bottom: 1px solid var(--color-border);
             padding: 12px 15px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             display: flex;
             align-items: center;
             gap: 12px;
@@ -206,20 +238,92 @@
             font-size: 18px;
             cursor: pointer;
             padding: 4px;
-            color: #fff;
+            color: var(--color-ink);
         }
 
         .content-header h2 {
             margin: 0;
             font-size: 16px;
-            color: #fff;
+            color: var(--color-ink);
             flex: 1;
         }
 
-        .example-frame {
+        /* the demo lives inside its own rounded container floating on the page */
+        .viewer {
+            position: relative;
             flex: 1;
+            overflow: hidden;
+            background: var(--color-viewer);
+        }
+
+        .example-frame {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
             border: none;
-            background: #222;
+            background: var(--color-viewer);
+        }
+
+        /* title overlaid top-left of the demo (desktop) */
+        .viewer-title {
+            position: absolute;
+            top: 18px;
+            left: 20px;
+            z-index: 3;
+            pointer-events: none;
+            display: none;
+        }
+
+        .viewer-title h2 {
+            margin: 0;
+            font-family: var(--mono);
+            font-size: 17px;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            text-transform: lowercase;
+            color: var(--color-ink);
+        }
+
+        /* source / open / fullscreen buttons, bottom-right of the demo */
+        .viewer-toolbar {
+            position: absolute;
+            right: 14px;
+            bottom: 14px;
+            z-index: 3;
+            display: flex;
+            gap: 8px;
+        }
+
+        .viewer-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 11px;
+            background: var(--color-glass);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 0;
+            color: #e8eaed;
+            font-family: var(--mono);
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            text-transform: lowercase;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.15s ease, border-color 0.15s ease;
+        }
+
+        .viewer-btn:hover {
+            background: rgba(35, 39, 47, 0.92);
+            border-color: rgba(255, 255, 255, 0.28);
+        }
+
+        .viewer-btn svg {
+            width: 13px;
+            height: 13px;
         }
 
         .sidebar-overlay {
@@ -241,33 +345,32 @@
         @media (min-width: 769px) {
             .sidebar {
                 position: static;
-                transform: translateX(0);
-                width: 360px;
-                min-width: 360px;
+                transform: none;
+                width: 300px;
+                min-width: 300px;
                 max-width: none;
                 box-shadow: none;
+            }
+
+            .content {
+                padding: 12px 12px 12px 0;
+            }
+
+            .viewer {
+                border-radius: 0;
+                box-shadow: 0 12px 34px rgba(0, 0, 0, 0.16);
+            }
+
+            .viewer-title {
+                display: block;
             }
 
             .content-header {
                 display: none;
             }
 
-            .examples-list {
-                padding: 20px;
-            }
-
-            .example-info {
-                padding: 20px 20px 24px 20px;
-                gap: 10px;
-            }
-
             .example-title {
-                font-size: 17px;
-            }
-
-            .example-description {
-                font-size: 14px;
-                line-height: 1.5;
+                font-size: 13px;
             }
 
             .hamburger {
@@ -285,11 +388,14 @@
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h1>recast-navigation-js</h1>
-        </div>
-        <div class="search-container">
-            <input type="text" id="search-input" class="search-input" placeholder="Search examples..." />
+        <div class="sidebar-top">
+            <div class="sidebar-header">
+                <h1><a href="../">recast-navigation-js</a></h1>
+                <p>npm i recast-navigation</p>
+            </div>
+            <div class="search-container">
+                <input type="text" id="search-input" class="search-input" placeholder="search examples..." />
+            </div>
         </div>
         <ul class="examples-list" id="examples-list"></ul>
     </div>
@@ -299,45 +405,99 @@
             <button class="hamburger" id="hamburger">☰</button>
             <h2 id="example-title">Select an example</h2>
         </div>
-        <iframe class="example-frame" id="example-frame"></iframe>
+        <div class="viewer" id="viewer">
+            <iframe class="example-frame" id="example-frame"></iframe>
+            <div class="viewer-title">
+                <h2 id="viewer-title-text"></h2>
+            </div>
+            <div class="viewer-toolbar">
+                <a class="viewer-btn" id="btn-source" target="_blank" rel="noopener" title="View source on GitHub">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18v-6h6v6M9 6h6"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+                    source
+                </a>
+                <a class="viewer-btn" id="btn-open" target="_blank" rel="noopener" title="Open in a new tab">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                    open
+                </a>
+            </div>
+        </div>
     </div>
 
     <script type="module">
         import examples from "./src/examples.json" with { type: "json" };
 
-        function addExamplesToSidebar() {
-            const examplesList = document.getElementById("examples-list");
+        // display order for categories
+        const CATEGORY_ORDER = [
+            "crowd",
+            "queries",
+            "generation",
+            "obstacles",
+            "advanced",
+            "debug",
+        ];
 
-            const examplesHTML = Object.entries(examples)
-                .map(([key, example]) => {
-                    return `
-                <li>
+        function orderIndex(order, value) {
+            const i = order.indexOf(value);
+            return i === -1 ? order.length : i;
+        }
+
+        function prettyCategory(category) {
+            if (!category) return "Other";
+            return category.charAt(0).toUpperCase() + category.slice(1);
+        }
+
+        function cardHTML(key, example) {
+            return `
+                <li class="example-card" data-example="${key}">
                     <div class="example-item" data-example="${key}">
-                    <div class="example-preview">
-                        <img src="./screenshots/${key}.png" alt="${example.title}" class="example-screenshot">
-                        <div class="example-info">
-                        <h3 class="example-title">${example.title}</h3>
-                        <p class="example-description">${example.description}</p>
-                        <a class="example-source-link" href="https://github.com/isaac-mason/recast-navigation-js/blob/main/examples/src/${key}.ts" target="_blank" onclick="event.stopPropagation()">
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18v-6h6v6M9 6h6"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
-                            source
-                        </a>
+                        <div class="example-preview">
+                            <img src="./screenshots/${key}.png" alt="${example.title}" class="example-screenshot" draggable="false" onerror="this.style.display='none'">
+                            <div class="example-overlay">
+                                <h3 class="example-title">${example.title}</h3>
+                            </div>
                         </div>
-                    </div>
                     </div>
                 </li>
             `;
-                })
-                .join("");
+        }
 
-            examplesList.innerHTML = examplesHTML;
+        function addExamplesToSidebar() {
+            const examplesList = document.getElementById("examples-list");
+
+            // group entries by category
+            const byCategory = new Map();
+            for (const [key, example] of Object.entries(examples)) {
+                const category = example.category || "other";
+                if (!byCategory.has(category)) byCategory.set(category, []);
+                byCategory.get(category).push([key, example]);
+            }
+
+            const categories = [...byCategory.keys()].sort(
+                (a, b) => orderIndex(CATEGORY_ORDER, a) - orderIndex(CATEGORY_ORDER, b),
+            );
+
+            let html = "";
+            for (const category of categories) {
+                html += `<li class="category-group" data-category="${category}">`;
+                html += `<div class="category-header">${prettyCategory(category)}</div>`;
+                html += `<ul class="examples-list" style="padding:0;">`;
+                for (const [key, example] of byCategory.get(category)) {
+                    html += cardHTML(key, example);
+                }
+                html += `</ul></li>`;
+            }
+
+            examplesList.innerHTML = html;
         }
 
         // initialize examples list
         addExamplesToSidebar();
 
         const titleElement = document.getElementById("example-title");
+        const viewerTitleText = document.getElementById("viewer-title-text");
         const frameElement = document.getElementById("example-frame");
+        const btnSource = document.getElementById("btn-source");
+        const btnOpen = document.getElementById("btn-open");
         const hamburger = document.getElementById("hamburger");
         const sidebar = document.getElementById("sidebar");
         const sidebarOverlay = document.getElementById("sidebar-overlay");
@@ -346,28 +506,30 @@
         // search functionality
         function filterExamples() {
             const searchTerm = searchInput.value.toLowerCase();
-            const exampleItems = document.querySelectorAll(".examples-list li");
+            const cards = document.querySelectorAll(".example-card");
 
-            exampleItems.forEach((item) => {
-                const exampleKey = item
-                    .querySelector(".example-item")
-                    .getAttribute("data-example");
+            cards.forEach((card) => {
+                const exampleKey = card.getAttribute("data-example");
                 const example = examples[exampleKey];
 
                 // search in title, description, and tags
                 const searchableText = [
                     example.title,
                     example.description,
-                    ...example.tags,
+                    ...(example.tags || []),
                 ]
                     .join(" ")
                     .toLowerCase();
 
-                if (searchableText.includes(searchTerm)) {
-                    item.style.display = "";
-                } else {
-                    item.style.display = "none";
-                }
+                card.style.display = searchableText.includes(searchTerm) ? "" : "none";
+            });
+
+            // hide category groups with no visible cards
+            document.querySelectorAll(".category-group").forEach((group) => {
+                const anyVisible = [...group.querySelectorAll(".example-card")].some(
+                    (c) => c.style.display !== "none",
+                );
+                group.classList.toggle("hidden", !anyVisible);
             });
         }
 
@@ -402,7 +564,10 @@
             if (!example) return;
 
             titleElement.textContent = example.title;
+            viewerTitleText.textContent = example.title;
             frameElement.src = `./${exampleKey}.html`;
+            btnSource.href = `https://github.com/isaac-mason/recast-navigation-js/blob/main/examples/src/${exampleKey}.ts`;
+            btnOpen.href = `./${exampleKey}.html`;
 
             // update active item
             const exampleItems = document.querySelectorAll(".example-item");

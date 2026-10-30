@@ -117,8 +117,7 @@ renderer.domElement.addEventListener('pointerdown', (event) => {
 
 /* info overlay */
 const infoDiv = document.createElement('div');
-infoDiv.style.cssText =
-    'position:absolute;top:0;padding:25px;color:white;font-family:monospace;user-select:none;z-index:1;';
+infoDiv.className = 'mc-info mc-hint';
 infoDiv.innerText = 'click to set flood fill start point';
 document.body.appendChild(infoDiv);
 
