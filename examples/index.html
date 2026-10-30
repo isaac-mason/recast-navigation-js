@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>recast-navigation examples</title>
+    <title>recast-navigation-js examples</title>
     <style>
         /* mobile-first base styles */
         body {
@@ -286,7 +286,7 @@
 
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h1>recast-navigation</h1>
+            <h1>recast-navigation-js</h1>
         </div>
         <div class="search-container">
             <input type="text" id="search-input" class="search-input" placeholder="Search examples..." />
@@ -303,7 +303,7 @@
     </div>
 
     <script type="module">
-        import examples from "./src/examples.json" assert { type: "json" };
+        import examples from "./src/examples.json" with { type: "json" };
 
         function addExamplesToSidebar() {
             const examplesList = document.getElementById("examples-list");

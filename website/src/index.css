@@ -131,33 +131,6 @@ canvas {
   color: #ffffff;
 }
 
-/* NavMesh Toggle Button - Mobile First */
-.navmesh-toggle {
-  text-align: center;
-  padding: 0.75rem 1rem;
-  font-family: "Roboto Mono", monospace;
-  font-size: 0.75rem;
-  text-transform: lowercase;
-  color: #cccccc;
-  background-color: rgba(34, 34, 34, 0.8);
-  border: 1px solid #666666;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  backdrop-filter: blur(4px);
-  min-height: 44px;
-}
-
-.navmesh-toggle:hover {
-  background-color: rgba(255, 255, 255, 0.9);
-  color: #000000;
-  border-color: #ffffff;
-}
-
-.navmesh-toggle:active {
-  transform: scale(0.95);
-}
-
 /* Loading Spinner */
 .loading-container {
   position: absolute;
@@ -222,7 +195,7 @@ canvas {
 
   .footer {
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: flex-end;
     padding: 2rem 3rem;
   }
 
@@ -237,10 +210,4 @@ canvas {
     min-height: auto;
   }
 
-  .navmesh-toggle {
-    width: auto;
-    padding: 0.75rem 1.25rem;
-    font-size: 0.9rem;
-    min-height: auto;
-  }
 }
