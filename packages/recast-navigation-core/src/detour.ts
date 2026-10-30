@@ -677,6 +677,7 @@ export class NavMeshCreateParams {
   }
 
   destroy(): void {
+    Raw.DetourNavMeshBuilder.freeOffMeshConnections(this.raw);
     Raw.destroy(this.raw);
   }
 }

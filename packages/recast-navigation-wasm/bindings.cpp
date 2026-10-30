@@ -946,6 +946,7 @@ EMSCRIPTEN_BINDINGS(recast) {
             auto f = convertJSArrayToNumberVector<unsigned short>(flags);
             auto u = convertJSArrayToNumberVector<unsigned int>(userId);
             b.setOffMeshConnections(params, count, v.data(), r.data(), d.data(), a.data(), f.data(), u.data()); }, allow_raw_pointers())
+        .function("freeOffMeshConnections", &DetourNavMeshBuilder::freeOffMeshConnections, allow_raw_pointers())
         .function("createNavMeshData", &DetourNavMeshBuilder::createNavMeshData, allow_raw_pointers());
 
     class_<DetourTileCacheBuilder>("DetourTileCacheBuilder")
